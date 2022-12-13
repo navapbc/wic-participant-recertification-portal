@@ -25,10 +25,10 @@ terraform {
   # Terraform does not allow interpolation here, values must be hardcoded.
 
   backend "s3" {
-    bucket         = "wic-prp-636249768232-us-east-1-tf-state"
+    bucket         = "wic-prp-636249768232-us-west-1-tf-state"
     dynamodb_table = "wic-prp-tf-state-locks"
     key            = "infra/account.tfstate"
-    region         = "us-east-1"
+    region         = "us-west-1"
     encrypt        = "true"
   }
 
