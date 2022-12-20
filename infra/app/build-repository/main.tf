@@ -29,7 +29,7 @@ terraform {
 
   backend "s3" {
     bucket         = "wic-prp-636249768232-us-west-1-tf-state"
-    key            = "infra/wic-prp/dist.tfstate"
+    key            = "infra/wic-prp/build-repository.tfstate"
     dynamodb_table = "wic-prp-tf-state-locks"
     region         = "us-west-1"
     encrypt        = "true"
