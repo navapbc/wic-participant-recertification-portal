@@ -8,15 +8,15 @@ locals {
   # if you choose not to use workspaces set this value to "dev" 
   prefix = terraform.workspace
   # Choose the region where this infrastructure should be deployed.
-  region = "us-east-1"
+  region = "us-west-1"
   # Add environment specific tags
   tags = merge(module.project_config.default_tags, {
     environment = local.environment_name
     description = "Application resources created in dev environment"
   })
 
-  tfstate_bucket = "<TF_STATE_BUCKET_NAME>"
-  tfstate_key    = "infra/<APP_NAME>/environments/dev.tfstate"
+  tfstate_bucket = "wic-prp-636249768232-us-west-1-tf-state"
+  tfstate_key    = "infra/wic-prp/environments/dev.tfstate"
 }
 
 terraform {
@@ -32,10 +32,10 @@ terraform {
   # Terraform does not allow interpolation here, values must be hardcoded.
 
   backend "s3" {
-    bucket         = "<TF_STATE_BUCKET_NAME>"
-    key            = "infra/<APP_NAME>/environments/dev.tfstate"
-    dynamodb_table = "<TF_LOCKS_TABLE_NAME>"
-    region         = "<REGION>"
+    bucket         = "wic-prp-636249768232-us-west-1-tf-state"
+    key            = "infra/wic-prp/environments/dev.tfstate"
+    dynamodb_table = "wic-prp-tf-state-locks"
+    region         = "us-west-1"
     encrypt        = "true"
   }
 }

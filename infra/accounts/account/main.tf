@@ -24,13 +24,13 @@ terraform {
 
   # Terraform does not allow interpolation here, values must be hardcoded.
 
-  #uncomment# backend "s3" {
-  #uncomment#   bucket         = "<TF_STATE_BUCKET_NAME>"
-  #uncomment#   dynamodb_table = "<TF_LOCKS_TABLE_NAME>"
-  #uncomment#   key            = "infra/account.tfstate"
-  #uncomment#   region         = "<REGION>"
-  #uncomment#   encrypt        = "true"
-  #uncomment# }
+  backend "s3" {
+    bucket         = "wic-prp-636249768232-us-west-1-tf-state"
+    dynamodb_table = "wic-prp-tf-state-locks"
+    key            = "infra/account.tfstate"
+    region         = "us-west-1"
+    encrypt        = "true"
+  }
 
 }
 
