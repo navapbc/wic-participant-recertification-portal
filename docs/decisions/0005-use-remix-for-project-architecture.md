@@ -14,10 +14,10 @@ Where do we want to integrate the data persistence layer?
 
 ## Decision Drivers
 
-- We want to make a compelling case that the Portal is a widget that can plug-and-play into any MIS
-- We want to continue building out the case for a WIC API standard by adding endpoints to the Mock MIS (aka Mock API)
-- We want to make it easy for other organizations to adopt, extend, and deploy our open source code
-- We want to iteratively improve on some of the less successful approaches we used when building the Eligibility Screener built for the WIC MT Demonstration Project
+* We want to make a compelling case that the Portal is a widget that can plug-and-play into any MIS
+* We want to continue building out the case for a WIC API standard by adding endpoints to the Mock MIS (aka Mock API)
+* We want to make it easy for other organizations to adopt, extend, and deploy our open source code
+* We want to iteratively improve on some of the less successful approaches we used when building the Eligibility Screener built for the WIC MT Demonstration Project
 
 ## Considered Options
 
