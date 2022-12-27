@@ -2,7 +2,7 @@
 
 * Status: [proposed | rejected | accepted | deprecated | … | superseded by [ADR-0005](0005-example.md)] <!-- optional -->
 * Deciders: [list everyone involved in the decision] <!-- optional -->
-* Date: [YYYY-MM-DD when the decision was last updated] <!-- optional -->
+* Date: [YYYY-MM-DD when the decision was made] <!-- optional -->
 
 Technical Story: [description | ticket/issue URL] <!-- optional -->
 Tech Spec: [tech spec URL] <!-- optional -->
