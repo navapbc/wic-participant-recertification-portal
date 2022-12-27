@@ -1,5 +1,7 @@
 # Use Markdown Architectural Decision Records
 
+* Status: augmented by [ADR-0004](0004-decision-making.md)]
+
 ## Context and Problem Statement
 
 We want to record architectural decisions made in this project.
