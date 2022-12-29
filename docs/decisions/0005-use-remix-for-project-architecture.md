@@ -10,7 +10,6 @@ Tech Spec: https://navasage.atlassian.net/wiki/spaces/MWDP/pages/553123898/Tech+
 ## Context and Problem Statement
 
 What framework do we want to use to build the Participant Recertification Portal?
-Where do we want to integrate the data persistence layer?
 
 ## Decision Drivers
 
