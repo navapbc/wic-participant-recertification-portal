@@ -2,7 +2,7 @@
 
 This log lists the architectural decisions for [project name].
 
-<!-- adrlog -- Regenerate the content by using "adr-log -i". You can install it via "npm install -g adr-log" -->
+<!-- adrlog -- Regenerate the content by using "adr-log -i index.md -e template.md". You can install it via "npm install -g adr-log" -->
 
 * [ADR-0000](0000-use-markdown-architectural-decision-records.md) - Use Markdown Architectural Decision Records
 * [ADR-0001](0001-ci-cd-interface.md) - CI/CD Interface
@@ -10,6 +10,8 @@ This log lists the architectural decisions for [project name].
 * [ADR-0003](0003-manage-ecr-in-prod-account-module.md) - Manage ECR in prod account module
 * [ADR-0004](0004-decision-making.md) - Decision making process
 * [ADR-0005](0005-use-remix-for-project-architecture.md) - Use Remix for project architecture
+* [ADR-0007](0007-authentication.md) - Authentication
+* [ADR-0008](0008-domain-management.md) - PRP Domain Management
 
 <!-- adrlogstop -->
 
