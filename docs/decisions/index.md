@@ -12,6 +12,7 @@ This log lists the architectural decisions for [project name].
 * [ADR-0007](0007-authentication.md) - Authentication
 * [ADR-0008](0008-domain-management.md) - PRP Domain Management
 
+
 <!-- adrlogstop -->
 
 For new ADRs, please use [template.md](template.md) as basis.
