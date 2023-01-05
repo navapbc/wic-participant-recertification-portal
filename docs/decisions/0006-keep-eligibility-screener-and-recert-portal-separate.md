@@ -25,14 +25,14 @@ Now that the [Eligibility Screener](https://github.com/navapbc/wic-mt-demo-proje
 
 ## Decision Outcome
 
-...
+Option 2 - Keep the eligibility screener and the recertification portal as two separate codebases
 
 ## Pros and Cons of the Options
 
 ### Option 1 - Combine the eligibility screener and the recertification portal into the same codebase
 
 * Good, because it will be easy to keep the eligibility screener's dependencies up to date
-* Good, because we can more easily create and manage a library of shared React components
+* Good, because we can more easily create and manage shared React components
 * Good, because we have fewer code repos to manage
 * Bad, because it may be hard for an interested party to try out one tool without the code and documentation for the other
 * Bad, because we might need to build a setup script / wizard to help someone navigate deployment options
@@ -44,6 +44,7 @@ Now that the [Eligibility Screener](https://github.com/navapbc/wic-mt-demo-proje
 * Good, because we can make architectural decisions for the PRP without worrying about how it might impact the eligibility screener code
 * Good, because they are actually distinct standalone tools with distinct use cases
 * Good, because pull requests can be reviewed without considering the impact to the other tool
+* Good, because we can always merge them later
 * Bad, because it means over time the two codebases may diverge in foundational or underlying tooling (e.g. tests, linting, package management)
 * Bad, because we maintain two separate stacks and terraform code, two separate CI pipelines and GitHub actions, etc
 
