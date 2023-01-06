@@ -1,8 +1,8 @@
 # Keep the Eligibility Screener and the Participant Recertification Portal separate
 
-* Status: proposed
-* Deciders: @rocketnova, @microwavenby, ...
-* Date: [YYYY-MM-DD when the decision was last updated] <!-- optional -->
+* Status: accepted
+* Deciders: @rocketnova, @microwavenby, @aplybeah
+* Date: 2022-01-06
 
 Technical Story: https://wicmtdp.atlassian.net/browse/PRP-52
 
