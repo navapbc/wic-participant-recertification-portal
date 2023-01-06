@@ -9,6 +9,7 @@ This log lists the architectural decisions for [project name].
 * [ADR-0002](0002-use-custom-implementation-of-github-oidc.md) - Use custom implementation of GitHub OIDC to authenticate GitHub actions with AWS rather than using module in Terraform Registry
 * [ADR-0003](0003-manage-ecr-in-prod-account-module.md) - Manage ECR in prod account module
 * [ADR-0004](0004-decision-making.md) - Decision making process
+* [ADR-0005](0005-use-remix-for-project-architecture.md) - Use Remix for project architecture
 * [ADR-0006](0006-keep-eligibility-screener-and-recert-portal-separate.md) - Keep the Eligibility Screener and the Participant Recertification Portal separate
 * [ADR-0007](0007-authentication.md) - Authentication
 * [ADR-0008](0008-domain-management.md) - PRP Domain Management
