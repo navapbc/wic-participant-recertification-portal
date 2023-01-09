@@ -319,3 +319,28 @@ resource "aws_security_group" "app" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+###########################
+## Database Configuration ##
+###########################
+resource "aws_rds_cluster" "postgresql" {
+  cluster_identifier = "${var.service_name}"
+  engine = "aurora-postgresql"
+  engine_mode = "provisioned"
+  database_name = replace("${var.service_name}", "-", "_")
+  master_username = "app_usr"
+  master_password = "test12345"
+
+  serverlessv2_scaling_configuration {
+    max_capacity = 1.0
+    min_capacity = 0.5
+  }
+
+}
+
+resource "aws_rds_cluster_instance" "postgresql-cluster" {
+  cluster_identifier = aws_rds_cluster.postgresql.id
+  instance_class     = "db.serverless"
+  engine             = aws_rds_cluster.postgresql.engine
+  engine_version     = aws_rds_cluster.postgresql.engine_version
+}
