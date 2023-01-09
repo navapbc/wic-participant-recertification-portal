@@ -329,7 +329,7 @@ resource "aws_rds_cluster" "postgresql" {
   engine_mode = "provisioned"
   database_name = replace("${var.service_name}", "-", "_")
   master_username = "app_usr"
-  master_password = "test12345"
+  master_password = "${aws_secretsmanager_secret_version.random_db_password.secret_string}"
 
   serverlessv2_scaling_configuration {
     max_capacity = 1.0
@@ -343,4 +343,20 @@ resource "aws_rds_cluster_instance" "postgresql-cluster" {
   instance_class     = "db.serverless"
   engine             = aws_rds_cluster.postgresql.engine
   engine_version     = aws_rds_cluster.postgresql.engine_version
+}
+
+resource "random_password" "random_db_password" {
+  length           = 48
+  special          = true
+  min_special      = 6
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "aws_secretsmanager_secret" "random_db_password" {
+  name  = "metadata/db/admin-password"
+}
+
+resource "aws_secretsmanager_secret_version" "random_db_password" {
+  secret_id = aws_secretsmanager_secret.random_db_password.id
+  secret_string = random_password.random_db_password.result
 }
