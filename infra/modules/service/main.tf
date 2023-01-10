@@ -376,7 +376,7 @@ resource "aws_backup_plan" "postgresql" {
     schedule          = "cron(0 12 ? * SUN *)"
   }
 }
-# TODO: add backup selection plan using tags
+# checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
 
 ################################################################################
 # IAM role for enhanced monitoring
@@ -410,20 +410,20 @@ data "aws_iam_policy_document" "rds_enhanced_monitoring" {
 ################################################################################
 # Parameters for Query Logging
 ################################################################################
-# checkov:skip=CKV2_AWS_27: have concerns about sensitive data in logs; want better way to get this information
+# checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
 
 resource "aws_rds_cluster_parameter_group" "rds_query_logging" {
-  name = "${var.service_name}"
+  name        = var.service_name
   family      = "aurora-postgresql13"
   description = "Default cluster parameter group"
 
   parameter {
-    name="log_statement"
-    value="all"
+    name  = "log_statement"
+    value = "all"
   }
 
   parameter {
-    name="log_min_duration_statement"
-    value="1"
+    name  = "log_min_duration_statement"
+    value = "1"
   }
 }
