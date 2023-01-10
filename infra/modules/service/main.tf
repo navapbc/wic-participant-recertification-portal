@@ -324,12 +324,12 @@ resource "aws_security_group" "app" {
 ## Database Configuration ##
 ###########################
 resource "aws_rds_cluster" "postgresql" {
-  cluster_identifier = "${var.service_name}"
-  engine = "aurora-postgresql"
-  engine_mode = "provisioned"
-  database_name = replace("${var.service_name}", "-", "_")
-  master_username = "app_usr"
-  master_password = "${aws_ssm_parameter.random_db_password.value}"
+  cluster_identifier = var.service_name
+  engine             = "aurora-postgresql"
+  engine_mode        = "provisioned"
+  database_name      = replace("${var.service_name}", "-", "_")
+  master_username    = "app_usr"
+  master_password    = aws_ssm_parameter.random_db_password.value
 
   serverlessv2_scaling_configuration {
     max_capacity = 1.0
