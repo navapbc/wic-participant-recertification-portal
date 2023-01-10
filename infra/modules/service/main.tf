@@ -330,6 +330,11 @@ resource "aws_rds_cluster" "postgresql" {
   database_name      = replace("${var.service_name}", "-", "_")
   master_username    = "app_usr"
   master_password    = aws_ssm_parameter.random_db_password.value
+  storage_encrypted  = true
+  # iam_database_authentication_enabled = true
+  # IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
+  deletion_protection = true
+
 
   serverlessv2_scaling_configuration {
     max_capacity = 1.0
@@ -339,10 +344,13 @@ resource "aws_rds_cluster" "postgresql" {
 }
 
 resource "aws_rds_cluster_instance" "postgresql-cluster" {
-  cluster_identifier = aws_rds_cluster.postgresql.id
-  instance_class     = "db.serverless"
-  engine             = aws_rds_cluster.postgresql.engine
-  engine_version     = aws_rds_cluster.postgresql.engine_version
+  cluster_identifier         = aws_rds_cluster.postgresql.id
+  instance_class             = "db.serverless"
+  engine                     = aws_rds_cluster.postgresql.engine
+  engine_version             = aws_rds_cluster.postgresql.engine_version
+  auto_minor_version_upgrade = true
+  monitoring_role_arn        = aws_iam_role.rds_enhanced_monitoring.arn
+  monitoring_interval        = 30
 }
 
 resource "random_password" "random_db_password" {
@@ -356,4 +364,33 @@ resource "aws_ssm_parameter" "random_db_password" {
   name  = "/metadata/db/admin-password"
   type  = "SecureString"
   value = random_password.random_db_password.result
+}
+
+################################################################################
+# Create an IAM role to allow enhanced monitoring
+################################################################################
+
+resource "aws_iam_role" "rds_enhanced_monitoring" {
+  name_prefix        = "aurora-enhanced-monitoring-"
+  assume_role_policy = data.aws_iam_policy_document.rds_enhanced_monitoring.json
+}
+
+resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
+  role       = aws_iam_role.rds_enhanced_monitoring.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+}
+
+data "aws_iam_policy_document" "rds_enhanced_monitoring" {
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["monitoring.rds.amazonaws.com"]
+    }
+  }
 }
