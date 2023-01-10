@@ -331,8 +331,9 @@ resource "aws_rds_cluster" "postgresql" {
   master_username    = "app_usr"
   master_password    = aws_ssm_parameter.random_db_password.value
   storage_encrypted  = true
+  # checkov:skip=CKV_AWS_128:IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
+  # checkov:skip=CKV_AWS_162:IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
   # iam_database_authentication_enabled = true
-  # IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
   deletion_protection = true
 
 
@@ -366,8 +367,19 @@ resource "aws_ssm_parameter" "random_db_password" {
   value = random_password.random_db_password.result
 }
 
+resource "aws_backup_plan" "postgresql" {
+  name = "${var.service_name}_backup_plan"
+
+  rule {
+    rule_name         = "${var.service_name}_backup_rule"
+    target_vault_name = "${var.service_name}-vault"
+    schedule          = "cron(0 12 ? * SUN *)"
+  }
+}
+# TODO: add backup selection plan using tags
+
 ################################################################################
-# Create an IAM role to allow enhanced monitoring
+# IAM role for enhanced monitoring
 ################################################################################
 
 resource "aws_iam_role" "rds_enhanced_monitoring" {
@@ -392,5 +404,26 @@ data "aws_iam_policy_document" "rds_enhanced_monitoring" {
       type        = "Service"
       identifiers = ["monitoring.rds.amazonaws.com"]
     }
+  }
+}
+
+################################################################################
+# Parameters for Query Logging
+################################################################################
+# checkov:skip=CKV2_AWS_27: have concerns about sensitive data in logs; want better way to get this information
+
+resource "aws_rds_cluster_parameter_group" "rds_query_logging" {
+  name = "${var.service_name}"
+  family      = "aurora-postgresql13"
+  description = "Default cluster parameter group"
+
+  parameter {
+    name="log_statement"
+    value="all"
+  }
+
+  parameter {
+    name="log_min_duration_statement"
+    value="1"
   }
 }
