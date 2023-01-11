@@ -324,6 +324,8 @@ resource "aws_security_group" "app" {
 ## Database Configuration ##
 ###########################
 resource "aws_rds_cluster" "postgresql" {
+  # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
+  # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
   cluster_identifier = var.service_name
   engine             = "aurora-postgresql"
   engine_mode        = "provisioned"
@@ -367,6 +369,10 @@ resource "aws_ssm_parameter" "random_db_password" {
   value = random_password.random_db_password.result
 }
 
+################################################################################
+# Backup Configuration
+################################################################################
+
 resource "aws_backup_plan" "postgresql" {
   name = "${var.service_name}_backup_plan"
 
@@ -376,7 +382,41 @@ resource "aws_backup_plan" "postgresql" {
     schedule          = "cron(0 12 ? * SUN *)"
   }
 }
-# checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
+# create IAM role
+resource "aws_iam_role" "postgresql_backup" {
+  name_prefix        = "aurora-backup-"
+  assume_role_policy = data.aws_iam_policy_document.postgresql_backup.json
+}
+
+resource "aws_iam_role_policy_attachment" "postgresql_backup" {
+  role       = aws_iam_role.postgresql_backup.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+}
+
+data "aws_iam_policy_document" "postgresql_backup" {
+  statement {
+    actions = [
+      "sts:AssumeRole",
+    ]
+
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["backup.amazonaws.com"]
+    }
+  }
+}
+# backup selection
+resource "aws_backup_selection" "postgresql_backup" {
+  iam_role_arn = aws_iam_role.postgresql_backup.arn
+  name         = "${var.service_name}-backup"
+  plan_id      = aws_backup_plan.postgresql.id
+
+  resources = [
+    aws_rds_cluster.postgresql.arn
+  ]
+}
 
 ################################################################################
 # IAM role for enhanced monitoring
@@ -410,7 +450,6 @@ data "aws_iam_policy_document" "rds_enhanced_monitoring" {
 ################################################################################
 # Parameters for Query Logging
 ################################################################################
-# checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
 
 resource "aws_rds_cluster_parameter_group" "rds_query_logging" {
   name        = var.service_name
