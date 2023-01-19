@@ -2,6 +2,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
+  environment_name = "prod"
   # The prefix key/value pair is used for terraform workspaces, which is useful for projects with multiple infrastructure developers. 
   # Leave this as a static string if you are not using workspaces for this environment (recommended). Change it to terraform.workspace 
   # if you want to use workspaces in this environment.
@@ -13,6 +14,8 @@ locals {
     environment = "prod"
     description = "Application resources created in production environment"
   })
+  tfstate_bucket = "wic-prp-636249768232-us-west-1-tf-state"
+  tfstate_key    = "infra/wic-prp/environments/prod.tfstate"
 }
 
 terraform {
@@ -48,3 +51,8 @@ module "project_config" {
 }
 
 # Add application modules below
+module "app" {
+  source           = "../../env-template"
+  environment_name = local.environment_name
+  image_tag        = local.image_tag # this doesn't exist yet
+}
