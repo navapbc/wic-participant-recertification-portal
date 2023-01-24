@@ -25,6 +25,10 @@ module "app_config" {
   source = "../app-config"
 }
 
+module "iam" {
+  source = "../../modules/iam"
+}
+
 module "service" {
   source                = "../../modules/service"
   service_name          = local.service_name

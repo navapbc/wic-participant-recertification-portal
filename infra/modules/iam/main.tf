@@ -10,30 +10,13 @@ data "aws_iam_group" "team" {
   group_name = "wic-prp-eng"
 }
 
-# IAM Perms to create application-level infra
-resource "aws_iam_role" "wic-prp-eng" {
-  name               = "wic-prp-eng"
-  assume_role_policy = data.aws_iam_policy_document.wic-prp-eng.json
-}
-
-resource "aws_iam_role_policy" "wic-prp-eng" {
+resource "aws_iam_group_policy" "wic-prp-eng" {
   name   = "wic-prp-eng-policy"
-  role   = aws_iam_role.wic-prp-eng.arn
+  group  = data.aws_iam_group.team.group_name
   policy = data.aws_iam_policy_document.wic-prp-eng.json
 }
 
-data "aws_iam_policy_document" "wic-prp-eng-assume-role" {
-  statement {
-    sid     = "WICUsersAssumeRole"
-    actions = ["sts:AssumeRole", ]
-    principals {
-      type = "AWS"
-      identifiers = [
-        "*"
-      ]
-    }
-  }
-}
+# IAM Perms to create application-level infra
 
 data "aws_iam_policy_document" "wic-prp-eng" {
   statement {
@@ -95,7 +78,7 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid       = "ECSServices"
     effect    = "Allow"
     actions   = ["ecs:DescribeServices"]
-    resources = ["arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${ClusterName}/${ServiceName}"]
+    resources = ["arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/*/*"]
   }
   statement {
     sid    = "IAMServices"
@@ -112,10 +95,10 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "iam:ListRolePolicies",
       "iam:PutRolePolicy"
     ]
-    resources = [aws_iam_role.wic-prp-eng.arn]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
   statement {
-    sid       = "KMSServices"
+    sid       = "KMSCreate"
     effect    = "Allow"
     actions   = ["kms:CreateAlias"]
     resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*"]
@@ -143,6 +126,6 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "s3:PutBucketPolicy",
       "s3:PutBucketPublicAccessBlock"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:s3:::*"]
   }
 }
