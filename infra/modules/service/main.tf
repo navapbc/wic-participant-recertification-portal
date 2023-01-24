@@ -471,9 +471,9 @@ resource "aws_rds_cluster_parameter_group" "rds_query_logging" {
 # IAM role for user access
 ################################################################################
 resource "aws_iam_policy" "db_access" {
-  name = "wic-prp-db-access"
+  name        = "wic-prp-db-access"
   description = "Allows access to the database instance"
-  policy = data.aws_iam_policy_document.db_access.json
+  policy      = data.aws_iam_policy_document.db_access.json
 }
 
 data "aws_iam_policy_document" "db_access" {
@@ -484,7 +484,7 @@ data "aws_iam_policy_document" "db_access" {
       "rds:ModifyDBInstance",
       "rds:CreateDBSnapshot"
     ]
-    resources = [ aws_rds_cluster.postgresql.arn]
+    resources = [aws_rds_cluster.postgresql.arn]
   }
 
   statement {
