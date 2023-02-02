@@ -6,13 +6,13 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 # References to current users
-data "aws_iam_group" "team" {
-  group_name = "wic-prp-eng"
+resource "aws_iam_group" "team" {
+  name = "wic-prp-eng"
 }
 
 resource "aws_iam_group_policy" "wic-prp-eng" {
   name   = "wic-prp-eng-policy"
-  group  = data.aws_iam_group.team.group_name
+  group  = aws_iam_group.team.name
   policy = data.aws_iam_policy_document.wic-prp-eng.json
 }
 
