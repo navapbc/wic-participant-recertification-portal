@@ -494,4 +494,12 @@ data "aws_iam_policy_document" "db_access" {
     ]
     resources = [aws_rds_cluster.postgresql.arn]
   }
+  
+  statement {
+    effect = "Allow"
+    actions = [
+      "rds:AddTagToResource"
+      ]
+    resources = [aws_rds_cluster_instance.postgresql-cluster.arn]
+  }
 }
