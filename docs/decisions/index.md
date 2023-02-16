@@ -13,6 +13,7 @@ This log lists the architectural decisions for [project name].
 * [ADR-0006](0006-keep-eligibility-screener-and-recert-portal-separate.md) - Keep the Eligibility Screener and the Participant Recertification Portal separate
 * [ADR-0007](0007-authentication.md) - Authentication
 * [ADR-0008](0008-domain-management.md) - PRP Domain Management
+* [ADR-0009](0009-parameter-validation.md) - Parameter Validation
 
 <!-- adrlogstop -->
 

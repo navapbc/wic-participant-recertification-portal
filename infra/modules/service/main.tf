@@ -458,7 +458,7 @@ resource "aws_rds_cluster_parameter_group" "rds_query_logging" {
 
   parameter {
     name  = "log_statement"
-    value = "all"
+    value = "all" # ddl for template; none for wic
   }
 
   parameter {
