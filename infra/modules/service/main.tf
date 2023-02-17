@@ -387,7 +387,15 @@ resource "aws_backup_plan" "postgresql" {
 
 # create backup vault
 resource "aws_backup_vault" "postgresql" {
-  name = "${var.service_name}-vault"
+  name        = "${var.service_name}-vault"
+  kms_key_arn = aws_kms_key.postgresql.arn
+}
+
+# Create KMS key for vault
+resource "aws_kms_key" "postgresql" {
+  description             = "KMS Key for backup vault ${aws_backup_vault.postgresql.name}"
+  deletion_window_in_days = "10"
+  enable_key_rotation     = "true"
 }
 
 # create IAM role
@@ -502,12 +510,12 @@ data "aws_iam_policy_document" "db_access" {
     ]
     resources = [aws_rds_cluster.postgresql.arn]
   }
-  
+
   statement {
     effect = "Allow"
     actions = [
       "rds:AddTagToResource"
-      ]
+    ]
     resources = [aws_rds_cluster_instance.postgresql-cluster.arn]
   }
 }
