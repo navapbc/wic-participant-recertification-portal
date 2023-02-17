@@ -385,17 +385,15 @@ resource "aws_backup_plan" "postgresql" {
   }
 }
 
+# KMS Key for the vault
+# This key was created by AWS by default alongside the vault
+data "aws_kms_key" "postgresql" {
+  key_id = "alias/aws/backup"
+}
 # create backup vault
 resource "aws_backup_vault" "postgresql" {
   name        = "${var.service_name}-vault"
-  kms_key_arn = aws_kms_key.postgresql.arn
-}
-
-# Create KMS key for vault
-resource "aws_kms_key" "postgresql" {
-  description             = "KMS Key for backup vault ${aws_backup_vault.postgresql.name}"
-  deletion_window_in_days = "10"
-  enable_key_rotation     = "true"
+  kms_key_arn = data.aws_kms_key.postgresql.arn
 }
 
 # create IAM role
