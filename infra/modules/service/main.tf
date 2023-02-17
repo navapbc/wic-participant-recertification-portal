@@ -337,6 +337,8 @@ resource "aws_rds_cluster" "postgresql" {
   # checkov:skip=CKV_AWS_162:IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
   # iam_database_authentication_enabled = true
   deletion_protection = true
+  # final_snapshot_identifier = "${var.service_name}-final"
+  skip_final_snapshot = true
 
 
   serverlessv2_scaling_configuration {
@@ -382,6 +384,12 @@ resource "aws_backup_plan" "postgresql" {
     schedule          = "cron(0 12 ? * SUN *)"
   }
 }
+
+# create backup vault
+resource "aws_backup_vault" "postgresql" {
+  name = "${var.service_name}-vault"
+}
+
 # create IAM role
 resource "aws_iam_role" "postgresql_backup" {
   name_prefix        = "aurora-backup-"
