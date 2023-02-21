@@ -337,6 +337,8 @@ resource "aws_rds_cluster" "postgresql" {
   # checkov:skip=CKV_AWS_162:IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
   # iam_database_authentication_enabled = true
   deletion_protection = true
+  # final_snapshot_identifier = "${var.service_name}-final"
+  skip_final_snapshot = true
 
 
   serverlessv2_scaling_configuration {
@@ -382,6 +384,18 @@ resource "aws_backup_plan" "postgresql" {
     schedule          = "cron(0 12 ? * SUN *)"
   }
 }
+
+# KMS Key for the vault
+# This key was created by AWS by default alongside the vault
+data "aws_kms_key" "postgresql" {
+  key_id = "alias/aws/backup"
+}
+# create backup vault
+resource "aws_backup_vault" "postgresql" {
+  name        = "${var.service_name}-vault"
+  kms_key_arn = data.aws_kms_key.postgresql.arn
+}
+
 # create IAM role
 resource "aws_iam_role" "postgresql_backup" {
   name_prefix        = "aurora-backup-"
@@ -464,5 +478,42 @@ resource "aws_rds_cluster_parameter_group" "rds_query_logging" {
   parameter {
     name  = "log_min_duration_statement"
     value = "1"
+  }
+}
+
+################################################################################
+# IAM role for user access
+################################################################################
+resource "aws_iam_policy" "db_access" {
+  name        = "wic-prp-db-access"
+  description = "Allows access to the database instance"
+  policy      = data.aws_iam_policy_document.db_access.json
+}
+
+data "aws_iam_policy_document" "db_access" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "rds:CreateDBInstance",
+      "rds:ModifyDBInstance",
+      "rds:CreateDBSnapshot"
+    ]
+    resources = [aws_rds_cluster.postgresql.arn]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "rds:Describe*"
+    ]
+    resources = [aws_rds_cluster.postgresql.arn]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "rds:AddTagToResource"
+    ]
+    resources = [aws_rds_cluster_instance.postgresql-cluster.arn]
   }
 }
