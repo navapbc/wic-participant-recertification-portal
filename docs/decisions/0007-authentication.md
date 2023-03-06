@@ -2,9 +2,9 @@
 
 - Status: [accepted]
 - Deciders: [@aplybeah, @rocketnova, @microwavenby]
-- Date: [2022-12-19]
+- Date: [2023-03-01]
 
-Technical Story: [PRP-67](https://wicmtdp.atlassian.net/browse/PRP-67)
+Technical Story: [PRP-67](https://wicmtdp.atlassian.net/browse/PRP-67), [PRP-176](https://wicmtdp.atlassian.net/browse/PRP-176)
 
 Tech Spec: [Authentication](https://navasage.atlassian.net/wiki/spaces/MWDP/pages/561021069/Tech+Spec+Authentication)
 
@@ -18,6 +18,7 @@ What authentication solution should we use for PRP?
 
 - Serve under 100 users with accounts
 - Single role for administrators
+- OpenID Connect Provider
 - **NO** Single Sign-on / Federation
 - **NO** User profile data
 - **NO** Multi-factor Authentication
@@ -31,9 +32,14 @@ What authentication solution should we use for PRP?
 
 ## Decision Outcome
 
-The team has decided to utilize **[Option 1](#option-1---internal-session-based-authentication)**, application-based session authentication given the limited scope, deployment needs, and presumed requirements and excluded scope.
+Due to new decision drivers (We now need an OpenID Connect Provider), the team has updated this decision to utilize **[Option 2](#option-2---aws-cognito)** AWS Cognito for the following reasons:
 
-If additional features become necessary such as MFA or multiple user-flows, we preferred **[Option 4](#option-4---supertokens)** over the rest.
+- Good, because Cognito is in our AWS private cloud and is FedRAMP and SOC 2 compliant, so we don’t need to alter our security/compliance plan
+- Good, because we don’t need to deploy or self-host another tool
+- Good, because it can function as an OpenID Connect Provider, which is required to integrate with Lowdefy
+- Good, because it will be free for the number of users we anticipate for the pilot
+
+Although we previously preferred **[Option 4](#option-4---supertokens)** over the rest as a second choice, SuperTokens is unfortunately not an OpenID Connect Provider.
 
 ## Pros and Cons of the Options
 
@@ -64,6 +70,7 @@ Utilize AWS Cognito to provide authenticated sessions for a single authorized ro
 - Good, because there is a simple UI to manage user accounts
 - Good, because the team has experience building Cognito-backed software
 - Good, because it is inexpensive and can scale
+- Good, because Cognito is an OpenID Connect Provider
 - Bad, because it has limited MFA functionality and flexibility
 - Bad, because more robust user flows require custom server-side code / development
 - Bad, because we also have experience with the limitations of Cognito
@@ -82,9 +89,11 @@ The platform is free to use for up to 7000 users
 - Good, because Auth0 is free for under 7000 users
 - Good, because Auth0 has a user management dashboard
 - Good, because other teammates at Nava have experience
+- Good, because Auth0 is an OpenID Connect Provider
 - Bad, because this team has no Auth0 experience
 - Bad, because there is no open source / self-hosted option
 - Bad, because larger scale gets expensive quickly
+- Bad, because it is not FedRAMP certified at this time
 
 ### Option 4 - SuperTokens
 
@@ -102,3 +111,4 @@ SuperTokens has customizeable user login flow, including passwordless, social lo
 - Good, because SuperTokens is open source
 - Bad, because the team has no experience with SuperTokens
 - Bad, because SuperTokens is a newcomer to the industry
+- Bad, because SuperTokens is not an OpenID Connect Provider
