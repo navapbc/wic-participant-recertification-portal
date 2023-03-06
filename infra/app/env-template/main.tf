@@ -29,6 +29,11 @@ module "iam" {
   source = "../../modules/iam"
 }
 
+# Commenting this out until we need the doc upload bucket
+# module "doc_upload" {
+#   source = "../../modules/doc-upload-s3"
+# }
+
 module "service" {
   source                = "../../modules/service"
   service_name          = local.service_name
