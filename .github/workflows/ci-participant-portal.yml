@@ -19,6 +19,8 @@ jobs:
 
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
+        with:
+          working-directory: ../
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v3.6.0
