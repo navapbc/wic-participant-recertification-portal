@@ -8,13 +8,13 @@ locals {
   # if you want to use workspaces in this environment.
   prefix = "prod"
   # Choose the region where this infrastructure should be deployed.
-  region = "us-west-1"
+  region = "us-west-2"
   # Add environment specific tags
   tags = merge(module.project_config.default_tags, {
     environment = "prod"
     description = "Application resources created in production environment"
   })
-  tfstate_bucket = "wic-prp-636249768232-us-west-1-tf-state"
+  tfstate_bucket = "wic-prp-636249768232-us-west-2-tf-state"
   tfstate_key    = "infra/wic-prp/environments/prod.tfstate"
 }
 
@@ -31,10 +31,10 @@ terraform {
   # Terraform does not allow interpolation here, values must be hardcoded.
 
   backend "s3" {
-    bucket         = "wic-prp-636249768232-us-west-1-tf-state"
+    bucket         = "wic-prp-636249768232-us-west-2-tf-state"
     key            = "infra/wic-prp/environments/prod.tfstate"
     dynamodb_table = "wic-prp-tf-state-locks"
-    region         = "us-west-1"
+    region         = "us-west-2"
     encrypt        = "true"
   }
 }

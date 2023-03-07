@@ -8,7 +8,7 @@ locals {
   # if you want to use workspaces in this environment.
   prefix = "staging"
   # Choose the region where this infrastructure should be deployed.
-  region = "us-west-1"
+  region = "us-west-2"
   # Add environment specific tags
   tags = merge(module.project_config.default_tags, {
     environment = "staging"
@@ -29,10 +29,10 @@ terraform {
   # Terraform does not allow interpolation here, values must be hardcoded.
 
   backend "s3" {
-    bucket         = "wic-prp-636249768232-us-west-1-tf-state"
+    bucket         = "wic-prp-636249768232-us-west-2-tf-state"
     key            = "infra/wic-prp/environments/staging.tfstate"
     dynamodb_table = "wic-prp-tf-state-locks"
-    region         = "us-west-1"
+    region         = "us-west-2"
     encrypt        = "true"
   }
 }
