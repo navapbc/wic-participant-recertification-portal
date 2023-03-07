@@ -5,9 +5,6 @@ on:
       - main
       - dev
   pull_request: {}
-defaults:
-  run:
-    working-directory: participant_portal
 
 jobs:
   setup-ci:
@@ -19,18 +16,18 @@ jobs:
 
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
-        with:
-          path: ${{ github.workspace }}
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v3.6.0
         with:
           node-version: 18
+          path: participant_portal
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
+          path: participant_portal
 
   lint:
     name: ⬣ ESLint
@@ -39,6 +36,7 @@ jobs:
     steps:
       - name: 🔬 Lint
         run: npm run lint
+        working-directory: participant_portal
 
   typecheck:
     name:  ʦ Typecheck
@@ -47,6 +45,7 @@ jobs:
     steps:
       - name: 🔎 Type check
         run: npm run typecheck --if-present
+        working-directory: participant_portal
 
   jest:
     name: ⚡ jest
@@ -55,6 +54,7 @@ jobs:
     steps:
       - name: ⚡ Run jest
         run: npm run test -- --coverage
+        working-directory: participant_portal
 
   playwright:
     name: 🎭 Playwright
@@ -63,9 +63,12 @@ jobs:
     steps:
       - name: 🖨 Copy the Darwin screenshots as Linux (faking it until we make it)
         run: find e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
+        working-directory: participant_portal
 
       - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps
+        working-directory: participant_portal
 
       - name: 🐳 Run Playwright in Docker Compose
         run: npx playwright test --retries=3
+        working-directory: participant_portal
