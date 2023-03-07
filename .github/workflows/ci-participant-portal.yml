@@ -10,9 +10,6 @@ on:
 jobs:
 
   setup-ci:
-    defaults:
-      run:
-        working-directory: ./participant_portal
     name: 🧰 Setup CI
     runs-on: ubuntu-latest
     steps:
@@ -31,6 +28,7 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
+          working-directory: ./participant_portal
 
   lint:
     defaults:
