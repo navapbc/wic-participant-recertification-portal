@@ -25,6 +25,11 @@ jobs:
         with:
           node-version: 18
 
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+
   lint:
     name: ⬣ ESLint
     runs-on: ubuntu-latest
