@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: 🔬 Lint
         run: npm run lint
-        working-directory: ../participant_portal
+        working-directory: ${GITHUB_WORKSPACE}/participant_portal
 
   typecheck:
     name:  ʦ Typecheck
@@ -44,7 +44,7 @@ jobs:
     steps:
       - name: 🔎 Type check
         run: npm run typecheck --if-present
-        working-directory: ../participant_portal
+        working-directory: ${GITHUB_WORKSPACE}/participant_portal
 
   jest:
     name: ⚡ jest
@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: ⚡ Run jest
         run: npm run test -- --coverage
-        working-directory: ../participant_portal
+        working-directory: ${GITHUB_WORKSPACE}/participant_portal
 
   playwright:
     name: 🎭 Playwright
@@ -62,12 +62,12 @@ jobs:
     steps:
       - name: 🖨 Copy the Darwin screenshots as Linux (faking it until we make it)
         run: find e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
-        working-directory: ../participant_portal
+        working-directory: ${GITHUB_WORKSPACE}/participant_portal
 
       - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps
-        working-directory: ../participant_portal
+        working-directory: ${GITHUB_WORKSPACE}/participant_portal
 
       - name: 🐳 Run Playwright in Docker Compose
         run: npx playwright test --retries=3
-        working-directory: ../participant_portal
+        working-directory: ${GITHUB_WORKSPACE}/participant_portal
