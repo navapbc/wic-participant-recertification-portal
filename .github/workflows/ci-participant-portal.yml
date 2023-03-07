@@ -5,13 +5,14 @@ on:
       - main
       - dev
   pull_request: {}
-defaults:
-  run:
-    working-directory: ./participant_portal
+
 
 jobs:
 
   setup-ci:
+    defaults:
+      run:
+        working-directory: ./participant_portal
     name: 🧰 Setup CI
     runs-on: ubuntu-latest
     steps:
@@ -32,6 +33,9 @@ jobs:
           useLockFile: false
 
   lint:
+    defaults:
+      run:
+        working-directory: ./participant_portal
     name: ⬣ ESLint
     runs-on: ubuntu-latest
     needs: setup-ci
@@ -40,6 +44,9 @@ jobs:
         run: npm run lint
 
   typecheck:
+    defaults:
+      run:
+        working-directory: ./participant_portal
     name:  ʦ Typecheck
     runs-on: ubuntu-latest
     needs: setup-ci
@@ -48,6 +55,9 @@ jobs:
         run: npm run typecheck --if-present
 
   jest:
+    defaults:
+      run:
+        working-directory: ./participant_portal
     name: ⚡ jest
     runs-on: ubuntu-latest
     needs: setup-ci
@@ -56,6 +66,9 @@ jobs:
         run: npm run test -- --coverage
 
   playwright:
+    defaults:
+      run:
+        working-directory: ./participant_portal
     name: 🎭 Playwright
     runs-on: ubuntu-latest
     needs: setup-ci
