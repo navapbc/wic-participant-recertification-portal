@@ -1,0 +1,14 @@
+/.cache
+/app/styles/*
+/build
+/coverage
+/node_modules
+/playwright*
+/public/build
+/storybook-static
+/test-results
+
+*.env
+*.log
+.DS_Store
+tsconfig.tsbuildinfo

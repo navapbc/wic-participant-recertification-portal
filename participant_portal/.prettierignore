@@ -1,0 +1,13 @@
+node_modules
+
+/build
+/public/build
+.env
+
+/postgres-data
+
+/app/styles/*.css
+/app/styles/unprefixed/*
+/styles/*
+.github/*
+/storybook-static
