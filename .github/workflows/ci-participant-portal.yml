@@ -12,6 +12,9 @@ jobs:
   setup-ci:
     name: 🧰 Setup CI
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./participant_portal
     steps:
       - name: 🛑 Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -28,7 +31,6 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
-          working-directory: ./participant_portal
 
   lint:
     defaults:
