@@ -21,13 +21,12 @@ jobs:
         uses: actions/setup-node@v3.6.0
         with:
           node-version: 18
-          path: participant_portal
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
-          path: participant_portal
+          working-directory: participant_portal
 
   lint:
     name: ⬣ ESLint
