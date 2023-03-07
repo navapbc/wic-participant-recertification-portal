@@ -7,7 +7,7 @@ on:
   pull_request: {}
 defaults:
   run:
-    working-directory: ${{ github.workspace }}/participant_portal
+    working-directory: participant_portal
 
 jobs:
   setup-ci:
