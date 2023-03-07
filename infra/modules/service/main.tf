@@ -6,11 +6,24 @@ data "aws_ecr_repository" "app" {
 
 
 locals {
-  alb_name                = var.service_name
-  cluster_name            = var.service_name
-  log_group_name          = "service/${var.service_name}"
-  task_executor_role_name = "${var.service_name}-task-executor"
-  image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"
+  services = {
+    "participant_portal" = {
+      alb_name                = var.service_name
+      cluster_name            = var.service_name
+      log_group_name          = "service/${var.service_name}"
+      task_executor_role_name = "${var.service_name}-task-executor"
+      image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"  
+    },
+
+    "staff_portal" = {
+      alb_name                = "${var.service_name}-staff-portal"
+      cluster_name            = var.service_name
+      log_group_name          = "service/${var.service_name}-staff-portal"
+      task_executor_role_name = "${var.service_name}-task-executor"
+      image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"
+    }
+  }
+
 }
 
 ###################
@@ -112,10 +125,11 @@ resource "aws_lb_target_group" "api_tg" {
 #######################
 
 resource "aws_ecs_service" "app" {
+  for_each        = local.services
   name            = var.service_name
-  cluster         = aws_ecs_cluster.cluster.arn
+  cluster         = aws_ecs_cluster.cluster[each.key].arn
   launch_type     = "FARGATE"
-  task_definition = aws_ecs_task_definition.app.arn
+  task_definition = "${aws_ecs_task_definition.app[each.key].arn}"
   desired_count   = var.desired_instance_count
 
   # Allow changes to the desired_count without differences in terraform plan.
@@ -139,8 +153,9 @@ resource "aws_ecs_service" "app" {
 }
 
 resource "aws_ecs_task_definition" "app" {
+  for_each           = local.services
   family             = var.service_name
-  execution_role_arn = aws_iam_role.task_executor.arn
+  execution_role_arn = "${aws_iam_role.task_executor[each.key].arn}"
 
   # when is this needed?
   # task_role_arn      = aws_iam_role.api_service.arn
@@ -148,11 +163,11 @@ resource "aws_ecs_task_definition" "app" {
     "${path.module}/container-definitions.json.tftpl",
     {
       service_name   = var.service_name
-      image_url      = local.image_url
+      image_url      = each.value.image_url
       container_port = var.container_port
       cpu            = var.cpu
       memory         = var.memory
-      awslogs_group  = aws_cloudwatch_log_group.service_logs.name
+      awslogs_group  = each.value.log_group_name
       aws_region     = data.aws_region.current.name
     }
   )
@@ -167,7 +182,8 @@ resource "aws_ecs_task_definition" "app" {
 }
 
 resource "aws_ecs_cluster" "cluster" {
-  name = local.cluster_name
+  for_each = local.services
+  name = each.value.cluster_name
 
   setting {
     name  = "containerInsights"
@@ -181,7 +197,8 @@ resource "aws_ecs_cluster" "cluster" {
 
 # Cloudwatch log group to for streaming ECS application logs.
 resource "aws_cloudwatch_log_group" "service_logs" {
-  name = local.log_group_name
+  for_each = local.services
+  name = each.value.log_group_name
 
   # Conservatively retain logs for 5 years.
   # Looser requirements may allow shorter retention periods
@@ -196,7 +213,8 @@ resource "aws_cloudwatch_log_group" "service_logs" {
 ####################
 
 resource "aws_iam_role" "task_executor" {
-  name               = local.task_executor_role_name
+  for_each           = local.services
+  name               = each.value.task_executor_role_name
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_executor_role.json
 }
 
@@ -215,13 +233,14 @@ data "aws_iam_policy_document" "ecs_assume_task_executor_role" {
 
 data "aws_iam_policy_document" "task_executor" {
   # Allow ECS to log to Cloudwatch.
+  for_each = aws_cloudwatch_log_group.service_logs
   statement {
     actions = [
       "logs:CreateLogStream",
       "logs:PutLogEvents",
       "logs:DescribeLogStreams"
     ]
-    resources = ["${aws_cloudwatch_log_group.service_logs.arn}:*"]
+    resources = ["${each.value.arn}:*"]
   }
 
   # Allow ECS to authenticate with ECR
@@ -247,9 +266,10 @@ data "aws_iam_policy_document" "task_executor" {
 
 # Link access policies to the ECS task execution role.
 resource "aws_iam_role_policy" "task_executor" {
+  for_each = data.aws_iam_policy_document.task_executor
   name   = "${var.service_name}-task-executor-role-policy"
-  role   = aws_iam_role.task_executor.id
-  policy = data.aws_iam_policy_document.task_executor.json
+  role   = aws_iam_role.task_executor[each.key].id
+  policy = data.aws_iam_policy_document.task_executor[each.key].json
 }
 
 ###########################
@@ -320,200 +340,3 @@ resource "aws_security_group" "app" {
   }
 }
 
-###########################
-## Database Configuration ##
-###########################
-resource "aws_rds_cluster" "postgresql" {
-  # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
-  # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
-  cluster_identifier = var.service_name
-  engine             = "aurora-postgresql"
-  engine_mode        = "provisioned"
-  database_name      = replace("${var.service_name}", "-", "_")
-  master_username    = "app_usr"
-  master_password    = aws_ssm_parameter.random_db_password.value
-  storage_encrypted  = true
-  # checkov:skip=CKV_AWS_128:IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
-  # checkov:skip=CKV_AWS_162:IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
-  # iam_database_authentication_enabled = true
-  deletion_protection = true
-  # final_snapshot_identifier = "${var.service_name}-final"
-  skip_final_snapshot = true
-
-
-  serverlessv2_scaling_configuration {
-    max_capacity = 1.0
-    min_capacity = 0.5
-  }
-
-}
-
-resource "aws_rds_cluster_instance" "postgresql-cluster" {
-  cluster_identifier         = aws_rds_cluster.postgresql.id
-  instance_class             = "db.serverless"
-  engine                     = aws_rds_cluster.postgresql.engine
-  engine_version             = aws_rds_cluster.postgresql.engine_version
-  auto_minor_version_upgrade = true
-  monitoring_role_arn        = aws_iam_role.rds_enhanced_monitoring.arn
-  monitoring_interval        = 30
-}
-
-resource "random_password" "random_db_password" {
-  length           = 48
-  special          = true
-  min_special      = 6
-  override_special = "!#$%&*()-_=+[]{}<>:?"
-}
-
-resource "aws_ssm_parameter" "random_db_password" {
-  name  = "/metadata/db/admin-password"
-  type  = "SecureString"
-  value = random_password.random_db_password.result
-}
-
-################################################################################
-# Backup Configuration
-################################################################################
-
-resource "aws_backup_plan" "postgresql" {
-  name = "${var.service_name}_backup_plan"
-
-  rule {
-    rule_name         = "${var.service_name}_backup_rule"
-    target_vault_name = "${var.service_name}-vault"
-    schedule          = "cron(0 12 ? * SUN *)"
-  }
-}
-
-# KMS Key for the vault
-# This key was created by AWS by default alongside the vault
-data "aws_kms_key" "postgresql" {
-  key_id = "alias/aws/backup"
-}
-# create backup vault
-resource "aws_backup_vault" "postgresql" {
-  name        = "${var.service_name}-vault"
-  kms_key_arn = data.aws_kms_key.postgresql.arn
-}
-
-# create IAM role
-resource "aws_iam_role" "postgresql_backup" {
-  name_prefix        = "aurora-backup-"
-  assume_role_policy = data.aws_iam_policy_document.postgresql_backup.json
-}
-
-resource "aws_iam_role_policy_attachment" "postgresql_backup" {
-  role       = aws_iam_role.postgresql_backup.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
-}
-
-data "aws_iam_policy_document" "postgresql_backup" {
-  statement {
-    actions = [
-      "sts:AssumeRole",
-    ]
-
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["backup.amazonaws.com"]
-    }
-  }
-}
-# backup selection
-resource "aws_backup_selection" "postgresql_backup" {
-  iam_role_arn = aws_iam_role.postgresql_backup.arn
-  name         = "${var.service_name}-backup"
-  plan_id      = aws_backup_plan.postgresql.id
-
-  resources = [
-    aws_rds_cluster.postgresql.arn
-  ]
-}
-
-################################################################################
-# IAM role for enhanced monitoring
-################################################################################
-
-resource "aws_iam_role" "rds_enhanced_monitoring" {
-  name_prefix        = "aurora-enhanced-monitoring-"
-  assume_role_policy = data.aws_iam_policy_document.rds_enhanced_monitoring.json
-}
-
-resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
-  role       = aws_iam_role.rds_enhanced_monitoring.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
-}
-
-data "aws_iam_policy_document" "rds_enhanced_monitoring" {
-  statement {
-    actions = [
-      "sts:AssumeRole",
-    ]
-
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["monitoring.rds.amazonaws.com"]
-    }
-  }
-}
-
-################################################################################
-# Parameters for Query Logging
-################################################################################
-
-resource "aws_rds_cluster_parameter_group" "rds_query_logging" {
-  name        = var.service_name
-  family      = "aurora-postgresql13"
-  description = "Default cluster parameter group"
-
-  parameter {
-    name  = "log_statement"
-    value = "all" # ddl for template; none for wic
-  }
-
-  parameter {
-    name  = "log_min_duration_statement"
-    value = "1"
-  }
-}
-
-################################################################################
-# IAM role for user access
-################################################################################
-resource "aws_iam_policy" "db_access" {
-  name        = "wic-prp-db-access"
-  description = "Allows access to the database instance"
-  policy      = data.aws_iam_policy_document.db_access.json
-}
-
-data "aws_iam_policy_document" "db_access" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "rds:CreateDBInstance",
-      "rds:ModifyDBInstance",
-      "rds:CreateDBSnapshot"
-    ]
-    resources = [aws_rds_cluster.postgresql.arn]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "rds:Describe*"
-    ]
-    resources = [aws_rds_cluster.postgresql.arn]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "rds:AddTagToResource"
-    ]
-    resources = [aws_rds_cluster_instance.postgresql-cluster.arn]
-  }
-}

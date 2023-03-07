@@ -33,6 +33,14 @@ module "iam" {
 # module "doc_upload" {
 #   source = "../../modules/doc-upload-s3"
 # }
+module "database" {
+  source = "../../modules/db"
+  service_name          = local.service_name
+  image_repository_name = module.app_config.image_repository_name
+  image_tag             = var.image_tag
+  vpc_id                = data.aws_vpc.default.id
+  subnet_ids            = data.aws_subnets.default.ids
+}
 
 module "service" {
   source                = "../../modules/service"
