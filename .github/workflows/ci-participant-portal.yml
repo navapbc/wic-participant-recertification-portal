@@ -7,7 +7,7 @@ on:
   pull_request: {}
 defaults:
   run:
-    working-directory: participant_portal
+    working-directory: ${{ github.workspace }}/participant_portal
 
 jobs:
   setup-ci:
@@ -20,7 +20,7 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
         with:
-          working-directory: ../
+          path: ${{ github.workspace }}
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v3.6.0
