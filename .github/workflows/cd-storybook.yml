@@ -35,12 +35,12 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v2
         id: pages_config
-      - name: Install dependencies
-        run: npm install -D
-        working-directory: ./participant_portal
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
       - name: Build
         run: BASE_PATH=${{ steps.pages_config.outputs.base_path }} npm run storybook:build
-        working-directory: ./
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
