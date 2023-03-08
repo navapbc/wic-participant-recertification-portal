@@ -94,25 +94,8 @@ jobs:
       - name: 🖨 Copy the Darwin screenshots as Linux (faking it until we make it)
         run: find participant_portal/e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
 
-      - name: ❓ Get installed Playwright version
-        id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./participant_portal/package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
-
-      - name: 🔒 Cache playwright binaries
-        uses: actions/cache@v3
-        id: playwright-cache
-        with:
-          path: |
-            ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-
       - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-
-      - name: 🛠️ Install Playwright deps
-        run: npx playwright install-deps
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
 
       - name: 🐳 Run Playwright in Docker Compose
         run: npx playwright test --retries=3
