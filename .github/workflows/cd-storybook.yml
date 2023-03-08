@@ -9,9 +9,7 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-defaults:
-  run:
-    working-directory: participant_portal
+
 # Sets permissions of the GITHUB_TOKEN to allow access to GitHub Pages
 permissions:
   contents: read
@@ -40,12 +38,13 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
+          working-directory: ./participant_portal
       - name: Build
-        run: BASE_PATH=${{ steps.pages_config.outputs.base_path }} npm run storybook:build
+        run: BASE_PATH=${{ steps.pages_config.outputs.base_path }} npm --prefix=./participant_portal run storybook:build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./storybook-static
+          path: ./participant_portal/storybook-static
 
   deploy:
     environment:
