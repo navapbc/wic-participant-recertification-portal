@@ -28,15 +28,6 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "cloudtrail:ListTags",
       "cloudtrail:ListTrails",
       "cloudtrail:LookupEvents",
-      "dynamodb:CreateTable",
-      "dynamodb:DeleteItem",
-      "dynamodb:DeleteTable",
-      "dynamodb:DescribeContinuousBackups",
-      "dynamodb:DescribeTable",
-      "dynamodb:GetItem",
-      "dynamodb:PutItem",
-      "dynamodb:TagResource",
-      "dynamodb:UpdateContinuousBackups",
       "ec2:DescribeAccountAttributes",
       "ec2:DescribeRouteTables",
       "ec2:DescribeSubnets",
@@ -55,13 +46,6 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "iam:ListRoles",
       "iam:ListSAMLProviders",
       "iam:ListUsers",
-      "kms:CreateGrant",
-      "kms:CreateKey",
-      "kms:DescribeKey",
-      "kms:EnableKeyRotation",
-      "kms:ListAliases",
-      "kms:ListResourceTags",
-      "kms:ScheduleKeyDeletion",
       "s3:GetAccountPublicAccessBlock",
       "s3:ListAccessPoints",
       "s3:ListAllMyBuckets",
@@ -69,6 +53,38 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "sts:GetCallerIdentity"
     ]
     resources = ["*"]
+  }
+  statement {
+    sid = "KMSPerms"
+    effect = "Allow"
+    actions = [
+      "kms:CreateGrant",
+      "kms:CreateKey",
+      "kms:DescribeKey",
+      "kms:EnableKeyRotation",
+      "kms:ListAliases",
+      "kms:ListResourceTags",
+      "kms:ScheduleKeyDeletion",
+    ]
+    resources = [
+      "arn:aws:kms:us-west-1:636249768232:alias/*", 
+      "arn:aws:kms:*:636249768232:key/*"]
+  }
+  statement {
+    sid = "DynamoDBActions"
+    effect = "Allow"
+    actions = [
+      "dynamodb:CreateTable",
+      "dynamodb:DeleteItem",
+      "dynamodb:DeleteTable",
+      "dynamodb:DescribeContinuousBackups",
+      "dynamodb:DescribeTable",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:TagResource",
+      "dynamodb:UpdateContinuousBackups"
+      ]
+    resources = ["arn:aws:dynamodb::636249768232:table/*"] # Both engineers and the github user needs these perms. Pretty much anyone running terraform apply
   }
   statement {
     sid       = "EC2Actions"
