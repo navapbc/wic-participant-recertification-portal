@@ -1,4 +1,4 @@
-name: 🧪 CI - Participant Portal - ⬣ ESLint, ℹ Format, ʦ Typecheck
+name: 🧪 CI - Participant Portal
 on:
   push:
     branches:
@@ -6,6 +6,10 @@ on:
       - dev
   pull_request: {}
 
+
+defaults:
+  run:
+    working-directory: participant_portal
 
 jobs:
   lint-format-typecheck:
