@@ -10,6 +10,7 @@ locals {
     "participant_portal" = {
       alb_name                = var.service_name
       cluster_name            = var.service_name
+      name                    = var.service_name
       log_group_name          = "service/${var.service_name}"
       task_executor_role_name = "${var.service_name}-task-executor"
       image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"  
@@ -18,6 +19,7 @@ locals {
     "staff_portal" = {
       alb_name                = "${var.service_name}-staff-portal"
       cluster_name            = var.service_name
+      name                    = "${var.service_name}-staff-portal"
       log_group_name          = "service/${var.service_name}-staff-portal"
       task_executor_role_name = "${var.service_name}-task-executor"
       image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"
@@ -126,8 +128,8 @@ resource "aws_lb_target_group" "api_tg" {
 
 resource "aws_ecs_service" "app" {
   for_each        = local.services
-  name            = var.service_name
-  cluster         = aws_ecs_cluster.cluster[each.key].arn
+  name            = each.value.name
+  cluster         = var.service_name
   launch_type     = "FARGATE"
   task_definition = "${aws_ecs_task_definition.app[each.key].arn}"
   desired_count   = var.desired_instance_count
@@ -154,8 +156,8 @@ resource "aws_ecs_service" "app" {
 
 resource "aws_ecs_task_definition" "app" {
   for_each           = local.services
-  family             = var.service_name
-  execution_role_arn = "${aws_iam_role.task_executor[each.key].arn}"
+  family             = each.value.name
+  execution_role_arn = "${aws_iam_role.task_executor.arn}"
 
   # when is this needed?
   # task_role_arn      = aws_iam_role.api_service.arn
@@ -180,10 +182,9 @@ resource "aws_ecs_task_definition" "app" {
   # Reference https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
   network_mode = "awsvpc"
 }
-
+# Probably best to take this out of the loop
 resource "aws_ecs_cluster" "cluster" {
-  for_each = local.services
-  name = each.value.cluster_name
+  name = var.service_name
 
   setting {
     name  = "containerInsights"
@@ -213,8 +214,7 @@ resource "aws_cloudwatch_log_group" "service_logs" {
 ####################
 
 resource "aws_iam_role" "task_executor" {
-  for_each           = local.services
-  name               = each.value.task_executor_role_name
+  name               = "${var.service_name}-task-executor"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_executor_role.json
 }
 
@@ -268,7 +268,7 @@ data "aws_iam_policy_document" "task_executor" {
 resource "aws_iam_role_policy" "task_executor" {
   for_each = data.aws_iam_policy_document.task_executor
   name   = "${var.service_name}-task-executor-role-policy"
-  role   = aws_iam_role.task_executor[each.key].id
+  role   = aws_iam_role.task_executor.id
   policy = data.aws_iam_policy_document.task_executor[each.key].json
 }
 
