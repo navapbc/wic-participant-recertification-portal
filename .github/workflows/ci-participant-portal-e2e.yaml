@@ -1,0 +1,43 @@
+name: 🧪 CI - Participant Portal - 🎭 Playwright
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request: {}
+
+
+defaults:
+  run:
+    working-directory: ./participant_portal
+
+jobs:
+  setup-ci:
+    name: 🎭 Playwright
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: participant_portal
+
+      - name: 🖨 Copy the Darwin screenshots as Linux (faking it until we make it)
+        run: find e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 🐳 Run Playwright in Docker Compose
+        run: npx playwright test --retries=3

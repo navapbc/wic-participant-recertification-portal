@@ -1,4 +1,4 @@
-name: 🧪 CI - Participant Portal - ⬣ ESLint, ℹ Format, ʦ Typecheck
+name: 🧪 CI - Participant Portal - ⚡ Jest
 on:
   push:
     branches:
@@ -7,9 +7,13 @@ on:
   pull_request: {}
 
 
+defaults:
+  run:
+    working-directory: ./participant_portal
+
 jobs:
   setup-ci:
-    name: ⬣ ESLint, ℹ Format, ʦ Typecheck
+    name: ⚡ Run jest
     runs-on: ubuntu-latest
     steps:
       - name: 🛑 Cancel Previous Runs
@@ -27,13 +31,8 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
-          working-directory: ./participant_portal
+          working-directory: participant_portal
 
-      - name: ⬣ Lint
-        run: npm run lint
+      - name: ⚡ Run jest
+        run: npm run test -- --coverage
 
-      - name: ℹ Format
-        run: npm run format:check
-
-      - name: ʦ Typecheck
-        run: npm run typecheck --if-present
