@@ -36,7 +36,9 @@ jobs:
     needs: setup-ci
     steps:
       - name: 🔬 Lint
-        run: npm --prefix participant_portal run lint
+        run: pwd
+      - run: ls -l .
+      - run: npm --prefix participant_portal run lint
 
   typecheck:
     name:  ʦ Typecheck
