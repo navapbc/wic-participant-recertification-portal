@@ -37,7 +37,7 @@ jobs:
     steps:
       - name: 🔬 Lint
         run: pwd
-      - run: ls -l .
+      - run: ls -l ..
       - run: npm --prefix participant_portal run lint
 
   typecheck:
