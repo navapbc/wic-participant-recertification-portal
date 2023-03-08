@@ -92,7 +92,7 @@ jobs:
           working-directory: ./participant_portal
 
       - name: 🖨 Copy the Darwin screenshots as Linux (faking it until we make it)
-        run: find e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
+        run: find participant_portal/e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
 
       - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps
