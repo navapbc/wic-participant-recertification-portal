@@ -34,7 +34,7 @@ module "iam" {
 #   source = "../../modules/doc-upload-s3"
 # }
 module "database" {
-  source = "../../modules/db"
+  source                = "../../modules/db"
   service_name          = local.service_name
   image_repository_name = module.app_config.image_repository_name
   image_tag             = var.image_tag

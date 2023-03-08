@@ -46,7 +46,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           # !! Update the role-to-assume with the GitHub actions role ARN
-          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/<PROJECT_NAME>-github-actions
+          role-to-assume: arn:aws:iam::636249768232:role/wic-prp-github-actions
           aws-region: us-west-1
 
       - name: Publish release

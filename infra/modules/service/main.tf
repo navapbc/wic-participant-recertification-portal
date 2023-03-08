@@ -13,7 +13,7 @@ locals {
       name                    = var.service_name
       log_group_name          = "service/${var.service_name}"
       task_executor_role_name = "${var.service_name}-task-executor"
-      image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"  
+      image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"
     },
 
     "staff_portal" = {
@@ -131,7 +131,7 @@ resource "aws_ecs_service" "app" {
   name            = each.value.name
   cluster         = var.service_name
   launch_type     = "FARGATE"
-  task_definition = "${aws_ecs_task_definition.app[each.key].arn}"
+  task_definition = aws_ecs_task_definition.app[each.key].arn
   desired_count   = var.desired_instance_count
 
   # Allow changes to the desired_count without differences in terraform plan.
@@ -157,7 +157,7 @@ resource "aws_ecs_service" "app" {
 resource "aws_ecs_task_definition" "app" {
   for_each           = local.services
   family             = each.value.name
-  execution_role_arn = "${aws_iam_role.task_executor.arn}"
+  execution_role_arn = aws_iam_role.task_executor.arn
 
   # when is this needed?
   # task_role_arn      = aws_iam_role.api_service.arn
@@ -199,7 +199,7 @@ resource "aws_ecs_cluster" "cluster" {
 # Cloudwatch log group to for streaming ECS application logs.
 resource "aws_cloudwatch_log_group" "service_logs" {
   for_each = local.services
-  name = each.value.log_group_name
+  name     = each.value.log_group_name
 
   # Conservatively retain logs for 5 years.
   # Looser requirements may allow shorter retention periods
@@ -267,9 +267,9 @@ data "aws_iam_policy_document" "task_executor" {
 # Link access policies to the ECS task execution role.
 resource "aws_iam_role_policy" "task_executor" {
   for_each = data.aws_iam_policy_document.task_executor
-  name   = "${var.service_name}-task-executor-role-policy"
-  role   = aws_iam_role.task_executor.id
-  policy = data.aws_iam_policy_document.task_executor[each.key].json
+  name     = "${var.service_name}-task-executor-role-policy"
+  role     = aws_iam_role.task_executor.id
+  policy   = data.aws_iam_policy_document.task_executor[each.key].json
 }
 
 ###########################
