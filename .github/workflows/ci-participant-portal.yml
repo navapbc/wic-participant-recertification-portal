@@ -16,9 +16,6 @@ jobs:
     name: ⬣ ESLint, ℹ Format, ʦ Typecheck
     runs-on: ubuntu-latest
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
@@ -46,9 +43,6 @@ jobs:
     name: ⚡ Run jest
     runs-on: ubuntu-latest
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
@@ -70,9 +64,6 @@ jobs:
     name: 🎭 Playwright
     runs-on: ubuntu-latest
     steps:
-      - name: 🛑 Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
@@ -94,4 +85,6 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: 🐳 Run Playwright in Docker Compose
+        run: pwd
+        run: ls -la
         run: npx playwright test --retries=3
