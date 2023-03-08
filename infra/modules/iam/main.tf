@@ -49,7 +49,6 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "s3:GetAccountPublicAccessBlock",
       "s3:ListAccessPoints",
       "s3:ListAllMyBuckets",
-      "securityhub:DescribeHub",
       "sts:GetCallerIdentity"
     ]
     resources = ["*"]
@@ -58,33 +57,12 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid = "KMSPerms"
     effect = "Allow"
     actions = [
-      "kms:CreateGrant",
       "kms:CreateKey",
-      "kms:DescribeKey",
-      "kms:EnableKeyRotation",
       "kms:ListAliases",
-      "kms:ListResourceTags",
-      "kms:ScheduleKeyDeletion",
     ]
     resources = [
       "arn:aws:kms:us-west-1:636249768232:alias/*", 
       "arn:aws:kms:*:636249768232:key/*"]
-  }
-  statement {
-    sid = "DynamoDBActions"
-    effect = "Allow"
-    actions = [
-      "dynamodb:CreateTable",
-      "dynamodb:DeleteItem",
-      "dynamodb:DeleteTable",
-      "dynamodb:DescribeContinuousBackups",
-      "dynamodb:DescribeTable",
-      "dynamodb:GetItem",
-      "dynamodb:PutItem",
-      "dynamodb:TagResource",
-      "dynamodb:UpdateContinuousBackups"
-      ]
-    resources = ["arn:aws:dynamodb::636249768232:table/*"] # Both engineers and the github user needs these perms. Pretty much anyone running terraform apply
   }
   statement {
     sid       = "EC2Actions"
@@ -157,5 +135,33 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "s3:PutBucketPublicAccessBlock"
     ]
     resources = ["arn:aws:s3:::*"]
+  }
+}
+
+/* wic-prp-privileged */
+resource "aws_iam_group" "wic-prp-privileged" {
+  name = "wic-prp-privileged"
+}
+
+resource "aws_iam_group_policy" "wic-prp-privileged" {
+  name   = "wic-prp-privileged-policy"
+  group  = aws_iam_group.wic-prp-privileged.name
+  policy = data.aws_iam_policy_document.wic-prp-privileged.json
+}
+
+data "aws_iam_policy_document" "wic-prp-privileged" {
+  statement {
+    sid    = "GrantAll"
+    effect = "Allow"
+    actions = [
+      "kms:*",
+      "logs:*",
+      "ecs:*",
+      "ecr:*",
+      "ec2:*",
+      "dynamodb:*",
+      "elasticloadbalancing:*"
+    ]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
 }
