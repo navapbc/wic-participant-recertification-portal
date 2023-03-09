@@ -1,0 +1,34 @@
+{
+  "Demo": {
+    "alertText": "This site is a demonstration project and for example purposes only"
+  },
+  "Index": {
+    "button": "Open the README",
+    "header": "<strong>Remix</strong> is a framework for server-rendered, fast web applications",
+    "title": "Shoegaze Stack",
+    "subtitle": "A Remix stack for Civic Technology",
+    "subtitle2": "Built on proven technologies, with accessible USWDS styles",
+    "readme": {
+      "header": "Read the README.md to learn more and get started",
+      "description": "<p><strong>This stack is intended to be deployed as a Docker container, connecting to a cloud-hosted Postgres server.</strong></p><p>Testing is done with a combination of Jest and Playwright</p>"
+    },
+    "uswds": {
+      "uswdsHref": "https://designsystem.digital.gov/",
+      "uswdsAlt": "US Web Design System Logo",
+      "header": "<strong>USWDS</strong>: <br/> The design system for the US Federal Government",
+      "description": "Responsive design, accessible styles, patterns, and components"
+    },
+    "technologies": {
+      "title": "Stack Technologies",
+      "subtitle": "Accessible, Flexible, Open Source"
+    }
+  },
+  "Layout": {
+    "footer": {
+      "links": ["https://remix.run"],
+      "text": "For more information, read the <0>Remix Run Documentation</0>"
+    },
+    "header": "Shoegaze Stack"
+  },
+  "routingError": "Some required responses are missing. Please go back through the form and answer all required questions."
+}
