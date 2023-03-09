@@ -10,6 +10,8 @@ locals {
   cluster_name            = var.service_name
   log_group_name          = "service/${var.service_name}"
   task_executor_role_name = "${var.service_name}-task-executor"
+  postgresql_backup_role_name = "${var.service_name}-postgresql-backup-"
+  rds_enhanced_monitoring_role_name = "${var.service_name}-rds-enhanced-monitoring-"
   image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"
 }
 
@@ -398,7 +400,7 @@ resource "aws_backup_vault" "postgresql" {
 
 # create IAM role
 resource "aws_iam_role" "postgresql_backup" {
-  name_prefix        = "aurora-backup-"
+  name        = local.postgresql_backup_role_name
   assume_role_policy = data.aws_iam_policy_document.postgresql_backup.json
 }
 
@@ -437,7 +439,7 @@ resource "aws_backup_selection" "postgresql_backup" {
 ################################################################################
 
 resource "aws_iam_role" "rds_enhanced_monitoring" {
-  name_prefix        = "aurora-enhanced-monitoring-"
+  name        = local.rds_enhanced_monitoring_role_name
   assume_role_policy = data.aws_iam_policy_document.rds_enhanced_monitoring.json
 }
 
