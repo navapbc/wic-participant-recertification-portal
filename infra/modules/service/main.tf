@@ -67,13 +67,13 @@ resource "aws_lb_listener" "alb_listener_http" {
   }
 }
 
-resource "aws_lb_listener_rule" "api_http_forward" {
+resource "aws_lb_listener_rule" "alb_http_forward" {
   listener_arn = aws_lb_listener.alb_listener_http.arn
   priority     = 100
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.api_tg.arn
+    target_group_arn = aws_lb_target_group.alb_target_group.arn
   }
   condition {
     path_pattern {
@@ -83,9 +83,9 @@ resource "aws_lb_listener_rule" "api_http_forward" {
 }
 
 
-resource "aws_lb_target_group" "api_tg" {
+resource "aws_lb_target_group" "alb_target_group" {
   # you must use a prefix, to facilitate successful tg changes
-  name_prefix          = "api-"
+  name_prefix          = "tg-"
   port                 = "8080"
   protocol             = "HTTP"
   vpc_id               = var.vpc_id
@@ -132,7 +132,7 @@ resource "aws_ecs_service" "app" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.api_tg.arn
+    target_group_arn = aws_lb_target_group.alb_target_group.arn
     container_name   = var.service_name
     container_port   = var.container_port
   }
