@@ -54,15 +54,15 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     resources = ["*"]
   }
   statement {
-    sid = "KMSPerms"
+    sid    = "KMSPerms"
     effect = "Allow"
     actions = [
       "kms:CreateKey",
       "kms:ListAliases",
     ]
     resources = [
-      "arn:aws:kms:us-west-1:636249768232:alias/*", 
-      "arn:aws:kms:*:636249768232:key/*"]
+      "arn:aws:kms:us-west-1:636249768232:alias/*",
+    "arn:aws:kms:*:636249768232:key/*"]
   }
   statement {
     sid       = "EC2Actions"
@@ -96,6 +96,7 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "iam:CreateRole",
       "iam:CreateServiceLinkedRole",
       "iam:GenerateServiceLastAccessedDetails",
+      "iam:GetAccountPasswordPolicy",
       "iam:GetRole",
       "iam:GetRolePolicy",
       "iam:GetServiceLinkedRoleDeletionStatus",
@@ -105,6 +106,15 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     ]
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
+  # @TODO restricte iam:ChangePassword to the calling user.
+  # statement {
+  #   sid    = "IAMUserChangePassword"
+  #   effect = "Allow"
+  #   actions = [
+  #     "iam:ChangePassword"
+  #   ]
+  #   resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${aws_iam_group.team.user.user_name}"]
+  # }
   statement {
     sid       = "KMSCreate"
     effect    = "Allow"
@@ -154,13 +164,38 @@ data "aws_iam_policy_document" "wic-prp-privileged" {
     sid    = "GrantAll"
     effect = "Allow"
     actions = [
+      "access-analyzer:*",
       "kms:*",
       "logs:*",
       "ecs:*",
       "ecr:*",
       "ec2:*",
       "dynamodb:*",
-      "elasticloadbalancing:*"
+      "elasticloadbalancing:*",
+      "s3:*"
+    ]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
+  }
+  statement {
+    sid    = "IAMFullAccess"
+    effect = "Allow"
+    actions = [
+      "iam:*",
+      "organizations:DescribeAccount",
+      "organizations:DescribeOrganization",
+      "organizations:DescribeOrganizationalUnit",
+      "organizations:DescribePolicy",
+      "organizations:ListAccounts",
+      "organizations:ListAccountsForParent",
+      "organizations:ListAWSServiceAccessForOrganization",
+      "organizations:ListChildren",
+      "organizations:ListDelegatedAdministrators",
+      "organizations:ListOrganizationalUnitsForParent",
+      "organizations:ListParents",
+      "organizations:ListPolicies",
+      "organizations:ListPoliciesForTarget",
+      "organizations:ListRoots",
+      "organizations:ListTargetsForPolicy"
     ]
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
