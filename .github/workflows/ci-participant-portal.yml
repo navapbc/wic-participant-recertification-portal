@@ -49,6 +49,27 @@ jobs:
       - name: 🔎 Type check
         run: npm --prefix participant_portal  run typecheck --if-present
 
+  format-check:
+    name: 🪞 Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./participant_portal
+
+      - name: 🥺 Prettier Format Check
+        run: npm --prefix participant_portal run format:check
+
   jest:
     name: ⚡ jest
     runs-on: ubuntu-latest
