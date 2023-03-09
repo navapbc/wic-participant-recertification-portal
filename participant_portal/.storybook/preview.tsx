@@ -18,6 +18,20 @@ i18next
       en: {
         common: common,
         test: {
+          inputchoice: {
+            label1: "Option 1",
+            label2: "Option 2",
+            label3: "Option 3",
+            labelRadio: "Example Radio",
+            labelCheckbox: "Example Checkbox",
+            helpHeader: "What does this mean?",
+            helpBody:
+              "<p><strong>Here is some information about what it means</strong></p><p>This is very helpful</p>",
+          },
+          textfield: {
+            inputbox: "Text input label:",
+            textarea: "This is a text area:",
+          },
           translinks: {
             plainStringLinks: {
               text: "first <0>second</0> <1>third</1>",
