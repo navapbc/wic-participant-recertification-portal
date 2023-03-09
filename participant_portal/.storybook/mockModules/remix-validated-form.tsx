@@ -24,15 +24,12 @@ type MinimalInputProps = {
   type?: string;
 };
 
-export const getInputProps = <T extends MinimalInputProps>(
-  props = {} as any
-) => {
-  return props as T;
-};
-
 // TODO: Figure out a way to determine whether this component is being
 // rendered in a story with "error" in the name or route, so that
 // an example error can be shown in Storybook
-export const useField = (args: any) => {
-  return { error: undefined, getInputProps };
+export const useField = (name: string) => {
+  const getter = <T extends MinimalInputProps>(props: T) => {
+    return { name: name, ...props } as T;
+  };
+  return { error: undefined, getInputProps: getter };
 };

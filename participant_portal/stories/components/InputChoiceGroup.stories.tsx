@@ -1,6 +1,7 @@
 import { InputChoiceGroup } from "app/components/InputChoiceGroup";
 import type { InputChoiceGroupProps } from "app/components/InputChoiceGroup";
 import { Trans } from "react-i18next";
+import { Form } from "@remix-run/react";
 
 export default {
   component: InputChoiceGroup,
@@ -39,12 +40,15 @@ export default {
 
 const InputChoiceTemplate = {
   render: (props: InputChoiceGroupProps) => {
-    return <InputChoiceGroup {...props} />;
+    return (
+      <Form>
+        <InputChoiceGroup {...props} />
+      </Form>
+    );
   },
 };
 
-const defaultInputChoiceGroupProps: InputChoiceGroupProps = {
-  name: "example-input-group",
+const defaultInputChoiceGroupProps = {
   choices: [
     {
       value: "option1",
@@ -62,12 +66,12 @@ const defaultInputChoiceGroupProps: InputChoiceGroupProps = {
   required: false,
   legendKey: "test:inputchoice.labelRadio",
   type: "radio",
-  handleChange: (e) => {},
 };
 
 export const RadioGroup = {
   ...InputChoiceTemplate,
   args: {
+    name: "input-radio",
     ...defaultInputChoiceGroupProps,
   },
 };
@@ -78,6 +82,7 @@ export const CheckboxGroup = {
     ...defaultInputChoiceGroupProps,
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",
+    name: "input-checkbox",
   },
 };
 
@@ -90,6 +95,7 @@ export const RadioGroupWithHelp = {
   args: {
     ...defaultInputChoiceGroupProps,
     helpElement: helpElement,
+    name: "input-radio-help",
   },
 };
 
@@ -100,5 +106,6 @@ export const CheckboxGroupWithHelp = {
     helpElement: helpElement,
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",
+    name: "input-checkbox-help",
   },
 };
