@@ -26,9 +26,6 @@ jobs:
           working-directory: ./participant_portal
 
       - name: 🔬 Lint
-        run: pwd
-      - run: ls -l .
-      - run: ls -l participant_portal
       - run: npm --prefix participant_portal run lint
 
   typecheck:

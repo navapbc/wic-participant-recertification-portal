@@ -11,3 +11,4 @@ node_modules
 /styles/*
 .github/*
 /storybook-static
+/playwright-report
