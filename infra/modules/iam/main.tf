@@ -159,8 +159,8 @@ resource "aws_iam_group_policy" "wic-prp-privileged" {
   policy = data.aws_iam_policy_document.wic-prp-privileged.json
 }
 
-# checkov:skip=checkov:skip=CKV2_AWS_40:Allow full IAM permissions for the privileged user group
 data "aws_iam_policy_document" "wic-prp-privileged" {
+# checkov:skip=checkov:skip=CKV2_AWS_40:Allow full IAM permissions for the privileged user group
   statement {
     sid    = "GrantAll"
     effect = "Allow"
