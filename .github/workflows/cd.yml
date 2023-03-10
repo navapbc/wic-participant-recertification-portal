@@ -28,9 +28,6 @@ on:
   # See https://docs.github.com/en/actions/using-workflows/reusing-workflows
   workflow_call:
     inputs:
-      env_name:
-        required: true
-        type: string
       app_name:
         required: true
         type: string
