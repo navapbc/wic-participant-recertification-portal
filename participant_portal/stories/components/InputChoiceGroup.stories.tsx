@@ -65,6 +65,7 @@ const defaultInputChoiceGroupProps = {
   ],
   required: false,
   legendKey: "test:inputchoice.labelRadio",
+  legendStyle: "",
   type: "radio",
 };
 
@@ -73,6 +74,38 @@ export const RadioGroup = {
   args: {
     name: "input-radio",
     ...defaultInputChoiceGroupProps,
+  },
+};
+
+export const RadioGroupLargeLegend = {
+  ...InputChoiceTemplate,
+  args: {
+    name: "input-radio",
+    ...defaultInputChoiceGroupProps,
+    legendStyle: "large",
+  },
+};
+
+const helpElement = (
+  <Trans i18nKey={"test:inputchoice.helpHeader"} id="help-text" />
+);
+
+export const RadioGroupWithHelpLargeLegend = {
+  ...InputChoiceTemplate,
+  args: {
+    ...defaultInputChoiceGroupProps,
+    helpElement: helpElement,
+    name: "input-radio-help",
+    legendStyle: "large",
+  },
+};
+
+export const RadioGroupWithHelp = {
+  ...InputChoiceTemplate,
+  args: {
+    ...defaultInputChoiceGroupProps,
+    helpElement: helpElement,
+    name: "input-radio-help",
   },
 };
 
@@ -86,16 +119,14 @@ export const CheckboxGroup = {
   },
 };
 
-const helpElement = (
-  <Trans i18nKey={"test:inputchoice.helpHeader"} id="help-text" />
-);
-
-export const RadioGroupWithHelp = {
+export const CheckboxGroupLargeLegend = {
   ...InputChoiceTemplate,
   args: {
     ...defaultInputChoiceGroupProps,
-    helpElement: helpElement,
-    name: "input-radio-help",
+    titleKey: "test:inputchoice.labelCheckbox",
+    type: "checkbox",
+    name: "input-checkbox",
+    legendStyle: "large",
   },
 };
 
@@ -107,5 +138,17 @@ export const CheckboxGroupWithHelp = {
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",
     name: "input-checkbox-help",
+  },
+};
+
+export const CheckboxGroupWithHelpLargeLegend = {
+  ...InputChoiceTemplate,
+  args: {
+    ...defaultInputChoiceGroupProps,
+    helpElement: helpElement,
+    titleKey: "test:inputchoice.labelCheckbox",
+    type: "checkbox",
+    name: "input-checkbox-help",
+    legendStyle: "large",
   },
 };

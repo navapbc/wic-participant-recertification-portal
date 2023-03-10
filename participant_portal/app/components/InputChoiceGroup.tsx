@@ -34,7 +34,7 @@ export const InputChoiceGroup = (
   const {
     choices,
     legendKey,
-    legendStyle = "srOnly",
+    legendStyle = "default",
     required,
     type,
     helpElement,

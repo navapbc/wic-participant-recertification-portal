@@ -18,6 +18,14 @@ i18next
       en: {
         common: common,
         test: {
+          dateinput: {
+            month: "Month",
+            day: "Day",
+            year: "Year",
+            hint: "For Example: 4 28 1986",
+            legend: "Date of Birth",
+            hintDMY: "For Example: 28 4 1986",
+          },
           inputchoice: {
             label1: "Option 1",
             label2: "Option 2",
@@ -27,6 +35,13 @@ i18next
             helpHeader: "What does this mean?",
             helpBody:
               "<p><strong>Here is some information about what it means</strong></p><p>This is very helpful</p>",
+          },
+          nameinput: {
+            firstname: "First name",
+            lastname: "Last name",
+            legal: "Legally as it appears on their ID.",
+            legend: "Name",
+            preferred: "Preferred name (optional)",
           },
           textfield: {
             inputbox: "Text input label:",
@@ -70,6 +85,11 @@ export const parameters = {
     matchers: {
       color: /(background|color)$/i,
       date: /Date$/,
+    },
+  },
+  options: {
+    storySort: {
+      order: ["Docs", ["Intro"], "Pages", "Layout", "Components"],
     },
   },
 };
