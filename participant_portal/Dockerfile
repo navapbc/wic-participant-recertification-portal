@@ -1,24 +1,59 @@
-# Simple hello, world image mostly copied
-# from https://github.com/crccheck/docker-hello-world
-#
-# Testing
-# -------
-# After running `make release-build` (see [Releases](../docs/releases.md)),
-# you can verify the image works by running
-#
-#   docker run -p 80:8000 template-infra-app
-#
-# then visit localhost in a browser (or can use curl from a terminal)
+# -------- Image: base -------- #
+# Base node image with package updates and dependencies
+FROM node:18-slim as base
+# Install openssl for Prisma
+WORKDIR /srv
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+  openssl
 
-FROM busybox:latest AS release
-ENV PORT=8000
+# -------- Image: deps -------- #
+# Install all node_modules, including dev dependencies
+FROM base as deps
+COPY package.json package-lock.json ./
+RUN npm install --production=false
 
-ADD index.html /www/index.html
-ADD health /www/health
+# -------- Image: dev -------- #
+# Provide a development image
+FROM base as dev
+COPY --from=deps /srv/node_modules /srv/node_modules
+COPY prisma .
+RUN npx prisma generate
+COPY . .
+CMD ["npm", "run", "dev:docker"]
 
-EXPOSE $PORT
+# -------- Image: build -------- #
+# Build the app
+FROM base as build
+COPY --from=deps /srv/node_modules /srv/node_modules
+COPY prisma .
+RUN npx prisma generate
+COPY . .
+RUN npm run build
+RUN npm run css
 
-HEALTHCHECK CMD nc -z localhost $PORT
+# -------- Image: test -------- #
+# Provide a test image
+FROM build as test
+ENV NODE_ENV test
+CMD ["npm", "test"]
 
-# Create a basic webserver and run it until the container is stopped
-CMD echo "httpd started" && trap "exit 0;" TERM INT; httpd -v -p $PORT -h /www -f & wait
+# -------- Image: production-deps -------- #
+# Setup production node_modules
+FROM base as production-deps
+ENV NODE_ENV production
+COPY --from=deps /srv/node_modules /srv/node_modules
+COPY package.json package-lock.json ./
+RUN npm prune --production
+
+# -------- Image: prod -------- #
+# Finally, build the production image with minimal footprint
+FROM base as prod
+ENV NODE_ENV production
+COPY --from=production-deps /srv/node_modules /srv/node_modules
+COPY --from=build /srv/node_modules/.prisma /srv/node_modules/.prisma
+COPY --from=build /srv/build /srv/build
+COPY --from=build /srv/styles/styles.* /srv/styles/
+COPY --from=build /srv/public/build /srv/public/build
+COPY . .
+CMD ["/srv/bin/prod-start.sh"]

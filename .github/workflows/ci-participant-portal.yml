@@ -1,0 +1,120 @@
+name: 🧪 CI - Participant Portal
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request: {}
+
+jobs:
+  lint:
+    name: ⬣ ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./participant_portal
+
+      - name: 🔬 Lint
+        run: npm --prefix participant_portal run lint
+
+  typecheck:
+    name:  ʦ Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./participant_portal
+
+      - name: 🔎 Type check
+        run: npm --prefix participant_portal  run typecheck --if-present
+
+  format-check:
+    name: 🪞 Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./participant_portal
+
+      - name: 🥺 Prettier Format Check
+        run: npm --prefix participant_portal run format:check
+
+  jest:
+    name: ⚡ jest
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./participant_portal
+
+      - name: ⚡ Run jest
+        run: npm  --prefix participant_portal run test -- --coverage
+
+  playwright:
+    name: 🎭 Playwright
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./participant_portal
+
+      - name: 🖨 Copy the Darwin screenshots as Linux (faking it until we make it)
+        run: find participant_portal/e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 🐳 Run Playwright in Docker Compose
+        run: npx playwright test --retries=3
+        working-directory: participant_portal

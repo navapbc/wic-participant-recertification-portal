@@ -1,0 +1,26 @@
+/*
+----------------------------------------
+USWDS with settings overrides
+----------------------------------------
+Uncomment the following lines and add a list of changed settings
+in the form $setting: value,
+----------------------------------------
+*/
+
+@use "uswds-core" with (
+  // Disable scary but mostly irrelevant warnings:
+  $theme-show-notifications: false,
+
+  // Specify USWDS font and image paths.
+  // Same paths are successfully used for both Remix and Storybook.
+  $theme-font-path: "/uswds/fonts",
+  $theme-image-path: "/uswds/img",
+  $theme-hero-image: "../../public/img/hero.jpg",
+  $theme-color-primary-family: "violet",
+  $theme-color-primary: "violet-60v",
+  $theme-color-primary-vivid: "violet-warm-60v",
+  $theme-color-primary-dark: "violet-warm-70v",
+  $theme-color-primary-darker: "indigo-warm-80v",
+  $theme-color-secondary-family: "mint",
+  $theme-color-accent-cool: "gold-20v"
+);
