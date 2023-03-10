@@ -60,3 +60,13 @@ module "staff_portal" {
   subnet_ids            = data.aws_subnets.default.ids
   service_cluster_arn   = module.service_cluster.service_cluster_arn
 }
+
+module "analytics" {
+  source                = "../../modules/service"
+  service_name          = "${local.project_name}-analytics-${var.environment_name}"
+  image_repository_name = module.app_config.image_repository_name
+  image_tag             = var.image_tag
+  vpc_id                = data.aws_vpc.default.id
+  subnet_ids            = data.aws_subnets.default.ids
+  service_cluster_arn   = module.service_cluster.service_cluster_arn
+}
