@@ -15,7 +15,8 @@ locals {
   project_name  = module.project_config.project_name
   app_name      = module.app_config.app_name
   service_name  = "${local.project_name}-${local.app_name}-${var.environment_name}"
-  database_name = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  database_name = local.service_name
+  cluster_name  = local.service_name
 }
 
 module "project_config" {
@@ -36,6 +37,11 @@ module "database" {
   admin_password = module.database_password.random_password
 }
 
+module "service_cluster" {
+  source       = "../../modules/service-cluster"
+  cluster_name = local.cluster_name
+}
+
 module "service" {
   source                = "../../modules/service"
   service_name          = local.service_name
@@ -43,4 +49,5 @@ module "service" {
   image_tag             = var.image_tag
   vpc_id                = data.aws_vpc.default.id
   subnet_ids            = data.aws_subnets.default.ids
+  service_cluster_arn   = module.service_cluster.service_cluster_arn
 }

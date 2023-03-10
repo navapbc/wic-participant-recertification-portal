@@ -7,7 +7,6 @@ data "aws_ecr_repository" "app" {
 
 locals {
   alb_name                = var.service_name
-  cluster_name            = var.service_name
   log_group_name          = "service/${var.service_name}"
   task_executor_role_name = "${var.service_name}-task-executor"
   image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"
@@ -113,7 +112,7 @@ resource "aws_lb_target_group" "alb_target_group" {
 
 resource "aws_ecs_service" "app" {
   name            = var.service_name
-  cluster         = aws_ecs_cluster.cluster.arn
+  cluster         = var.service_cluster_arn
   launch_type     = "FARGATE"
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = var.desired_instance_count
@@ -166,14 +165,6 @@ resource "aws_ecs_task_definition" "app" {
   network_mode = "awsvpc"
 }
 
-resource "aws_ecs_cluster" "cluster" {
-  name = local.cluster_name
-
-  setting {
-    name  = "containerInsights"
-    value = "enabled"
-  }
-}
 
 ##########
 ## Logs ##

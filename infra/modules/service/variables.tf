@@ -50,3 +50,8 @@ variable "subnet_ids" {
   type        = list(any)
   description = "Private subnet id from vpc module"
 }
+
+variable "service_cluster_arn" {
+  type        = string
+  description = "The arn of the service cluster that the service should be part of"
+}
