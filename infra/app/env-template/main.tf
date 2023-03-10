@@ -43,7 +43,7 @@ module "service_cluster" {
 
 module "participant_portal" {
   source                = "../../modules/service"
-  service_name          = "${local.project_name}-participant-portal-${var.environment_name}"
+  service_name          = "${local.project_name}-participant-${var.environment_name}"
   image_repository_name = module.app_config.image_repository_name
   image_tag             = var.image_tag
   vpc_id                = data.aws_vpc.default.id
@@ -53,7 +53,7 @@ module "participant_portal" {
 
 module "staff_portal" {
   source                = "../../modules/service"
-  service_name          = "${local.project_name}-staff-portal-${var.environment_name}"
+  service_name          = "${local.project_name}-staff-${var.environment_name}"
   image_repository_name = module.app_config.image_repository_name
   image_tag             = var.image_tag
   vpc_id                = data.aws_vpc.default.id
