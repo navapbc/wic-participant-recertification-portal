@@ -111,14 +111,6 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
   statement {
-    sid    = "AllowManageOwnPasswords"
-    effect = "Allow"
-    actions = [
-      "iam:ChangePassword"
-    ]
-    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/$${aws:username}"]
-  }
-  statement {
     sid       = "KMSCreate"
     effect    = "Allow"
     actions   = ["kms:CreateAlias"]
