@@ -17,8 +17,8 @@ jobs:
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
-          with:
-            fetch-depth: 2  # To retrieve the preceding commit
+        with:
+          fetch-depth: 2  # To retrieve the preceding commit
 
       - name: 📬 Get changed files in the participant_portal folder
         id: changed-files-participant
