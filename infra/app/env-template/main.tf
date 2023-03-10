@@ -14,9 +14,8 @@ data "aws_subnets" "default" {
 locals {
   project_name  = module.project_config.project_name
   app_name      = module.app_config.app_name
-  service_name  = "${local.project_name}-${local.app_name}-${var.environment_name}"
-  database_name = local.service_name
-  cluster_name  = local.service_name
+  database_name = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  cluster_name  = local.database_name
 }
 
 module "project_config" {
@@ -42,9 +41,19 @@ module "service_cluster" {
   cluster_name = local.cluster_name
 }
 
-module "service" {
+module "participant_portal" {
   source                = "../../modules/service"
-  service_name          = local.service_name
+  service_name          = "${local.project_name}-participant-portal-${var.environment_name}"
+  image_repository_name = module.app_config.image_repository_name
+  image_tag             = var.image_tag
+  vpc_id                = data.aws_vpc.default.id
+  subnet_ids            = data.aws_subnets.default.ids
+  service_cluster_arn   = module.service_cluster.service_cluster_arn
+}
+
+module "staff_portal" {
+  source                = "../../modules/service"
+  service_name          = "${local.project_name}-staff-portal-${var.environment_name}"
   image_repository_name = module.app_config.image_repository_name
   image_tag             = var.image_tag
   vpc_id                = data.aws_vpc.default.id
