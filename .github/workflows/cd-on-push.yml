@@ -11,9 +11,11 @@ on:
 
 
 jobs:
-  deploy_participant:
-    name: 📬 Deploy participant portal if there are changes
+  check_participant:
+    name: 🔎📬 Check participant_portal for changes
     runs-on: ubuntu-latest
+    outputs:
+      has_changed: ${{steps.changed-files-participant.outputs.any_changed == 'true'}}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
@@ -26,53 +28,57 @@ jobs:
         with:
           files: participant_portal
 
-      - run: |
-          echo "List all the files that have changed: ${{ steps.changed-files-excluded.outputs.all_changed_files }}"
+      - name: 📋 List participant_portal that have changed
+        run: |
+          echo "List all the files that have changed: ${{ steps.changed-files-participant.outputs.all_changed_files }}"
 
-      - name: 📦 Deploy participant_portal if there are changes
-        if: steps.changed-files-participant.outputs.any_changed == 'true'
-        uses: ./.github/workflows/cd.yml
-        with:
-          app_name: participant_portal
 
-  deploy_staff:
-    name: 📨 Deploy staff portal if there are changes
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2  # To retrieve the preceding commit
+  deploy_participant:
+    name: 📬 Deploy participant portal if there are changes
+    needs: check_participant
+    if: ${{ needs.check_participant.has_changed }}
+    uses: ./.github/workflows/cd.yml
+    with:
+      app_name: participant_portal
 
-      - name: 🗂 Get changed files in the staff_portal folder
-        id: changed-files-staff
-        uses: tj-actions/changed-files@v35
-        with:
-          files: staff_portal
+  # deploy_staff:
+  #   name: 📨 Deploy staff portal if there are changes
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: ⬇️ Checkout repo
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 2  # To retrieve the preceding commit
 
-      - name: 📦 Deploy staff_portal if there are changes
-        if: steps.changed-files-staff.outputs.any_changed == 'true'
-        uses: ./.github/workflows/cd.yml
-        with:
-          app_name: staff_portal
+  #     - name: 🗂 Get changed files in the staff_portal folder
+  #       id: changed-files-staff
+  #       uses: tj-actions/changed-files@v35
+  #       with:
+  #         files: staff_portal
 
-  deploy_analytics:
-    name: 📊 Deploy analytics if there are changes
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2  # To retrieve the preceding commit
+  #     - name: 📦 Deploy staff_portal if there are changes
+  #       if: steps.changed-files-staff.outputs.any_changed == 'true'
+  #       uses: ./.github/workflows/cd.yml
+  #       with:
+  #         app_name: staff_portal
 
-      - name: 🗂 Get changed files in the analytics folder
-        id: changed-files-analytics
-        uses: tj-actions/changed-files@v35
-        with:
-          files: analytics
+  # deploy_analytics:
+  #   name: 📊 Deploy analytics if there are changes
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: ⬇️ Checkout repo
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 2  # To retrieve the preceding commit
 
-      - name: 📦 Deploy analytics if there are changes
-        if: steps.changed-files-analytics.outputs.any_changed == 'true'
-        uses: ./.github/workflows/cd.yml
-        with:
-          app_name: analytics
+  #     - name: 🗂 Get changed files in the analytics folder
+  #       id: changed-files-analytics
+  #       uses: tj-actions/changed-files@v35
+  #       with:
+  #         files: analytics
+
+  #     - name: 📦 Deploy analytics if there are changes
+  #       if: steps.changed-files-analytics.outputs.any_changed == 'true'
+  #       uses: ./.github/workflows/cd.yml
+  #       with:
+  #         app_name: analytics
