@@ -11,8 +11,8 @@ on:
 
 
 jobs:
-  deploy_app:
-    name: 🪴 Deploy only changed apps
+  deploy_participant:
+    name: 📬 Deploy participant portal if there are changes
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -20,37 +20,55 @@ jobs:
         with:
           fetch-depth: 2  # To retrieve the preceding commit
 
-      - name: 📬 Get changed files in the participant_portal folder
+      - name: 🗂 Get changed files in the participant_portal folder
         id: changed-files-participant
         uses: tj-actions/changed-files@v35
         with:
           files: participant_portal
 
-      - name: 📬📦 Deploy participant_portal if there are changes
+      - name: 📦 Deploy participant_portal if there are changes
         if: steps.changed-files-participant.outputs.any_changed == 'true'
         uses: ./.github/workflows/cd.yml
         with:
           app_name: participant_portal
 
-      - name: 📨 Get changed files in the staff_portal folder
+  deploy_staff:
+    name: 📨 Deploy staff portal if there are changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # To retrieve the preceding commit
+
+      - name: 🗂 Get changed files in the staff_portal folder
         id: changed-files-staff
         uses: tj-actions/changed-files@v35
         with:
           files: staff_portal
 
-      - name: 📨📦 Deploy staff_portal if there are changes
+      - name: 📦 Deploy staff_portal if there are changes
         if: steps.changed-files-staff.outputs.any_changed == 'true'
         uses: ./.github/workflows/cd.yml
         with:
           app_name: staff_portal
 
-      - name: 📊 Get changed files in the analytics folder
+  deploy_analytics:
+    name: 📊 Deploy analytics if there are changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # To retrieve the preceding commit
+
+      - name: 🗂 Get changed files in the analytics folder
         id: changed-files-analytics
         uses: tj-actions/changed-files@v35
         with:
           files: analytics
 
-      - name: 📊📦 Deploy analytics if there are changes
+      - name: 📦 Deploy analytics if there are changes
         if: steps.changed-files-analytics.outputs.any_changed == 'true'
         uses: ./.github/workflows/cd.yml
         with:
