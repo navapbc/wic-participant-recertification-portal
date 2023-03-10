@@ -1,0 +1,93 @@
+import {
+  Default,
+  MultipleLinks,
+  SingleStyledLink,
+  MultipleStyledLinks,
+} from "../components/TransLinks.stories";
+import TransLinks, { TransLinkProps } from "app/components/TransLinks";
+import { useTranslation } from "react-i18next";
+import { Canvas, Meta } from "@storybook/addon-docs";
+
+export const TransDescription = (props) => {
+  let { t } = useTranslation();
+  return (
+    <>
+      <table>
+        <tr>
+          <td>
+            <em>i18nTextKey</em>
+          </td>
+          <td>{props.i18nTextKey}</td>
+          <td>
+            <em>i18nText</em>
+          </td>
+          <td> {t(props.i18nTextKey)}</td>
+        </tr>
+        <tr>
+          <td>
+            <em>i18nLinkKey</em>
+          </td>
+          <td>{props.i18nLinkKey}</td>
+          <td>
+            <em>i18nLinks</em>
+          </td>
+          <td>
+            {JSON.stringify(t(props.i18nLinkKey, { returnObjects: true }))}
+          </td>
+        </tr>
+      </table>
+    </>
+  );
+};
+
+<Meta title="Docs/Components/TransLinks" />
+
+# TransLinks
+
+The TransLinks component allows interpolation of links and text from the internationalization data into a React component
+
+This component is passed two parameters:
+
+- i18nTextKey -- This maps to a key in the localization data to a string that may have styles, but has placeholders for links
+- i18nLinkKey -- This maps to a list of URLs, to be interpolated into the above
+
+## A simple example
+
+These are the values of the internationalization strings in the file
+`public/locales/en/common.json`
+
+<TransDescription {...Default.args} />
+
+<Canvas>
+  <TransLinks {...Default.args} />
+</Canvas>
+
+## Multiple plaintext links
+
+This string uses the same link multiple times, interpolating the 1st into `<0></0>` and the 2nd into `<1></1>`
+
+<TransDescription {...MultipleLinks.args} />
+
+<Canvas>
+  <TransLinks {...MultipleLinks.args} />
+</Canvas>
+
+## Single styled text, unstyled link
+
+This is an example of text that contains other HTML styling, with link interpolated
+
+<TransDescription {...SingleStyledLink.args} />
+
+<Canvas>
+  <TransLinks {...SingleStyledLink.args} />
+</Canvas>
+
+## Styled link with unstyled text
+
+This is an example of text that contains other HTML styling, the styling around the link
+
+<TransDescription {...MultipleStyledLinks.args} />
+
+<Canvas>
+  <TransLinks {...MultipleStyledLinks.args} />
+</Canvas>

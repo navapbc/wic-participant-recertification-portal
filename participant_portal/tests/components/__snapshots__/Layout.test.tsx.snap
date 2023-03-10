@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match snapshot 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <header
+      class="usa-header usa-header--extended"
+      data-testid="header"
+    >
+      <div
+        class="usa-navbar"
+      >
+        <div
+          class="usa-logo"
+          id="extended-logo"
+        >
+          <em
+            class="usa-logo__text"
+          >
+            <em
+              class="usa-logo__text text-primary-darker"
+            >
+              Shoegaze Stack
+            </em>
+          </em>
+        </div>
+      </div>
+    </header>
+    <main
+      class="main"
+    >
+      <div
+        class="grid-row"
+      >
+        <div
+          class="desktop:grid-col-8 padding-2 padding-bottom-8"
+        />
+      </div>
+      <h1>
+        'child'
+      </h1>
+    </main>
+    <footer
+      class="usa-footer usa-footer--slim"
+    >
+      <div
+        class="usa-footer__primary-section"
+      />
+      <div
+        class="usa-footer__secondary-section"
+      >
+        <div
+          class="grid-container"
+        >
+          For more information, read the 
+          <a
+            class="usa-link usa-link--external"
+            href="https://remix.run"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Remix Run Documentation
+          </a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+`;
