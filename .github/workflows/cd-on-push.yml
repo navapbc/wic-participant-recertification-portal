@@ -23,7 +23,7 @@ jobs:
 
       - name: 🗂 Get modified files in the participant_portal folder
         id: modified-files-participant
-        uses: tj-actions/modified-files@v35
+        uses: tj-actions/changed-files@v35
         with:
           files: participant_portal
 
@@ -53,7 +53,7 @@ jobs:
 
       - name: 🗂 Get modified files in the staff_portal folder
         id: modified-files-staff
-        uses: tj-actions/modified-files@v35
+        uses: tj-actions/changed-files@v35
         with:
           files: staff_portal
 
@@ -83,7 +83,7 @@ jobs:
 
       - name: 🗂 Get modified files in the analytics folder
         id: modified-files-analytics
-        uses: tj-actions/modified-files@v35
+        uses: tj-actions/changed-files@v35
         with:
           files: analytics
 
