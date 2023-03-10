@@ -66,6 +66,9 @@ infra-lint:
 infra-format:
 	terraform fmt -recursive infra
 
+infra-test:
+	cd infra/test && go test -v -timeout 30m
+
 ########################
 ## Release Management ##
 ########################
@@ -96,3 +99,23 @@ release-publish:
 	./bin/publish-release.sh $(APP_NAME) $(IMAGE_NAME) $(IMAGE_TAG)
 
 release-deploy:
+# check the varaible against the list of enviroments and suggest one of the correct envs.
+ifneq ($(filter $(ENV_NAME),$(ENVIRONMENTS)),)
+	./bin/deploy-release.sh $(APP_NAME) $(IMAGE_TAG) $(ENV_NAME)
+else
+	@echo "Please enter: make release-deploy ENV_NAME=<env_name>. The value for env_name must be one of these: $(ENVIRONMENTS)"
+	exit 1
+endif
+
+release-image-name: ## Prints the image name of the release image
+	@echo $(IMAGE_NAME)
+
+release-image-tag: ## Prints the image tag of the release image
+	@echo $(IMAGE_TAG)
+
+########################
+## Scripts and Helper ##
+########################
+
+help: ## Prints the help documentation and info about each command
+	@grep -E '^[/a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
