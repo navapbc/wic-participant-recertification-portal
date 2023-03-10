@@ -169,15 +169,20 @@ data "aws_iam_policy_document" "wic-prp-privileged" {
       "elasticloadbalancing:*",
       "s3:*"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:*:*:${data.aws_caller_identity.current.account_id}:*"]
   }
-
-  # checkov:skip=CKV2_AWS_40:Allow full IAM permissions for the privileged user group
   statement {
-    sid    = "IAMFullAccess"
+    sid     = "IAMFullAccess"
+    effect  = "Allow"
+    actions = ["iam:*"]
+    resources = [
+      "arn:aws:iam:*:${data.aws_caller_identity.current.account_id}:user/*"
+    ]
+  }
+  statement {
+    sid    = "OrgFullAccess"
     effect = "Allow"
     actions = [
-      "iam:*",
       "organizations:DescribeAccount",
       "organizations:DescribeOrganization",
       "organizations:DescribeOrganizationalUnit",
@@ -194,6 +199,6 @@ data "aws_iam_policy_document" "wic-prp-privileged" {
       "organizations:ListRoots",
       "organizations:ListTargetsForPolicy"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:organizations:*:${data.aws_caller_identity.current.account_id}:*"]
   }
 }
