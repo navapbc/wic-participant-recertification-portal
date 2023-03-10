@@ -14,28 +14,28 @@ jobs:
     name: 🔎 Check participant
     runs-on: ubuntu-latest
     outputs:
-      has_changed: ${{ steps.changed-files-participant.outputs.any_changed }}
+      has_modified: ${{ steps.modified-files-participant.outputs.any_modified }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 2  # To retrieve the preceding commit
 
-      - name: 🗂 Get changed files in the participant_portal folder
-        id: changed-files-participant
-        uses: tj-actions/changed-files@v35
+      - name: 🗂 Get modified files in the participant_portal folder
+        id: modified-files-participant
+        uses: tj-actions/modified-files@v35
         with:
           files: participant_portal
 
-      - name: 📋 List participant_portal files that have changed
+      - name: 📋 List participant_portal files that have been modified
         run: |
-          echo "List all the files that have changed: ${{ steps.changed-files-participant.outputs.all_changed_files }}"
+          echo "List all the files that have been modified: ${{ steps.modified-files-participant.outputs.all_modified_files }}"
 
 
   deploy_participant:
     name: 📬 Deploy participant
     needs: check_participant
-    if: ${{ needs.check_participant.outputs.has_changed  == 'true'}}
+    if: ${{ needs.check_participant.outputs.has_modified  == 'true'}}
     uses: ./.github/workflows/cd.yml
     with:
       app_name: participant_portal
@@ -44,28 +44,28 @@ jobs:
     name: 🔎 Check staff
     runs-on: ubuntu-latest
     outputs:
-      has_changed: ${{ steps.changed-files-staff.outputs.any_changed }}
+      has_modified: ${{ steps.modified-files-staff.outputs.any_modified }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 2  # To retrieve the preceding commit
 
-      - name: 🗂 Get changed files in the staff_portal folder
-        id: changed-files-staff
-        uses: tj-actions/changed-files@v35
+      - name: 🗂 Get modified files in the staff_portal folder
+        id: modified-files-staff
+        uses: tj-actions/modified-files@v35
         with:
           files: staff_portal
 
-      - name: 📋 List staff_portal files that have changed
+      - name: 📋 List staff_portal files that have been modified
         run: |
-          echo "List all the files that have changed: ${{ steps.changed-files-staff.outputs.all_changed_files }}"
+          echo "List all the files that have been modified: ${{ steps.modified-files-staff.outputs.all_modified_files }}"
 
 
   deploy_staff:
     name: 📨 Deploy staff
     needs: check_staff
-    if: ${{ needs.check_staff.outputs.has_changed  == 'true'}}
+    if: ${{ needs.check_staff.outputs.has_modified  == 'true'}}
     uses: ./.github/workflows/cd.yml
     with:
       app_name: staff_portal
@@ -74,28 +74,28 @@ jobs:
     name: 🔎 Check analytics
     runs-on: ubuntu-latest
     outputs:
-      has_changed: ${{ steps.changed-files-analytics.outputs.any_changed }}
+      has_modified: ${{ steps.modified-files-analytics.outputs.any_modified }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 2  # To retrieve the preceding commit
 
-      - name: 🗂 Get changed files in the analytics folder
-        id: changed-files-analytics
-        uses: tj-actions/changed-files@v35
+      - name: 🗂 Get modified files in the analytics folder
+        id: modified-files-analytics
+        uses: tj-actions/modified-files@v35
         with:
           files: analytics
 
-      - name: 📋 List analytics files that have changed
+      - name: 📋 List analytics files that have been modified
         run: |
-          echo "List all the files that have changed: ${{ steps.changed-files-analytics.outputs.all_changed_files }}"
+          echo "List all the files that have been modified: ${{ steps.modified-files-analytics.outputs.all_modified_files }}"
 
 
   deploy_analytics:
     name: 📊 Deploy analytics
     needs: check_analytics
-    if: ${{ needs.check_analytics.outputs.has_changed  == 'true'}}
+    if: ${{ needs.check_analytics.outputs.has_modified  == 'true'}}
     uses: ./.github/workflows/cd.yml
     with:
       app_name: analytics
