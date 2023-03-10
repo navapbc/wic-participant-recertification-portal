@@ -16,7 +16,7 @@ resource "aws_rds_cluster" "postgresql" {
   master_password                     = var.admin_password
   storage_encrypted                   = true
   iam_database_authentication_enabled = true
-  deletion_protection                 = false
+  deletion_protection                 = true
   skip_final_snapshot                 = true
   # final_snapshot_identifier = "${var.database_name}-final"
 
