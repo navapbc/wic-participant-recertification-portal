@@ -174,7 +174,7 @@ data "aws_iam_policy_document" "wic-prp-privileged" {
       "elasticloadbalancing:*",
       "s3:*"
     ]
-    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
+    resources = ["*"]
   }
 
   # checkov:skip=CKV2_AWS_40:Allow full IAM permissions for the privileged user group
@@ -199,6 +199,6 @@ data "aws_iam_policy_document" "wic-prp-privileged" {
       "organizations:ListRoots",
       "organizations:ListTargetsForPolicy"
     ]
-    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
+    resources = ["*"]
   }
 }
