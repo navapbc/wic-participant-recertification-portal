@@ -24,6 +24,15 @@ on:
           - participant_portal
           - staff_portal
           - analytics
+  # Designate this as a reusable workflow
+  # See https://docs.github.com/en/actions/using-workflows/reusing-workflows
+  workflow_call:
+    env_name:
+      required: true
+      type: string
+    app_name:
+      required: true
+      type: string
 
 env:
   ENV_NAME: ${{ inputs.env_name || 'dev' }}

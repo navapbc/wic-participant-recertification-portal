@@ -1,0 +1,15 @@
+name: 👉 Deploy on push
+
+on:
+  # !! Uncomment the following lines once you've set up the dev environment and ready to turn on continuous deployment
+  # push:
+  #   branches: ["main"]
+  # @DEBUG
+  workflow_dispatch:
+
+jobs:
+  deploy_to:
+    uses: ./.github/workflows/cd.yml
+    with:
+      env_name: dev
+      app_name: participant_portal
