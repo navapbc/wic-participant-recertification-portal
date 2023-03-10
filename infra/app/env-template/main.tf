@@ -12,9 +12,10 @@ data "aws_subnets" "default" {
 }
 
 locals {
-  project_name = module.project_config.project_name
-  app_name     = module.app_config.app_name
-  service_name = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  project_name  = module.project_config.project_name
+  app_name      = module.app_config.app_name
+  service_name  = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  database_name = "${local.project_name}-${local.app_name}-${var.environment_name}"
 }
 
 module "project_config" {
@@ -23,6 +24,11 @@ module "project_config" {
 
 module "app_config" {
   source = "../app-config"
+}
+
+module "database" {
+  source        = "../../modules/database"
+  database_name = local.database_name
 }
 
 module "service" {
