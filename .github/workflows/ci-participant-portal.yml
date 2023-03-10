@@ -5,11 +5,9 @@ on:
       - main
     paths:
       - participant_portal/**
-      - .github/workflows/ci-participant-portal.yml
   pull_request:
     paths:
       - participant_portal/**
-      - .github/workflows/ci-participant-portal.yml
 
 jobs:
   lint:
