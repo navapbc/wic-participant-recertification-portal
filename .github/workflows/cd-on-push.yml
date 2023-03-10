@@ -36,7 +36,7 @@ jobs:
   deploy_participant:
     name: 📬 Deploy participant
     needs: check_participant
-    # if: ${{ needs.check_participant.has_changed  == 'true'}}
+    if: ${{ needs.check_participant.outputs.has_changed  == 'true'}}
     uses: ./.github/workflows/cd.yml
     with:
       app_name: participant_portal
