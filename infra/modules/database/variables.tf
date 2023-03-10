@@ -5,3 +5,7 @@ variable "database_name" {
     error_message = "use only lower case letters, numbers, dashes, and underscores"
   }
 }
+
+variable "admin_password" {
+  description = "database admin password"
+}

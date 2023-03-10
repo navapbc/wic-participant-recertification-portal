@@ -26,9 +26,14 @@ module "app_config" {
   source = "../app-config"
 }
 
+module "database_password" {
+  source = "../../modules/random-password"
+}
+
 module "database" {
-  source        = "../../modules/database"
-  database_name = local.database_name
+  source         = "../../modules/database"
+  database_name  = local.database_name
+  admin_password = module.database_password.random_password
 }
 
 module "service" {

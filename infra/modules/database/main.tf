@@ -8,19 +8,17 @@ data "aws_region" "current" {}
 resource "aws_rds_cluster" "postgresql" {
   # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
   # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
-  cluster_identifier = var.database_name
-  engine             = "aurora-postgresql"
-  engine_mode        = "provisioned"
-  database_name      = replace("${var.database_name}", "-", "_")
-  master_username    = "app_usr"
-  master_password    = aws_ssm_parameter.random_db_password.value
-  storage_encrypted  = true
-  # checkov:skip=CKV_AWS_128:IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
-  # checkov:skip=CKV_AWS_162:IAM Auth will be added with the `wic-prp-eng` role created in PRP-74 https://wicmtdp.atlassian.net/browse/PRP-74
-  # iam_database_authentication_enabled = true
-  deletion_protection = true
-  # final_snapshot_identifier = "${var.service_name}-final"
-  skip_final_snapshot = true
+  cluster_identifier                  = var.database_name
+  engine                              = "aurora-postgresql"
+  engine_mode                         = "provisioned"
+  database_name                       = replace("${var.database_name}", "-", "_")
+  master_username                     = "app_usr"
+  master_password                     = var.admin_password
+  storage_encrypted                   = true
+  iam_database_authentication_enabled = true
+  deletion_protection                 = false
+  skip_final_snapshot                 = true
+  # final_snapshot_identifier = "${var.database_name}-final"
 
 
   serverlessv2_scaling_configuration {
@@ -39,28 +37,22 @@ resource "aws_rds_cluster_instance" "postgresql-cluster" {
   monitoring_interval        = 30
 }
 
-resource "random_password" "random_db_password" {
-  length           = 48
-  special          = true
-  min_special      = 6
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+resource "aws_ssm_parameter" "admin_password" {
+  name  = "/metadata/db/${var.database_name}-admin-password"
+  type  = "SecureString"
+  value = var.admin_password
 }
 
-resource "aws_ssm_parameter" "random_db_password" {
-  name  = "/metadata/db/admin-password"
-  type  = "SecureString"
-  value = random_password.random_db_password.result
-}
 
 ################################################################################
 # Backup Configuration
 ################################################################################
 
 resource "aws_backup_plan" "postgresql" {
-  name = "${var.database_name}_backup_plan"
+  name = "${var.database_name}-backup-plan"
 
   rule {
-    rule_name         = "${var.database_name}_backup_rule"
+    rule_name         = "${var.database_name}-backup-rule"
     target_vault_name = "${var.database_name}-vault"
     schedule          = "cron(0 12 ? * SUN *)"
   }
