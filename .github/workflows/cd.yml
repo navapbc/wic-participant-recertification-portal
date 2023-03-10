@@ -1,9 +1,6 @@
 name: Deploy
 
 on:
-  # !! Uncomment the following lines once you've set up the dev environment and ready to turn on continuous deployment
-  # push:
-  #   branches: ["main"]
   workflow_dispatch:
     inputs:
       env_name:
@@ -24,7 +21,8 @@ on:
           - participant_portal
           - staff_portal
           - analytics
-  # Designate this as a reusable workflow
+  # Designate this as a reusable workflow.
+  # When used as a reusable workflow, this always deploys to the dev environment.
   # See https://docs.github.com/en/actions/using-workflows/reusing-workflows
   workflow_call:
     inputs:
