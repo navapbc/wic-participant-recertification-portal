@@ -176,6 +176,8 @@ data "aws_iam_policy_document" "wic-prp-privileged" {
     ]
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
+
+  # checkov:skip=checkov:skip=CKV2_AWS_40:Allow full IAM permissions for the privileged user group
   statement {
     sid    = "IAMFullAccess"
     effect = "Allow"
