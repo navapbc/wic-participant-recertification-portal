@@ -33,25 +33,25 @@ jobs:
           app_name: participant_portal
 
       - name: 📨 Get changed files in the staff_portal folder
-        id: changed-files-participant
+        id: changed-files-staff
         uses: tj-actions/changed-files@v35
         with:
           files: staff_portal
 
       - name: 📨📦 Deploy staff_portal if there are changes
-        if: steps.changed-files-participant.outputs.any_changed == 'true'
+        if: steps.changed-files-staff.outputs.any_changed == 'true'
         uses: ./.github/workflows/cd.yml
         with:
           app_name: staff_portal
 
       - name: 📊 Get changed files in the analytics folder
-        id: changed-files-participant
+        id: changed-files-analytics
         uses: tj-actions/changed-files@v35
         with:
           files: analytics
 
       - name: 📊📦 Deploy analytics if there are changes
-        if: steps.changed-files-participant.outputs.any_changed == 'true'
+        if: steps.changed-files-analytics.outputs.any_changed == 'true'
         uses: ./.github/workflows/cd.yml
         with:
           app_name: analytics
