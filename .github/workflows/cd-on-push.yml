@@ -6,6 +6,9 @@ on:
   #   branches: ["main"]
   # @DEBUG
   workflow_dispatch:
+  push:
+    branches: ["PRP-166-cd-connect-the-infrastructure"]
+
 
 jobs:
   deploy_to:
