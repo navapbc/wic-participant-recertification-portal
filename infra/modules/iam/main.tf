@@ -97,24 +97,27 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "iam:CreateServiceLinkedRole",
       "iam:GenerateServiceLastAccessedDetails",
       "iam:GetAccountPasswordPolicy",
+      "iam:GetLoginProfile",
       "iam:GetRole",
       "iam:GetRolePolicy",
       "iam:GetServiceLinkedRoleDeletionStatus",
+      "iam:GetUser",
+      "iam:ListAccessKeys",
       "iam:ListAttachedRolePolicies",
       "iam:ListRolePolicies",
+      "iam:ListUserPolicies",
       "iam:PutRolePolicy"
     ]
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
-  # TODO restrict iam:ChangePassword to the user itself
-  # statement {
-  #   sid    = "IAMUserChangePassword"
-  #   effect = "Allow"
-  #   actions = [
-  #     "iam:ChangePassword"
-  #   ]
-  #   resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${aws_iam_group.team.user.user_name}"]
-  # }
+  statement {
+    sid    = "AllowManageOwnPasswords"
+    effect = "Allow"
+    actions = [
+      "iam:ChangePassword"
+    ]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/$${aws:username}"]
+  }
   statement {
     sid       = "KMSCreate"
     effect    = "Allow"
