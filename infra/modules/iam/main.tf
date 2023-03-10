@@ -61,8 +61,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "kms:ListAliases",
     ]
     resources = [
-      "arn:aws:kms:us-west-1:636249768232:alias/*",
-    "arn:aws:kms:*:636249768232:key/*"]
+      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*",
+    "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*"]
   }
   statement {
     sid       = "EC2Actions"
