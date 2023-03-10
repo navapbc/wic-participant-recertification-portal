@@ -106,7 +106,7 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     ]
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
-  # @TODO restricte iam:ChangePassword to the calling user.
+  # TODO restrict iam:ChangePassword to the user itself
   # statement {
   #   sid    = "IAMUserChangePassword"
   #   effect = "Allow"
