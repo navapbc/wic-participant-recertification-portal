@@ -54,6 +54,7 @@ module "auth_github_actions" {
   source                   = "../../modules/auth-github-actions"
   github_actions_role_name = module.project_config.github_actions_role_name
   github_repository        = module.project_config.code_repository
+  iam_role_policy_arns = ["arn:aws:iam::aws:policy/PowerUserAccess", "arn:aws:iam::aws:policy/IAMReadOnlyAccess"]
 }
 
 module "iam" {
