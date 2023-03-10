@@ -26,6 +26,9 @@ jobs:
         with:
           files: participant_portal
 
+      - run: |
+        echo "List all the files that have changed: ${{ steps.changed-files-excluded.outputs.all_changed_files }}"
+
       - name: 📦 Deploy participant_portal if there are changes
         if: steps.changed-files-participant.outputs.any_changed == 'true'
         uses: ./.github/workflows/cd.yml
