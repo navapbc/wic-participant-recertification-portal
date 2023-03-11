@@ -130,4 +130,48 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     ]
     resources = ["arn:aws:s3:::*"]
   }
+  statement {
+    sid = "DynamodbServices"
+    effect = "Allow"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:PutItem",
+    ]
+    resources = [
+      "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/*"
+    ]
+  }
+  statement {
+    sid = "SSMBroadAccess"
+    effect = "Allow"
+    actions = [
+      "ssm:DescribeParameters",
+      "ssm:ListTagsForResource"
+    ]
+    resources = [
+      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+    ]
+  }
+  statement {
+    sid = "SSMRestrictedAccess"
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters"
+    ]
+    resources = [
+      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/metadata/db/*"
+    ]
+  }
+  statement {
+    sid = "RDSServices"
+    effect = "Allow"
+    actions = [
+      "rds:DescribeDBClusterParameterGroups"
+    ]
+    resources = [
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+    ]
+  }
 }
