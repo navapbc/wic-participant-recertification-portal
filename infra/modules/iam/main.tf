@@ -23,26 +23,27 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "General"
     effect = "Allow"
     actions = [
-      "sts:GetCallerIdentity",
       "ec2:DescribeAccountAttributes",
-      "ec2:DescribeVpcs",
-      "ec2:DescribeSubnets",
-      "ssm:DescribeParameters",
-      "ec2:DescribeRouteTables",
-      "elasticloadbalancing:DescribeTargetGroups",
-      "ec2:DescribeSecurityGroups",
-      "elasticloadbalancing:DescribeTargetGroupAttributes",
-      "ecs:DescribeTaskDefinition",
-      "ecs:DeregisterTaskDefinition",
       "ec2:DescribeNetworkInterfaces",
-      "rds:AddTagsToResource",
-      "iam:PassRole",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeVpcs",
       "ecs:CreateCluster",
+      "ecs:DeregisterTaskDefinition",
+      "ecs:DescribeTaskDefinition",
       "ecs:RegisterTaskDefinition",
-      "elasticloadbalancing:DescribeLoadBalancers",
-      "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "ecr:DescribeRepositories",
       "elasticloadbalancing:DescribeListeners",
-      "elasticloadbalancing:DescribeRules"
+      "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "elasticloadbalancing:DescribeRules",
+      "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "iam:PassRole",
+      "rds:AddTagsToResource",
+      "ssm:DescribeParameters",
+      "sts:GetCallerIdentity",
     ]
     resources = [
       "*"
@@ -57,7 +58,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "backup:CreateBackupPlan",
       "backup:GetBackupPlan",
       "backup:CreateBackupSelection",
-      "backup:GetBackupSelection"
+      "backup:GetBackupSelection",
+      "backup:DeleteBackupVault"
     ]
     resources = [
       "arn:aws:backup:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:backup-vault:*",
@@ -84,7 +86,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "ec2:CreateSecurityGroup",
       "ec2:RevokeSecurityGroupEgress",
       "ec2:AuthorizeSecurityGroupIngress",
-      "ec2:AuthorizeSecurityGroupEgress"
+      "ec2:AuthorizeSecurityGroupEgress",
+      "ec2:DeleteSecurityGroup"
     ]
     resources = [
       "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:vpc/*",
@@ -99,11 +102,22 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "ecs:DescribeClusters",
       "ecs:CreateService",
       "ecs:DescribeServices",
-      "ecs:UpdateService"
+      "ecs:UpdateService",
+      "ecs:DeleteCluster"
     ]
     resources = [
       "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster/*",
       "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/*"
+    ]
+  }
+  statement {
+    sid    = "ECR"
+    effect = "Allow"
+    actions = [
+      "ecr:ListTagsForResource"
+    ]
+    resources = [
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*",
     ]
   }
   statement {
@@ -117,7 +131,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "elasticloadbalancing:AddTags",
       "elasticloadbalancing:SetSecurityGroups",
       "elasticloadbalancing:CreateListener",
-      "elasticloadbalancing:CreateRule"
+      "elasticloadbalancing:CreateRule",
+      "elasticloadbalancing:DeleteTargetGroup"
     ]
     resources = [
       "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:targetgroup/*",
@@ -140,7 +155,9 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "iam:AttachRolePolicy",
       "iam:PutRolePolicy",
       "iam:ListAttachedRolePolicies",
-      "iam:PassRole"
+      "iam:PassRole",
+      "iam:DeleteRolePolicy",
+      "iam:DeleteRole",
     ]
     resources = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
@@ -162,7 +179,7 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "KMS"
     effect = "Allow"
     actions = [
-      "kms:DescribeKey"
+      "kms:DescribeKey",
     ]
     resources = [
       "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*"
@@ -175,7 +192,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "logs:DescribeLogGroups",
       "logs:ListTagsLogGroup",
       "logs:CreateLogGroup",
-      "logs:PutRetentionPolicy"
+      "logs:PutRetentionPolicy",
+      "logs:DeleteLogGroup"
     ]
     resources = [
       "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group/*"
@@ -191,10 +209,13 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "rds:ModifyDBClusterParameterGroup",
       "rds:DescribeDBClusters",
       "rds:DescribeGlobalClusters",
+      "rds:DeleteDBCluster",
+      "rds:DeleteDBClusterParameterGroup"
     ]
     resources = [
       "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg/*",
       "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster:*",
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-snapshot:*",
       "arn:aws:rds::${data.aws_caller_identity.current.account_id}:global-cluster:*"
     ]
   }
@@ -220,7 +241,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     effect = "Allow"
     actions = [
       "s3:GetObject",
-      "s3:ListBucket"
+      "s3:PutObject",
+      "s3:ListBucket",
     ]
     resources = [
       "arn:aws:s3:::*"
@@ -248,84 +270,6 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:maintenancewindow//metadata/db/*",
       "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:opsitem//metadata/db/*",
       "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:opsmetadata//metadata/db/*"
-    ]
-  }
-
-  ######
-  # Uncomment to allow this user group to delete resources
-  ######
-  statement {
-    sid    = "BackupDelete"
-    effect = "Allow"
-    actions = [
-      "backup:DeleteBackupVault"
-    ]
-    resources = [
-      "arn:aws:backup:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:backup-vault:*"
-    ]
-  }
-  statement {
-    sid    = "EC2Delete"
-    effect = "Allow"
-    actions = [
-      "ec2:DeleteSecurityGroup"
-    ]
-    resources = [
-      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:security-group/*"
-    ]
-  }
-  statement {
-    sid    = "ECSDelete"
-    effect = "Allow"
-    actions = [
-      "ecs:DeleteCluster"
-    ]
-    resources = [
-      "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster/*"
-    ]
-  }
-  statement {
-    sid    = "ELBDelete"
-    effect = "Allow"
-    actions = [
-      "elasticloadbalancing:DeleteTargetGroup"
-    ]
-    resources = [
-      "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:targetgroup/*"
-    ]
-  }
-  statement {
-    sid    = "IAMDelete"
-    effect = "Allow"
-    actions = [
-      "iam:DeleteRolePolicy",
-      "iam:DeleteRole"
-    ]
-    resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
-    ]
-  }
-  statement {
-    sid    = "LogsDelete"
-    effect = "Allow"
-    actions = [
-      "logs:DeleteLogGroup"
-    ]
-    resources = [
-      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group/*"
-    ]
-  }
-  statement {
-    sid    = "RDSDelete"
-    effect = "Allow"
-    actions = [
-      "rds:DeleteDBCluster",
-      "rds:DeleteDBClusterParameterGroup"
-    ]
-    resources = [
-      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg/*",
-      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-snapshot:*",
-      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster:*"
     ]
   }
 }
