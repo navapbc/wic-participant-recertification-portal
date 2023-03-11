@@ -54,20 +54,9 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     resources = ["*"]
   }
   statement {
-    sid    = "KMSPerms"
-    effect = "Allow"
-    actions = [
-      "kms:CreateKey",
-      "kms:ListAliases",
-    ]
-    resources = [
-      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*",
-    "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*"]
-  }
-  statement {
     sid       = "EC2Actions"
     effect    = "Allow"
-    actions   = ["ec2:DescribeVpcAttribute", ]
+    actions   = ["ec2:DescribeVpcAttribute"]
     resources = [data.aws_vpc.default.arn]
   }
   statement {
@@ -111,21 +100,21 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
   }
   statement {
-    sid       = "KMSCreate"
-    effect    = "Allow"
-    actions   = ["kms:CreateAlias"]
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*"]
-  }
-  statement {
     sid    = "KMSServices"
     effect = "Allow"
     actions = [
       "kms:CreateAlias",
+      "kms:DescribeKey",
       "kms:Decrypt",
       "kms:PutKeyPolicy",
-      "kms:TagResource"
+      "kms:TagResource",
+      "kms:CreateKey",
+      "kms:ListAliases"
     ]
-    resources = ["arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"]
+    resources = [
+      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*",
+      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*"
+    ]
   }
   statement {
     sid    = "S3SServices"
