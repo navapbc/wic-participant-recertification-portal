@@ -2,7 +2,13 @@
   "name": "staff_portal",
   "private": true,
   "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
-  }
+  },
+  "devDependencies": {
+    "prettier": "^2.8.4"
+  },
+  "prettier": {}
 }
