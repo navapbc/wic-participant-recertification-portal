@@ -83,6 +83,7 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "ecs:DeleteCluster",
       "ecs:Describe*",
       "ecs:UpdateService",
+      "ecs:DeleteService",
     ]
     resources = [
       "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster/*",
@@ -109,6 +110,9 @@ data "aws_iam_policy_document" "wic-prp-eng" {
       "elasticloadbalancing:CreateLoadBalancer",
       "elasticloadbalancing:CreateRule",
       "elasticloadbalancing:CreateTargetGroup",
+      "elasticloadbalancing:DeleteRule",
+      "elasticloadbalancing:DeleteListener",
+      "elasticloadbalancing:DeleteLoadBalancer",
       "elasticloadbalancing:DeleteTargetGroup",
       "elasticloadbalancing:ModifyLoadBalancerAttributes",
       "elasticloadbalancing:ModifyTargetGroupAttributes",
@@ -117,7 +121,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     resources = [
       "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:targetgroup/*",
       "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:loadbalancer/*",
-      "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:listener/*"
+      "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:listener/*",
+      "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:listener-rule/*",
     ]
   }
   statement {
@@ -147,8 +152,10 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     effect = "Allow"
     actions = [
       "iam:CreatePolicy",
+      "iam:DeletePolicy",
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
+      "iam:ListPolicyVersions",
       "iam:TagPolicy",
     ]
     resources = [
@@ -206,9 +213,10 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     effect = "Allow"
     actions = [
       "rds:CreateDBCluster",
+      "rds:CreateDBInstance",
+      "rds:DeleteDBInstance",
       "rds:DescribeDBInstances",
       "rds:ListTagsForResource",
-      "rds:CreateDBInstance",
     ]
     resources = [
       "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg/*",
