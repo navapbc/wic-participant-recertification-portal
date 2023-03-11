@@ -23,27 +23,19 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "General"
     effect = "Allow"
     actions = [
-      "ec2:DescribeAccountAttributes",
-      "ec2:DescribeNetworkInterfaces",
-      "ec2:DescribeRouteTables",
-      "ec2:DescribeSecurityGroups",
-      "ec2:DescribeSubnets",
-      "ec2:DescribeVpcs",
+      "ec2:Describe*",
       "ecs:CreateCluster",
       "ecs:DeregisterTaskDefinition",
       "ecs:DescribeTaskDefinition",
       "ecs:RegisterTaskDefinition",
-      "ecr:DescribeRepositories",
-      "elasticloadbalancing:DescribeListeners",
-      "elasticloadbalancing:DescribeLoadBalancerAttributes",
-      "elasticloadbalancing:DescribeLoadBalancers",
-      "elasticloadbalancing:DescribeRules",
-      "elasticloadbalancing:DescribeTargetGroupAttributes",
-      "elasticloadbalancing:DescribeTargetGroups",
-      "iam:PassRole",
+      "elasticloadbalancing:Describe*",
+      "kms:CreateKey",
+      "kms:ListAliases",
       "rds:AddTagsToResource",
       "ssm:DescribeParameters",
       "sts:GetCallerIdentity",
+      "ssm:ListTagsForResource",
+      "backup-storage:MountCapsule",
     ]
     resources = [
       "*"
@@ -53,17 +45,10 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "Backup"
     effect = "Allow"
     actions = [
-      "backup:DescribeBackupVault",
-      "backup:CreateBackupVault",
-      "backup:CreateBackupPlan",
-      "backup:GetBackupPlan",
-      "backup:CreateBackupSelection",
-      "backup:GetBackupSelection",
-      "backup:DeleteBackupVault"
+      "backup:*",
     ]
     resources = [
-      "arn:aws:backup:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:backup-vault:*",
-      "arn:aws:backup:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:backup-plan:*"
+      "arn:aws:backup:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*",
     ]
   }
   statement {
@@ -82,12 +67,7 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "EC2"
     effect = "Allow"
     actions = [
-      "ec2:DescribeVpcAttribute",
-      "ec2:CreateSecurityGroup",
-      "ec2:RevokeSecurityGroupEgress",
-      "ec2:AuthorizeSecurityGroupIngress",
-      "ec2:AuthorizeSecurityGroupEgress",
-      "ec2:DeleteSecurityGroup"
+      "ec2:*",
     ]
     resources = [
       "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:vpc/*",
@@ -99,11 +79,10 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "ECS"
     effect = "Allow"
     actions = [
-      "ecs:DescribeClusters",
       "ecs:CreateService",
-      "ecs:DescribeServices",
+      "ecs:DeleteCluster",
+      "ecs:Describe*",
       "ecs:UpdateService",
-      "ecs:DeleteCluster"
     ]
     resources = [
       "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster/*",
@@ -114,7 +93,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "ECR"
     effect = "Allow"
     actions = [
-      "ecr:ListTagsForResource"
+      "ecr:Describe*",
+      "ecr:ListTagsForResource",
     ]
     resources = [
       "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*",
@@ -124,15 +104,15 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "ELB"
     effect = "Allow"
     actions = [
-      "elasticloadbalancing:CreateTargetGroup",
-      "elasticloadbalancing:ModifyTargetGroupAttributes",
-      "elasticloadbalancing:CreateLoadBalancer",
-      "elasticloadbalancing:ModifyLoadBalancerAttributes",
       "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:SetSecurityGroups",
       "elasticloadbalancing:CreateListener",
+      "elasticloadbalancing:CreateLoadBalancer",
       "elasticloadbalancing:CreateRule",
-      "elasticloadbalancing:DeleteTargetGroup"
+      "elasticloadbalancing:CreateTargetGroup",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:SetSecurityGroups",
     ]
     resources = [
       "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:targetgroup/*",
@@ -144,20 +124,19 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "IAM"
     effect = "Allow"
     actions = [
-      "iam:GetRole",
-      "iam:ListRolePolicies",
-      "iam:DetachRolePolicy",
-      "iam:GetRolePolicy",
-      "iam:DeleteRolePolicy",
-      "iam:ListInstanceProfilesForRole",
-      "iam:DeleteRole",
-      "iam:CreateRole",
       "iam:AttachRolePolicy",
-      "iam:PutRolePolicy",
-      "iam:ListAttachedRolePolicies",
-      "iam:PassRole",
-      "iam:DeleteRolePolicy",
+      "iam:CreateRole",
       "iam:DeleteRole",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
+      "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
+      "iam:ListRolePolicies",
+      "iam:PassRole",
+      "iam:PutRolePolicy",
+      "iam:TagRole",
     ]
     resources = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
@@ -169,7 +148,8 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     actions = [
       "iam:CreatePolicy",
       "iam:GetPolicy",
-      "iam:GetPolicyVersion"
+      "iam:GetPolicyVersion",
+      "iam:TagPolicy",
     ]
     resources = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*"
@@ -180,40 +160,42 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     effect = "Allow"
     actions = [
       "kms:DescribeKey",
+      "kms:CreateAlias",
+      "kms:Decrypt",
     ]
     resources = [
-      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*"
+      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*",
+      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*",
     ]
   }
   statement {
     sid    = "Logs"
     effect = "Allow"
     actions = [
+      "logs:CreateLogGroup",
+      "logs:DeleteLogGroup",
       "logs:DescribeLogGroups",
       "logs:ListTagsLogGroup",
-      "logs:CreateLogGroup",
       "logs:PutRetentionPolicy",
-      "logs:DeleteLogGroup"
+      "logs:TagResource",
     ]
     resources = [
-      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group/*"
+      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*",
     ]
   }
   statement {
     sid    = "RDS"
     effect = "Allow"
     actions = [
-      "rds:DescribeDBClusterParameterGroups",
-      "rds:DescribeDBClusterParameters",
       "rds:CreateDBClusterParameterGroup",
-      "rds:ModifyDBClusterParameterGroup",
-      "rds:DescribeDBClusters",
-      "rds:DescribeGlobalClusters",
       "rds:DeleteDBCluster",
-      "rds:DeleteDBClusterParameterGroup"
+      "rds:DeleteDBClusterParameterGroup",
+      "rds:Describe*",
+      "rds:ModifyDBClusterParameterGroup",
     ]
     resources = [
       "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg/*",
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg:*",
       "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster:*",
       "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-snapshot:*",
       "arn:aws:rds::${data.aws_caller_identity.current.account_id}:global-cluster:*"
@@ -224,16 +206,16 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     effect = "Allow"
     actions = [
       "rds:CreateDBCluster",
-      "rds:CreateDBInstance",
       "rds:DescribeDBInstances",
-      "rds:ListTagsForResource"
+      "rds:ListTagsForResource",
+      "rds:CreateDBInstance",
     ]
     resources = [
       "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg/*",
       "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster:*",
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:db:*",
       "arn:aws:rds::${data.aws_caller_identity.current.account_id}:og:*",
       "arn:aws:rds::${data.aws_caller_identity.current.account_id}:subgrp:*",
-      "arn:aws:rds::${data.aws_caller_identity.current.account_id}:db:*"
     ]
   }
   statement {
@@ -252,24 +234,14 @@ data "aws_iam_policy_document" "wic-prp-eng" {
     sid    = "SSM"
     effect = "Allow"
     actions = [
+      "ssm:AddTagsToResource",
       "ssm:GetParameter",
+      "ssm:GetParameters",
       "ssm:DeleteParameter",
-      "ssm:PutParameter"
+      "ssm:PutParameter",
     ]
     resources = [
-      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter//metadata/db/*"
-    ]
-  }
-  statement {
-    sid    = "SSMListTags"
-    effect = "Allow"
-    actions = [
-      "ssm:ListTagsForResource"
-    ]
-    resources = [
-      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:maintenancewindow//metadata/db/*",
-      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:opsitem//metadata/db/*",
-      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:opsmetadata//metadata/db/*"
+      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/metadata/db/*"
     ]
   }
 }
