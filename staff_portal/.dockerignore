@@ -1,4 +1,8 @@
 /node_modules
 
-.env
+.dockerignore
+*.env
 .lowdefy/**
+.DS_Store
+docker-compose.*
+Dockerfile*

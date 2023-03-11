@@ -1,6 +1,52 @@
-version: "3.9"
+version: "3.7"
+
 services:
-  lowdefy:
-    build: .
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: incredible_local_secret_phrase
+      POSTGRES_USER: postgres
+    healthcheck:
+      test: "pg_isready --username=postgres"
+      timeout: 10s
+      retries: 20
+    init: true
     ports:
-      - "3000:3000"
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  lowdefy_dev:
+    build:
+      target: dev
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+    init: true
+    ports:
+      - "3033:3000"
+    volumes:
+      # Mount the local directory for faster local development.
+      - ./:/home/node/lowdefy
+      # Use a named volume for the node_modules so that the container uses the guest machine's node_modules dir instead of the host machine's node_modules directory, which might be divergent.
+      - lowdefy_dev_nodemodules:/home/node/lowdefy/node_modules
+
+  lowdefy_prod:
+    build:
+      target: prod
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+    init: true
+    ports:
+      - "3333:3000"
+
+volumes:
+  lowdefy_dev_nodemodules:
+  postgres_data:

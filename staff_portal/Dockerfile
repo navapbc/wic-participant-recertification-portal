@@ -4,7 +4,6 @@ FROM node:18-slim as base
 # Set working directory and node user
 WORKDIR /home/node/lowdefy
 RUN chown node:node /home/node/lowdefy
-USER node
 
 # -------- Image: deps -------- #
 # Install all node_modules, including dev dependencies
@@ -36,7 +35,8 @@ RUN npm prune --production
 
 # -------- Image: prod -------- #
 # Finally, build the production image with minimal footprint
-FROM lowdefy/lowdefy:3.23.3
+FROM lowdefy/lowdefy:3.23.3 as prod
+USER node
 COPY --from=production-deps /home/node/lowdefy/node_modules ./node_modules
 COPY --from=build --chown=node:node /home/node/lowdefy/.lowdefy/build ./build
 COPY --chown=node:node ./public ./public
