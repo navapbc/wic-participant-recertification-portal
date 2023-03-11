@@ -1,8 +1,41 @@
-
 lowdefy: 3.23.3
 name: Lowdefy starter
 
+cli:
+  disableTelemetry: true
+
+types:
+  AgGridAlpine:
+    url: https://blocks-cdn.lowdefy.com/v3.12.3/blocks-aggrid/meta/AgGridAlpine.json
+
+connections:
+  - id: postgres
+    type: Knex
+    properties:
+      client: postgres
+      connection:
+        _secret: PG_CONNECTION_STRING
+        # user:
+        #   _secret: PG_USER
+        # host:
+        #   _secret: PG_HOST
+        # database:
+        #   _secret: PG_DB
+        # password:
+        #   _secret: PG_PASSWORD
+
+menus:
+  - id: default
+    links:
+      - id: recertifications
+        type: MenuLink
+        properties:
+          icon: AlertOutlined
+          title: WIC Recertifications
+        pageId: recertifications
+
 pages:
+  - _ref: recertifications.yaml
   - id: welcome
     type: PageHeaderMenu
     properties:
@@ -19,11 +52,11 @@ pages:
               - id: content
                 type: Result
                 properties:
-                  title: Welcome to your Lowdefy app
+                  title: Welcome to your Lowdefy app.
                   subTitle: We are excited to see what you are going to build
                   icon:
                     name: HeartTwoTone
-                    color: '#f00'
+                    color: "#f00"
                 areas:
                   extra:
                     blocks:
@@ -32,13 +65,13 @@ pages:
                         properties:
                           size: large
                           title: Let's build something
-                          color: '#1890ff'
+                          color: "#1890ff"
                         events:
                           onClick:
                             - id: link_to_docs
                               type: Link
                               params:
-                                url: https://docs.lowdefy.com
+                                url: https://lowdefy.com
                                 newTab: true
       footer:
         blocks:
@@ -48,4 +81,3 @@ pages:
               type: secondary
               content: |
                 Made by a Lowdefy 🤖
-
