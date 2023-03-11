@@ -154,6 +154,19 @@ resource "aws_iam_group_policy" "wic-prp-privileged" {
   policy = data.aws_iam_policy_document.wic-prp-privileged.json
 }
 
+locals {
+  aws_managed_policy_arns = [
+    "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
+  ]
+}
+
+resource "aws_iam_group_policy_attachment" "wic-prp-privileged" {
+  count = length(local.aws_managed_policy_arns)
+
+  group      = aws_iam_group.wic-prp-privileged.name
+  policy_arn = local.aws_managed_policy_arns[count.index]
+}
+
 data "aws_iam_policy_document" "wic-prp-privileged" {
   statement {
     sid    = "GrantAll"
@@ -162,43 +175,56 @@ data "aws_iam_policy_document" "wic-prp-privileged" {
       "access-analyzer:*",
       "kms:*",
       "logs:*",
-      "ecs:*",
       "ecr:*",
       "ec2:*",
       "dynamodb:*",
-      "elasticloadbalancing:*",
-      "s3:*"
+      "s3:*",
+      "servicediscovery:*",
     ]
-    resources = ["arn:aws:*:*:${data.aws_caller_identity.current.account_id}:*"]
-  }
-  statement {
-    sid     = "IAMFullAccess"
-    effect  = "Allow"
-    actions = ["iam:*"]
     resources = [
-      "arn:aws:iam:*:${data.aws_caller_identity.current.account_id}:user/*"
+      "arn:aws:access-analyzer:*:${data.aws_caller_identity.current.account_id}:*",
+      "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:*",
+      "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:*",
+      "arn:aws:ecr:*:${data.aws_caller_identity.current.account_id}:*",
+      "arn:aws:ec2:*:${data.aws_caller_identity.current.account_id}:*",
+      "arn:aws:dynamodb:*:${data.aws_caller_identity.current.account_id}:*",
+      "arn:aws:s3:::*",
+      "arn:aws:servicediscovery:*:${data.aws_caller_identity.current.account_id}:*",
     ]
   }
   statement {
-    sid    = "OrgFullAccess"
+    sid    = "GrantECSAllRead"
     effect = "Allow"
     actions = [
-      "organizations:DescribeAccount",
-      "organizations:DescribeOrganization",
-      "organizations:DescribeOrganizationalUnit",
-      "organizations:DescribePolicy",
-      "organizations:ListAccounts",
-      "organizations:ListAccountsForParent",
-      "organizations:ListAWSServiceAccessForOrganization",
-      "organizations:ListChildren",
-      "organizations:ListDelegatedAdministrators",
-      "organizations:ListOrganizationalUnitsForParent",
-      "organizations:ListParents",
-      "organizations:ListPolicies",
-      "organizations:ListPoliciesForTarget",
-      "organizations:ListRoots",
-      "organizations:ListTargetsForPolicy"
+      "ecs:ListAttributes",
+      "ecs:ListClusters",
+      "ecs:ListContainerInstances",
+      "ecs:ListServices",
+      "ecs:ListServicesByNamespace",
+      "ecs:ListTaskDefinitionFamilies",
+      "ecs:ListTaskDefinitions",
+      "ecs:ListTasks",
+      "ecs:DescribeCapacityProviders",
+      "ecs:DescribeClusters",
+      "ecs:DescribeContainerInstances",
+      "ecs:DescribeServices",
+      "ecs:DescribeTaskDefinition",
+      "ecs:DescribeTasks",
+      "ecs:DescribeTaskSets",
+      "ecs:GetTaskProtection",
+      "application-autoscaling:*"
     ]
-    resources = ["arn:aws:organizations:*:${data.aws_caller_identity.current.account_id}:*"]
+    resources = ["*"]
+  }
+  statement {
+    sid    = "GrantECSRestrictedWrite"
+    effect = "Allow"
+    actions = [
+      "ecs:*",
+    ]
+    resources = [
+      "arn:aws:ecs:*:${data.aws_caller_identity.current.account_id}:service/*/*",
+      "arn:aws:ecs:*:${data.aws_caller_identity.current.account_id}:cluster/*"
+    ]
   }
 }
