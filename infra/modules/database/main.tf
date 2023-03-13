@@ -159,7 +159,7 @@ resource "aws_rds_cluster_parameter_group" "rds_query_logging" {
 ################################################################################
 resource "aws_iam_policy" "db_access" {
   name        = "${var.database_name}-db-access"
-  description = "Allows access to the database instance"
+  description = "Allows administration of the database instance"
   policy      = data.aws_iam_policy_document.db_access.json
 }
 
