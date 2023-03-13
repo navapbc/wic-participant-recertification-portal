@@ -20,112 +20,236 @@ resource "aws_iam_group_policy" "wic-prp-eng" {
 
 data "aws_iam_policy_document" "wic-prp-eng" {
   statement {
-    sid    = "GenAcctAccess"
+    sid    = "General"
     effect = "Allow"
     actions = [
-      "cloudtrail:AddTags",
-      "cloudtrail:DescribeTrails",
-      "cloudtrail:ListTags",
-      "cloudtrail:ListTrails",
-      "cloudtrail:LookupEvents",
-      "ec2:DescribeAccountAttributes",
-      "ec2:DescribeRouteTables",
-      "ec2:DescribeSubnets",
-      "ec2:DescribeVpcs",
-      "ecr:DescribeRepositories",
-      "ecs:ListClusters",
-      "ecs:ListServices",
-      "iam:GetAccountPasswordPolicy",
-      "iam:GetAccountSummary",
-      "iam:GetServiceLastAccessedDetails",
-      "iam:ListAccountAliases",
-      "iam:ListGroups",
-      "iam:ListMFADevices",
-      "iam:ListOpenIDConnectProviders",
-      "iam:ListPolicies",
-      "iam:ListRoles",
-      "iam:ListSAMLProviders",
-      "iam:ListUsers",
+      "ec2:Describe*",
+      "ecs:CreateCluster",
+      "ecs:DeregisterTaskDefinition",
+      "ecs:DescribeTaskDefinition",
+      "ecs:RegisterTaskDefinition",
+      "elasticloadbalancing:Describe*",
       "kms:CreateKey",
       "kms:ListAliases",
-      "s3:GetAccountPublicAccessBlock",
-      "s3:ListAccessPoints",
-      "s3:ListAllMyBuckets",
-      "securityhub:DescribeHub",
-      "sts:GetCallerIdentity"
+      "rds:AddTagsToResource",
+      "ssm:DescribeParameters",
+      "sts:GetCallerIdentity",
+      "ssm:ListTagsForResource",
+      "backup-storage:MountCapsule",
     ]
-    resources = ["*"]
+    resources = [
+      "*"
+    ]
   }
   statement {
-    sid       = "EC2Actions"
-    effect    = "Allow"
-    actions   = ["ec2:DescribeVpcAttribute", ]
-    resources = [data.aws_vpc.default.arn]
+    sid    = "Backup"
+    effect = "Allow"
+    actions = [
+      "backup:*",
+    ]
+    resources = [
+      "arn:aws:backup:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*",
+    ]
   }
   statement {
-    sid       = "ECRActions"
-    effect    = "Allow"
-    actions   = ["ecr:ListTagsForResource"]
-    resources = ["arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*"]
+    sid    = "Dynamodb"
+    effect = "Allow"
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:PutItem"
+    ]
+    resources = [
+      "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/*"
+    ]
   }
   statement {
-    sid       = "ECSClusters"
-    effect    = "Allow"
-    actions   = ["ecs:DescribeClusters"]
-    resources = ["arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster/*"]
+    sid    = "EC2"
+    effect = "Allow"
+    actions = [
+      "ec2:*",
+    ]
+    resources = [
+      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:vpc/*",
+      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:security-group/*",
+      "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:security-group-rule/*"
+    ]
   }
   statement {
-    sid       = "ECSServices"
-    effect    = "Allow"
-    actions   = ["ecs:DescribeServices"]
-    resources = ["arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/*/*"]
+    sid    = "ECS"
+    effect = "Allow"
+    actions = [
+      "ecs:CreateService",
+      "ecs:DeleteCluster",
+      "ecs:Describe*",
+      "ecs:UpdateService",
+      "ecs:DeleteService",
+    ]
+    resources = [
+      "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster/*",
+      "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/*"
+    ]
   }
   statement {
-    sid    = "IAMServices"
+    sid    = "ECR"
+    effect = "Allow"
+    actions = [
+      "ecr:Describe*",
+      "ecr:ListTagsForResource",
+    ]
+    resources = [
+      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*",
+    ]
+  }
+  statement {
+    sid    = "ELB"
+    effect = "Allow"
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:CreateListener",
+      "elasticloadbalancing:CreateLoadBalancer",
+      "elasticloadbalancing:CreateRule",
+      "elasticloadbalancing:CreateTargetGroup",
+      "elasticloadbalancing:DeleteRule",
+      "elasticloadbalancing:DeleteListener",
+      "elasticloadbalancing:DeleteLoadBalancer",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:SetSecurityGroups",
+    ]
+    resources = [
+      "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:targetgroup/*",
+      "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:loadbalancer/*",
+      "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:listener/*",
+      "arn:aws:elasticloadbalancing:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:listener-rule/*",
+    ]
+  }
+  statement {
+    sid    = "IAM"
     effect = "Allow"
     actions = [
       "iam:AttachRolePolicy",
       "iam:CreateRole",
-      "iam:CreateServiceLinkedRole",
-      "iam:GenerateServiceLastAccessedDetails",
+      "iam:DeleteRole",
+      "iam:DeleteRolePolicy",
+      "iam:DetachRolePolicy",
       "iam:GetRole",
       "iam:GetRolePolicy",
-      "iam:GetServiceLinkedRoleDeletionStatus",
       "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
       "iam:ListRolePolicies",
-      "iam:PutRolePolicy"
+      "iam:PassRole",
+      "iam:PutRolePolicy",
+      "iam:TagRole",
     ]
-    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/*"]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
+    ]
   }
   statement {
-    sid       = "KMSCreate"
-    effect    = "Allow"
-    actions   = ["kms:CreateAlias"]
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*"]
-  }
-  statement {
-    sid    = "KMSServices"
+    sid    = "IAMPolicy"
     effect = "Allow"
     actions = [
+      "iam:CreatePolicy",
+      "iam:DeletePolicy",
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListPolicyVersions",
+      "iam:TagPolicy",
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/*"
+    ]
+  }
+  statement {
+    sid    = "KMS"
+    effect = "Allow"
+    actions = [
+      "kms:DescribeKey",
       "kms:CreateAlias",
       "kms:Decrypt",
-      "kms:PutKeyPolicy",
-      "kms:TagResource"
     ]
-    resources = ["arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"]
+    resources = [
+      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*",
+      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*",
+    ]
   }
   statement {
-    sid    = "S3SServices"
+    sid    = "Logs"
     effect = "Allow"
     actions = [
-      "s3:CreateBucket",
-      "s3:GetBucketAcl",
-      "s3:GetBucketLocation",
-      "s3:GetBucketPolicyStatus",
-      "s3:GetBucketPublicAccessBlock",
-      "s3:PutBucketPolicy",
-      "s3:PutBucketPublicAccessBlock"
+      "logs:CreateLogGroup",
+      "logs:DeleteLogGroup",
+      "logs:DescribeLogGroups",
+      "logs:ListTagsLogGroup",
+      "logs:PutRetentionPolicy",
+      "logs:TagResource",
     ]
-    resources = ["arn:aws:s3:::*"]
+    resources = [
+      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*",
+    ]
+  }
+  statement {
+    sid    = "RDS"
+    effect = "Allow"
+    actions = [
+      "rds:CreateDBClusterParameterGroup",
+      "rds:DeleteDBCluster",
+      "rds:DeleteDBClusterParameterGroup",
+      "rds:Describe*",
+      "rds:ModifyDBClusterParameterGroup",
+    ]
+    resources = [
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg/*",
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg:*",
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster:*",
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-snapshot:*",
+      "arn:aws:rds::${data.aws_caller_identity.current.account_id}:global-cluster:*"
+    ]
+  }
+  statement {
+    sid    = "RDSCreate"
+    effect = "Allow"
+    actions = [
+      "rds:CreateDBCluster",
+      "rds:CreateDBInstance",
+      "rds:DeleteDBInstance",
+      "rds:DescribeDBInstances",
+      "rds:ListTagsForResource",
+    ]
+    resources = [
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster-pg/*",
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:cluster:*",
+      "arn:aws:rds:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:db:*",
+      "arn:aws:rds::${data.aws_caller_identity.current.account_id}:og:*",
+      "arn:aws:rds::${data.aws_caller_identity.current.account_id}:subgrp:*",
+    ]
+  }
+  statement {
+    sid    = "S3"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket",
+    ]
+    resources = [
+      "arn:aws:s3:::*"
+    ]
+  }
+  statement {
+    sid    = "SSM"
+    effect = "Allow"
+    actions = [
+      "ssm:AddTagsToResource",
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:DeleteParameter",
+      "ssm:PutParameter",
+    ]
+    resources = [
+      "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/metadata/db/*"
+    ]
   }
 }

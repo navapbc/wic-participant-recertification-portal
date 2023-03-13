@@ -25,10 +25,10 @@ terraform {
   # Terraform does not allow interpolation here, values must be hardcoded.
 
   backend "s3" {
-    bucket         = "wic-prp-636249768232-us-west-1-tf-state"
+    bucket         = "wic-prp-636249768232-us-west-2-tf-state"
     dynamodb_table = "wic-prp-tf-state-locks"
     key            = "infra/account.tfstate"
-    region         = "us-west-1"
+    region         = "us-west-2"
     encrypt        = "true"
   }
 
@@ -55,4 +55,7 @@ module "auth_github_actions" {
   github_actions_role_name = module.project_config.github_actions_role_name
   github_repository        = module.project_config.code_repository
 }
-# add iam module here?
+
+module "iam" {
+  source = "../../modules/iam"
+}

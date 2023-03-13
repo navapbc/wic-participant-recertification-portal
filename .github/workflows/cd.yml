@@ -1,13 +1,31 @@
 name: Deploy
 
 on:
-  push:
-    branches: ["main"]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      env_name:
+        description: "env_name input"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+
+env:
+  ENV_NAME: ${{ inputs.env_name || 'dev' }}
+
+# Need to repeat the expression since env.ENV_NAME is not accessible in this context
+concurrency: cd-${{ inputs.env_name || 'dev' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v3
@@ -15,8 +33,15 @@ jobs:
       - name: Build release
         run: make release-build
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          # !! Update the role-to-assume with the GitHub actions role ARN
+          role-to-assume: arn:aws:iam::636249768232:role/wic-prp-github-actions
+          aws-region: us-west-2
+
       - name: Publish release
         run: make release-publish
 
       - name: Deploy release
-        run: make release-deploy
+        run: make release-deploy ENV_NAME="$ENV_NAME"
