@@ -5,20 +5,26 @@ data "aws_vpc" "default" {
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-# References to current users
-resource "aws_iam_group" "team" {
+# Create a user group for engineers managing environments
+resource "aws_iam_group" "wic_prp_eng" {
   name = "wic-prp-eng"
 }
 
-resource "aws_iam_group_policy" "wic-prp-eng" {
-  name   = "wic-prp-eng-policy"
-  group  = aws_iam_group.team.name
-  policy = data.aws_iam_policy_document.wic-prp-eng.json
+# Create a policy with all the permissions necessary to create and destroy a WIC PPR environment
+resource "aws_iam_policy" "manage_wic_prp_env" {
+  name = "manage-wic-prp-env"
+  description = "A policy that supports all permissions necessary to create and destroy a WIC PRP environment"
+  policy = data.aws_iam_policy_document.manage_wic_prp_env.json
 }
 
-# IAM Perms to create application-level infra
+# Attach the manage_wic_prp_env policy to the group
+resource "aws_iam_group_policy_attachment" "manage_wic_prp_env" {
+  group  = aws_iam_group.wic_prp_eng.name
+  policy_arn = aws_iam_policy.manage_wic_prp_env.arn
+}
 
-data "aws_iam_policy_document" "wic-prp-eng" {
+# Define the policy for managing PRP environments
+data "aws_iam_policy_document" "manage_wic_prp_env" {
   statement {
     sid    = "General"
     effect = "Allow"
