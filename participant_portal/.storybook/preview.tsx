@@ -18,11 +18,22 @@ i18next
       en: {
         common: common,
         test: {
+          adjunctive: {
+            label: "Are they enrolled in any of these programs?",
+            programs: [
+              "Medicaid / Healthy Montana Kids Plus",
+              "SNAP (Supplemental Nutrition Assistance Program",
+              "TANF (Temporary Assistance for Needy Families)",
+              "FDPIR (Food Distribution Program on Indian Reservations",
+            ],
+            yes: "Yes",
+            no: "No",
+          },
           dateinput: {
             month: "Month",
             day: "Day",
             year: "Year",
-            hint: "For Example: 4 28 1986",
+            hintMDY: "For Example: 4 28 1986",
             legend: "Date of Birth",
             hintDMY: "For Example: 28 4 1986",
           },
@@ -42,6 +53,18 @@ i18next
             legal: "Legally as it appears on their ID.",
             legend: "Name",
             preferred: "Preferred name (optional)",
+          },
+          participantcard: {
+            header: "Participant",
+            footer: "Add another participant?",
+          },
+          relationship: {
+            label: "Relationship to you",
+            self: "Self",
+            child: "Child",
+            grandchild: "Grandchild",
+            foster: "Foster child",
+            other: "Other",
           },
           textfield: {
             inputbox: "Text input label:",

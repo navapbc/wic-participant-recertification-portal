@@ -11,7 +11,7 @@ const defaultProps: TransLinkProps = {
   i18nLinkKey: "test:translinks.plainStringLinks.links",
 };
 
-export const TransLinksTemplate = {
+const TransLinksTemplate = {
   render: (props: TransLinkProps) => {
     return <TransLinks {...props} />;
   },

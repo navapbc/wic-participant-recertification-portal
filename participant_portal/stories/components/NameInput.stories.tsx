@@ -2,17 +2,13 @@ import { NameInput, NameInputProps } from "app/components/NameInput";
 
 export default {
   component: NameInput,
-  title: "Components/NameInput",
+  title: "Components/Input/NameInput",
 };
 
 const defaultProps: NameInputProps = {
   id: "input-example",
-  firstNameKey: "test:nameinput.firstname",
-  lastNameKey: "test:nameinput.lastname",
-  legalKey: "test:nameinput.legal",
-  legendKey: "test:nameinput.legend",
+  nameKey: "test:nameinput",
   legendStyle: "srOnly",
-  preferredKey: "test:nameinput.preferred",
 };
 
 const NameInputTemplate = {

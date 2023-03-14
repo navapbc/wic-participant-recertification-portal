@@ -1,0 +1,52 @@
+import type { i18nKey, legendStyleType } from "~/types";
+import type { ReactElement } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { ChoiceGroupInput } from "~/components/ChoiceGroupInput";
+import type {
+  Choice,
+  ChoiceGroupInputProps,
+} from "~/components/ChoiceGroupInput";
+
+export type AdjunctiveInputProps = Omit<
+  ChoiceGroupInputProps,
+  "choices" | "type" | "legendKey"
+> & {
+  adjunctiveKey: i18nKey;
+};
+
+export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
+  const { t } = useTranslation();
+
+  const { name, adjunctiveKey, legendStyle, ...rest } = props;
+  const adjunctiveChoices: Choice[] = [
+    {
+      value: "yes",
+      labelElement: <Trans i18nKey={`${adjunctiveKey}.yes`} />,
+    },
+    {
+      value: "no",
+      labelElement: <Trans i18nKey={`${adjunctiveKey}.no`} />,
+    },
+  ];
+  const programList = t(`${adjunctiveKey}.programs`, {
+    returnObjects: true,
+  }) as Array<string>;
+  const helpElement = (
+    <ul>
+      {programList.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  );
+  return (
+    <ChoiceGroupInput
+      choices={adjunctiveChoices}
+      name={name}
+      type="radio"
+      legendKey={`${adjunctiveKey}.label`}
+      legendStyle={legendStyle}
+      helpElement={helpElement}
+      {...rest}
+    />
+  );
+};

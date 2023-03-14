@@ -1,11 +1,11 @@
-import { InputChoiceGroup } from "app/components/InputChoiceGroup";
-import type { InputChoiceGroupProps } from "app/components/InputChoiceGroup";
+import { ChoiceGroupInput } from "~/components/ChoiceGroupInput";
+import type { ChoiceGroupInputProps } from "~/components/ChoiceGroupInput";
 import { Trans } from "react-i18next";
 import { Form } from "@remix-run/react";
 
 export default {
-  component: InputChoiceGroup,
-  title: "Components/InputChoiceGroup",
+  component: ChoiceGroupInput,
+  title: "Components/Input/ChoiceGroupInput",
   argTypes: {
     name: {
       description: "Name for the element",
@@ -38,17 +38,17 @@ export default {
   },
 };
 
-const InputChoiceTemplate = {
-  render: (props: InputChoiceGroupProps) => {
+const ChoiceGroupInputTemplate = {
+  render: (props: ChoiceGroupInputProps) => {
     return (
       <Form>
-        <InputChoiceGroup {...props} />
+        <ChoiceGroupInput {...props} />
       </Form>
     );
   },
 };
 
-const defaultInputChoiceGroupProps = {
+const defaultChoiceGroupInputProps = {
   choices: [
     {
       value: "option1",
@@ -70,18 +70,18 @@ const defaultInputChoiceGroupProps = {
 };
 
 export const RadioGroup = {
-  ...InputChoiceTemplate,
+  ...ChoiceGroupInputTemplate,
   args: {
     name: "input-radio",
-    ...defaultInputChoiceGroupProps,
+    ...defaultChoiceGroupInputProps,
   },
 };
 
 export const RadioGroupLargeLegend = {
-  ...InputChoiceTemplate,
+  ...ChoiceGroupInputTemplate,
   args: {
     name: "input-radio",
-    ...defaultInputChoiceGroupProps,
+    ...defaultChoiceGroupInputProps,
     legendStyle: "large",
   },
 };
@@ -91,9 +91,9 @@ const helpElement = (
 );
 
 export const RadioGroupWithHelpLargeLegend = {
-  ...InputChoiceTemplate,
+  ...ChoiceGroupInputTemplate,
   args: {
-    ...defaultInputChoiceGroupProps,
+    ...defaultChoiceGroupInputProps,
     helpElement: helpElement,
     name: "input-radio-help",
     legendStyle: "large",
@@ -101,18 +101,18 @@ export const RadioGroupWithHelpLargeLegend = {
 };
 
 export const RadioGroupWithHelp = {
-  ...InputChoiceTemplate,
+  ...ChoiceGroupInputTemplate,
   args: {
-    ...defaultInputChoiceGroupProps,
+    ...defaultChoiceGroupInputProps,
     helpElement: helpElement,
     name: "input-radio-help",
   },
 };
 
 export const CheckboxGroup = {
-  ...InputChoiceTemplate,
+  ...ChoiceGroupInputTemplate,
   args: {
-    ...defaultInputChoiceGroupProps,
+    ...defaultChoiceGroupInputProps,
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",
     name: "input-checkbox",
@@ -120,9 +120,9 @@ export const CheckboxGroup = {
 };
 
 export const CheckboxGroupLargeLegend = {
-  ...InputChoiceTemplate,
+  ...ChoiceGroupInputTemplate,
   args: {
-    ...defaultInputChoiceGroupProps,
+    ...defaultChoiceGroupInputProps,
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",
     name: "input-checkbox",
@@ -131,9 +131,9 @@ export const CheckboxGroupLargeLegend = {
 };
 
 export const CheckboxGroupWithHelp = {
-  ...InputChoiceTemplate,
+  ...ChoiceGroupInputTemplate,
   args: {
-    ...defaultInputChoiceGroupProps,
+    ...defaultChoiceGroupInputProps,
     helpElement: helpElement,
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",
@@ -142,9 +142,9 @@ export const CheckboxGroupWithHelp = {
 };
 
 export const CheckboxGroupWithHelpLargeLegend = {
-  ...InputChoiceTemplate,
+  ...ChoiceGroupInputTemplate,
   args: {
-    ...defaultInputChoiceGroupProps,
+    ...defaultChoiceGroupInputProps,
     helpElement: helpElement,
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",

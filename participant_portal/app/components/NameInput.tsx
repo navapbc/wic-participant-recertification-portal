@@ -1,58 +1,54 @@
 import type { ReactElement } from "react";
 import { TextField } from "app/components/TextField";
 import { Fieldset } from "@trussworks/react-uswds";
-import type { i18nKey } from "~/types";
+import type { i18nKey, legendStyleType } from "~/types";
 
 import { Trans, useTranslation } from "react-i18next";
 
 export type NameInputProps = {
   id: string;
-  firstNameKey: i18nKey;
-  lastNameKey: i18nKey;
-  legalKey: i18nKey;
-  legendKey: i18nKey;
-  legendStyle?: "default" | "large" | "srOnly" | undefined;
+  nameKey: i18nKey;
+  legendStyle?: legendStyleType;
+  legal?: boolean;
   preferred?: boolean;
-  preferredKey?: i18nKey;
 };
 
 export const NameInput = (props: NameInputProps): ReactElement => {
   const {
     id,
-    firstNameKey,
-    lastNameKey,
-    legalKey,
-    legendKey,
+    nameKey,
     legendStyle = "srOnly",
     preferred,
-    preferredKey,
+    legal = true,
   } = props;
   const { t } = useTranslation();
-  const hint = (
+  const hint = legal ? (
     <div>
-      <Trans i18nKey={legalKey} />
+      <Trans i18nKey={`${nameKey}.legal`} />
     </div>
+  ) : (
+    <></>
   );
   return (
-    <Fieldset legend={t(legendKey)} legendStyle={legendStyle}>
+    <Fieldset legend={t(`${nameKey}.legend`)} legendStyle={legendStyle}>
       <TextField
-        id={`firstName-${id}`}
-        labelKey={firstNameKey}
+        id={`${id}-firstName`}
+        labelKey={`${nameKey}.firstname`}
         inputType="text"
         hint={hint}
         required={true}
       />
       <TextField
-        id={`lastName-${id}`}
-        labelKey={lastNameKey}
+        id={`${id}-lastName`}
+        labelKey={`${nameKey}.lastname`}
         inputType="text"
         hint={hint}
         required={true}
       />
-      {preferred && preferredKey ? (
+      {preferred && t(`${nameKey}.preferred`) ? (
         <TextField
-          id={`preferred-${id}`}
-          labelKey={preferredKey}
+          id={`${id}-preferredName`}
+          labelKey={t(`${nameKey}.preferred`)}
           inputType="text"
         />
       ) : (

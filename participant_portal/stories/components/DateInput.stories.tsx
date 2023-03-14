@@ -2,16 +2,13 @@ import { DateInput, DateInputProps } from "app/components/DateInput";
 
 export default {
   component: DateInput,
-  title: "Components/DateInput",
+  title: "Components/Input/DateInput",
 };
 
 const defaultProps: DateInputProps = {
   id: "date-example",
   name: "date-example",
-  monthKey: "test:dateinput.month",
-  dayKey: "test:dateinput.day",
-  yearKey: "test:dateinput.year",
-  hintKey: "test:dateinput.hint",
+  dateKey: "test:dateinput",
   legendKey: "test:dateinput.legend",
 };
 
@@ -41,7 +38,6 @@ export const DayMonthYearHint = {
   args: {
     ...defaultProps,
     hint: true,
-    hintKey: "test:dateinput.hintDMY",
     DMYorder: true,
   },
 };

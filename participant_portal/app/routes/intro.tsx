@@ -7,15 +7,15 @@ export default function Index() {
 
   return (
     <div>
-      <h1>{t("Index.title")}</h1>
+      <h1>{t("Intro.title")}</h1>
       <div className="font-sans-lg">
-        <Trans i18nKey="Index.intro" />
+        <Trans i18nKey="Intro.intro" />
       </div>
       <div>
-        <Trans i18nKey="Index.body" />
+        <Trans i18nKey="Intro.body" />
       </div>
       <Button className="display-block margin-top-6" type="button">
-        {t("Index.button")}
+        {t("Intro.button")}
       </Button>
     </div>
   );

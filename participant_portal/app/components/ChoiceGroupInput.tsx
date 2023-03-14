@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { ChangeEvent, ReactElement } from "react";
 import {
   Fieldset,
@@ -9,18 +9,18 @@ import {
 
 import Required from "app/components/Required";
 import { useField } from "remix-validated-form";
-import { i18nKey } from "app/types";
+import { i18nKey, legendStyleType } from "app/types";
 
 export type Choice = {
   value: string;
   labelElement: ReactElement;
 };
 
-export type InputChoiceGroupProps = {
+export type ChoiceGroupInputProps = {
   name: string;
   choices: Choice[];
   legendKey: i18nKey;
-  legendStyle?: "default" | "large" | "srOnly" | undefined;
+  legendStyle?: legendStyleType;
   required?: boolean;
   handleChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   type: "checkbox" | "radio";
@@ -28,8 +28,8 @@ export type InputChoiceGroupProps = {
   helpElement?: ReactElement;
 };
 
-export const InputChoiceGroup = (
-  props: InputChoiceGroupProps
+export const ChoiceGroupInput = (
+  props: ChoiceGroupInputProps
 ): ReactElement => {
   const {
     choices,
@@ -43,14 +43,18 @@ export const InputChoiceGroup = (
   } = props;
   const { getInputProps, error } = useField(name);
   const InputTypeClass = type == "checkbox" ? Checkbox : Radio;
-  const { t } = useTranslation();
   if (!choices?.length) {
     return <></>;
   }
+  const legendElement = (
+    <div>
+      <Trans i18nKey={legendKey} />
+      {required ? <Required /> : ""}
+    </div>
+  );
   return (
     <>
-      <Fieldset legend={t(legendKey)} legendStyle={legendStyle}>
-        {required && <Required />}
+      <Fieldset legend={legendElement} legendStyle={legendStyle}>
         {error && (
           <ErrorMessage id="${titleKey}-error-message">{error}</ErrorMessage>
         )}

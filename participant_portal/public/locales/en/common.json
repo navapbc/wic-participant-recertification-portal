@@ -1,34 +1,58 @@
 {
+  "Count": {
+    "title": "Who in your household is recertifying?",
+    "intro": "We only need to collect information about WIC participants who have a recertification appointment.",
+    "body": "Usually these appointments happen: ",
+    "listItems": [
+      "For a child near their birthday or a year after initial enrollment",
+      "Shortly after giving birth for a parent that received WIC while pregnant."
+    ],
+    "example": "For example, we do not need to collect information about a child who will have their mid-certification appointment, or for a parent who has been breastfeeding or using formula for an infant for the past year.",
+    "householdSize": {
+      "label": "How many people in your household will recertify their WIC benefits at the next appointment?",
+      "button": "Continue"
+    }
+  },
   "Demo": {
     "alertText": "This site is a demonstration project and for example purposes only"
   },
   "Index": {
-    "button": "Open the README",
-    "header": "<strong>Remix</strong> is a framework for server-rendered, fast web applications",
-    "title": "Shoegaze Stack",
-    "subtitle": "A Remix stack for Civic Technology",
-    "subtitle2": "Built on proven technologies, with accessible USWDS styles",
-    "readme": {
-      "header": "Read the README.md to learn more and get started",
-      "description": "<p><strong>This stack is intended to be deployed as a Docker container, connecting to a cloud-hosted Postgres server.</strong></p><p>Testing is done with a combination of Jest and Playwright</p>"
-    },
-    "uswds": {
-      "uswdsHref": "https://designsystem.digital.gov/",
-      "uswdsAlt": "US Web Design System Logo",
-      "header": "<strong>USWDS</strong>: <br/> The design system for the US Federal Government",
-      "description": "Responsive design, accessible styles, patterns, and components"
-    },
-    "technologies": {
-      "title": "Stack Technologies",
-      "subtitle": "Accessible, Flexible, Open Source"
-    }
+    "title": "Title",
+    "intro": "<strong>Remix</strong> is a framework for server-rendered, fast web applications",
+    "body": "<p>This is an introductory paragraph</p><p>There will be useful information here</p>",
+    "button": "Call to Action"
+  },
+  "Intro": {
+    "title": "Title",
+    "intro": "Blue mountain, grinder fair trade, coffee et strong bar  roast pumpkin spice robust siphon french press. White as, coffee macchiato spoon coffee crema single shot lungo seasonal latte. Id cortado, breve, carajillo, macchiato blue mountain so a cream. Caramelization, foam shop, spoon cappuccino at galão café au lait. Crema, cream viennese body turkish instant plunger pot that trifecta.    ",
+    "body": "Aged, a acerbic viennese aroma, black crema milk french press cup aftertaste. Java, milk fair trade café au lait skinny, dripper breve in roast aftertaste sweet. Cappuccino froth, fair trade affogato saucer dark sugar. Crema wings half and half, cultivar bar  et single origin, doppio blue mountain sweet extra  saucer. Cup roast beans, cream cultivar instant as percolator cultivar trifecta.",
+    "button": "Do the thing!"
   },
   "Layout": {
-    "footer": {
-      "links": ["https://remix.run"],
-      "text": "For more information, read the <0>Remix Run Documentation</0>"
+    "footer1": {
+      "links": ["https://dphhs.mt.gov/ecfsd/wic/index"],
+      "text": "This site is built in partnership with <0>Montana WIC</0>"
     },
-    "header": "Shoegaze Stack"
+    "footer2": {
+      "links": [
+        "https://www.fns.usda.gov/civil-rights/usda-nondiscrimination-statement-other-fns-programs"
+      ],
+      "text": "This institution is an equal opportunity provider. <0>USDA Non-Discrimination Statement</0>"
+    },
+    "header": "Montana WIC<br />Recertification Portal"
+  },
+  "Name": {
+    "title": "What's your name?",
+    "intro": "Why are we asking this?",
+    "body": "Staff collect the information for authorized representatives and check to make sure the authorized representative is on the child's chart",
+    "button": "Continue"
+  },
+  "NameInput": {
+    "firstname": "First name",
+    "lastname": "Last name",
+    "legal": "Legally as it appears on their ID.",
+    "legend": "What's your name?",
+    "preferred": "Preferred name (optional)"
   },
   "routingError": "Some required responses are missing. Please go back through the form and answer all required questions."
 }

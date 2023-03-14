@@ -2,7 +2,7 @@ import { TextField, TextFieldProps } from "app/components/TextField";
 
 export default {
   component: TextField,
-  title: "Components/TextField",
+  title: "Components/Input/TextField",
 };
 
 const defaultProps: TextFieldProps = {

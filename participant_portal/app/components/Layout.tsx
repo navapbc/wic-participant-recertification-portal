@@ -1,6 +1,14 @@
 import { Trans } from "react-i18next";
 import type { ReactElement } from "react";
-import { Alert, Title, Header, Footer } from "@trussworks/react-uswds";
+import {
+  Alert,
+  Title,
+  Header,
+  Footer,
+  GridContainer,
+  Grid,
+} from "@trussworks/react-uswds";
+import { Image } from "remix-image";
 import TransLinks from "./TransLinks";
 
 export type LayoutProps = {
@@ -23,15 +31,15 @@ const Layout = ({
       ) : (
         ""
       )}
-      <Header extended>
+      <header className="header usa-header usa-header--basic" role="banner">
         <div className="usa-navbar">
-          <Title id="extended-logo">
-            <em className="usa-logo__text text-primary-darker">
+          <Title id="extended-logo" className="usa-logo margin-left-2">
+            <em className="usa-logo__text">
               <Trans i18nKey="Layout.header" />
             </em>
           </Title>
         </div>
-      </Header>
+      </header>
       <main className="main">
         <div className="grid-row">
           <div className="desktop:grid-col-8 padding-2 padding-bottom-8">
@@ -47,20 +55,47 @@ const Layout = ({
             ) : (
               ""
             )}
+            {children}
           </div>
         </div>
-        {children}
       </main>
-      <Footer
-        size="slim"
-        primary=""
-        secondary={
-          <TransLinks
-            i18nTextKey="Layout.footer.text"
-            i18nLinkKey="Layout.footer.links"
-          />
-        }
-      />
+      <footer className="footer usa-footer usa-footer--slim">
+        <div className="usa-footer__primary-section">
+          <Grid row>
+            <div className="desktop:grid-col-8 padding-2">
+              <div className="logos">
+                <Image
+                  src="/img/wic-logo.svg"
+                  alt="WIC logo"
+                  width={64.52}
+                  height={32}
+                />
+
+                <Image
+                  src="/img/montana-logo.svg"
+                  alt="Montana DPHHS logo"
+                  width={46.22}
+                  height={32}
+                />
+              </div>
+              <div className="font-body-3xs">
+                <p>
+                  <TransLinks
+                    i18nTextKey="Layout.footer1.text"
+                    i18nLinkKey="Layout.footer1.links"
+                  />
+                </p>
+                <p>
+                  <TransLinks
+                    i18nTextKey="Layout.footer2.text"
+                    i18nLinkKey="Layout.footer2.links"
+                  />
+                </p>{" "}
+              </div>
+            </div>
+          </Grid>
+        </div>
+      </footer>
     </div>
   );
 };
