@@ -1,15 +1,11 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
-data "aws_ecr_repository" "app" {
-  name = var.image_repository_name
-}
-
 
 locals {
   alb_name                = var.service_name
   log_group_name          = "service/${var.service_name}"
   task_executor_role_name = "${var.service_name}-task-executor"
-  image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"
+  image_url               = "${var.image_repository_url}:${var.image_tag}"
 }
 
 ###################
@@ -232,7 +228,7 @@ data "aws_iam_policy_document" "task_executor" {
       "ecr:BatchGetImage",
       "ecr:GetDownloadUrlForLayer",
     ]
-    resources = [data.aws_ecr_repository.app.arn]
+    resources = [var.image_repository_arn]
   }
 }
 
