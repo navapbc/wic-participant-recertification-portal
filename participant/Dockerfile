@@ -27,7 +27,7 @@ CMD ["npm", "run", "dev:docker"]
 # -------- Image: build -------- #
 # Build the app
 FROM base as build
-COPY --from=deps /home/node/remix/node_modules /home/node/remix/node_modules
+COPY --from=deps /home/node/remix/node_modules ./node_modules
 COPY --chown=node:node prisma .
 RUN npx prisma generate
 COPY --chown=node:node . .
@@ -38,7 +38,7 @@ RUN npm run build
 # Setup production node_modules
 FROM base as production-deps
 ENV NODE_ENV production
-COPY --from=deps /home/node/remix/node_modules /home/node/remix/node_modules
+COPY --from=deps /home/node/remix/node_modules ./node_modules
 COPY --chown=node:node package.json package-lock.json ./
 RUN npm prune --production
 
@@ -47,10 +47,10 @@ RUN npm prune --production
 FROM base as prod
 ENV NODE_ENV production
 USER node
-COPY --from=production-deps /home/node/remix/node_modules /home/node/remix/node_modules
-COPY --from=build /home/node/remix/node_modules/.prisma /home/node/remix/node_modules/.prisma
-COPY --from=build /home/node/remix/build /home/node/remix/build
-COPY --from=build /home/node/remix/styles/styles.* /home/node/remix/styles/
-COPY --from=build /home/node/remix/public/build /home/node/remix/public/build
+COPY --from=production-deps /home/node/remix/node_modules ./node_modules
+COPY --from=build /home/node/remix/node_modules/.prisma ./node_modules/.prisma
+COPY --from=build /home/node/remix/build ./build
+COPY --from=build /home/node/remix/styles/styles.* ./styles/
+COPY --from=build /home/node/remix/public/build ./public/build
 COPY --chown=node:node . .
 CMD ["/home/node/remix/bin/prod-start.sh"]
