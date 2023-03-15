@@ -6,7 +6,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - participant_portal/**
+      - participant/**
       - .github/workflows/cd-storybook.yml
 
   # Allows you to run this workflow manually from the Actions tab
@@ -43,18 +43,18 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
-          working-directory: ./participant_portal
+          working-directory: ./participant
 
       - name: 🖼 Build CSS
-        run: npm  --prefix participant_portal run css
+        run: npm  --prefix participant run css
 
       - name: 🏗️ Build Storybook
-        run: BASE_PATH=${{ steps.pages_config.outputs.base_path }} npm --prefix=./participant_portal run storybook:build
+        run: BASE_PATH=${{ steps.pages_config.outputs.base_path }} npm --prefix=./participant run storybook:build
 
       - name: ⬆ Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./participant_portal/storybook-static
+          path: ./participant/storybook-static
 
   deploy:
     environment:

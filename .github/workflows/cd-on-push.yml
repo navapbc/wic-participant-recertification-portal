@@ -17,13 +17,13 @@ jobs:
         with:
           fetch-depth: 2  # To retrieve the preceding commit
 
-      - name: 🗂 Get modified files in the participant_portal folder
+      - name: 🗂 Get modified files in the participant folder
         id: modified-files-participant
         uses: tj-actions/changed-files@v35
         with:
-          files: participant_portal
+          files: participant
 
-      - name: 📋 List participant_portal files that have been modified
+      - name: 📋 List participant files that have been modified
         run: |
           echo "List all the files that have been modified: ${{ steps.modified-files-participant.outputs.all_modified_files }}"
 
@@ -34,7 +34,7 @@ jobs:
     if: ${{ needs.check_participant.outputs.has_modified  == 'true'}}
     uses: ./.github/workflows/cd.yml
     with:
-      app_name: participant_portal
+      app_name: participant
 
   check_staff:
     name: 🔎 Check staff
