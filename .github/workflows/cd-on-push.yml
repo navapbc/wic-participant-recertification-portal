@@ -3,7 +3,7 @@ name: 👉 Deploy on push
 on:
   # !! Uncomment the following lines once you've set up the dev environment and ready to turn on continuous deployment
   push:
-    branches: ["main", "PRP-166-cd-connect-the-infrastructure"]
+    branches: ["main", "PRP-166-redo"]
 
 jobs:
   check_participant:
