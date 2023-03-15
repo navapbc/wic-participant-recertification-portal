@@ -47,7 +47,7 @@ resource "aws_s3_bucket" "tf_state" {
   bucket = local.tf_state_bucket_name
 
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
-  # checkov:skip=CKV2_AWS_61:This S3 bucket has a lifecycle policy and checkov still fails
+  # checkov:skip=CKV2_AWS_61:This S3 bucket should not transition objects to another storage class or expire objects.
 
   # Prevent accidental destruction a developer executing terraform destory in the wrong directory. Contains terraform state files.
   lifecycle {
@@ -129,7 +129,6 @@ resource "aws_s3_bucket" "tf_log" {
   bucket = local.tf_logs_bucket_name
 
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
-  # checkov:skip=CKV2_AWS_61:This S3 bucket does not need a lifecycle policy
 }
 
 resource "aws_s3_bucket_versioning" "tf_log" {
