@@ -23,7 +23,7 @@ CLUSTER_NAME=$(terraform -chdir=infra/$INFRA_APP_NAME/envs/$ENV_NAME output -raw
 # Set env vars to output the arguments that are needed for:
 # - aws-actions/amazon-ecs-render-task-definition
 # - aws-actions/amazon-ecs-deploy-task-definition
-echo "ecs_task_definition=infra/$INFRA_APP_NAME/modules/service/container-definitions.json.tftpl" >> $GITHUB_OUTPUT
+echo "ecs_task_definition=infra/modules/service/container-definitions.json.tftpl" >> $GITHUB_OUTPUT
 echo "container_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
 echo "image=$IMAGE_REPOSITORY_URL:$IMAGE_TAG" >> $GITHUB_OUTPUT
 echo "service_name=$SERVICE_NAME" >> $GITHUB_OUTPUT
