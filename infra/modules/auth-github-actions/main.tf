@@ -58,6 +58,16 @@ data "aws_iam_policy_document" "deploy" {
       "arn:aws:s3:::*",
     ]
   }
+  # Required to download the ECS task definition
+  statement {
+    sid    = "DescribeECSTaskDefinition"
+    effect = "Allow"
+    actions = [
+      "ecs:DescribeTaskDefinition",
+    ]
+    resources = ["*"]
+  }
+
   # Required to register a new ECS task definition and deploy it
   statement {
     sid    = "RegisterTaskDefinition"
