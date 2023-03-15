@@ -47,13 +47,13 @@ jobs:
         with:
           fetch-depth: 2  # To retrieve the preceding commit
 
-      - name: 🗂 Get modified files in the staff_portal folder
+      - name: 🗂 Get modified files in the staff folder
         id: modified-files-staff
         uses: tj-actions/changed-files@v35
         with:
-          files: staff_portal
+          files: staff
 
-      - name: 📋 List staff_portal files that have been modified
+      - name: 📋 List staff files that have been modified
         run: |
           echo "List all the files that have been modified: ${{ steps.modified-files-staff.outputs.all_modified_files }}"
 
@@ -64,7 +64,7 @@ jobs:
     if: ${{ needs.check_staff.outputs.has_modified  == 'true'}}
     uses: ./.github/workflows/cd.yml
     with:
-      app_name: staff_portal
+      app_name: staff
 
   check_analytics:
     name: 🔎 Check analytics

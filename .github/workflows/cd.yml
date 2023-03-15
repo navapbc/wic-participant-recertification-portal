@@ -19,7 +19,7 @@ on:
         type: choice
         options:
           - participant
-          - staff_portal
+          - staff
           - analytics
   # Designate this as a reusable workflow.
   # When used as a reusable workflow, this always deploys to the dev environment.
