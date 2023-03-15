@@ -10,7 +10,8 @@ INFRA_APP_NAME=$4
 terraform -chdir=infra/$INFRA_APP_NAME/build-repository init
 REGION=$(terraform -chdir=infra/$INFRA_APP_NAME/build-repository output -raw region)
 IMAGE_REGISTRY=$(terraform -chdir=infra/$INFRA_APP_NAME/build-repository output -raw image_registry)
-IMAGE_REPOSITORY_URL=$(terraform -chdir=infra/$INFRA_APP_NAME/build-repository output -raw image_repository_url)
+IMAGE_REPOSITORY_URL=$(terraform -chdir=infra/$INFRA_APP_NAME/build-repository output -raw "${APP_NAME}_image_repository_url")
+
 
 echo "--------------------------"
 echo "Publish release parameters"
