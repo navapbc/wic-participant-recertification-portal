@@ -29,8 +29,8 @@ COPY --from=deps /srv/node_modules /srv/node_modules
 COPY prisma .
 RUN npx prisma generate
 COPY . .
-RUN npm run build
 RUN npm run css
+RUN npm run build
 
 # -------- Image: test -------- #
 # Provide a test image
