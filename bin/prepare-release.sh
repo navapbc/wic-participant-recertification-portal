@@ -12,7 +12,7 @@ terraform -chdir=infra/$INFRA_APP_NAME/build-repository init
 IMAGE_REPOSITORY_URL=$(terraform -chdir=infra/$INFRA_APP_NAME/build-repository output -raw "${APP_NAME}_image_repository_url")
 
 terraform -chdir=infra/$INFRA_APP_NAME/envs/$ENV_NAME init
-SERVICE_NAME=$(terraform -chdir=infra/$INFRA_APP_NAME/envs/$ENV_NAME output -raw "{$APP_NAME}_service_name")
+SERVICE_NAME=$(terraform -chdir=infra/$INFRA_APP_NAME/envs/$ENV_NAME output -raw "${APP_NAME}_service_name")
 CLUSTER_NAME=$(terraform -chdir=infra/$INFRA_APP_NAME/envs/$ENV_NAME output -raw cluster_name)
 
 # Set env vars to output the arguments that are needed for:
