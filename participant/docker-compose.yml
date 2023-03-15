@@ -31,9 +31,9 @@ services:
       - "6066:6006"
     volumes:
       # Mount the app directory for faster local development.
-      - ./:/srv
+      - ./:/home/node/remix
       # Use a named volume for the node_modules so that the container uses the guest machine's node_modules dir instead of the host machine's node_modules directory, which might be divergent.
-      - remix_dev_nodemodules:/srv/node_modules
+      - remix_dev_nodemodules:/home/node/remix/node_modules
 
   remix_prod:
     build:
