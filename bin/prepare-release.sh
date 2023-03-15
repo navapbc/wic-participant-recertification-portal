@@ -1,4 +1,5 @@
 #!/bin/bash
+# Note: This script only works in a Github Action due using $GITHUB_OUTPUT
 set -euo pipefail
 
 PROJECT_NAME=$1
