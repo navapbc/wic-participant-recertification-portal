@@ -53,4 +53,5 @@ COPY --from=build /home/node/remix/build ./build
 COPY --from=build /home/node/remix/styles/styles.* ./styles/
 COPY --from=build /home/node/remix/public/build ./public/build
 COPY --chown=node:node . .
+RUN mkdir -p /home/node/.npm
 CMD ["/home/node/remix/bin/prod-start.sh"]
