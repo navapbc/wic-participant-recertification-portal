@@ -205,14 +205,14 @@ data "aws_iam_policy_document" "ecs_assume_task_executor_role" {
 }
 
 resource "aws_iam_policy" "task_executor" {
-  name   = "${var.service_name}-task-executor-role-policy"
+  name        = "${var.service_name}-task-executor-role-policy"
   description = "A policy for ECS task execution"
-  policy = data.aws_iam_policy_document.task_executor.json
+  policy      = data.aws_iam_policy_document.task_executor.json
 }
 
 # Link access policies to the ECS task execution role.
 resource "aws_iam_role_policy_attachment" "task_executor" {
-  role   = aws_iam_role.task_executor.name
+  role       = aws_iam_role.task_executor.name
   policy_arn = aws_iam_policy.task_executor.arn
 }
 

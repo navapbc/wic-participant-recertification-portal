@@ -12,13 +12,13 @@ data "aws_subnets" "default" {
 }
 
 locals {
-  project_name  = module.project_config.project_name
-  app_name      = module.app_config.app_name
-  database_name = "${local.project_name}-${local.app_name}-${var.environment_name}"
-  cluster_name  = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  project_name             = module.project_config.project_name
+  app_name                 = module.app_config.app_name
+  database_name            = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  cluster_name             = "${local.project_name}-${local.app_name}-${var.environment_name}"
   participant_service_name = "${local.project_name}-participant-${var.environment_name}"
-  staff_service_name = "${local.project_name}-staff-${var.environment_name}"
-  analytics_service_name = "${local.project_name}-analytics-${var.environment_name}"
+  staff_service_name       = "${local.project_name}-staff-${var.environment_name}"
+  analytics_service_name   = "${local.project_name}-analytics-${var.environment_name}"
 }
 
 module "project_config" {
@@ -57,34 +57,34 @@ module "service_cluster" {
 }
 
 module "participant" {
-  source                = "../../modules/service"
-  service_name          = local.participant_service_name
+  source               = "../../modules/service"
+  service_name         = local.participant_service_name
   image_repository_url = data.aws_ecr_repository.participant_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.participant_image_repository.arn
-  image_tag             = var.image_tag
-  vpc_id                = data.aws_vpc.default.id
-  subnet_ids            = data.aws_subnets.default.ids
-  service_cluster_arn   = module.service_cluster.service_cluster_arn
+  image_tag            = var.image_tag
+  vpc_id               = data.aws_vpc.default.id
+  subnet_ids           = data.aws_subnets.default.ids
+  service_cluster_arn  = module.service_cluster.service_cluster_arn
 }
 
 module "staff" {
-  source                = "../../modules/service"
-  service_name          = local.staff_service_name
+  source               = "../../modules/service"
+  service_name         = local.staff_service_name
   image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
-  image_tag             = var.image_tag
-  vpc_id                = data.aws_vpc.default.id
-  subnet_ids            = data.aws_subnets.default.ids
-  service_cluster_arn   = module.service_cluster.service_cluster_arn
+  image_tag            = var.image_tag
+  vpc_id               = data.aws_vpc.default.id
+  subnet_ids           = data.aws_subnets.default.ids
+  service_cluster_arn  = module.service_cluster.service_cluster_arn
 }
 
 module "analytics" {
-  source                = "../../modules/service"
-  service_name          = local.analytics_service_name
+  source               = "../../modules/service"
+  service_name         = local.analytics_service_name
   image_repository_url = data.aws_ecr_repository.analytics_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.analytics_image_repository.arn
-  image_tag             = var.image_tag
-  vpc_id                = data.aws_vpc.default.id
-  subnet_ids            = data.aws_subnets.default.ids
-  service_cluster_arn   = module.service_cluster.service_cluster_arn
+  image_tag            = var.image_tag
+  vpc_id               = data.aws_vpc.default.id
+  subnet_ids           = data.aws_subnets.default.ids
+  service_cluster_arn  = module.service_cluster.service_cluster_arn
 }
