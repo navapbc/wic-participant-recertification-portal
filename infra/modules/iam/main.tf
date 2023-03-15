@@ -258,27 +258,6 @@ data "aws_iam_policy_document" "manage_wic_prp_env" {
       "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/metadata/db/*"
     ]
   }
-  # Additional permissions to manage ECR
-  statement {
-    sid = "ECRManage"
-    effect = "Allow"
-    actions = [
-      "kms:ListResourceTags",
-      "kms:TagResource",
-      "kms:EnableKeyRotation",
-      "kms:GetKeyPolicy",
-      "kms:GetKeyRotationStatus",
-      "kms:ScheduleKeyDeletion",
-      "kms:CreateGrant",
-      "ecr:CreateRepository",
-      "ecr:TagResource",
-    ]
-    resources = [
-      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/*",
-      "arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:alias/*",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/*",
-    ]
-  }
 }
 
 # Attach the managed AWS IAMUserChangePassword policy to the wic-prp-eng group
