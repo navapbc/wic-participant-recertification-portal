@@ -49,24 +49,24 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
-      - name: Build release
+      - name: 🔨 Build release
         run: make release-build APP_NAME=$APP_NAME
 
-      - name: Configure AWS credentials
+      - name: 🗝 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           # !! Update the role-to-assume with the GitHub actions role ARN
           role-to-assume: arn:aws:iam::636249768232:role/wic-prp-github-actions
           aws-region: us-west-2
 
-      - name: Publish release
+      - name: 📩 Publish release
         run: make release-publish APP_NAME=$APP_NAME
 
-      - name: Prepare for release by gathering outputs to pass to aws-actions steps
+      - name: 💾 Prepare for release by gathering outputs to pass to aws-actions steps
         id: prepare-release
         run: make prepare-release ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME >> $GITHUB_OUTPUT
 
-      - name: Fill in the new image ID in the Amazon ECS task definition
+      - name: ✏️ Fill in the new image ID in the Amazon ECS task definition
         id: render-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
@@ -74,7 +74,7 @@ jobs:
           container-name: ${{ steps.prepare-release.container_name }}
           image: ${{ steps.prepare-release.image }}
 
-      - name: Deploy Amazon ECS task definition
+      - name: 📬 Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
