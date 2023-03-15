@@ -72,8 +72,8 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ steps.prepare-release.outputs.ecs_task_definition }}
-          container-name: ${{ steps.prepare-release.container_name }}
-          image: ${{ steps.prepare-release.image }}
+          container-name: ${{ steps.prepare-release.outputs.container_name }}
+          image: ${{ steps.prepare-release.outputs.image }}
 
       - name: 📬 Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
