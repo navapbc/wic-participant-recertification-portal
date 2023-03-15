@@ -64,7 +64,7 @@ jobs:
 
       - name: 💾 Prepare for release by gathering outputs to pass to aws-actions steps
         id: prepare-release
-        run: make prepare-release ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME >> $GITHUB_OUTPUT
+        run: make release-prepare ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME >> $GITHUB_OUTPUT
 
       - name: ✏️ Fill in the new image ID in the Amazon ECS task definition
         id: render-task-definition
