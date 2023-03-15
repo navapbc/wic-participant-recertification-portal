@@ -15,10 +15,10 @@ on:
       app_name:
         description: "The app to deploy"
         required: true
-        default: "participant_portal"
+        default: "participant"
         type: choice
         options:
-          - participant_portal
+          - participant
           - staff_portal
           - analytics
   # Designate this as a reusable workflow.
@@ -32,10 +32,10 @@ on:
 
 env:
   ENV_NAME: ${{ inputs.env_name || 'dev' }}
-  APP_NAME: ${{ inputs.app_name || 'participant_portal' }}
+  APP_NAME: ${{ inputs.app_name || 'participant' }}
 
 # Need to repeat the expression since env.WHATEVER is not accessible in this context
-concurrency: cd-${{ inputs.env_name || 'dev' }}-${{ inputs.app_name || 'participant_portal' }}
+concurrency: cd-${{ inputs.env_name || 'dev' }}-${{ inputs.app_name || 'participant' }}
 
 jobs:
   deploy:
