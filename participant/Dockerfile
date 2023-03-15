@@ -7,7 +7,7 @@ RUN apt-get update \
   openssl
 # Set working directory and node user
 WORKDIR /home/node/remix
-RUN chown node:node /home/node/remix
+RUN chown -R node:node /home/node
 
 # -------- Image: deps -------- #
 # Install all node_modules, including dev dependencies
