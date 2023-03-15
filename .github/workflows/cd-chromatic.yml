@@ -43,7 +43,7 @@ jobs:
 
   pull_request_comment:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
+    if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
     needs: chromatic-deployment
     steps:
       - name: 🎯 Post link to build on PR
