@@ -33,6 +33,7 @@ on:
 env:
   ENV_NAME: ${{ inputs.env_name || 'dev' }}
   APP_NAME: ${{ inputs.app_name || 'participant' }}
+  PROJECT_NAME: 'wic-prp'
 
 # Need to repeat the expression since env.WHATEVER is not accessible in this context
 concurrency: cd-${{ inputs.env_name || 'dev' }}-${{ inputs.app_name || 'participant' }}
@@ -50,7 +51,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 🔨 Build release
-        run: make release-build APP_NAME=$APP_NAME
+        run: make release-build PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME
 
       - name: 🗝 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -60,11 +61,11 @@ jobs:
           aws-region: us-west-2
 
       - name: 📩 Publish release
-        run: make release-publish APP_NAME=$APP_NAME
+        run: make release-publish PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME
 
       - name: 💾 Prepare for release by gathering outputs to pass to aws-actions steps
         id: prepare-release
-        run: make release-prepare ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME >> $GITHUB_OUTPUT
+        run: make release-prepare PROJECT_NAME=$PROJECT_NAME ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME >> $GITHUB_OUTPUT
 
       - name: ✏️ Fill in the new image ID in the Amazon ECS task definition
         id: render-task-definition
