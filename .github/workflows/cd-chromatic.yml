@@ -41,14 +41,10 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: participant_portal
 
-  pull_request_comment:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
-    needs: chromatic-deployment
-    steps:
       - name: 🎯 Post link to build on PR
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            Chromatic_Build : Link to latest build in Chromatic 🌈 ${{ needs.chromatic-deployment.outputs.buildUrl }})
+            Chromatic_Build : Link to [latest build](${{ steps.publish.outputs.buildUrl }}) in Chromatic 🌈
           comment_tag: "Chromatic_Build"
+
