@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import type { i18nKey, legendStyleType } from "~/types";
 
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import {
   Card,
   CardHeader,
@@ -55,7 +55,6 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     participantKey,
     relationshipKey,
   } = props;
-  const { t } = useTranslation();
 
   const nameProps: NameInputProps = {
     id: `participant-${index}`,
@@ -84,7 +83,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
       <CardHeader>
         <div className={participantHeaderClassName}>
           <strong>
-            <Trans i18nKey={`${participantKey}.header`} /> {index}
+            <Trans i18nKey={`${participantKey}.cardHeader`} /> {index}
           </strong>
         </div>
       </CardHeader>
@@ -100,7 +99,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
       </CardBody>
       <CardFooter>
         {" "}
-        <Trans i18nKey={`${participantKey}.footer`} />
+        <Trans i18nKey={`${participantKey}.cardFooter`} />
       </CardFooter>
     </Card>
   );

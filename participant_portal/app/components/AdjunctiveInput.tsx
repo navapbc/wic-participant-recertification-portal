@@ -1,4 +1,4 @@
-import type { i18nKey, legendStyleType } from "~/types";
+import type { i18nKey } from "~/types";
 import type { ReactElement } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { ChoiceGroupInput } from "~/components/ChoiceGroupInput";
@@ -28,13 +28,14 @@ export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
       labelElement: <Trans i18nKey={`${adjunctiveKey}.no`} />,
     },
   ];
+  // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion
   const programList = t(`${adjunctiveKey}.programs`, {
     returnObjects: true,
   }) as Array<string>;
   const helpElement = (
     <ul>
       {programList.map((item) => (
-        <li>{item}</li>
+        <li key={item}>{item}</li>
       ))}
     </ul>
   );

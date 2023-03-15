@@ -23,6 +23,9 @@ module.exports = {
       files: ["tests/**"],
       plugins: ["jest"],
       extends: ["plugin:jest/recommended"],
+      rules: {
+        "jest/valid-expect": "off",
+      },
     },
     // Lint config specific to TypeScript files
     {

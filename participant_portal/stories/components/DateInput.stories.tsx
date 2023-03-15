@@ -1,4 +1,5 @@
-import { DateInput, DateInputProps } from "app/components/DateInput";
+import { DateInput } from "app/components/DateInput";
+import type { DateInputProps } from "app/components/DateInput";
 
 export default {
   component: DateInput,

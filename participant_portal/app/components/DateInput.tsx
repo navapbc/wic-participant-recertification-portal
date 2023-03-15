@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import {
-  DateInput as USWDS_DateInput,
+  DateInput as USWDSDateInput,
   Fieldset,
   DateInputGroup,
 } from "@trussworks/react-uswds";
@@ -44,7 +44,7 @@ export const DateInput = (props: DateInputProps): ReactElement => {
   const orderedDateFields = orderedFields.map((field: DateFieldTypes) => {
     const len = field == "year" ? 4 : 2;
     return (
-      <USWDS_DateInput
+      <USWDSDateInput
         id={`${id}-${field}`}
         key={`${id}-${field}`}
         label={t(`${dateKey}.${field}`)}

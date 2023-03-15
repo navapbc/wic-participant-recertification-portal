@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the default date component 1`] = `
+<div>
+  <fieldset
+    class="usa-fieldset"
+    data-testid="fieldset"
+  >
+    <legend
+      class="usa-legend"
+    >
+      Date of Birth
+    </legend>
+    <div
+      class="usa-memorable-date"
+      data-testid="dateInputGroup"
+    >
+      <div
+        class="usa-form-group usa-form-group--month"
+        data-testid="formGroup"
+      >
+        <label
+          class="usa-label"
+          data-testid="label"
+          for="date-example-month"
+        >
+          Month
+        </label>
+        <input
+          class="usa-input"
+          data-testid="textInput"
+          id="date-example-month"
+          inputmode="numeric"
+          maxlength="2"
+          minlength="2"
+          name="date-example-month"
+          pattern="[0-9]*"
+          type="text"
+        />
+      </div>
+      <div
+        class="usa-form-group usa-form-group--day"
+        data-testid="formGroup"
+      >
+        <label
+          class="usa-label"
+          data-testid="label"
+          for="date-example-day"
+        >
+          Day
+        </label>
+        <input
+          class="usa-input"
+          data-testid="textInput"
+          id="date-example-day"
+          inputmode="numeric"
+          maxlength="2"
+          minlength="2"
+          name="date-example-day"
+          pattern="[0-9]*"
+          type="text"
+        />
+      </div>
+      <div
+        class="usa-form-group usa-form-group--year"
+        data-testid="formGroup"
+      >
+        <label
+          class="usa-label"
+          data-testid="label"
+          for="date-example-year"
+        >
+          Year
+        </label>
+        <input
+          class="usa-input"
+          data-testid="textInput"
+          id="date-example-year"
+          inputmode="numeric"
+          maxlength="4"
+          minlength="4"
+          name="date-example-year"
+          pattern="[0-9]*"
+          type="text"
+        />
+      </div>
+    </div>
+  </fieldset>
+</div>
+`;

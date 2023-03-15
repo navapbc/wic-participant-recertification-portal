@@ -17,11 +17,11 @@ const RelationshipInputTemplate = {
   },
 };
 
-const defaultRelationshipInputProps = {
+const defaultRelationshipInputProps: Omit<RelationshipInputProps, "name"> = {
   relationshipKey: "test:relationship",
   required: false,
   legendKey: "test:relationship.label",
-  legendStyle: "",
+  legendStyle: "default",
 };
 
 export const Default = {

@@ -1,13 +1,6 @@
 import { Trans } from "react-i18next";
 import type { ReactElement } from "react";
-import {
-  Alert,
-  Title,
-  Header,
-  Footer,
-  GridContainer,
-  Grid,
-} from "@trussworks/react-uswds";
+import { Alert, Title, Grid } from "@trussworks/react-uswds";
 import { Image } from "remix-image";
 import TransLinks from "./TransLinks";
 

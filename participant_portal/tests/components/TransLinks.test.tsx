@@ -8,8 +8,8 @@ const beta = "/relative/link";
 it("should render a string with one internal link and no styles", () => {
   renderWithRouter(
     <TransLinks
-      i18nTextKey="test:transLine.plainStringOneLink.text"
-      i18nLinkKey="test:transLine.plainStringOneLink.links"
+      i18nTextKey="test:translinks.plainStringLinks.text"
+      i18nLinkKey="test:translinks.plainStringLinks.links"
     />
   );
   expect(
@@ -20,8 +20,8 @@ it("should render a string with one internal link and no styles", () => {
 it("should render a string with multiple links and no styles", () => {
   renderWithRouter(
     <TransLinks
-      i18nTextKey="test:transLine.plainStringLinks.text"
-      i18nLinkKey="test:transLine.plainStringLinks.links"
+      i18nTextKey="test:translinks.plainStringLinks.text"
+      i18nLinkKey="test:translinks.plainStringLinks.links"
     />
   );
   expect(
@@ -35,8 +35,8 @@ it("should render a string with multiple links and no styles", () => {
 it("should render a string with multiple internal links reused links and out of order", () => {
   renderWithRouter(
     <TransLinks
-      i18nTextKey="test:transLine.plainStringLinksComplicated.text"
-      i18nLinkKey="test:transLine.plainStringLinksComplicated.links"
+      i18nTextKey="test:translinks.plainStringLinksComplicated.text"
+      i18nLinkKey="test:translinks.plainStringLinksComplicated.links"
     />
   );
   expect(
@@ -56,8 +56,8 @@ it("should render a string with multiple internal links reused links and out of 
 it("should render a string with one internal link and styles", () => {
   renderWithRouter(
     <TransLinks
-      i18nTextKey="test:transLine.styledStringOneLink.text"
-      i18nLinkKey="test:transLine.styledStringOneLink.links"
+      i18nTextKey="test:translinks.styledString.text"
+      i18nLinkKey="test:translinks.styledString.links"
     />
   );
   // eslint-disable-next-line -- This is a valid assertion
@@ -76,8 +76,8 @@ it("should render a string with one internal link and styles", () => {
 it("should render a string with a styled internal link", () => {
   renderWithRouter(
     <TransLinks
-      i18nTextKey="test:transLine.styledLink.text"
-      i18nLinkKey="test:transLine.styledLink.links"
+      i18nTextKey="test:translinks.styledLink.text"
+      i18nLinkKey="test:translinks.styledLink.links"
     />
   );
 

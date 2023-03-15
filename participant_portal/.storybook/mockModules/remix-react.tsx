@@ -27,6 +27,7 @@ export const useActionData = () => {};
 export function useLoaderData<T>() {
   return {
     // Insert your useLoaderData variable names / values here
+    participantCount: 2,
   };
 }
 

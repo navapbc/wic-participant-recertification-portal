@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { ChangeEvent, ReactElement } from "react";
+import type { ChangeEvent, ReactElement } from "react";
 
 import Required from "app/components/Required";
 
-import { i18nKey } from "app/types";
+import type { i18nKey } from "app/types";
 import {
   ErrorMessage,
   Label,

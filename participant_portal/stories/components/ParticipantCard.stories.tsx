@@ -1,6 +1,6 @@
 import { ParticipantCard } from "app/components/ParticipantCard";
 import type { ParticipantCardProps } from "app/components/ParticipantCard";
-
+import { CardGroup } from "@trussworks/react-uswds";
 export default {
   component: ParticipantCard,
   title: "Components/ParticipantCard",
@@ -21,7 +21,11 @@ const defaultProps: ParticipantCardProps = {
 
 const ParticipantCardTemplate = {
   render: (props: ParticipantCardProps) => {
-    return <ParticipantCard {...props} />;
+    return (
+      <CardGroup>
+        <ParticipantCard {...props} />
+      </CardGroup>
+    );
   },
 };
 

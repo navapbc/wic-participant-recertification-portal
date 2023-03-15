@@ -6,7 +6,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
 
-export default function Index() {
+export default function Count() {
   const { t } = useTranslation();
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
@@ -14,6 +14,7 @@ export default function Index() {
     inputType: "text",
     labelKey: "Count.householdSize.label",
   };
+  // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion
   const listItems = t("Count.listItems", {
     returnObjects: true,
   }) as Array<string>;
@@ -27,8 +28,8 @@ export default function Index() {
       <div>
         <Trans i18nKey="Count.body" />
         <ul>
-          {listItems.map((item: string) => (
-            <li>{item}</li>
+          {listItems.map((item: string, index) => (
+            <li key={index}>{item}</li>
           ))}
         </ul>
       </div>

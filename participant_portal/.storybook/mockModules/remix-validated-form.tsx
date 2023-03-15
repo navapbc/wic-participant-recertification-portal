@@ -6,6 +6,8 @@ export {
   validationError,
   setFormDefaults,
   createValidator,
+} from "../../node_modules/remix-validated-form";
+export type {
   FieldErrors,
   Validator,
 } from "../../node_modules/remix-validated-form";

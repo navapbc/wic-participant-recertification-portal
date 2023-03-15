@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match snapshot when it is a textarea 1`] = `
+<div>
+  <label
+    class="usa-label"
+    data-testid="label"
+    for="input-id"
+  >
+    input label
+  </label>
+  <textarea
+    class="usa-textarea"
+    data-testid="textarea"
+    id="input-id"
+    name="input-id"
+    type="text"
+  />
+</div>
+`;
+
+exports[`should match snapshot when it is a textfield 1`] = `
+<div>
+  <label
+    class="usa-label"
+    data-testid="label"
+    for="input-id"
+  >
+    input label
+  </label>
+  <input
+    class="usa-input"
+    data-testid="textInput"
+    id="input-id"
+    name="input-id"
+    type="text"
+    value=""
+  />
+</div>
+`;

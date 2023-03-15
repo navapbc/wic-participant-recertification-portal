@@ -6,23 +6,25 @@ exports[`should match snapshot 1`] = `
     class="container"
   >
     <header
-      class="usa-header usa-header--extended"
-      data-testid="header"
+      class="header usa-header usa-header--basic"
+      role="banner"
     >
       <div
         class="usa-navbar"
       >
         <div
-          class="usa-logo"
+          class="usa-logo usa-logo margin-left-2"
           id="extended-logo"
         >
           <em
             class="usa-logo__text"
           >
             <em
-              class="usa-logo__text text-primary-darker"
+              class="usa-logo__text"
             >
-              Shoegaze Stack
+              Montana WIC
+              <br />
+              Recertification Portal
             </em>
           </em>
         </div>
@@ -36,33 +38,78 @@ exports[`should match snapshot 1`] = `
       >
         <div
           class="desktop:grid-col-8 padding-2 padding-bottom-8"
-        />
+        >
+          <h1>
+            'child'
+          </h1>
+        </div>
       </div>
-      <h1>
-        'child'
-      </h1>
     </main>
     <footer
-      class="usa-footer usa-footer--slim"
+      class="footer usa-footer usa-footer--slim"
     >
       <div
         class="usa-footer__primary-section"
-      />
-      <div
-        class="usa-footer__secondary-section"
       >
         <div
-          class="grid-container"
+          class="grid-row"
+          data-testid="grid"
         >
-          For more information, read the 
-          <a
-            class="usa-link usa-link--external"
-            href="https://remix.run"
-            rel="noopener noreferrer"
-            target="_blank"
+          <div
+            class="desktop:grid-col-8 padding-2"
           >
-            Remix Run Documentation
-          </a>
+            <div
+              class="logos"
+            >
+              <img
+                alt="WIC logo"
+                class="remix-image"
+                decoding="async"
+                height="32"
+                loading="lazy"
+                src="/img/wic-logo.svg"
+                style="min-width: 0; min-height: 0; background-size: cover; background-position: center;"
+                width="64.52"
+              />
+              <img
+                alt="Montana DPHHS logo"
+                class="remix-image"
+                decoding="async"
+                height="32"
+                loading="lazy"
+                src="/img/montana-logo.svg"
+                style="min-width: 0; min-height: 0; background-size: cover; background-position: center;"
+                width="46.22"
+              />
+            </div>
+            <div
+              class="font-body-3xs"
+            >
+              <p>
+                This site is built in partnership with 
+                <a
+                  class="usa-link usa-link--external"
+                  href="https://dphhs.mt.gov/ecfsd/wic/index"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Montana WIC
+                </a>
+              </p>
+              <p>
+                This institution is an equal opportunity provider. 
+                <a
+                  class="usa-link usa-link--external"
+                  href="https://www.fns.usda.gov/civil-rights/usda-nondiscrimination-statement-other-fns-programs"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  USDA Non-Discrimination Statement
+                </a>
+              </p>
+               
+            </div>
+          </div>
         </div>
       </div>
     </footer>

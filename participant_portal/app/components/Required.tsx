@@ -1,7 +1,7 @@
-import { ReactElement } from 'react'
+import type { ReactElement } from "react";
 
 export const Required = (): ReactElement => {
-  return <abbr className="usa-hint usa-hint--required"> *</abbr>
-}
+  return <abbr className="usa-hint usa-hint--required"> *</abbr>;
+};
 
-export default Required
+export default Required;

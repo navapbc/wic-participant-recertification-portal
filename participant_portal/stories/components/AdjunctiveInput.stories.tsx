@@ -12,10 +12,10 @@ const AdjunctiveTemplate = {
   },
 };
 
-const defaultAdjunctiveProps = {
+const defaultAdjunctiveProps: Omit<AdjunctiveInputProps, "name"> = {
   adjunctiveKey: "test:adjunctive",
   required: false,
-  legendStyle: "",
+  legendStyle: "default",
 };
 
 export const Default = {

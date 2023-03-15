@@ -1,4 +1,5 @@
-import { NameInput, NameInputProps } from "app/components/NameInput";
+import { NameInput } from "app/components/NameInput";
+import type { NameInputProps } from "app/components/NameInput";
 
 export default {
   component: NameInput,

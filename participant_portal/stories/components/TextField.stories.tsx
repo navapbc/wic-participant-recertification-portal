@@ -1,4 +1,5 @@
-import { TextField, TextFieldProps } from "app/components/TextField";
+import { TextField } from "app/components/TextField";
+import type { TextFieldProps } from "app/components/TextField";
 
 export default {
   component: TextField,

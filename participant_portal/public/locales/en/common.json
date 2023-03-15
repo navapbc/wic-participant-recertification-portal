@@ -1,4 +1,15 @@
 {
+  "AdjunctiveEligibility": {
+    "label": "Are they enrolled in any of these programs?",
+    "programs": [
+      "Medicaid / Healthy Montana Kids Plus",
+      "SNAP (Supplemental Nutrition Assistance Program",
+      "TANF (Temporary Assistance for Needy Families)",
+      "FDPIR (Food Distribution Program on Indian Reservations"
+    ],
+    "yes": "Yes",
+    "no": "No"
+  },
   "Count": {
     "title": "Who in your household is recertifying?",
     "intro": "We only need to collect information about WIC participants who have a recertification appointment.",
@@ -15,6 +26,21 @@
   },
   "Demo": {
     "alertText": "This site is a demonstration project and for example purposes only"
+  },
+  "Detail": {
+    "participantCard": {
+      "cardHeader": "Participant",
+      "cardFooter": "Add another participant?"
+    },
+    "button": "Continue"
+  },
+  "DateOfBirth": {
+    "month": "Month",
+    "day": "Day",
+    "year": "Year",
+    "hintMDY": "For Example: 4 28 1986",
+    "legend": "Date of Birth",
+    "hintDMY": "For Example: 28 4 1986"
   },
   "Index": {
     "title": "Title",
@@ -53,6 +79,14 @@
     "legal": "Legally as it appears on their ID.",
     "legend": "What's your name?",
     "preferred": "Preferred name (optional)"
+  },
+  "Relationship": {
+    "label": "Relationship to you",
+    "self": "Self",
+    "child": "Child",
+    "grandchild": "Grandchild",
+    "foster": "Foster child",
+    "other": "Other"
   },
   "routingError": "Some required responses are missing. Please go back through the form and answer all required questions."
 }

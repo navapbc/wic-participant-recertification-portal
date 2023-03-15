@@ -1,5 +1,5 @@
 import { Trans } from "react-i18next";
-import { ChangeEvent, ReactElement } from "react";
+import type { ChangeEvent, ReactElement } from "react";
 import {
   Fieldset,
   Checkbox,
@@ -9,7 +9,7 @@ import {
 
 import Required from "app/components/Required";
 import { useField } from "remix-validated-form";
-import { i18nKey, legendStyleType } from "app/types";
+import type { i18nKey, legendStyleType } from "app/types";
 
 export type Choice = {
   value: string;
@@ -56,7 +56,7 @@ export const ChoiceGroupInput = (
     <>
       <Fieldset legend={legendElement} legendStyle={legendStyle}>
         {error && (
-          <ErrorMessage id="${titleKey}-error-message">{error}</ErrorMessage>
+          <ErrorMessage id={`${legendKey}-error-message`}>{error}</ErrorMessage>
         )}
         {helpElement}
         {choices?.map((choice: Choice) => (
