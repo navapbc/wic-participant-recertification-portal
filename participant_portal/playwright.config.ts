@@ -121,7 +121,7 @@ const config: PlaywrightTestConfig = {
        docker compose -f docker-compose.e2e.yml run --rm remix-migrate-reset && \
        npm run dev",
     port: 5556,
-    timeout: 240 * 1000,
+    timeout: 450 * 1000,
     reuseExistingServer: !process.env.CI,
     env: {
       DATABASE_URL:
