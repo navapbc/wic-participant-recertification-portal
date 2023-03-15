@@ -26,6 +26,14 @@ data "aws_ecr_repository" "participant_image_repository" {
   name = "${local.project_name}-participant"
 }
 
+data "aws_ecr_repository" "staff_image_repository" {
+  name = "${local.project_name}-staff"
+}
+
+data "aws_ecr_repository" "analytics_image_repository" {
+  name = "${local.project_name}-analytics"
+}
+
 module "app_config" {
   source = "../app-config"
 }
@@ -45,22 +53,22 @@ module "service_cluster" {
   cluster_name = local.cluster_name
 }
 
-module "participant_portal" {
+module "participant" {
   source                = "../../modules/service"
   service_name          = "${local.project_name}-participant-${var.environment_name}"
-  image_repository_url = data.participant_image_repository.repository_url
-  image_repository_arn = data.participant_image_repository.arn
+  image_repository_url = data.aws_ecr_repository.participant_image_repository.repository_url
+  image_repository_arn = data.aws_ecr_repository.participant_image_repository.arn
   image_tag             = var.image_tag
   vpc_id                = data.aws_vpc.default.id
   subnet_ids            = data.aws_subnets.default.ids
   service_cluster_arn   = module.service_cluster.service_cluster_arn
 }
 
-module "staff_portal" {
+module "staff" {
   source                = "../../modules/service"
   service_name          = "${local.project_name}-staff-${var.environment_name}"
-  image_repository_url = data.participant_image_repository.repository_url
-  image_repository_arn = data.participant_image_repository.arn
+  image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
+  image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
   image_tag             = var.image_tag
   vpc_id                = data.aws_vpc.default.id
   subnet_ids            = data.aws_subnets.default.ids
@@ -70,8 +78,8 @@ module "staff_portal" {
 module "analytics" {
   source                = "../../modules/service"
   service_name          = "${local.project_name}-analytics-${var.environment_name}"
-  image_repository_url = data.participant_image_repository.repository_url
-  image_repository_arn = data.participant_image_repository.arn
+  image_repository_url = data.aws_ecr_repository.analytics_image_repository.repository_url
+  image_repository_arn = data.aws_ecr_repository.analytics_image_repository.arn
   image_tag             = var.image_tag
   vpc_id                = data.aws_vpc.default.id
   subnet_ids            = data.aws_subnets.default.ids
