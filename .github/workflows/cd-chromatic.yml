@@ -11,6 +11,8 @@ jobs:
   chromatic-deployment:
     # Operating System
     runs-on: ubuntu-latest
+    outputs:
+     buildUrl: ${{steps.publish.outputs.buildUrl}}
     # Job steps
     steps:
       - name: ✅ Checkout
@@ -32,8 +34,21 @@ jobs:
       - name: 🖼 Build CSS
         run: npm  --prefix participant_portal run css
 
-      - name: 🖨️ Publish to Chromatic
+      - id: publish
+        name: 🖨️ Publish to Chromatic
         uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: participant_portal
+
+  pull_request_comment:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: chromatic-deployment
+    steps:
+      - name: 🎯 Post link to build on PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Chromatic_Build : Link to latest build in Chromatic 🌈 ${{ needs.chromatic-deployment.outputs.buildUrl }})
+          comment_tag: "Chromatic_Build"
