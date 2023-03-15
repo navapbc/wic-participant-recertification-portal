@@ -43,14 +43,15 @@ resource "aws_dynamodb_table" "terraform_lock" {
 }
 
 # Create the S3 bucket used to store terraform state remotely.
-# Prevent accidental destruction a developer executing terraform destory in the wrong directory. Contains terraform state files.
 resource "aws_s3_bucket" "tf_state" {
-  # checkov:skip=CKV_AWS_144:Cross region replication not required by default
   bucket = local.tf_state_bucket_name
+
+  # checkov:skip=CKV_AWS_144:Cross region replication not required by default
+
+  # Prevent accidental destruction a developer executing terraform destory in the wrong directory. Contains terraform state files.
   lifecycle {
     prevent_destroy = true
   }
-
 }
 
 resource "aws_s3_bucket_versioning" "tf_state" {
@@ -127,6 +128,7 @@ resource "aws_s3_bucket" "tf_log" {
   bucket = local.tf_logs_bucket_name
 
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
+  # checkov:skip=CKV2_AWS_61:This S3 bucket does not need a lifecycle condition
 }
 
 resource "aws_s3_bucket_versioning" "tf_log" {
