@@ -11,25 +11,12 @@ module.exports = {
   // Additional lint rules. These get layered onto the top-level rules.
   overrides: [
     {
-      files: "tests/*.test.*",
-      extends: ["@remix-run/eslint-config/jest-testing-library"],
-    },
-    {
       files: "e2e/*.spec.*",
       extends: ["plugin:playwright/playwright-test"],
     },
-    // Lint config specific to Test files
-    {
-      files: ["tests/**"],
-      plugins: ["jest"],
-      extends: ["plugin:jest/recommended"],
-      rules: {
-        "jest/valid-expect": "off",
-      },
-    },
     // Lint config specific to TypeScript files
     {
-      files: "**/*.+(ts|tsx)",
+      files: ["app/*.+(ts|tsx)", "stories/*.+(ts|tsx)"],
       parserOptions: {
         // These paths need defined to support rules that require type information
         tsconfigRootDir: __dirname,
@@ -48,6 +35,17 @@ module.exports = {
         "@typescript-eslint/no-unused-vars": "error",
         // The usage of `any` defeats the purpose of typescript. Consider using `unknown` type instead instead.
         "@typescript-eslint/no-explicit-any": "error",
+      },
+    },
+    // Lint config specific to Test files
+    {
+      files: ["tests/**"],
+      plugins: ["jest"],
+      extends: ["plugin:jest/recommended"],
+      rules: {
+        "jest/valid-expect": "off",
+        "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/no-unused-expressions": "off",
       },
     },
   ],

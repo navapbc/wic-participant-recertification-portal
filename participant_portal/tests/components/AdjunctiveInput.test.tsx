@@ -1,5 +1,3 @@
-/* eslint-disable jest/valid-expect */
-
 import { screen } from "@testing-library/react";
 import { renderWithRouter } from "tests/helpers/setup";
 import { AdjunctiveInput } from "app/components/AdjunctiveInput";

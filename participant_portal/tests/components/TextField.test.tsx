@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import { renderWithRouter } from "tests/helpers/setup";
 import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
-import { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 
 const testProps: TextFieldProps = {
   id: "input-id",
