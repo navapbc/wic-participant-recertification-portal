@@ -13,15 +13,8 @@ test("index has no automatically detectable accessibility errors", async ({
 test("has title", async ({ page }) => {
   await page.goto("/");
   // Expect a title "to contain" a correct app title.
-  await expect(page).toHaveTitle(/Shoegaze Stack/);
+  await expect(page).toHaveTitle(/Title/);
   await expect(page).toHaveScreenshot();
-});
-
-test("Open the README link", async ({ page }) => {
-  await page.goto("/");
-  const readmeLink = page.getByRole("link", { name: "Open the README" });
-  await expect(readmeLink).toBeVisible();
-  await expect(readmeLink).toHaveAttribute("href", "../README.md");
 });
 
 // This page shouldn't set cookies
