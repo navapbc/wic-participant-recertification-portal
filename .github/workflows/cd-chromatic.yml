@@ -29,8 +29,11 @@ jobs:
           useLockFile: false
           working-directory: ./participant_portal
 
+      - name: 🖼 Build CSS
+        run: npm  --prefix participant_portal run css
+
       - name: 🖨️ Publish to Chromatic
         uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          buildScriptName: "--prefix ./participant_portal build:storybook"
+          workingDir: participant_portal
