@@ -46,7 +46,8 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v3
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
 
       - name: Build release
         run: make release-build APP_NAME=$APP_NAME
@@ -61,5 +62,22 @@ jobs:
       - name: Publish release
         run: make release-publish APP_NAME=$APP_NAME
 
-      - name: Deploy release
-        run: make release-deploy ENV_NAME="$ENV_NAME" APP_NAME=$APP_NAME
+      - name: Prepare for release by gathering outputs to pass to aws-actions steps
+        id: prepare-release
+        run: make prepare-release APP_NAME=$APP_NAME ENV_NAME=$ENV_NAME >> $GITHUB_OUTPUT
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@97587c9d45a4930bf0e3da8dd2feb2a463cf4a3a
+        with:
+          task-definition: ${{ steps.prepare-release.outputs.ecs_task_definition }}
+          container-name: ${{ steps.prepare-release.container_name }}
+          image: ${{ steps.prepare-release.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@de0132cf8cdedb79975c6d42b77eb7ea193cf28e
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ steps.prepare-release.outputs.service_name }}
+          cluster: ${{ steps.prepare-release.outputs.cluster_name }}
+          wait-for-service-stability: true
