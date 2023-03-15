@@ -38,18 +38,24 @@ resource "aws_iam_role_policy_attachment" "deploy" {
 data "aws_iam_policy_document" "deploy" {
   # Required to push a new docker image to ECR
   statement {
+    sid    = "AccessECR"
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+    resources = ["*"]
+  }
+  statement {
     sid    = "PublishImage"
     effect = "Allow"
     actions = [
       "s3:ListBucket",
       "s3:GetObject",
       "dynamodb:GetItem",
-      "ecr:GetAuthorizationToken",
     ]
     resources = [
       "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/*",
       "arn:aws:s3:::*",
-      "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*",
     ]
   }
   # Required to register a new ECS task definition and deploy it
