@@ -8,6 +8,18 @@ async function seed() {
   // Put the actions you need to take to seed the databse here.
   // You can access relations as normal here
   // const users = await prisma.user.findMany(); // (for example)
+  await prisma.localAgency.createMany({
+    data: [
+      {
+        urlId: "bozeman",
+        name: "Bozeman WIC",
+      },
+      {
+        urlId: "missoula",
+        name: "Missoula WIC",
+      },
+    ],
+  });
   console.log(`Database has been seeded. 🌱`);
 }
 
