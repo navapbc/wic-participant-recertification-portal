@@ -177,6 +177,12 @@ resource "aws_ecs_task_definition" "app" {
             "awslogs-stream-prefix" = var.service_name
           },
         }
+        mountPoints = [
+          {
+            containerPath = "/tmp",
+            sourceVolume  = "${var.service_name}-tmp"
+          }
+        ]
       }
     ]
   )
@@ -188,6 +194,10 @@ resource "aws_ecs_task_definition" "app" {
 
   # Reference https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
   network_mode = "awsvpc"
+
+  volume {
+    name = "${var.service_name}-tmp"
+  }
 
   lifecycle {
     ignore_changes = [container_definitions]

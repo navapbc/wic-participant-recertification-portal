@@ -47,7 +47,11 @@ services:
     init: true
     ports:
       - "3010:3000"
+    read_only: true
+    volumes:
+      - remix_prod_tmp:/tmp
 
 volumes:
   remix_dev_nodemodules:
+  remix_prod_tmp:
   postgres_data:

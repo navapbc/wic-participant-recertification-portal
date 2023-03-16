@@ -7,7 +7,6 @@ RUN apt-get update \
   openssl
 # Set working directory and node user
 WORKDIR /home/node/remix
-RUN chown -R node:node /home/node
 
 # -------- Image: deps -------- #
 # Install all node_modules, including dev dependencies
@@ -46,6 +45,7 @@ RUN npm prune --production
 # Finally, build the production image with minimal footprint
 FROM base as prod
 ENV NODE_ENV production
+ENV npm_config_cache /tmp
 USER node
 COPY --from=production-deps /home/node/remix/node_modules ./node_modules
 COPY --from=build /home/node/remix/node_modules/.prisma ./node_modules/.prisma
@@ -53,5 +53,6 @@ COPY --from=build /home/node/remix/build ./build
 COPY --from=build /home/node/remix/styles/styles.* ./styles/
 COPY --from=build /home/node/remix/public/build ./public/build
 COPY --chown=node:node . .
-RUN mkdir -p /home/node/.npm
+RUN chown node:node /tmp
+VOLUME ["/tmp"]
 CMD ["/home/node/remix/bin/prod-start.sh"]
