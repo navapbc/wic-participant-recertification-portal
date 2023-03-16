@@ -5,9 +5,6 @@ on:
     branches: ["main"]
     paths:
       - analytics/**
-  pull_request:
-    paths:
-      - analytics/**
 
 jobs:
   deploy_analytics:

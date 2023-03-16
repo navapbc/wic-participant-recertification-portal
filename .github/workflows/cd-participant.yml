@@ -5,9 +5,6 @@ on:
     branches: ["main"]
     paths:
       - participant/**
-  pull_request:
-    paths:
-      - participant/**
 
 jobs:
   deploy_participant:

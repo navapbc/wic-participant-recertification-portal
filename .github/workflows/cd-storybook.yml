@@ -1,8 +1,6 @@
 name: Deploy Storybook
 
 on:
-  # Runs on pushes targeting the default branch
-  # !! Uncomment the lines below to enable this workflow
   push:
     branches: ["main"]
     paths:
