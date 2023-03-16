@@ -11,8 +11,8 @@ async function seed() {
   await prisma.localAgency.createMany({
     data: [
       {
-        urlId: "bozeman",
-        name: "Bozeman WIC",
+        urlId: "gallatin",
+        name: "Gallatin WIC",
       },
       {
         urlId: "missoula",
