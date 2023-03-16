@@ -1,6 +1,12 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+locals {
+  admin_user_name         = "app_usr"
+  admin_password_name     = "/metadata/db/${var.database_name}-admin-password"
+  admin_db_url_name       = "/metadata/db/${var.database_name}-admin-db-url"
+  database_name_formatted = replace("${var.database_name}", "-", "_")
+}
 
 ###########################
 ## Database Configuration ##
@@ -11,8 +17,8 @@ resource "aws_rds_cluster" "postgresql" {
   cluster_identifier                  = var.database_name
   engine                              = "aurora-postgresql"
   engine_mode                         = "provisioned"
-  database_name                       = replace("${var.database_name}", "-", "_")
-  master_username                     = "app_usr"
+  database_name                       = local.database_name_formatted
+  master_username                     = var.admin_user_name
   master_password                     = var.admin_password
   storage_encrypted                   = true
   iam_database_authentication_enabled = true
@@ -27,7 +33,7 @@ resource "aws_rds_cluster" "postgresql" {
   }
 }
 
-resource "aws_rds_cluster_instance" "postgresql-cluster" {
+resource "aws_rds_cluster_instance" "postgresql_instance" {
   cluster_identifier         = aws_rds_cluster.postgresql.id
   instance_class             = "db.serverless"
   engine                     = aws_rds_cluster.postgresql.engine
@@ -38,11 +44,20 @@ resource "aws_rds_cluster_instance" "postgresql-cluster" {
 }
 
 resource "aws_ssm_parameter" "admin_password" {
-  name  = "/metadata/db/${var.database_name}-admin-password"
+  name  = local.admin_password_name
   type  = "SecureString"
   value = var.admin_password
 }
 
+data "aws_ssm_parameter" "admin_db_url" {
+  name  = local.admin_db_url_name
+  type  = "SecureString"
+  value = "postgresql://${local.admin_user_name}:${var.admin_password}@${aws_rds_cluster_instance.postgresql_instance.endpoint}:${aws_rds_cluster_instance.postgresql_instance.port}/${local.database_name_formatted}?schema=public"
+
+  depends_on = [
+    aws_rds_cluster_instance.postgresql_instance
+  ]
+}
 
 ################################################################################
 # Backup Configuration
@@ -187,6 +202,6 @@ data "aws_iam_policy_document" "db_access" {
     actions = [
       "rds:AddTagToResource"
     ]
-    resources = [aws_rds_cluster_instance.postgresql-cluster.arn]
+    resources = [aws_rds_cluster_instance.postgresql_instance.arn]
   }
 }
