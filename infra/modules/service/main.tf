@@ -157,11 +157,16 @@ resource "aws_ecs_task_definition" "app" {
           command = [
             "CMD-SHELL",
             "curl -f http://localhost:${var.container_port}/health || exit 1",
-          ]
+          ],
+          interval = 30,
+          retries  = 3,
+          timeout  = 5,
         }
         portMappings = [
           {
             containerPort = var.container_port,
+            hostPort      = var.container_port,
+            protocol      = "tcp",
           }
         ]
         linuxParameters = {
@@ -184,6 +189,7 @@ resource "aws_ecs_task_definition" "app" {
             sourceVolume  = "${var.service_name}-tmp"
           }
         ]
+        volumesFrom = []
       }
     ]
   )
