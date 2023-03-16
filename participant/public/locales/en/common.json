@@ -43,10 +43,15 @@
     "hintDMY": "For Example: 28 4 1986"
   },
   "Index": {
-    "title": "Title",
-    "intro": "<strong>Remix</strong> is a framework for server-rendered, fast web applications",
-    "body": "<p>This is an introductory paragraph</p><p>There will be useful information here</p>",
-    "button": "Call to Action"
+    "button": "Get started",
+    "eligible": "You can fill out this form if:",
+    "intro": "You can now prepare for your recertification appointment with your local Montana WIC clinic.",
+    "ifLink": "You have received this link from your local WIC clinic.",
+    "ifReceivesWIC": "You or someone in your household currently receives WIC benefits.",
+    "ifThirtyDays": "You or someone in your household is eligible for a recertification in the next 30 days.",
+    "note": "Not all WIC households can use this form. If you do not have a permanent address, if nobody in your household earns money, or if you do not have identity documents, then you cannot use this form ahead of your recertification appointment.",
+    "time": "This form should take about 15 minutes to complete.",
+    "title": "Start your recertification for Montana WIC"
   },
   "Intro": {
     "title": "Title",
@@ -56,7 +61,9 @@
   },
   "Layout": {
     "footer1": {
-      "links": ["https://dphhs.mt.gov/ecfsd/wic/index"],
+      "links": [
+        "https://dphhs.mt.gov/ecfsd/wic/index"
+      ],
       "text": "This site is built in partnership with <0>Montana WIC</0>"
     },
     "footer2": {
