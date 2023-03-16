@@ -53,7 +53,7 @@ resource "aws_ssm_parameter" "admin_password" {
 resource "aws_ssm_parameter" "admin_db_url" {
   name  = local.admin_db_url_secret_name
   type  = "SecureString"
-  value = "postgresql://${local.admin_user}:${var.admin_password}@${aws_rds_cluster_instance.postgresql_instance.endpoint}:${aws_rds_cluster_instance.postgresql_instance.port}/${local.database_name_formatted}?schema=public"
+  value = "postgresql://${local.admin_user}:${urlencode(var.admin_password)}@${aws_rds_cluster_instance.postgresql_instance.endpoint}:${aws_rds_cluster_instance.postgresql_instance.port}/${local.database_name_formatted}?schema=public"
 
   depends_on = [
     aws_rds_cluster_instance.postgresql_instance
