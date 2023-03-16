@@ -34,14 +34,6 @@ resource "aws_security_group" "database" {
     to_port     = var.database_port
     cidr_blocks = [data.aws_vpc.default.cidr_block]
   }
-
-  egress {
-    description = "Allow all outgoing traffic from database"
-    protocol    = "-1"
-    from_port   = 0
-    to_port     = 0
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }
 
 
