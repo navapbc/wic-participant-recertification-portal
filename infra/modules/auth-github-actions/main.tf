@@ -45,8 +45,9 @@ data "aws_iam_policy_document" "deploy" {
     ]
     resources = ["*"]
   }
+  # Allow github actions to access the terraform state in order to run `terraform init`
   statement {
-    sid    = "PublishImage"
+    sid    = "AccessTFState"
     effect = "Allow"
     actions = [
       "s3:ListBucket",
