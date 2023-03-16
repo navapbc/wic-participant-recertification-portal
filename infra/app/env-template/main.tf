@@ -11,6 +11,9 @@ data "aws_subnets" "default" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
 locals {
   project_name             = module.project_config.project_name
   app_name                 = module.app_config.app_name
@@ -65,6 +68,30 @@ module "participant" {
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
+  container_secrets = [
+    {
+      name      = "DATABASE_URL",
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${module.database.admin_db_url_name}"
+    },
+    {
+      name      = "POSTGRES_PASSWORD",
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${module.database.admin_password_name}"
+    },
+    {
+      name  = "POSTGRES_USER",
+      value = module.database.admin_user_name
+    }
+  ]
+  container_env_vars = [
+    {
+      name  = "NEXT_PUBLIC_DEMO_MODE",
+      value = false
+    }
+  ]
+  service_ssm_resource_paths = [
+    module.database.admin_db_url_name,
+    module.database.admin_password_name,
+  ]
 }
 
 module "staff" {

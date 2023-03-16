@@ -7,7 +7,9 @@
     "networkMode": "awsvpc",
     "essential": true,
     "entryPoint": null,
+    "environment": ${container_env_vars},
     "readonlyRootFilesystem": true,
+    "secrets": ${container_secrets},
     "healthcheck": {
       "command": [
         "CMD-SHELL",

@@ -142,13 +142,15 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = templatefile(
     "${path.module}/container-definitions.json.tftpl",
     {
-      service_name   = var.service_name
-      image_url      = local.image_url
-      container_port = var.container_port
-      cpu            = var.cpu
-      memory         = var.memory
-      awslogs_group  = aws_cloudwatch_log_group.service_logs.name
-      aws_region     = data.aws_region.current.name
+      service_name       = var.service_name
+      image_url          = local.image_url
+      container_port     = var.container_port
+      container_env_vars = var.container_env_vars
+      container_secrets  = var.container_secrets
+      cpu                = var.cpu
+      memory             = var.memory
+      awslogs_group      = aws_cloudwatch_log_group.service_logs.name
+      aws_region         = data.aws_region.current.name
     }
   )
 
@@ -245,6 +247,14 @@ data "aws_iam_policy_document" "task_executor" {
       "ecr:GetDownloadUrlForLayer",
     ]
     resources = [var.image_repository_arn]
+  }
+  # Allow ECS to access Parameter Store for specific resources
+  statement {
+    sid = "SSMAccess"
+    actions = [
+      "ssm:GetParameters",
+    ]
+    resources = [for path in var.service_ssm_resource_paths : "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${path}"]
   }
 }
 

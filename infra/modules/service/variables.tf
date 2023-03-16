@@ -46,6 +46,18 @@ variable "container_port" {
   default     = 8000
 }
 
+variable "container_env_vars" {
+  type        = list(map(string))
+  description = "Environment variables to pass to the container definition"
+  default     = []
+}
+
+variable "container_secrets" {
+  type        = list(map(string))
+  description = "AWS secrets to pass to the container definition"
+  default     = []
+}
+
 variable "vpc_id" {
   type        = string
   description = "Uniquely identifies the VPC."
@@ -59,4 +71,10 @@ variable "subnet_ids" {
 variable "service_cluster_arn" {
   type        = string
   description = "The arn of the service cluster that the service should be part of"
+}
+
+variable "service_ssm_resource_paths" {
+  type        = list(string)
+  description = "A list of ssm resource paths that the ECS task executor should have permission to access"
+  default     = []
 }
