@@ -1,5 +1,8 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
+data "aws_vpc" "default" {
+  default = true
+}
 
 locals {
   admin_user                 = "app_usr"
@@ -9,9 +12,42 @@ locals {
   database_name_formatted    = replace("${var.database_name}", "-", "_")
 }
 
-###########################
+####################
+## Security Group ##
+####################
+resource "aws_security_group" "database" {
+  # Specify name_prefix instead of name because when a change requires creating a new
+  # security group, sometimes the change requires the new security group to be created
+  # before the old one is destroyed. In this situation, the new one needs a unique name
+  name_prefix = "${var.database_name}-database"
+  description = "Allow inbound TCP access to database port"
+  vpc_id      = data.aws_vpc.default.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  ingress {
+    description = "Allow HTTP traffic to database port"
+    protocol    = "tcp"
+    from_port   = var.database_port
+    to_port     = var.database_port
+    cidr_blocks = [data.aws_vpc.default.cidr_block]
+  }
+
+  egress {
+    description = "Allow all outgoing traffic from database"
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+############################
 ## Database Configuration ##
-###########################
+############################
 resource "aws_rds_cluster" "postgresql" {
   # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
   # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
@@ -21,10 +57,12 @@ resource "aws_rds_cluster" "postgresql" {
   database_name                       = local.database_name_formatted
   master_username                     = local.admin_user
   master_password                     = var.admin_password
+  port                                = var.database_port
   storage_encrypted                   = true
   iam_database_authentication_enabled = true
   deletion_protection                 = true
   skip_final_snapshot                 = true
+  vpc_security_group_ids              = [aws_security_group.database.id]
   # final_snapshot_identifier = "${var.database_name}-final"
 
 
@@ -53,7 +91,7 @@ resource "aws_ssm_parameter" "admin_password" {
 resource "aws_ssm_parameter" "admin_db_url" {
   name  = local.admin_db_url_secret_name
   type  = "SecureString"
-  value = "postgresql://${local.admin_user}:${urlencode(var.admin_password)}@${aws_rds_cluster_instance.postgresql_instance.endpoint}:${aws_rds_cluster_instance.postgresql_instance.port}/${local.database_name_formatted}?schema=public"
+  value = "postgresql://${local.admin_user}:${urlencode(var.admin_password)}@${aws_rds_cluster_instance.postgresql_instance.endpoint}:${var.database_port}/${local.database_name_formatted}?schema=public"
 
   depends_on = [
     aws_rds_cluster_instance.postgresql_instance

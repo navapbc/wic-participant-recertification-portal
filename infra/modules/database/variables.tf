@@ -9,3 +9,9 @@ variable "database_name" {
 variable "admin_password" {
   description = "database admin password"
 }
+
+variable "database_port" {
+  type        = number
+  description = "The port number for accessing the database"
+  default     = 5432
+}

@@ -96,12 +96,6 @@ module "participant" {
   ]
 }
 
-module "participant_service_database" {
-  source                  = "../../modules/service-database"
-  database_name           = local.database_name
-  allowed_security_groups = [module.participant.security_group_app_id]
-}
-
 module "staff" {
   source               = "../../modules/service"
   service_name         = local.staff_service_name
