@@ -1,0 +1,14 @@
+name: 📊 Deploy analytics
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - analytics/**
+
+jobs:
+  deploy_analytics:
+    name: 📊 Deploy analytics
+    uses: ./.github/workflows/cd.yml
+    with:
+      app_name: analytics

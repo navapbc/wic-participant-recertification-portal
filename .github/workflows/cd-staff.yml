@@ -1,0 +1,14 @@
+name: 📨 Deploy staff
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - staff/**
+
+jobs:
+  deploy_staff:
+    name: 📨 Deploy staff
+    uses: ./.github/workflows/cd.yml
+    with:
+      app_name: staff

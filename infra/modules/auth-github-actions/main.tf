@@ -1,3 +1,6 @@
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
 # Set up GitHub's OpenID Connect provider in AWS account
 resource "aws_iam_openid_connect_provider" "github" {
   url             = "https://token.actions.githubusercontent.com"
@@ -18,6 +21,84 @@ resource "aws_iam_role_policy_attachment" "custom" {
 
   role       = aws_iam_role.github_actions.name
   policy_arn = var.iam_role_policy_arns[count.index]
+}
+
+# Create a policy to push images to ECR and update ECS task definitions
+resource "aws_iam_policy" "deploy" {
+  name        = "${var.github_actions_role_name}-deploy"
+  description = "A policy for a machine user to deploy releases"
+  policy      = data.aws_iam_policy_document.deploy.json
+}
+
+resource "aws_iam_role_policy_attachment" "deploy" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.deploy.arn
+}
+
+data "aws_iam_policy_document" "deploy" {
+  # Required to push a new docker image to ECR
+  statement {
+    sid    = "AccessECR"
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+    resources = ["*"]
+  }
+  # Allow github actions to access the terraform state in order to run `terraform init`
+  statement {
+    sid    = "AccessTFState"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "dynamodb:GetItem",
+    ]
+    resources = [
+      "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/*",
+      "arn:aws:s3:::*",
+    ]
+  }
+  # Required to download the ECS task definition
+  statement {
+    sid    = "DescribeECSTaskDefinition"
+    effect = "Allow"
+    actions = [
+      "ecs:DescribeTaskDefinition",
+    ]
+    resources = ["*"]
+  }
+
+  # Required to register a new ECS task definition and deploy it
+  statement {
+    sid    = "RegisterTaskDefinition"
+    effect = "Allow"
+    actions = [
+      "ecs:RegisterTaskDefinition",
+    ]
+    resources = ["*"]
+  }
+  statement {
+    sid    = "PassRolesInTaskDefinition"
+    effect = "Allow"
+    actions = [
+      "iam:PassRole",
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
+    ]
+  }
+  statement {
+    sid    = "DeployService"
+    effect = "Allow"
+    actions = [
+      "ecs:UpdateService",
+      "ecs:DescribeServices",
+    ]
+    resources = [
+      "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/*"
+    ]
+  }
 }
 
 # Get GitHub's OIDC provider's thumbprint

@@ -7,7 +7,7 @@ name: '🌈 Chromatic'
 on:
   pull_request:
     paths:
-      - participant_portal/**
+      - participant/**
 # List of jobs
 jobs:
   chromatic-deployment:
@@ -31,17 +31,17 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
-          working-directory: ./participant_portal
+          working-directory: ./participant
 
       - name: 🖼 Build CSS
-        run: npm  --prefix participant_portal run css
+        run: npm  --prefix participant run css
 
       - id: publish
         name: 🖨️ Publish to Chromatic
         uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          workingDir: participant_portal
+          workingDir: participant
 
       - name: 🎯 Post link to build on PR
         uses: thollander/actions-comment-pull-request@v2

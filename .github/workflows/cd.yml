@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       env_name:
-        description: "env_name input"
+        description: "The environment to deploy to"
         required: true
         default: "dev"
         type: choice
@@ -12,12 +12,32 @@ on:
           - dev
           - staging
           - prod
+      app_name:
+        description: "The app to deploy"
+        required: true
+        default: "participant"
+        type: choice
+        options:
+          - participant
+          - staff
+          - analytics
+  # Designate this as a reusable workflow.
+  # When used as a reusable workflow, this always deploys to the dev environment.
+  # See https://docs.github.com/en/actions/using-workflows/reusing-workflows
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
 
 env:
   ENV_NAME: ${{ inputs.env_name || 'dev' }}
+  APP_NAME: ${{ inputs.app_name || 'participant' }}
+  PROJECT_NAME: 'wic-prp'
+  IMAGE_TAG: ${{ github.sha }}-${{ github.run_number }}-${{ github.run_attempt }}
 
-# Need to repeat the expression since env.ENV_NAME is not accessible in this context
-concurrency: cd-${{ inputs.env_name || 'dev' }}
+# Need to repeat the expression since env.WHATEVER is not accessible in this context
+concurrency: cd-${{ inputs.env_name || 'dev' }}-${{ inputs.app_name || 'participant' }}
 
 jobs:
   deploy:
@@ -28,20 +48,42 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v3
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Build release
-        run: make release-build
+      - name: 🔨 Build release
+        run: make release-build PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME IMAGE_TAG=$IMAGE_TAG
 
-      - name: Configure AWS credentials
+      - name: 🗝 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           # !! Update the role-to-assume with the GitHub actions role ARN
           role-to-assume: arn:aws:iam::636249768232:role/wic-prp-github-actions
           aws-region: us-west-2
 
-      - name: Publish release
-        run: make release-publish
+      - name: 📩 Publish release
+        run: make release-publish PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME IMAGE_TAG=$IMAGE_TAG
 
-      - name: Deploy release
-        run: make release-deploy ENV_NAME="$ENV_NAME"
+      - name: 💾 Prepare for release by gathering outputs to pass to aws-actions steps
+        id: prepare-release
+        run: make release-prepare PROJECT_NAME=$PROJECT_NAME ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME IMAGE_TAG=$IMAGE_TAG
+
+      - name: ⏬ Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ steps.prepare-release.outputs.service_name }} --query taskDefinition > task-definition.json
+
+      - name: ✏️ Fill in the new image ID in the Amazon ECS task definition
+        id: render-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ./task-definition.json
+          container-name: ${{ steps.prepare-release.outputs.container_name }}
+          image: ${{ steps.prepare-release.outputs.image }}
+
+      - name: 📬 Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
+          service: ${{ steps.prepare-release.outputs.service_name }}
+          cluster: ${{ steps.prepare-release.outputs.cluster_name }}
+          wait-for-service-stability: true

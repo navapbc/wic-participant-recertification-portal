@@ -1,15 +1,11 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
-data "aws_ecr_repository" "app" {
-  name = var.image_repository_name
-}
-
 
 locals {
   alb_name                = var.service_name
   log_group_name          = "service/${var.service_name}"
   task_executor_role_name = "${var.service_name}-task-executor"
-  image_url               = "${data.aws_ecr_repository.app.repository_url}:${var.image_tag}"
+  image_url               = "${var.image_repository_url}:${var.image_tag}"
 }
 
 ###################
@@ -119,8 +115,9 @@ resource "aws_ecs_service" "app" {
 
   # Allow changes to the desired_count without differences in terraform plan.
   # This allows autoscaling to manage the desired count for us.
+  # Ignoring the task_definition allows the task revision to not get reverted if a rew revision is created outside of terraform.
   lifecycle {
-    ignore_changes = [desired_count]
+    ignore_changes = [task_definition, desired_count]
   }
 
   network_configuration {
@@ -143,17 +140,58 @@ resource "aws_ecs_task_definition" "app" {
 
   # when is this needed?
   # task_role_arn      = aws_iam_role.api_service.arn
-  container_definitions = templatefile(
-    "${path.module}/container-definitions.json.tftpl",
-    {
-      service_name   = var.service_name
-      image_url      = local.image_url
-      container_port = var.container_port
-      cpu            = var.cpu
-      memory         = var.memory
-      awslogs_group  = aws_cloudwatch_log_group.service_logs.name
-      aws_region     = data.aws_region.current.name
-    }
+  container_definitions = jsonencode(
+    [
+      {
+        name                   = var.service_name
+        image                  = local.image_url
+        memory                 = var.memory
+        cpu                    = var.cpu
+        networkMode            = "awsvpc"
+        essential              = true
+        entryPoint             = null
+        environment            = var.container_env_vars
+        readonlyRootFilesystem = true
+        secrets                = var.container_secrets
+        healthCheck = {
+          command = [
+            "CMD-SHELL",
+            "curl -f http://localhost:${var.container_port}/health || exit 1",
+          ],
+          interval = 30,
+          retries  = 3,
+          timeout  = 5,
+        }
+        portMappings = [
+          {
+            containerPort = var.container_port,
+            hostPort      = var.container_port,
+            protocol      = "tcp",
+          }
+        ]
+        linuxParameters = {
+          capabilities = {
+            drop = ["ALL"],
+          },
+          initProcessEnabled = true
+        }
+        logConfiguration = {
+          logDriver = "awslogs",
+          options = {
+            "awslogs-group"         = aws_cloudwatch_log_group.service_logs.name,
+            "awslogs-region"        = data.aws_region.current.name,
+            "awslogs-stream-prefix" = var.service_name
+          },
+        }
+        mountPoints = [
+          {
+            containerPath = "/tmp",
+            sourceVolume  = "${var.service_name}-tmp"
+          }
+        ]
+        volumesFrom = []
+      }
+    ]
   )
 
   cpu    = var.cpu
@@ -163,6 +201,11 @@ resource "aws_ecs_task_definition" "app" {
 
   # Reference https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
   network_mode = "awsvpc"
+
+  # TODO: This block should be optionally set and controlled by a variable
+  volume {
+    name = "${var.service_name}-tmp"
+  }
 }
 
 
@@ -204,6 +247,18 @@ data "aws_iam_policy_document" "ecs_assume_task_executor_role" {
   }
 }
 
+resource "aws_iam_policy" "task_executor" {
+  name        = "${var.service_name}-task-executor-role-policy"
+  description = "A policy for ECS task execution"
+  policy      = data.aws_iam_policy_document.task_executor.json
+}
+
+# Link access policies to the ECS task execution role.
+resource "aws_iam_role_policy_attachment" "task_executor" {
+  role       = aws_iam_role.task_executor.name
+  policy_arn = aws_iam_policy.task_executor.arn
+}
+
 data "aws_iam_policy_document" "task_executor" {
   # Allow ECS to log to Cloudwatch.
   statement {
@@ -232,15 +287,20 @@ data "aws_iam_policy_document" "task_executor" {
       "ecr:BatchGetImage",
       "ecr:GetDownloadUrlForLayer",
     ]
-    resources = [data.aws_ecr_repository.app.arn]
+    resources = [var.image_repository_arn]
   }
-}
-
-# Link access policies to the ECS task execution role.
-resource "aws_iam_role_policy" "task_executor" {
-  name   = "${var.service_name}-task-executor-role-policy"
-  role   = aws_iam_role.task_executor.id
-  policy = data.aws_iam_policy_document.task_executor.json
+  # Allow ECS to access Parameter Store for specific resources
+  # But only include the statement if var.service_ssm_resource_paths is not empty
+  dynamic "statement" {
+    for_each = var.service_ssm_resource_paths
+    content {
+      sid = "SSMAccess${statement.key}"
+      actions = [
+        "ssm:GetParameters",
+      ]
+      resources = ["arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${statement.value}"]
+    }
+  }
 }
 
 ###########################

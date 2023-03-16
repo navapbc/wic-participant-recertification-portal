@@ -1,10 +1,10 @@
 # PROJECT_NAME defaults to name of the current directory.
 PROJECT_NAME ?= $(notdir $(PWD))
 
-# For now only support a single app in the folder `app/` within the repo
+# For now only support a single infra application deployment in the folder `infra/app/` within the repo
 # In the future, support multiple apps, and which app is being operated
-# on will be determined by the APP_NAME Makefile argument
-APP_NAME ?= app
+# on will be determined by the INFRA_APP_NAME Makefile argument
+INFRA_APP_NAME ?= app
 
 # Get the list of reusable terraform modules by getting out all the modules
 # in infra/modules and then stripping out the "infra/modules/" prefix
@@ -25,7 +25,7 @@ ENVIRONMENTS := $(notdir $(wildcard infra/app/envs/*))
 	infra-format \
 	release-build \
 	release-publish \
-	release-deploy \
+	release-prepare \
 	image-registry-login \
 	db-migrate \
 	db-migrate-down \
@@ -73,6 +73,11 @@ infra-test:
 ## Release Management ##
 ########################
 
+# The application to be deployed.
+# Must be the name of the directory.
+# The directory must be relative to this Makefile
+APP_NAME ?= default
+
 # Include project name in image name so that image name
 # does not conflict with other images during local development
 IMAGE_NAME := $(PROJECT_NAME)-$(APP_NAME)
@@ -96,14 +101,14 @@ release-build:
 		OPTS="--tag $(IMAGE_NAME):latest --tag $(IMAGE_NAME):$(IMAGE_TAG)"
 
 release-publish:
-	./bin/publish-release.sh $(APP_NAME) $(IMAGE_NAME) $(IMAGE_TAG)
+	./bin/publish-release.sh $(APP_NAME) $(IMAGE_NAME) $(IMAGE_TAG) $(INFRA_APP_NAME)
 
-release-deploy:
+release-prepare:
 # check the varaible against the list of enviroments and suggest one of the correct envs.
 ifneq ($(filter $(ENV_NAME),$(ENVIRONMENTS)),)
-	./bin/deploy-release.sh $(APP_NAME) $(IMAGE_TAG) $(ENV_NAME)
+	./bin/prepare-release.sh $(PROJECT_NAME) $(APP_NAME) $(ENV_NAME) $(IMAGE_TAG) $(INFRA_APP_NAME)
 else
-	@echo "Please enter: make release-deploy ENV_NAME=<env_name>. The value for env_name must be one of these: $(ENVIRONMENTS)"
+	@echo "The value for env_name must be one of these: $(ENVIRONMENTS)"
 	exit 1
 endif
 
