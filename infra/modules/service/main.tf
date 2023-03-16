@@ -139,19 +139,46 @@ resource "aws_ecs_task_definition" "app" {
 
   # when is this needed?
   # task_role_arn      = aws_iam_role.api_service.arn
-  container_definitions = templatefile(
-    "${path.module}/container-definitions.json.tftpl",
-    {
-      service_name       = var.service_name
-      image_url          = local.image_url
-      container_port     = var.container_port
-      container_env_vars = var.container_env_vars
-      container_secrets  = var.container_secrets
-      cpu                = var.cpu
-      memory             = var.memory
-      awslogs_group      = aws_cloudwatch_log_group.service_logs.name
-      aws_region         = data.aws_region.current.name
-    }
+  container_definitions = jsonencode(
+    [
+      {
+        name                   = var.service_name
+        image                  = local.image_url
+        memory                 = var.memory
+        cpu                    = var.cpu
+        networkMode            = "awsvpc"
+        essential              = true
+        entryPoint             = null
+        environment            = var.container_env_vars
+        readonlyRootFilesystem = true
+        secrets                = var.container_secrets
+        healthCheck = {
+          command = [
+            "CMD-SHELL",
+            "curl -f http://localhost:${var.container_port}/health || exit 1",
+          ]
+        }
+        portMappings = [
+          {
+            containerPort = var.container_port,
+          }
+        ]
+        linuxParameters = {
+          capabilities = {
+            drop = ["ALL"],
+          },
+          initProcessEnabled = true
+        }
+        logConfiguration = {
+          logDriver = "awslogs",
+          options = {
+            "awslogs-group"         = aws_cloudwatch_log_group.service_logs.name,
+            "awslogs-region"        = data.aws_region.current.name,
+            "awslogs-stream-prefix" = var.service_name
+          },
+        }
+      }
+    ]
   )
 
   cpu    = var.cpu
@@ -162,9 +189,9 @@ resource "aws_ecs_task_definition" "app" {
   # Reference https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
   network_mode = "awsvpc"
 
-  lifecycle {
-    ignore_changes = [container_definitions]
-  }
+  # lifecycle {
+  #   ignore_changes = [container_definitions]
+  # }
 }
 
 
