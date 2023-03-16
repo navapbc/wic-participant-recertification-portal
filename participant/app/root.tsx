@@ -50,7 +50,7 @@ type LoaderData = { locale: string; demoMode: string; missingData: string };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const locale = await i18next.getLocale(request);
-  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE ?? "false";
+  const demoMode = process.env.PUBLIC_DEMO_MODE ?? "false";
   const url = new URL(request.url);
   const missingData =
     url.searchParams.get("missing-data") == "true" ? "true" : "false";

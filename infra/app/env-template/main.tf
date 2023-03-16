@@ -85,7 +85,7 @@ module "participant" {
   ]
   container_env_vars = [
     {
-      name  = "NEXT_PUBLIC_DEMO_MODE",
+      name  = "PUBLIC_DEMO_MODE",
       value = false
     }
   ]
