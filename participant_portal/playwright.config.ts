@@ -119,7 +119,8 @@ const config: PlaywrightTestConfig = {
     command:
       "docker compose -f docker-compose.e2e.yml up database-e2e --wait && \
        docker compose -f docker-compose.e2e.yml run --rm remix-migrate-reset && \
-       npm run dev",
+       npm run css && \
+       npm run dev:remix",
     port: 5556,
     timeout: 450 * 1000,
     reuseExistingServer: !process.env.CI,
