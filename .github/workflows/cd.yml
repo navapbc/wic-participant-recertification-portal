@@ -34,7 +34,7 @@ env:
   ENV_NAME: ${{ inputs.env_name || 'dev' }}
   APP_NAME: ${{ inputs.app_name || 'participant' }}
   PROJECT_NAME: 'wic-prp'
-  IMAGE_TAG: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
+  IMAGE_TAG: ${{ github.sha }}-${{ github.workflow }}-${{ github.run_number }}-${{ github.run_attempt }}
 
 # Need to repeat the expression since env.WHATEVER is not accessible in this context
 concurrency: cd-${{ inputs.env_name || 'dev' }}-${{ inputs.app_name || 'participant' }}
