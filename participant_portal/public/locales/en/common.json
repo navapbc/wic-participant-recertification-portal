@@ -3,9 +3,9 @@
     "label": "Are they enrolled in any of these programs?",
     "programs": [
       "Medicaid / Healthy Montana Kids Plus",
-      "SNAP (Supplemental Nutrition Assistance Program",
+      "SNAP (Supplemental Nutrition Assistance Program)",
       "TANF (Temporary Assistance for Needy Families)",
-      "FDPIR (Food Distribution Program on Indian Reservations"
+      "FDPIR (Food Distribution Program on Indian Reservations)"
     ],
     "yes": "Yes",
     "no": "No"

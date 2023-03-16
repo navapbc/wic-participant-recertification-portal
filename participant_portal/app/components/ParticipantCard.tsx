@@ -98,7 +98,6 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
         <AdjunctiveInput {...adjunctiveProps} />
       </CardBody>
       <CardFooter>
-        {" "}
         <Trans i18nKey={`${participantKey}.cardFooter`} />
       </CardFooter>
     </Card>
