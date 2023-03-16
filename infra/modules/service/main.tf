@@ -115,8 +115,9 @@ resource "aws_ecs_service" "app" {
 
   # Allow changes to the desired_count without differences in terraform plan.
   # This allows autoscaling to manage the desired count for us.
+  # Ignoring the task_definition allows the task revision to not get reverted if a rew revision is created outside of terraform.
   lifecycle {
-    ignore_changes = [desired_count]
+    ignore_changes = [task_definition, desired_count]
   }
 
   network_configuration {
@@ -195,12 +196,9 @@ resource "aws_ecs_task_definition" "app" {
   # Reference https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
   network_mode = "awsvpc"
 
+  # TODO: This block should be optionally set and controlled by a variable
   volume {
     name = "${var.service_name}-tmp"
-  }
-
-  lifecycle {
-    ignore_changes = [container_definitions]
   }
 }
 
