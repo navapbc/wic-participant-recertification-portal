@@ -68,6 +68,7 @@ module "participant" {
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
+  container_port       = 3000
   container_secrets = [
     {
       name      = "DATABASE_URL",
