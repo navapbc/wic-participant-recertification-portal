@@ -25,7 +25,7 @@ ENVIRONMENTS := $(notdir $(wildcard infra/app/envs/*))
 	infra-format \
 	release-build \
 	release-publish \
-	release-deploy \
+	release-prepare \
 	image-registry-login \
 	db-migrate \
 	db-migrate-down \
