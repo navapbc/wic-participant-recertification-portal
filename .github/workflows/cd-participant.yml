@@ -1,0 +1,17 @@
+name: 📬 Deploy participant
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - participant/**
+  pull_request:
+    paths:
+      - participant/**
+
+jobs:
+  deploy_participant:
+    name: 📬 Deploy participant
+    uses: ./.github/workflows/cd.yml
+    with:
+      app_name: participant
