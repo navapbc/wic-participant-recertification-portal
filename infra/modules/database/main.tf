@@ -60,6 +60,12 @@ resource "aws_ssm_parameter" "admin_db_url" {
   ]
 }
 
+resource "aws_ssm_parameter" "admin_user" {
+  name  = local.admin_user_secret_name
+  type  = "SecureString"
+  value = local.admin_user
+}
+
 ################################################################################
 # Backup Configuration
 ################################################################################
