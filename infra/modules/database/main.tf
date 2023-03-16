@@ -2,10 +2,11 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  admin_user_name         = "app_usr"
-  admin_password_name     = "/metadata/db/${var.database_name}-admin-password"
-  admin_db_url_name       = "/metadata/db/${var.database_name}-admin-db-url"
-  database_name_formatted = replace("${var.database_name}", "-", "_")
+  admin_user                 = "app_usr"
+  admin_user_secret_name     = "/metadata/db/${var.database_name}-admin-user"
+  admin_password_secret_name = "/metadata/db/${var.database_name}-admin-password"
+  admin_db_url_secret_name   = "/metadata/db/${var.database_name}-admin-db-url"
+  database_name_formatted    = replace("${var.database_name}", "-", "_")
 }
 
 ###########################
@@ -18,7 +19,7 @@ resource "aws_rds_cluster" "postgresql" {
   engine                              = "aurora-postgresql"
   engine_mode                         = "provisioned"
   database_name                       = local.database_name_formatted
-  master_username                     = var.admin_user_name
+  master_username                     = local.admin_user
   master_password                     = var.admin_password
   storage_encrypted                   = true
   iam_database_authentication_enabled = true
@@ -44,15 +45,15 @@ resource "aws_rds_cluster_instance" "postgresql_instance" {
 }
 
 resource "aws_ssm_parameter" "admin_password" {
-  name  = local.admin_password_name
+  name  = local.admin_password_secret_name
   type  = "SecureString"
   value = var.admin_password
 }
 
-data "aws_ssm_parameter" "admin_db_url" {
-  name  = local.admin_db_url_name
+resource "aws_ssm_parameter" "admin_db_url" {
+  name  = local.admin_db_url_secret_name
   type  = "SecureString"
-  value = "postgresql://${local.admin_user_name}:${var.admin_password}@${aws_rds_cluster_instance.postgresql_instance.endpoint}:${aws_rds_cluster_instance.postgresql_instance.port}/${local.database_name_formatted}?schema=public"
+  value = "postgresql://${local.admin_user}:${var.admin_password}@${aws_rds_cluster_instance.postgresql_instance.endpoint}:${aws_rds_cluster_instance.postgresql_instance.port}/${local.database_name_formatted}?schema=public"
 
   depends_on = [
     aws_rds_cluster_instance.postgresql_instance
