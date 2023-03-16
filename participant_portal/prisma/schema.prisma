@@ -7,8 +7,37 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Log {
-  log_id     Int      @id @default(autoincrement())
-  data       Json
-  created_at DateTime @updatedAt @db.Timestamptz
+model Submission {
+  submissionId    String           @id @default(uuid()) @map("submission_id") @db.Uuid
+  localAgencyId   String           @map("local_agency_id") @db.Uuid
+  localAgency     LocalAgency      @relation(fields: [localAgencyId], references: [localAgencyId])
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  submitted       Boolean          @default(false)
+  submissionForms SubmissionForm[]
+
+  @@map("submissions")
+}
+
+model SubmissionForm {
+  submissionFormId String     @id @default(uuid()) @map("submission_form_id") @db.Uuid
+  submissionId     String     @map("submission_id") @db.Uuid
+  submission       Submission @relation(fields: [submissionId], references: [submissionId])
+  formRoute        String     @map("form_route")
+  formData         Json       @map("form_data")
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("submission_forms")
+}
+
+model LocalAgency {
+  localAgencyId String       @id @default(uuid()) @map("local_agency_id") @db.Uuid
+  urlId         String       @unique @map("url_id")
+  name          String
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  submissions   Submission[]
+
+  @@map("local_agencies")
 }
