@@ -1,4 +1,4 @@
 #!/bin/bash
-npx --loglevel=verbose prisma migrate deploy
-npx --loglevel=verbose prisma db seed
-npx --loglevel=verbose remix-serve build/
+npx prisma migrate deploy
+npx prisma db seed
+npx remix-serve build/
