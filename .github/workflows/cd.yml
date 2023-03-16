@@ -34,6 +34,7 @@ env:
   ENV_NAME: ${{ inputs.env_name || 'dev' }}
   APP_NAME: ${{ inputs.app_name || 'participant' }}
   PROJECT_NAME: 'wic-prp'
+  IMAGE_TAG: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
 
 # Need to repeat the expression since env.WHATEVER is not accessible in this context
 concurrency: cd-${{ inputs.env_name || 'dev' }}-${{ inputs.app_name || 'participant' }}
@@ -51,7 +52,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 🔨 Build release
-        run: make release-build PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME
+        run: make release-build PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME IMAGE_TAG=$IMAGE_TAG
 
       - name: 🗝 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -61,11 +62,11 @@ jobs:
           aws-region: us-west-2
 
       - name: 📩 Publish release
-        run: make release-publish PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME
+        run: make release-publish PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME IMAGE_TAG=$IMAGE_TAG
 
       - name: 💾 Prepare for release by gathering outputs to pass to aws-actions steps
         id: prepare-release
-        run: make release-prepare PROJECT_NAME=$PROJECT_NAME ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME
+        run: make release-prepare PROJECT_NAME=$PROJECT_NAME ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME IMAGE_TAG=$IMAGE_TAG
 
       - name: ⏬ Download task definition
         run: |
