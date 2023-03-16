@@ -9,6 +9,8 @@ import { I18nextProvider, initReactI18next } from "react-i18next";
 import i18n from "app/i18n"; // your i18n configuration file
 import { BrowserRouter } from "react-router-dom";
 import common from "public/locales/en/common.json";
+import test from "../fixtures/test-i18n.json";
+
 export const i18nwrapper = ({
   children,
 }: {
@@ -25,30 +27,7 @@ export const i18nwrapper = ({
       resources: {
         en: {
           common: common,
-          test: {
-            transLine: {
-              plainStringOneLink: {
-                text: "first <0>second</0> third",
-                links: ["https://external.com"],
-              },
-              plainStringLinks: {
-                text: "first <0>second</0> <1>third</1>",
-                links: ["https://external.com", "/relative/link"],
-              },
-              plainStringLinksComplicated: {
-                text: "<1>first</1> <0>second</0> third <0>fourth</0> <1>fifth</1>",
-                links: ["https://external.com", "/relative/link"],
-              },
-              styledStringOneLink: {
-                text: "first <strong>second</strong> <0>third</0>",
-                links: ["https://external.com"],
-              },
-              styledLink: {
-                text: "first <strong><0>second</0></strong>",
-                links: ["https://external.com"],
-              },
-            },
-          },
+          test: test, // Unifying strings for both Jest and Storybook here
         },
       },
       detection: {

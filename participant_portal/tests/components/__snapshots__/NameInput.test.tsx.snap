@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders name input component 1`] = `
+<div>
+  <fieldset
+    class="usa-fieldset"
+    data-testid="fieldset"
+  >
+    <legend
+      class="usa-sr-only"
+    >
+      Name
+    </legend>
+    <label
+      class="usa-label"
+      data-testid="label"
+      for="input-example-firstName"
+    >
+      First name
+      <abbr
+        class="usa-hint usa-hint--required"
+      >
+         *
+      </abbr>
+      <span
+        class="usa-hint"
+      >
+        <div>
+          Legally as it appears on their ID.
+        </div>
+      </span>
+    </label>
+    <input
+      class="usa-input"
+      data-testid="textInput"
+      id="input-example-firstName"
+      name="input-example-firstName"
+      type="text"
+      value=""
+    />
+    <label
+      class="usa-label"
+      data-testid="label"
+      for="input-example-lastName"
+    >
+      Last name
+      <abbr
+        class="usa-hint usa-hint--required"
+      >
+         *
+      </abbr>
+      <span
+        class="usa-hint"
+      >
+        <div>
+          Legally as it appears on their ID.
+        </div>
+      </span>
+    </label>
+    <input
+      class="usa-input"
+      data-testid="textInput"
+      id="input-example-lastName"
+      name="input-example-lastName"
+      type="text"
+      value=""
+    />
+  </fieldset>
+</div>
+`;

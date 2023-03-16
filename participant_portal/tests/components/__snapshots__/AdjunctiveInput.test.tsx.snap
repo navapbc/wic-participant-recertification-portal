@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders the default adjunctive eligibility field 1`] = `
+<div>
+  <fieldset
+    class="usa-fieldset"
+    data-testid="fieldset"
+  >
+    <legend
+      class="usa-legend"
+    >
+      <div>
+        Are they enrolled in any of these programs?
+      </div>
+    </legend>
+    <ul>
+      <li>
+        Medicaid / Healthy Montana Kids Plus
+      </li>
+      <li>
+        SNAP (Supplemental Nutrition Assistance Program
+      </li>
+      <li>
+        TANF (Temporary Assistance for Needy Families)
+      </li>
+      <li>
+        FDPIR (Food Distribution Program on Indian Reservations
+      </li>
+    </ul>
+    <div
+      class="usa-radio"
+      data-testid="radio"
+    >
+      <input
+        class="usa-radio__input"
+        id="adjunctive-yes"
+        name="adjunctive"
+        type="radio"
+        value="yes"
+      />
+      <label
+        class="usa-radio__label"
+        for="adjunctive-yes"
+      >
+        Yes
+      </label>
+    </div>
+    <div
+      class="usa-radio"
+      data-testid="radio"
+    >
+      <input
+        class="usa-radio__input"
+        id="adjunctive-no"
+        name="adjunctive"
+        type="radio"
+        value="no"
+      />
+      <label
+        class="usa-radio__label"
+        for="adjunctive-no"
+      >
+        No
+      </label>
+    </div>
+  </fieldset>
+</div>
+`;

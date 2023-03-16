@@ -13,7 +13,9 @@
     "moduleResolution": "node",
     "noEmit": true,
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "tests/*": ["./tests/*"],
+      "stories/*": ["./stories/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

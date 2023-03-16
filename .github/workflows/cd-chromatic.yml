@@ -1,0 +1,54 @@
+# .github/workflows/chromatic.yml
+
+# Workflow name
+name: '🌈 Chromatic'
+
+# Event for the workflow
+on:
+  pull_request:
+    paths:
+      - participant_portal/**
+# List of jobs
+jobs:
+  chromatic-deployment:
+    # Operating System
+    runs-on: ubuntu-latest
+    outputs:
+     buildUrl: ${{steps.publish.outputs.buildUrl}}
+    # Job steps
+    steps:
+      - name: ✅ Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # 👈 Required to retrieve git history
+
+      - name: ⚙️ Setup NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./participant_portal
+
+      - name: 🖼 Build CSS
+        run: npm  --prefix participant_portal run css
+
+      - id: publish
+        name: 🖨️ Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: participant_portal
+
+      - name: 🎯 Post link to build on PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Chromatic_Build : Link to [latest build](${{ steps.publish.outputs.buildUrl }}) in Chromatic 🌈
+                              Link to [storybook build](${{ steps.publish.outputs.storybookUrl }}) in Chromatic
+          comment_tag: "Chromatic_Build"
+          mode: recreate
+

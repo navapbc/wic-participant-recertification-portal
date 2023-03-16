@@ -5,6 +5,9 @@ export {
   Link,
   useLocation,
   useCatch,
+  useTransition,
+  useSubmit,
+  useMatches,
 } from "../../node_modules/@remix-run/react";
 import { FormProps } from "../../node_modules/@remix-run/react";
 import React from "react";
@@ -24,6 +27,7 @@ export const useActionData = () => {};
 export function useLoaderData<T>() {
   return {
     // Insert your useLoaderData variable names / values here
+    participantCount: 2,
   };
 }
 
