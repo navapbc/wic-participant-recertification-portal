@@ -4,7 +4,7 @@ import { Trans, useTranslation } from "react-i18next";
 
 export default function Index() {
   const { t } = useTranslation();
-  const listUserKeys: string[] = ['ifLink', 'ifReceivesWIC', 'ifThirtyDays']
+  const listUserKeys: string[] = ["ifLink", "ifReceivesWIC", "ifThirtyDays"];
 
   return (
     <div className="measure-6">

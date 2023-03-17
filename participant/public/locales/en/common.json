@@ -61,9 +61,7 @@
   },
   "Layout": {
     "footer1": {
-      "links": [
-        "https://dphhs.mt.gov/ecfsd/wic/index"
-      ],
+      "links": ["https://dphhs.mt.gov/ecfsd/wic/index"],
       "text": "This site is built in partnership with <0>Montana WIC</0>"
     },
     "footer2": {
