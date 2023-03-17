@@ -30,7 +30,7 @@ const config: PlaywrightTestConfig = {
        * a specific command:
        * https://github.com/basarat/demo-playwright-vrt/blob/main/.github/workflows/update-snapshots.yml
        */
-      maxDiffPixelRatio: 0.01,
+      maxDiffPixelRatio: 0,
     },
   },
   /* Run tests in files in parallel */
