@@ -2,6 +2,7 @@
 /app/styles/*
 /build
 /coverage
+/e2e/**/*.png
 /node_modules
 /playwright-report
 /public/build
