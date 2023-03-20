@@ -250,29 +250,31 @@ data "aws_iam_policy_document" "manage_wic_prp_env" {
     ]
   }
   statement {
-      sid    = "DocUploadS3"
-      effect = "Allow"
-      actions = [
-        "s3:AbortMultipartUpload",
-        "s3:DeleteObject",
-        "s3:ListMultipartUploadParts",
-      ]
-      resources = [
-        "arn:aws:s3:::*"
-      ]
-    }
-    statement {
-      sid    = "ListContentS3"
-      effect = "Allow"
-      actions = [
-        "s3:GetBucketLocation",
-        "s3:ListBucket",
-        "s3:ListBucketMultipartUploads"
-      ]
-      resources = [
-        "arn:aws:s3:::*"
-      ]
-    }
+    sid    = "DocUploadS3"
+    effect = "Allow"
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:DeleteObject",
+      "s3:ListMultipartUploadParts",
+    ]
+    resources = [
+      "arn:aws:s3:::*"
+    ]
+  }
+  statement {
+    sid    = "ListContentS3"
+    effect = "Allow"
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:GetBucketAcl",
+      "s3:GetBucketCORS",
+      "s3:ListAllMyBuckets",
+      "s3:ListBucketMultipartUploads"
+    ]
+    resources = [
+      "arn:aws:s3:::*"
+    ]
+  }
 
   statement {
     sid    = "SSM"
