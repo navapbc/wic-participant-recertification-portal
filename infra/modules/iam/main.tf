@@ -38,6 +38,7 @@ data "aws_iam_policy_document" "manage_wic_prp_env" {
       "kms:CreateKey",
       "kms:ListAliases",
       "rds:AddTagsToResource",
+      "rds:ListTagsForResource",
       "ssm:DescribeParameters",
       "sts:GetCallerIdentity",
       "ssm:ListTagsForResource",
@@ -239,11 +240,40 @@ data "aws_iam_policy_document" "manage_wic_prp_env" {
       "s3:GetObject",
       "s3:PutObject",
       "s3:ListBucket",
+      "s3:CreateBucket",
+      "s3:GetObjectTagging",
+      "s3:GetBucketPolicy",
+      "s3:PutBucketPolicy"
     ]
     resources = [
       "arn:aws:s3:::*"
     ]
   }
+  statement {
+      sid    = "DocUploadS3"
+      effect = "Allow"
+      actions = [
+        "s3:AbortMultipartUpload",
+        "s3:DeleteObject",
+        "s3:ListMultipartUploadParts",
+      ]
+      resources = [
+        "arn:aws:s3:::*"
+      ]
+    }
+    statement {
+      sid    = "ListContentS3"
+      effect = "Allow"
+      actions = [
+        "s3:GetBucketLocation",
+        "s3:ListBucket",
+        "s3:ListBucketMultipartUploads"
+      ]
+      resources = [
+        "arn:aws:s3:::*"
+      ]
+    }
+
   statement {
     sid    = "SSM"
     effect = "Allow"

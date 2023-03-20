@@ -54,6 +54,12 @@ module "database" {
   admin_password = module.database_password.random_password
 }
 
+module "doc_upload" {
+  source           = "../../modules/doc-upload-s3"
+  environment_name = var.environment_name
+  service_name     = local.analytics_service_name
+}
+
 module "service_cluster" {
   source       = "../../modules/service-cluster"
   cluster_name = local.cluster_name
