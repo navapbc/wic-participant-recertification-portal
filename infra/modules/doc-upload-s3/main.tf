@@ -51,6 +51,12 @@ resource "aws_kms_key" "doc-upload" {
   enable_key_rotation = "true"
 }
 
+# ----------------------------------------------------
+#
+#  Document Upload Logging
+#
+# ----------------------------------------------------
+
 # Create the S3 bucket to provide server access logging.
 resource "aws_s3_bucket" "doc-upload-log" {
   bucket = "${var.environment_name}-upload-logging"
@@ -58,11 +64,48 @@ resource "aws_s3_bucket" "doc-upload-log" {
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
   # checkov:skip=CKV2_AWS_62:Disable SNS requirement
 }
-resource "aws_s3_bucket_logging" "doc-upload" {
+resource "aws_s3_bucket_logging" "doc-upload-log" {
   bucket        = aws_s3_bucket.doc-upload.id
   target_bucket = aws_s3_bucket.doc-upload-log.bucket
   target_prefix = var.environment_name
 }
+
+resource "aws_s3_bucket_versioning" "doc-upload-log" {
+  bucket = aws_s3_bucket.doc-upload-log.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "doc-upload-log" {
+  bucket = aws_s3_bucket.doc-upload-log.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.doc-upload.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "doc-upload-log" {
+  bucket = aws_s3_bucket.doc-upload-log.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+resource "aws_s3_bucket_policy" "doc-upload-log" {
+  bucket = aws_s3_bucket.doc-upload-log.id
+  policy = data.aws_iam_policy_document.doc-upload-log.json
+}
+# ----------------------------------------------------
+#
+#  Data Attributes
+#
+# ----------------------------------------------------
+
 data "aws_iam_role" "task_executor" {
   # Referencing the task executor of the ECS services so that they have the ability to upload documents to s3
   name = "${var.service_name}-task-executor"
@@ -95,5 +138,27 @@ data "aws_iam_policy_document" "doc-upload" {
       type        = "AWS"
       identifiers = ["${data.aws_iam_role.task_executor.arn}"]
     }
+  }
+}
+
+data "aws_iam_policy_document" "doc-upload-log" {
+
+  statement {
+    sid = "S3ServerAccessLogsPolicy"
+    principals {
+      type = "Service"
+      identifiers = [
+        "logging.s3.amazonaws.com"
+      ]
+    }
+    actions = [
+      "s3:PutObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.doc-upload-log.arn}/*"
+    ]
+
+    effect = "Allow"
   }
 }
