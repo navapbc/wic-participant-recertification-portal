@@ -62,6 +62,7 @@ resource "aws_s3_bucket" "doc-upload-log" {
   bucket = "${var.environment_name}-upload-logging"
 
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
+  # checkov:skip=CKV2_AWS_61:This S3 bucket should not transition objects to another storage class or expire objects
   # checkov:skip=CKV2_AWS_62:Disable SNS requirement
 }
 resource "aws_s3_bucket_logging" "doc-upload-log" {
