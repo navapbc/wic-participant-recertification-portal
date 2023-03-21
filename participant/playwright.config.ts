@@ -118,7 +118,7 @@ const config: PlaywrightTestConfig = {
   webServer: {
     command:
       "docker compose -f docker-compose.e2e.yml up database-e2e --wait && \
-       docker compose -f docker-compose.e2e.yml run --rm prisma-migrate-reset && \
+       docker compose -f docker-compose.e2e.yml run --rm remix-migrate-reset && \
        npm run css && \
        npm run dev:remix",
     port: 5556,
