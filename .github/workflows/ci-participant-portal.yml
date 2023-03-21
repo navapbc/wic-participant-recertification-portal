@@ -123,7 +123,6 @@ jobs:
 
       - name: 🗃 Archive test results
         if: always()
-        id: upload_artifacts
         uses: actions/upload-artifact@v3
         with:
           name: test-results
@@ -131,7 +130,6 @@ jobs:
 
       - name: 📦 Download test results
         if: always()
-        needs: upload_artifacts
         uses: actions/download-artifact@v3
         with:
           name: test-results
