@@ -3,12 +3,11 @@
 FROM node:18-slim as base
 # Set working directory and node user
 WORKDIR /home/node/lowdefy
-RUN chown node:node /home/node/lowdefy
 
 # -------- Image: deps -------- #
 # Install all node_modules, including dev dependencies
 FROM base as deps
-COPY package.json package-lock.json ./
+COPY --chown=node:node package.json package-lock.json ./
 RUN npm install
 
 # -------- Image: dev -------- #
@@ -30,12 +29,13 @@ RUN npx lowdefy@3.23.3 build
 FROM base as production-deps
 ENV NODE_ENV production
 COPY --from=deps /home/node/lowdefy/node_modules ./node_modules
-COPY package.json package-lock.json ./
+COPY --chown=node:node package.json package-lock.json ./
 RUN npm prune --production
 
 # -------- Image: prod -------- #
 # Finally, build the production image with minimal footprint
 FROM lowdefy/lowdefy:3.23.3 as prod
+ENV npm_config_cache /tmp
 USER node
 COPY --from=production-deps /home/node/lowdefy/node_modules ./node_modules
 COPY --from=build --chown=node:node /home/node/lowdefy/.lowdefy/build ./build
