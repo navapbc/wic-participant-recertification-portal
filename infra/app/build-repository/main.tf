@@ -72,6 +72,6 @@ module "analytics_image_repository" {
   app_account_ids      = var.app_environment_account_ids
 }
 
-module "waf"{
+module "waf" {
   source = "../../modules/waf"
 }
