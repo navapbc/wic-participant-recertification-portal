@@ -11,6 +11,9 @@ on:
         options:
           - participant
           - staff
+  pull_request:
+    paths:
+      - .github/workflows/update-playwright-snapshots.yml
 
 env:
   APP_NAME: ${{ inputs.app_name || 'participant' }}
