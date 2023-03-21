@@ -15,6 +15,9 @@ const jestConfig: JestConfigWithTsJest = {
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/tests/helpers/prismaMock.ts"],
   testMatch: ["**/tests/**/*.test.(ts|tsx|js)"],
+  transformIgnorePatterns: [
+    "/node_modules/(?!(@remix-run/web-fetch|@remix-run/web-blob|@remix-run/web-stream|@remix-run/web-form-data|@remix-run/web-file|@web3-storage/multipart-parser)/)",
+  ],
 };
 
 export default jestConfig;

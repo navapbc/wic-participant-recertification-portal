@@ -1,6 +1,7 @@
 // app/sessions.js
 import { createCookie } from "@remix-run/node"; // or "@remix-run/cloudflare"
-import { Request } from "@remix-run/node";
+
+import type { Request } from "@remix-run/node";
 import { redirect } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { findSubmission, upsertSubmission } from "./utils/db.server";
@@ -11,7 +12,7 @@ export const ParticipantCookie = createCookie("prp-recertification-form", {
   secure: true,
 });
 
-const sessionCheck: Function = (time: Date): boolean => {
+export const sessionCheck: Function = (time: Date): boolean => {
   const age = (new Date().getTime() - time.getTime()) / 1000;
   if (age > MAX_SESSION_SECONDS) {
     console.log(
@@ -42,6 +43,7 @@ export const cookieParser: Function = async (
       } else if (!resetSession) {
         const validSession = sessionCheck(existingSubmission.updatedAt);
         if (validSession) {
+          console.log(`Session ${submissionID} valid; finished parser`);
           return { submissionID: submissionID, headers: {} };
         }
         forceRedirect = true;

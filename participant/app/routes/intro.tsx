@@ -4,7 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 
 import type { LoaderFunction } from "@remix-run/server-runtime";
-import { cookieParser } from "app/cookies";
+import { cookieParser } from "app/cookies.server";
 import { Trans, useTranslation } from "react-i18next";
 
 export const loader: LoaderFunction = async ({ request }) => {
