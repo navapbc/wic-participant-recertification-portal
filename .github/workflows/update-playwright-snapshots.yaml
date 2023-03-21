@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       app_name:
-        description: "The app to deploy"
+        description: "The app with Playwright snapshots to update"
         required: true
         default: "participant"
         type: choice
