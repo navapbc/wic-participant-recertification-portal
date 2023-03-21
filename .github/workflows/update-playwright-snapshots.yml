@@ -29,6 +29,12 @@ jobs:
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
+        with:
+          # Personal access token is required to get this workflow to trigger other workflows, such as CI
+          # See https://github.com/stefanzweifel/git-auto-commit-action#commits-made-by-this-action-do-not-trigger-new-workflow-runs
+          token: ${{ secrets.PAT }}
+          # Make sure to checkout the correct branch
+          ref: ${{ github.head_ref }}
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v3.6.0
