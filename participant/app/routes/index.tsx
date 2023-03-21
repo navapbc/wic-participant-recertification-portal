@@ -7,7 +7,7 @@ export default function Index() {
   const listUserKeys: string[] = ["ifLink", "ifReceivesWIC", "ifThirtyDays"];
 
   return (
-    <div className="measure-6">
+    <div>
       <h1>{t("Index.title")}</h1>
       <div className="font-sans-lg">
         <p>
