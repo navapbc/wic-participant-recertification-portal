@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  remix-migrate-reset:
+  prisma-migrate-reset:
     build:
       target: dev
       context: .
@@ -11,7 +11,7 @@ services:
       database-e2e:
         condition: service_healthy
     networks:
-      - participant_portal-e2e
+      - e2e
     command: >
       bash -c "npx prisma migrate reset --force"
   database-e2e:
@@ -26,6 +26,6 @@ services:
     ports:
       - 5555:5432
     networks:
-      - participant_portal-e2e
+      - e2e
 networks:
-  participant_portal-e2e:
+  e2e:
