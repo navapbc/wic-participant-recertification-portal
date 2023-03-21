@@ -42,8 +42,6 @@ export const cookieParser: Function = async (
       } else if (!resetSession) {
         const validSession = sessionCheck(existingSubmission.updatedAt);
         if (validSession) {
-          console.log(`Updating timestamp in database for ${submissionID}`);
-          await upsertSubmission(submissionID, urlId);
           return { submissionID: submissionID, headers: {} };
         }
         forceRedirect = true;
