@@ -11,9 +11,6 @@ on:
         options:
           - participant
           - staff
-  pull_request:
-    paths:
-      - .github/workflows/update-playwright-snapshots.yml
 
 env:
   APP_NAME: ${{ inputs.app_name || 'participant' }}
@@ -23,7 +20,7 @@ concurrency: playwright-${{ github.ref_name }}-${{ inputs.app_name || 'participa
 
 jobs:
   snapshots:
-    name: 🎭 Playwright
+    name: 🎭 Playwright snapshots
     runs-on: ubuntu-latest
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
@@ -42,14 +39,14 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
-          working-directory: ./${{ $APP_NAME }}
+          working-directory: ./${{ env.APP_NAME }}
 
       - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: 📸 Take Playwright snapshots 
+      - name: 📸 Take Playwright snapshots
         run: npx playwright test --update-snapshots
-        working-directory: ${{ $APP_NAME }}
+        working-directory: ${{ env.APP_NAME }}
 
       - name: 💾 Save Playwright snapshots
         # Do not allow save to main branch
@@ -58,4 +55,4 @@ jobs:
         with:
           commit_message: Update playwright snapshots
           # Save only snapshots for the selected app
-          file_pattern: '${{ $APP_NAME }}/e2e/*.png'
+          file_pattern: '${{ env.APP_NAME }}/e2e/*.png'

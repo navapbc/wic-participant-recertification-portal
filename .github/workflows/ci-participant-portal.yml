@@ -116,9 +116,6 @@ jobs:
           useLockFile: false
           working-directory: ./participant
 
-      - name: 🖨 Copy the Darwin screenshots as Linux (faking it until we make it)
-        run: find participant/e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
-
       - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps
 
@@ -126,42 +123,9 @@ jobs:
         run: npx playwright test --retries=3
         working-directory: participant
 
-  snapshots:
-    name: 🎭 Playwright snapshots
-    runs-on: ubuntu-latest
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
-      contents: write
-    env:
-      APP_NAME: participant
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v3
-
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v3.6.0
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v3
         with:
-          node-version: 18
-
-      - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
-        with:
-          useLockFile: false
-          working-directory: ./${{ env.APP_NAME }}
-
-      - name: 🎭 Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: 📸 Take Playwright snapshots
-        run: npx playwright test --update-snapshots
-        working-directory: ${{ env.APP_NAME }}
-
-      - name: 💾 Save Playwright snapshots
-        # Do not allow save to main branch
-        if: github.ref != 'refs/heads/main'
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Update playwright snapshots
-          # Save only snapshots for the selected app
-          file_pattern: '${{ env.APP_NAME }}/e2e/*.png'
+          name: test-results
+          path: participant/test-results
