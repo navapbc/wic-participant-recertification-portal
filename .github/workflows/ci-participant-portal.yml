@@ -122,17 +122,11 @@ jobs:
         working-directory: participant
 
       - name: 🗃 Archive test results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: participant/test-results
-
-      - name: 📦 Download test results
-        if: always()
-        uses: actions/download-artifact@v3
-        with:
-          name: test-results
 
       - name: 🐛 Add debug message
         if: failure()
