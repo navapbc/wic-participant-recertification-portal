@@ -11,8 +11,6 @@ on:
       - participant/**
       - .github/workflows/ci-participant-portal.yml
 
-concurrency: playwright-${{ github.ref_name }}-participant
-
 jobs:
   lint:
     name: ⬣ ESLint
@@ -123,9 +121,22 @@ jobs:
         run: npx playwright test --retries=3
         working-directory: participant
 
-      - name: Archive test results
+      - name: 🗃 Archive test results
         if: always()
+        id: upload_artifacts
         uses: actions/upload-artifact@v3
         with:
           name: test-results
           path: participant/test-results
+
+      - name: 📦 Download test results
+        if: always()
+        needs: upload_artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: test-results
+
+      - name: 🐛 Add debug message
+        if: failure()
+        run: |
+          echo "If this fails, try running the Playwright Snapshots github actions workflow on your branch"
