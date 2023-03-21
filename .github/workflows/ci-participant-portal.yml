@@ -11,9 +11,6 @@ on:
       - participant/**
       - .github/workflows/ci-participant-portal.yml
 
-env:
-  APP_NAME: 'participant'
-
 concurrency: playwright-${{ github.ref_name }}-participant
 
 jobs:
@@ -136,6 +133,8 @@ jobs:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
       contents: write
+    env:
+      APP_NAME: participant
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
@@ -149,14 +148,14 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
-          working-directory: ./$APP_NAME
+          working-directory: ./${{ env.APP_NAME }}
 
       - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps
 
       - name: 📸 Take Playwright snapshots
         run: npx playwright test --update-snapshots
-        working-directory: $APP_NAME
+        working-directory: ${{ env.APP_NAME }}
 
       - name: 💾 Save Playwright snapshots
         # Do not allow save to main branch
@@ -165,4 +164,4 @@ jobs:
         with:
           commit_message: Update playwright snapshots
           # Save only snapshots for the selected app
-          file_pattern: '$APP_NAME/e2e/*.png'
+          file_pattern: '${{ env.APP_NAME }}/e2e/*.png'
