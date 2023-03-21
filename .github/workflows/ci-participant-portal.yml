@@ -11,6 +11,11 @@ on:
       - participant/**
       - .github/workflows/ci-participant-portal.yml
 
+env:
+  APP_NAME: 'participant'
+
+concurrency: playwright-${{ github.ref_name }}-participant
+
 jobs:
   lint:
     name: ⬣ ESLint
@@ -123,3 +128,41 @@ jobs:
       - name: 🐳 Run Playwright in Docker Compose
         run: npx playwright test --retries=3
         working-directory: participant
+
+  snapshots:
+    name: 🎭 Playwright snapshots
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./${{ $APP_NAME }}
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 📸 Take Playwright snapshots
+        run: npx playwright test --update-snapshots
+        working-directory: ${{ $APP_NAME }}
+
+      - name: 💾 Save Playwright snapshots
+        # Do not allow save to main branch
+        if: github.ref != 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update playwright snapshots
+          # Save only snapshots for the selected app
+          file_pattern: '${{ $APP_NAME }}/e2e/*.png'
