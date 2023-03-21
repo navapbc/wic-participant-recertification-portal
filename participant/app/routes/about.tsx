@@ -11,7 +11,7 @@ export default function Index() {
   const listProcessKeys: string[] = ["answer", "upload", "appointment"];
 
   return (
-    <div className="measure-6">
+    <div>
       <h1>{t("About.title")}</h1>
       <ProcessList>
         {listProcessKeys.map((key: string) => (
