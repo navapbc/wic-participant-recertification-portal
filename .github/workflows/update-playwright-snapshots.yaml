@@ -19,7 +19,7 @@ env:
   APP_NAME: ${{ inputs.app_name || 'participant' }}
 
 # Need to repeat the expression since env.WHATEVER is not accessible in this context
-concurrency: cd-${{ github.ref_name }}-${{ inputs.app_name || 'participant' }}
+concurrency: playwright-${{ github.ref_name }}-${{ inputs.app_name || 'participant' }}
 
 jobs:
   snapshots:
