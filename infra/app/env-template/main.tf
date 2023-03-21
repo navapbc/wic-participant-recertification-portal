@@ -22,6 +22,7 @@ locals {
   participant_service_name = "${local.project_name}-participant-${var.environment_name}"
   staff_service_name       = "${local.project_name}-staff-${var.environment_name}"
   analytics_service_name   = "${local.project_name}-analytics-${var.environment_name}"
+  document_upload_s3_name  = "${local.project_name}-doc-upload-${var.environment_name}"
 }
 
 module "project_config" {
@@ -52,12 +53,6 @@ module "database" {
   source         = "../../modules/database"
   database_name  = local.database_name
   admin_password = module.database_password.random_password
-}
-
-module "doc_upload" {
-  source           = "../../modules/doc-upload-s3"
-  environment_name = var.environment_name
-  service_name     = local.analytics_service_name
 }
 
 module "service_cluster" {
@@ -122,4 +117,23 @@ module "analytics" {
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
+}
+
+data "aws_iam_role" "participant_task_executor" {
+  # Referencing the task executor of the ECS services so that they have the ability to upload documents to s3
+  name = "${local.participant_service_name}-task-executor"
+
+}
+
+data "aws_iam_role" "staff_task_executor" {
+  # Referencing the task executor of the ECS services so that they have the ability to upload documents to s3
+  name = "${local.staff_service_name}-task-executor"
+}
+
+module "doc_upload" {
+  source           = "../../modules/s3-encrypted"
+  environment_name = var.environment_name
+  s3_bucket_name   = local.document_upload_s3_name
+  read_role_arns   = [data.aws_iam_role.staff_task_executor.arn, data.aws_iam_role.participant_task_executor.arn]
+  read_role_names  = [data.aws_iam_role.staff_task_executor.name, data.aws_iam_role.participant_task_executor.name]
 }
