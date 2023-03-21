@@ -17,6 +17,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "e2e": "npx playwright test --retries=3",
+    "e2e:update": "npx playwright test --update-snapshots",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook",
     "storybook:docker": "docker compose up -d remix_dev && docker compose exec remix_dev npm run storybook",
