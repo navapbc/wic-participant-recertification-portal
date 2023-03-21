@@ -1,9 +1,27 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
+import { useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
+
+import type { LoaderFunction } from "@remix-run/server-runtime";
+import { cookieParser } from "app/cookies";
 import { Trans, useTranslation } from "react-i18next";
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const { submissionID, headers } = await cookieParser(request);
+  return json(
+    {
+      submissionID: submissionID,
+    },
+    { headers: headers }
+  );
+};
+
+type loaderData = Awaited<ReturnType<typeof loader>>;
 
 export default function Index() {
   const { t } = useTranslation();
+  const { submissionID } = useLoaderData<loaderData>();
 
   return (
     <div>
