@@ -1,0 +1,58 @@
+name: 🎭 Playwright snapshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: "The app to deploy"
+        required: true
+        default: "participant"
+        type: choice
+        options:
+          - participant
+          - staff
+
+env:
+  APP_NAME: ${{ inputs.app_name || 'participant' }}
+
+# Need to repeat the expression since env.WHATEVER is not accessible in this context
+concurrency: cd-${{ inputs.env_name || 'dev' }}-${{ inputs.app_name || 'participant' }}
+
+jobs:
+  snapshots:
+    name: 🎭 Playwright
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./${{ inputs.app_name }}
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: 📸 Take Playwright snapshots 
+        run: npx playwright test --update-snapshots
+        working-directory: ${{ inputs.app_name }}
+
+      - name: 💾 Save Playwright snapshots
+        # Do not allow save to main branch
+        if: github.ref != 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update playwright snapshots
+          # Save only snapshots for the selected app
+          file_pattern: '${{ inputs.app_name }}/e2e/*.png'
