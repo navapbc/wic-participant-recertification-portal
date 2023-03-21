@@ -98,7 +98,7 @@ jobs:
 
   playwright:
     name: 🎭 Playwright
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
