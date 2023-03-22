@@ -25,6 +25,12 @@ RUN npx prisma generate
 COPY --chown=node:node . .
 CMD ["npm", "run", "dev:docker"]
 
+# -------- Image: e2e -------- #
+# Provide an e2e image
+FROM dev as e2e
+ENTRYPOINT ["./entrypoint-e2e.sh"]
+CMD ["npm", "run", "dev:docker"]
+
 # -------- Image: build -------- #
 # Build the app
 FROM base as build
@@ -55,10 +61,4 @@ COPY --from=build /home/node/remix/build ./build
 COPY --from=build /home/node/remix/public/build ./public/build
 COPY --chown=node:node . .
 VOLUME ["/tmp"]
-CMD ["/home/node/remix/bin/prod-start.sh"]
-
-# -------- Image: e2e -------- #
-# Provide an e2e image
-FROM prod as e2e
-ENTRYPOINT ["./entrypoint-e2e.sh"]
 CMD ["/home/node/remix/bin/prod-start.sh"]
