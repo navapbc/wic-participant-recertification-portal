@@ -100,6 +100,13 @@ jobs:
     name: 🎭 Playwright
     runs-on: macos-latest
     steps:
+      - name: Install docker
+        run: |
+          brew install docker colima
+          colima start
+          docker -version
+          sudo docker –version
+
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
