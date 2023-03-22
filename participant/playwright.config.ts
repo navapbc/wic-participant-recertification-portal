@@ -117,21 +117,9 @@ const config: PlaywrightTestConfig = {
    * (and implicitly when you run `npm run e2e`)
    * This is for running playwright outside of docker, which is usually NOT
    * what you want because you want to create snapshots in a linux environment.
+   * See https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
    */
   // webServer: {
-  //   command:
-  //     "docker-compose -f docker-compose.e2e.yml up database-e2e --wait && \
-  //      docker-compose -f docker-compose.e2e.yml run --rm remix-migrate-reset && \
-  //      npm run css && \
-  //      npm run dev:remix",
-  //   port: 5556,
-  //   timeout: 450 * 1000,
-  //   reuseExistingServer: !process.env.CI,
-  //   env: {
-  //     DATABASE_URL:
-  //       "postgresql://postgres:incredible_local_secret_phrase@localhost:5555/postgres?schema=public",
-  //     PORT: "5556",
-  //   },
   // },
 };
 
