@@ -13,7 +13,7 @@ test("index has no automatically detectable accessibility errors", async ({
 test("has title", async ({ page }) => {
   await page.goto("/");
   // Expect a title "to contain" a correct app title.
-  await expect(page).toHaveTitle(/Title/);
+  await expect(page).toHaveTitle(/Start your recertification for Montana WIC/);
   await expect(page).toHaveScreenshot();
 });
 
