@@ -102,10 +102,10 @@ jobs:
     steps:
       - name: Install docker
         run: |
-          brew install docker colima
+          brew install docker
           colima start
-          docker -version
-          sudo docker –version
+          docker --version
+          sudo docker -–version
 
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
