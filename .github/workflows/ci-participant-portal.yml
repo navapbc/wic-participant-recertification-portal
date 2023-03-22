@@ -114,11 +114,8 @@ jobs:
           useLockFile: false
           working-directory: ./participant
 
-      - name: 🎭 Install Playwright browsers
-        run: npx playwright install --with-deps
-
       - name: 🐳 Run Playwright in Docker Compose
-        run: npx playwright test --retries=3
+        run: npm run e2e
         working-directory: participant
 
       - name: 🗃 Archive test results
@@ -127,8 +124,3 @@ jobs:
         with:
           name: test-results
           path: participant/test-results
-
-      - name: 🐛 Add debug message
-        if: failure()
-        run: |
-          echo "If this fails, try running the Playwright Snapshots github actions workflow on your branch"

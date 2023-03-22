@@ -1,31 +1,83 @@
+# Usage:
+# This docker composition is meant to be invoked using the npm scripts in package.json.
+# Run `npm run e2e` to create the database, then remix, then run the playwright tests.
+# Run `npm run e2e:cleanup` to clean up running and exited containers.
+# Run `npm run e2e:update` to update the playwright linux snapshots.
+#
+# Advanced usage:
+# Run `docker-compose up -d --build` to start up all the services
+# Run `docker-compose exec playwright npx playwright test` to run tests
+# Run `docker-compose down -v --remove-orphans` to cleanup
+# Note: This usage *requires* running docker-compose down; otherwise containers are
+#       will hang around forever. Not suitable for CI.
 version: "3.7"
 
 services:
-  remix-migrate-reset:
-    build:
-      target: dev
-      context: .
-    environment:
-      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
-    depends_on:
-      database-e2e:
-        condition: service_healthy
-    networks:
-      - participant_portal-e2e
-    command: >
-      bash -c "npx prisma migrate reset --force"
+  # Create a database to run e2e tests against
   database-e2e:
     image: postgres
     environment:
       POSTGRES_PASSWORD: incredible_local_secret_phrase
       POSTGRES_USER: postgres
+    # Check that the database is up and running
     healthcheck:
       test: "pg_isready --username=postgres"
       timeout: 5s
       retries: 20
-    ports:
-      - 5555:5432
     networks:
       - participant_portal-e2e
+
+  # Create a remix server to run e2e tests against
+  remix-e2e:
+    build:
+      # This target includes entrypoint-e2e.sh which will force reset the prisma migrations
+      target: e2e
+      context: .
+    # The database must be up and running before the remix server will start
+    depends_on:
+      database-e2e:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
+    # Check that the remix server is up and running
+    healthcheck:
+      test: "curl -f http://localhost:3000/healthcheck || exit 1"
+      timeout: 5s
+      retries: 20
+    init: true
+    networks:
+      - participant_portal-e2e
+    # Expose a port in case it's useful for debugging
+    ports:
+      - 3000:3000
+    volumes:
+      # Mount the app directory for faster local development
+      - ./:/home/node/remix
+      # Use a named volume for the node_modules so that the container uses the guest machine's node_modules dir instead of the host machine's node_modules directory, which might be divergent
+      - remix_dev_nodemodules:/home/node/remix/node_modules
+
+  # Create the playwright container
+  playwright:
+    build:
+      # Use a different Dockerfile specifically to build a slim container just for playwright
+      context: .
+      dockerfile: Dockerfile.playwright
+    # Remix must be up and running before playwright will start
+    depends_on:
+      remix-e2e:
+        condition: service_healthy
+    init: true
+    networks:
+      - participant_portal-e2e
+    # Bind mount some local directories to make working on e2e tests faster
+    # and to be able to update snapshots
+    volumes:
+      - ./e2e:/srv/e2e
+      - ./playwright-report:/srv/playwright-report
+      - ./test-results:/srv/test-results
+
 networks:
   participant_portal-e2e:
+
+volumes:
+  remix_dev_nodemodules:
