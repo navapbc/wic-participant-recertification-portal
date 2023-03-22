@@ -48,11 +48,22 @@
     "body": "<p>This is an introductory paragraph</p><p>There will be useful information here</p>",
     "button": "Call to Action"
   },
-  "Intro": {
-    "title": "Title",
-    "intro": "Blue mountain, grinder fair trade, coffee et strong bar  roast pumpkin spice robust siphon french press. White as, coffee macchiato spoon coffee crema single shot lungo seasonal latte. Id cortado, breve, carajillo, macchiato blue mountain so a cream. Caramelization, foam shop, spoon cappuccino at galão café au lait. Crema, cream viennese body turkish instant plunger pot that trifecta.    ",
-    "body": "Aged, a acerbic viennese aroma, black crema milk french press cup aftertaste. Java, milk fair trade café au lait skinny, dripper breve in roast aftertaste sweet. Cappuccino froth, fair trade affogato saucer dark sugar. Crema wings half and half, cultivar bar  et single origin, doppio blue mountain sweet extra  saucer. Cup roast beans, cream cultivar instant as percolator cultivar trifecta.",
-    "button": "Do the thing!"
+  "About": {
+    "title": "How it works",
+    "note": "Note: This form does not guarantee your enrollment in WIC. Your eligibility will be confirmed when you have your recertification appointment with WIC.",
+    "button": "Continue",
+    "answer": {
+      "body": "We only need to collect information about WIC participants who have a recertification appointment.",
+      "header": "Answer questions about who is recertifying in your household"
+    },
+    "upload": {
+      "body": "We will help you figure out which ones you need. If you usually have to show income information, like paystubs or tax returns, have those documents accessible before you start.",
+      "header": "Upload any needed documents"
+    },
+    "appointment": {
+      "body": "Your local WIC clinic staff will confirm the information and documents you sent.",
+      "header": "Later, attend your recertification appointment"
+    }
   },
   "Layout": {
     "footer1": {
