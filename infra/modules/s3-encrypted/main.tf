@@ -19,9 +19,9 @@ resource "aws_s3_bucket_public_access_block" "s3_encrypted" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_policy" "s3_encrypted" {
+resource "aws_s3_bucket_policy" "s3_encrypted_deny_unencrypted" {
   bucket = aws_s3_bucket.s3_encrypted.id
-  policy = data.aws_iam_policy_document.s3_encrypted.json
+  policy = data.aws_iam_policy_document.deny_unencrypted.json
 }
 
 resource "aws_s3_bucket_policy" "s3_encrypted_require_tls" {
@@ -29,26 +29,39 @@ resource "aws_s3_bucket_policy" "s3_encrypted_require_tls" {
   policy = data.aws_iam_policy_document.require_tls.json
 }
 
-resource "aws_iam_role_policy" "read_s3" {
-  for_each = toset(var.read_role_names)
-  name     = "ReadAndDecryptS3"
-  role     = each.value
-  policy   = data.aws_iam_policy_document.read_s3.json
+resource "aws_iam_policy" "read" {
+  name        = "${var.s3_bucket_name}-read"
+  description = "Allows read access to the bucket"
+  policy      = data.aws_iam_policy_document.read_s3.json
 }
 
-resource "aws_iam_role_policy" "delete_s3" {
-  for_each = toset(var.read_role_names)
-  name     = "DeleteAndDecryptS3"
-  role     = each.value
-  policy   = data.aws_iam_policy_document.delete_s3.json
+resource "aws_iam_policy" "write" {
+  name        = "${var.s3_bucket_name}-write"
+  description = "Allows write access to the bucket"
+  policy      = data.aws_iam_policy_document.write_s3.json
 }
 
-resource "aws_iam_role_policy" "write_s3" {
-  for_each = toset(var.read_role_names)
-  name     = "WriteAndDecryptS3"
-  # using the role arn resulted in a malformed policy
-  role   = each.value
-  policy = data.aws_iam_policy_document.delete_s3.json
+resource "aws_iam_policy" "delete" {
+  name        = "${var.s3_bucket_name}-delete"
+  description = "Allows delete access to the bucket"
+  policy      = data.aws_iam_policy_document.delete_s3.json
+}
+
+resource "aws_iam_role_policy_attachment" "read" {
+  for_each   = toset(var.read_role_names)
+  role       = each.value
+  policy_arn = aws_iam_policy.read.arn
+}
+
+resource "aws_iam_role_policy_attachment" "write" {
+  for_each   = toset(var.write_role_names)
+  role       = each.value
+  policy_arn = aws_iam_policy.read.arn
+}
+resource "aws_iam_role_policy_attachment" "delete" {
+  for_each   = toset(var.delete_role_names)
+  role       = each.value
+  policy_arn = aws_iam_policy.read.arn
 }
 
 resource "aws_s3_bucket_versioning" "s3_encrypted" {
@@ -178,7 +191,6 @@ data "aws_iam_policy_document" "read_s3" {
 }
 
 data "aws_iam_policy_document" "write_s3" {
-  for_each = toset(var.read_role_arns)
   statement {
     sid    = "AllowWriteAccess"
     effect = "Allow"
@@ -193,14 +205,10 @@ data "aws_iam_policy_document" "write_s3" {
       aws_s3_bucket.s3_encrypted.arn,
       "${aws_s3_bucket.s3_encrypted.arn}/*"
     ]
-    principals {
-      type        = "AWS"
-      identifiers = [each.value]
-    }
   }
 }
 
-data "aws_iam_policy_document" "s3_encrypted" {
+data "aws_iam_policy_document" "deny_unencrypted" {
   statement {
     sid    = "DenyUnEncryptedObjectUploads"
     effect = "Deny"
