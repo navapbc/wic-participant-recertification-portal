@@ -1,5 +1,5 @@
 import db from "app/utils/db.connection";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export type SubmissionWithAgency = Prisma.PromiseReturnType<
   typeof findSubmission

@@ -6,11 +6,7 @@ import {
 } from "app/utils/db.server";
 import { v4 as uuidv4 } from "uuid";
 
-import {
-  getLocalAgency,
-  getCurrentSubmission,
-  getExpiredSubmission,
-} from "tests/helpers/mockData";
+import { getLocalAgency, getCurrentSubmission } from "tests/helpers/mockData";
 
 it("finds a submission", async () => {
   const submissionID = uuidv4();

@@ -1,15 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
-import { LocalAgency, Submission } from "@prisma/client";
+import type { LocalAgency, Submission } from "@prisma/client";
 import invariant from "tiny-invariant";
 
 type SubmissionWithAgencyNoNull = Submission & {
   localAgency: LocalAgency;
 };
 
-export function getLocalAgency() {
+export function getLocalAgency(urlId: string = "agency") {
   return {
     localAgencyId: uuidv4(),
-    urlId: "agency",
+    urlId: urlId,
     name: "A WIC Agency",
     createdAt: new Date(),
     updatedAt: new Date(),
