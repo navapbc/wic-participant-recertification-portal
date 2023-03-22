@@ -111,9 +111,9 @@ jobs:
         uses: docker-practice/actions-setup-docker@master
 
       - run: |
-        set -x
-        docker version
-        docker compose version
+          set -x
+          docker version
+          docker compose version
 
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
