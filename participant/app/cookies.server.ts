@@ -1,10 +1,8 @@
 // app/sessions.js
 import { createCookie } from "@remix-run/node"; // or "@remix-run/cloudflare"
-import type { Request } from "@remix-run/node";
 import { redirect } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { findSubmission, upsertSubmission } from "./utils/db.server";
-
 const MAX_SESSION_SECONDS = Number(process.env.MAX_SESSION_SECONDS) || 1800;
 
 type ParticipantCookieContents = {
@@ -45,7 +43,7 @@ export const cookieParser = async (request: Request, resetSession = false) => {
         const validSession = sessionCheck(existingSubmission.updatedAt);
         if (validSession) {
           console.log(`Session ${submissionID} valid; finished parser`);
-          return { submissionID: submissionID, headers: {} };
+          return { submissionID: submissionID };
         }
         forceRedirect = true;
       }
@@ -67,7 +65,7 @@ export const cookieParser = async (request: Request, resetSession = false) => {
     );
     throw redirect("/", {
       headers: {
-        "Set-Cookie": await ParticipantCookie.serialize(cookie),
+        "Set-cookie": await ParticipantCookie.serialize(cookie),
       },
     });
   }

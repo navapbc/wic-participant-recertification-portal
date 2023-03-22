@@ -9,7 +9,6 @@ import {
   sessionCheck,
 } from "app/cookies.server";
 import { v4 as uuidv4 } from "uuid";
-import type { Request } from "@remix-run/node";
 import { prismaMock } from "tests/helpers/prismaMock";
 import {
   getCurrentSubmission,
@@ -111,7 +110,7 @@ it("continues the same session if valid", async () => {
   // The cookie parser doesn't do upserts on valid sessions
   expect(prismaMock.submission.upsert).not.toHaveBeenCalled();
   // The cookie parser doesn't set a new cookie on a valid session
-  expect(headers).not.toHaveProperty("Set-cookie");
+  expect(headers).toBeUndefined;
   // It does return the same SubmissionID for the loader / caller to use
   expect(submissionID).toEqual(mockSubmissionID);
 });
