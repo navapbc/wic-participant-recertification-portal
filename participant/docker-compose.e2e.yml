@@ -41,7 +41,7 @@ services:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
     # Check that the remix server is up and running
     healthcheck:
-      test: 'curl -f http://localhost:3000/healthcheck || exit 1'
+      test: "curl -f http://localhost:3000/healthcheck || exit 1"
       timeout: 5s
       retries: 20
     init: true
