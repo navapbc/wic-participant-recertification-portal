@@ -44,3 +44,7 @@ export const findLocalAgency = async (urlId: string) => {
     },
   });
 };
+
+export const firstLocalAgency = async () => {
+  return await db.localAgency.findFirst();
+};

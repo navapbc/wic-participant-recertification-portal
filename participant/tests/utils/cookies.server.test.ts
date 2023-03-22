@@ -22,6 +22,7 @@ async function makeCookieRequest(submissionID: string) {
   });
   return {
     headers: new Map([["Cookie", cookieValue]]),
+    url: "http://localhost/foobar",
   } as unknown as Request;
 }
 
@@ -94,7 +95,7 @@ it("resets the session if a cookie is sent without DB Submission record", async 
   } catch (error) {
     if (!(error instanceof Response)) throw error;
     expect(error.status).toBe(302);
-    expect(error.headers.get("location")).toBe("/");
+    expect(error.headers.get("location")).toBe("/gallatin/recertify");
     expect(error.headers.get("set-cookie")).toContain(
       "prp-recertification-form"
     );
@@ -199,7 +200,7 @@ it("resets the session if the submission is stale", async () => {
   } catch (error) {
     if (!(error instanceof Response)) throw error;
     expect(error.status).toBe(302);
-    expect(error.headers.get("location")).toBe("/");
+    expect(error.headers.get("location")).toBe("/gallatin/recertify");
     expect(error.headers.get("set-cookie")).toContain(
       "prp-recertification-form"
     );

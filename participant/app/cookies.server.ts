@@ -1,7 +1,9 @@
 import { createCookie } from "@remix-run/node"; // or "@remix-run/cloudflare"
+import { Params } from "@remix-run/react";
 import { redirect } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { findSubmission, upsertSubmission } from "./utils/db.server";
+import { validRoute } from "./utils/redirect";
 const MAX_SESSION_SECONDS = Number(process.env.MAX_SESSION_SECONDS) || 1800;
 
 type ParticipantCookieContents = {
@@ -23,13 +25,18 @@ export const sessionCheck = (time: Date): boolean => {
   return true;
 };
 
-export const cookieParser = async (request: Request, resetSession = false) => {
+export const cookieParser = async (
+  request: Request,
+  params?: Params<string>,
+  resetSession = false
+) => {
   const cookie = ((await ParticipantCookie.parse(
     request.headers.get("Cookie")
   )) || {}) as ParticipantCookieContents;
 
   let forceRedirect: boolean = resetSession;
-  const urlId = "gallatin"; // ONLY HERE until PRP-227
+  const urlId = params?.localAgency || "";
+  console.log(`URL ID ${urlId}`);
   if (cookie) {
     if (cookie.submissionID) {
       const submissionID = cookie.submissionID;
@@ -65,14 +72,17 @@ export const cookieParser = async (request: Request, resetSession = false) => {
     throw redirect("/error/databaseError");
   }
   if (forceRedirect) {
-    console.log(
-      `Force redirect is ${forceRedirect.toString()}; sending the user back to /`
-    );
-    throw redirect("/", {
-      headers: {
-        "Set-cookie": await ParticipantCookie.serialize(cookie),
-      },
-    });
+    const redirectTarget = await validRoute(request, params, true);
+    if (redirectTarget) {
+      console.log(
+        `Force redirect is ${forceRedirect.toString()}; sending the user back to ${redirectTarget}`
+      );
+      throw redirect(redirectTarget, {
+        headers: {
+          "Set-cookie": await ParticipantCookie.serialize(cookie),
+        },
+      });
+    }
   }
   return {
     submissionID: submissionID,
