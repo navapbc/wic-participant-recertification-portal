@@ -1,19 +1,6 @@
 version: "3.7"
 
 services:
-  remix-migrate-reset:
-    build:
-      target: dev
-      context: .
-    environment:
-      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
-    depends_on:
-      database-e2e:
-        condition: service_healthy
-    networks:
-      - participant_portal-e2e
-    command: >
-      bash -c "npx prisma migrate reset --force"
   database-e2e:
     image: postgres
     environment:
@@ -23,9 +10,42 @@ services:
       test: "pg_isready --username=postgres"
       timeout: 5s
       retries: 20
-    ports:
-      - 5555:5432
     networks:
       - participant_portal-e2e
+
+  remix-e2e:
+    build:
+      target: e2e
+      context: .
+    depends_on:
+      database-e2e:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
+    healthcheck:
+      test: 'curl -f http://localhost:3000/healthcheck || exit 1'
+      timeout: 5s
+      retries: 20
+    init: true
+    networks:
+      - participant_portal-e2e
+    ports:
+      - 3000:3000
+
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile.playwright
+    depends_on:
+      remix-e2e:
+        condition: service_healthy
+    init: true
+    networks:
+      - participant_portal-e2e
+    volumes:
+      - ./e2e:/srv/e2e
+      - ./playwright-report:/srv/playwright-report
+      - ./test-results:/srv/test-results
+
 networks:
   participant_portal-e2e:

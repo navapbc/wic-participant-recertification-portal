@@ -4,7 +4,7 @@
 /build
 /coverage
 /node_modules
-/playwright*
+/playwright-report
 /public/build
 /storybook-static
 /test-results

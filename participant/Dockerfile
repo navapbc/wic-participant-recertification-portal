@@ -1,10 +1,12 @@
 # -------- Image: base -------- #
 # Base node image with package updates and dependencies
 FROM node:18-slim as base
-# Install openssl for Prisma
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-  openssl
+    # Install curl for healthcheck
+    curl \
+    # Install openssl for Prisma
+    openssl
 # Set working directory and node user
 WORKDIR /home/node/remix
 
@@ -53,4 +55,10 @@ COPY --from=build /home/node/remix/build ./build
 COPY --from=build /home/node/remix/public/build ./public/build
 COPY --chown=node:node . .
 VOLUME ["/tmp"]
+CMD ["/home/node/remix/bin/prod-start.sh"]
+
+# -------- Image: e2e -------- #
+# Provide an e2e image
+FROM prod as e2e
+ENTRYPOINT ["./entrypoint-e2e.sh"]
 CMD ["/home/node/remix/bin/prod-start.sh"]
