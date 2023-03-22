@@ -1,6 +1,7 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
-import { Params, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
+import type { Params } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { cookieParser } from "app/cookies.server";

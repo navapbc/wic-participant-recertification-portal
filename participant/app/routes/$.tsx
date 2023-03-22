@@ -1,4 +1,5 @@
-import { LoaderFunction, redirect } from "@remix-run/server-runtime";
+import { redirect } from "@remix-run/server-runtime";
+import type { LoaderFunction } from "@remix-run/server-runtime";
 import { validRoute } from "~/utils/redirect";
 
 export const loader: LoaderFunction = async ({ request, params }) => {

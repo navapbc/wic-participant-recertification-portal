@@ -1,5 +1,5 @@
 import { createCookie } from "@remix-run/node"; // or "@remix-run/cloudflare"
-import { Params } from "@remix-run/react";
+import type { Params } from "@remix-run/react";
 import { redirect } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { findSubmission, upsertSubmission } from "./utils/db.server";

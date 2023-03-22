@@ -17,7 +17,6 @@ import i18next from "~/i18next.server";
 import Layout from "app/components/Layout";
 import { camelCase, upperFirst } from "lodash";
 import { useEffect } from "react";
-import { findLocalAgency, firstLocalAgency } from "./utils/db.server";
 
 export function useChangeLanguage(locale: string) {
   const { i18n } = useTranslation();

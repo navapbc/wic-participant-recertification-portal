@@ -1,4 +1,4 @@
-import { Params } from "@remix-run/react";
+import type { Params } from "@remix-run/react";
 import { findLocalAgency, firstLocalAgency } from "./db.server";
 
 export const validRoute = async (
