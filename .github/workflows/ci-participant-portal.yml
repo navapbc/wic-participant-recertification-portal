@@ -100,13 +100,20 @@ jobs:
     name: 🎭 Playwright
     runs-on: macos-latest
     steps:
+      # - name: Install docker
+      #   run: |
+      #     brew install docker
+      #     colima start
+      #     rm -rf ~/.docker
+      #     docker -v
+      #     which docker-compose
       - name: Install docker
-        run: |
-          brew install docker
-          colima start
-          rm -rf ~/.docker
-          docker -v
-          which docker-compose
+        uses: docker-practice/actions-setup-docker@master
+
+      - run: |
+        set -x
+        docker version
+        docker compose version
 
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
