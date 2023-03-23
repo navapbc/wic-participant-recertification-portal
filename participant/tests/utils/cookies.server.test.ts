@@ -132,11 +132,11 @@ it("resets the session if asked to", async () => {
   );
   let returnedSubmissionID: string = "default";
   try {
-    await cookieParser(cookieRequest, true);
+    await cookieParser(cookieRequest, {}, true);
   } catch (error) {
     if (!(error instanceof Response)) throw error;
     expect(error.status).toBe(302);
-    expect(error.headers.get("location")).toBe("/");
+    expect(error.headers.get("location")).toBe("/gallatin/recertify");
     expect(error.headers.get("set-cookie")).toContain(
       "prp-recertification-form"
     );
