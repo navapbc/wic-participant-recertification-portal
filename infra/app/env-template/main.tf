@@ -105,6 +105,16 @@ module "staff" {
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
+  container_port       = 3000
+  container_secrets = [
+    {
+      name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.database.admin_db_url_secret_name}"
+    },
+  ]
+  service_ssm_resource_paths = [
+    module.database.admin_db_url_secret_name,
+  ]
 }
 
 module "analytics" {
