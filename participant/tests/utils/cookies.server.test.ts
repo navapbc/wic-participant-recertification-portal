@@ -22,7 +22,10 @@ async function makeCookieRequest(submissionID: string) {
   });
   return {
     headers: new Map([["Cookie", cookieValue]]),
+<<<<<<< HEAD
     url: "http://localhost/foobar",
+=======
+>>>>>>> main
   } as unknown as Request;
 }
 
@@ -95,7 +98,11 @@ it("resets the session if a cookie is sent without DB Submission record", async 
   } catch (error) {
     if (!(error instanceof Response)) throw error;
     expect(error.status).toBe(302);
+<<<<<<< HEAD
     expect(error.headers.get("location")).toBe("/gallatin/recertify");
+=======
+    expect(error.headers.get("location")).toBe("/");
+>>>>>>> main
     expect(error.headers.get("set-cookie")).toContain(
       "prp-recertification-form"
     );
@@ -132,11 +139,19 @@ it("resets the session if asked to", async () => {
   );
   let returnedSubmissionID: string = "default";
   try {
+<<<<<<< HEAD
     await cookieParser(cookieRequest, {}, true);
   } catch (error) {
     if (!(error instanceof Response)) throw error;
     expect(error.status).toBe(302);
     expect(error.headers.get("location")).toBe("/gallatin/recertify");
+=======
+    await cookieParser(cookieRequest, true);
+  } catch (error) {
+    if (!(error instanceof Response)) throw error;
+    expect(error.status).toBe(302);
+    expect(error.headers.get("location")).toBe("/");
+>>>>>>> main
     expect(error.headers.get("set-cookie")).toContain(
       "prp-recertification-form"
     );
@@ -200,7 +215,11 @@ it("resets the session if the submission is stale", async () => {
   } catch (error) {
     if (!(error instanceof Response)) throw error;
     expect(error.status).toBe(302);
+<<<<<<< HEAD
     expect(error.headers.get("location")).toBe("/gallatin/recertify");
+=======
+    expect(error.headers.get("location")).toBe("/");
+>>>>>>> main
     expect(error.headers.get("set-cookie")).toContain(
       "prp-recertification-form"
     );
