@@ -30,6 +30,15 @@ it("will find a valid agency if one is not in the url", async () => {
   expect(target).toBe(`/${mockAgency.urlId}/recertify`);
 });
 
+it("will find a valid agency a bogus one is in the first urlPart", async () => {
+  const mockAgency = getLocalAgency();
+  prismaMock.localAgency.findUnique.mockResolvedValue(mockAgency);
+  prismaMock.localAgency.findFirst.mockResolvedValue(mockAgency);
+  const request = makeRequest(`/bogus`);
+  const target = await validRoute(request);
+  expect(target).toBe(`/${mockAgency.urlId}/recertify`);
+});
+
 it("will use a valid agency even if it is in the first urlPart", async () => {
   let mockAgency = getLocalAgency();
   mockAgency.urlId = "DIFFERENT";

@@ -53,7 +53,7 @@ type LoaderData = { locale: string; demoMode: string; missingData: string };
 export const loader: LoaderFunction = async ({ request, params }) => {
   const redirectTarget = await validRoute(request, params);
   if (redirectTarget) {
-    console.log(`Redirecting to first agency ${redirectTarget}`);
+    console.log(`Redirecting to baseUrl ${redirectTarget}`);
     throw redirect(redirectTarget);
   }
 

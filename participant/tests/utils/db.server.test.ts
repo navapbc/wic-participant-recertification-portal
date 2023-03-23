@@ -3,6 +3,7 @@ import {
   findSubmission,
   upsertSubmission,
   findLocalAgency,
+  firstLocalAgency,
 } from "app/utils/db.server";
 import { v4 as uuidv4 } from "uuid";
 
@@ -65,4 +66,12 @@ it("throws an exception if there is no agency", async () => {
   await expect(async () => {
     await upsertSubmission(submissionID, "bogus");
   }).rejects.toThrow(`Unable to find agency for bogus`);
+});
+
+it("finds the firstLocalAgency", async () => {
+  const mockAgencyFirst = getLocalAgency();
+  prismaMock.localAgency.findFirst.mockResolvedValue(mockAgencyFirst);
+  const foundAgency = await firstLocalAgency();
+  expect(prismaMock.localAgency.findFirst).toHaveBeenCalled();
+  expect(foundAgency).toMatchObject(mockAgencyFirst);
 });

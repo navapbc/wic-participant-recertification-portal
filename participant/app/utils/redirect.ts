@@ -4,7 +4,7 @@ import { findLocalAgency, firstLocalAgency } from "./db.server";
 export const validRoute = async (
   request: Request,
   params?: Params<string>,
-  findRoot: boolean = false
+  findBaseURL: boolean = false
 ) => {
   const url = new URL(request.url);
   let redirectToFirstAgency = !params?.localAgency;
@@ -37,7 +37,7 @@ export const validRoute = async (
     }
     return `/${agency.urlId}/recertify`;
   }
-  if (!url.pathname.includes("recertify") || findRoot) {
+  if (!url.pathname.includes("recertify") || findBaseURL) {
     return `/${validAgencyId}/recertify`;
   }
   return null;
