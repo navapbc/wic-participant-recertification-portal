@@ -51,6 +51,35 @@ it("creates a session if it creates a new cookie", async () => {
   expect(headers).toHaveProperty("Set-cookie");
 });
 
+it("creates a session if an empty cookie is sent", async () => {
+  const request = { headers: new Map([["Cookie", ""]]) } as unknown as Request;
+  prismaMock.localAgency.findUnique.mockResolvedValue(
+    getLocalAgency("gallatin")
+  );
+  const { submissionID, headers } = await cookieParser(request);
+  expect(prismaMock.submission.upsert).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: { submissionId: submissionID },
+    })
+  );
+  expect(headers).toHaveProperty("Set-cookie");
+});
+
+it("creates a session if a cookie with empty string SubmissionID is sent", async () => {
+  const cookieRequest = await makeCookieRequest("");
+
+  prismaMock.localAgency.findUnique.mockResolvedValue(
+    getLocalAgency("gallatin")
+  );
+  const { submissionID, headers } = await cookieParser(cookieRequest);
+  expect(prismaMock.submission.upsert).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: { submissionId: submissionID },
+    })
+  );
+  expect(headers).toHaveProperty("Set-cookie");
+});
+
 it("resets the session if a cookie is sent without DB Submission record", async () => {
   const submissionID = uuidv4();
   const cookieRequest = await makeCookieRequest(submissionID);
@@ -90,6 +119,47 @@ it("resets the session if a cookie is sent without DB Submission record", async 
     })
   );
   expect(returnedSubmissionID).not.toBe(submissionID);
+});
+
+it("resets the session if asked to", async () => {
+  const mockSubmissionID = uuidv4();
+  const mockSubmission = getCurrentSubmission(mockSubmissionID);
+  prismaMock.submission.findUnique.mockResolvedValue(mockSubmission);
+  const cookieRequest = await makeCookieRequest(mockSubmissionID);
+  prismaMock.localAgency.findUnique.mockResolvedValue(
+    getLocalAgency("gallatin")
+  );
+  let returnedSubmissionID: string = "default";
+  try {
+    await cookieParser(cookieRequest, true);
+  } catch (error) {
+    if (!(error instanceof Response)) throw error;
+    expect(error.status).toBe(302);
+    expect(error.headers.get("location")).toBe("/");
+    expect(error.headers.get("set-cookie")).toContain(
+      "prp-recertification-form"
+    );
+    // The headers on this redirect set the new cookie;
+    // we need the value to verify the Database calls
+    const returnedCookie = await ParticipantCookie.parse(
+      error.headers.get("set-cookie")
+    );
+    returnedSubmissionID = returnedCookie.submissionID;
+  }
+
+  expect(prismaMock.submission.findUnique).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: {
+        submissionId: mockSubmissionID,
+      },
+    })
+  );
+  expect(prismaMock.submission.upsert).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: { submissionId: returnedSubmissionID },
+    })
+  );
+  expect(returnedSubmissionID).not.toBe(mockSubmissionID);
 });
 
 it("continues the same session if valid", async () => {

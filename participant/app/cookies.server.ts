@@ -1,4 +1,3 @@
-// app/sessions.js
 import { createCookie } from "@remix-run/node"; // or "@remix-run/cloudflare"
 import { redirect } from "react-router";
 import { v4 as uuidv4 } from "uuid";
@@ -28,6 +27,7 @@ export const cookieParser = async (request: Request, resetSession = false) => {
   const cookie = ((await ParticipantCookie.parse(
     request.headers.get("Cookie")
   )) || {}) as ParticipantCookieContents;
+
   let forceRedirect: boolean = resetSession;
   const urlId = "gallatin"; // ONLY HERE until PRP-227
   if (cookie) {
@@ -58,7 +58,12 @@ export const cookieParser = async (request: Request, resetSession = false) => {
   console.log(
     `Creating Submission record in database for ${submissionID} and agency ${urlId}`
   );
-  await upsertSubmission(submissionID, urlId);
+  try {
+    await upsertSubmission(submissionID, urlId);
+  } catch (e) {
+    console.error(`Database error! ${JSON.stringify(e)}`);
+    throw redirect("/error/databaseError");
+  }
   if (forceRedirect) {
     console.log(
       `Force redirect is ${forceRedirect.toString()}; sending the user back to /`
