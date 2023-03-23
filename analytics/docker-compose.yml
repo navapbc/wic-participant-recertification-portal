@@ -20,11 +20,31 @@ services:
       - mysql_data:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
 
-  matomo:
-    # image: matomo:4
+  install:
     build:
-      target: prod
-      context: .
+      target: install
+      context: install
+    environment:
+      MATOMO_DATABASE_HOST: mysql
+      MATOMO_DATABASE_USERNAME: matomo
+      MATOMO_DATABASE_PASSWORD: more_secret_local_passwords
+      MATOMO_DATABASE_DBNAME: matomo
+    # command: ["php", "./console", "-n", "matomo:install", "--install-file=install.json"]
+    # command: systemctl start apache2 && php ./console -n matomo:install --install-file=install.json
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - 8081:80
+    profiles:
+      - install
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./install/install.json:/var/www/html/install.json
+      - ./config.ini.php:/var/www/html/config/config.ini.php
+
+  matomo:
+    image: matomo:4.14.1
     environment:
       MATOMO_DATABASE_HOST: mysql
       MATOMO_DATABASE_USERNAME: matomo
@@ -35,11 +55,12 @@ services:
         condition: service_healthy
     ports:
       - 8080:80
+    profiles:
+      - prod
     volumes:
       - matomo_data:/var/www/html
       - /etc/localtime:/etc/localtime:ro
-      # - ./config.ini.php:/var/www/html/config/config.ini.php
-      - ./install.json:/var/www/html/install.json
+      - ./config.ini.php:/var/www/html/config/config.ini.php
 
 volumes:
   mysql_data:

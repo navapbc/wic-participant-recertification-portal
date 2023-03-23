@@ -23,7 +23,7 @@ RUN wget "https://raw.githubusercontent.com/matomo-org/matomo/$VERSION/composer.
 # Install ExtraTools
 RUN git clone https://github.com/digitalist-se/extratools.git plugins/ExtraTools
 
-FROM matomo:4.14.1 as prod
+FROM matomo:4.14.1 as install
 COPY --from=mysql /usr/bin/mysqladmin /usr/bin/mysqladmin
 COPY --from=build /usr/local/bin/composer /usr/local/bin/composer
 COPY --from=build /var/www/html/composer.json .

@@ -47,10 +47,14 @@ echo "[General]" > /var/www/html/config/common.config.ini.php
 echo "always_load_commands_from_plugin=ExtraTools" >> /var/www/html/config/common.config.ini.php
 
 # Update file permissions
+mkdir -p /var/www/html/tmp/assets
+mkdir -p /var/www/html/tmp/templates_c
 chown -R www-data:www-data /var/www/html
 find /var/www/html/tmp/assets -type f -exec chmod 644 {} \;
 find /var/www/html/tmp/assets -type d -exec chmod 755 {} \;
 find /var/www/html/tmp/templates_c -type f -exec chmod 644 {} \;
 find /var/www/html/tmp/templates_c -type d -exec chmod 755 {} \;
+# php ./console matomo:install --force --install-file=install.json
+# php ./console site:add --name=Foo --urls=https://foo.bar
 
 exec "$@"
