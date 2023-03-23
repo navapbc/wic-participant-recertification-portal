@@ -11,9 +11,8 @@ import AxeBuilder from "@axe-core/playwright";
 // });
 
 test("has title", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: 'networkidle' });
   // Expect a title "to contain" a correct app title.
-  await page.waitForLoadState();
   await expect(page).toHaveTitle(/Welcome/);
   await expect(page).toHaveScreenshot();
 });
