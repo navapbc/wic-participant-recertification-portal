@@ -34,27 +34,26 @@ jobs:
   #     - name: 🔬 Lint
   #       run: npm --prefix staff run lint
 
-  # No typescript to typecheck yet!
-  # typecheck:
-  #   name:  ʦ Typecheck
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: ⬇️ Checkout repo
-  #       uses: actions/checkout@v3
+  typecheck:
+    name:  ʦ Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
 
-  #     - name: ⎔ Setup node
-  #       uses: actions/setup-node@v3.6.0
-  #       with:
-  #         node-version: 18
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18
 
-  #     - name: 📥 Download deps
-  #       uses: bahmutov/npm-install@v1
-  #       with:
-  #         useLockFile: false
-  #         working-directory: ./staff
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+          working-directory: ./staff
 
-  #     - name: 🔎 Type check
-  #       run: npm --prefix staff  run typecheck --if-present
+      - name: 🔎 Type check
+        run: npm --prefix staff  run typecheck --if-present
 
   format-check:
     name: 🪞 Prettier
