@@ -10,9 +10,8 @@ type ParticipantCookieContents = {
   submissionID?: string;
 };
 
-export const ParticipantCookie = createCookie("prp-recertification-form", {
-  secure: true,
-});
+// This should be secure: true, and have secrets in prod (probably)
+export const ParticipantCookie = createCookie("prp-recertification-form");
 
 export const sessionCheck = (time: Date): boolean => {
   const age = (new Date().getTime() - time.getTime()) / 1000;
@@ -36,7 +35,6 @@ export const cookieParser = async (
 
   let forceRedirect: boolean = resetSession;
   const urlId = params?.localAgency || "";
-  console.log(`URL ID ${urlId}`);
   if (cookie) {
     if (cookie.submissionID) {
       const submissionID = cookie.submissionID;

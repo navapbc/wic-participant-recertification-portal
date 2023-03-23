@@ -34,7 +34,6 @@ export const meta: MetaFunction = ({ location }) => {
   const trimBase = location.pathname.replace(/^\/(.*?)\/recertify\/?/, "");
   const route = trimBase != "" ? trimBase : "index";
   const title = t(`${upperFirst(camelCase(route))}.title`);
-  console.log(`Trimbase ${trimBase} route ${route} title ${title}`);
   return {
     charset: "utf-8",
     title: title,
