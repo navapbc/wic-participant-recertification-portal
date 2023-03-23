@@ -36,19 +36,21 @@ const Layout = ({
       <main className="main">
         <div className="grid-row">
           <div className="desktop:grid-col-8 padding-2 padding-bottom-8">
-            {missingData === "true" ? (
-              <Alert
-                type="error"
-                headingLevel="h4"
-                className="margin-bottom-3"
-                role="alert"
-              >
-                <Trans i18nKey={"routingError"} />
-              </Alert>
-            ) : (
-              ""
-            )}
-            {children}
+            <div className="measure-6">
+              {missingData === "true" ? (
+                <Alert
+                  type="error"
+                  headingLevel="h4"
+                  className="margin-bottom-3"
+                  role="alert"
+                >
+                  <Trans i18nKey={"routingError"} />
+                </Alert>
+              ) : (
+                ""
+              )}
+              {children}
+            </div>
           </div>
         </div>
       </main>

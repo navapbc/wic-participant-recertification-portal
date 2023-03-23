@@ -1,5 +1,5 @@
-import Intro from "~/routes/intro";
-import Layout from "~/components/Layout";
+import Intro from "app/routes/$localAgency/recertify/intro";
+import Layout from "app/components/Layout";
 export default {
   title: "Pages/Intro",
   parameters: {},

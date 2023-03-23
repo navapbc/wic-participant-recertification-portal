@@ -8,6 +8,11 @@ on:
   pull_request:
     paths:
       - participant/**
+  push:
+    branches:
+      - main
+    paths:
+      - participant/**
 # List of jobs
 jobs:
   chromatic-deployment:
@@ -44,6 +49,7 @@ jobs:
           workingDir: participant
 
       - name: 🎯 Post link to build on PR
+        if: github.ref != 'refs/heads/main' && github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |

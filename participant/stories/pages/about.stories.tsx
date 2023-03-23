@@ -1,5 +1,5 @@
-import About from "~/routes/about";
-import Layout from "~/components/Layout";
+import About from "app/routes/$localAgency/recertify/about";
+import Layout from "app/components/Layout";
 export default {
   title: "Pages/About",
   parameters: {},
