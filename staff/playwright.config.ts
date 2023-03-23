@@ -42,13 +42,14 @@ const config: PlaywrightTestConfig = {
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: "list",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://localhost:3000',
+    baseURL: "http://lowdefy-e2e:3000/",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -114,16 +115,12 @@ const config: PlaywrightTestConfig = {
   /* Run your local dev server before starting the tests */
   /* This command is what gets run by playwright automatically
    * (and implicitly when you run `npm run e2e`)
+   * This is for running playwright outside of docker, which is usually NOT
+   * what you want because you want to create snapshots in a linux environment.
+   * See https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
    */
-  webServer: {
-    command:
-      "npm run prisma:update && \
-       docker compose up --build && \
-       docker compose exec remix_dev npx prisma migrate reset --force",
-    port: 3033,
-    timeout: 450 * 1000,
-    reuseExistingServer: !process.env.CI,
-  },
+  // webServer: {
+  // },
 };
 
 export default config;
