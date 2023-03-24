@@ -15,25 +15,19 @@ export default function Index() {
       <h1>
         <Trans i18nKey="Index.title" />
       </h1>
-      <div className="font-sans-lg">
-        <p>
-          <Trans i18nKey="Index.intro" />
-        </p>
-      </div>
-      <div>
-        <p>
-          <Trans i18nKey="Index.eligible" />
-        </p>
-      </div>
+      <p className="font-sans-lg">
+        <Trans i18nKey="Index.intro" />
+      </p>
+      <p>
+        <Trans i18nKey="Index.eligible" />
+      </p>
       <List listKeys={listUserKeys} ordered={true} />
-      <div>
-        <p>
-          <Trans i18nKey="Index.note" />
-        </p>
-        <p>
-          <Trans i18nKey="Index.time" />
-        </p>
-      </div>
+      <p>
+        <Trans i18nKey="Index.note" />
+      </p>
+      <p>
+        <Trans i18nKey="Index.time" />
+      </p>
       <Button className="display-block margin-top-6" type="button">
       <Trans i18nKey="Index.button" />
       </Button>

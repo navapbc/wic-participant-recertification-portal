@@ -26,22 +26,16 @@ export default function Count() {
       <h1>
       <Trans i18nKey="Count.title" />
       </h1>
-      <div className="font-sans-lg">
-        <p>
-          <Trans i18nKey="Count.intro" />
-        </p>
-      </div>
-      <div>
-        <p>
-          <Trans i18nKey="Count.body" />
-        </p>
-        <List listKeys={listItems} ordered={false} />
-      </div>
-      <div>
-        <p>
-          <Trans i18nKey="Count.example" />
-        </p>
-      </div>
+      <p className="font-sans-lg">
+        <Trans i18nKey="Count.intro" />
+      </p>
+      <p>
+        <Trans i18nKey="Count.body" />
+      </p>
+      <List listKeys={listItems} ordered={false} />
+      <p>
+        <Trans i18nKey="Count.example" />
+      </p>
       <Form>
         <TextField {...householdSizeProps} />
         <Button

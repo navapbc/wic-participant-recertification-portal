@@ -54,11 +54,9 @@ export default function Details() {
       <h1>
         <Trans i18nKey="Details.title" />
       </h1>
-      <div className="font-sans-lg">
-        <p>
-          <Trans i18nKey="Details.intro" />
-        </p>
-      </div>
+      <p className="font-sans-lg">
+        <Trans i18nKey="Details.intro" />
+      </p>
       <Form>
         <CardGroup>{participantCards}</CardGroup>
         <Button
