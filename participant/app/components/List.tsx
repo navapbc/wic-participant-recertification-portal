@@ -8,7 +8,7 @@ export type ListProps = {
   unstyled?: boolean;
 };
 
-export const List = (props: NameInputProps): ReactElement => {
+export const List = (props: ListProps): ReactElement => {
   const {
     listKeys,
     ordered = false,
