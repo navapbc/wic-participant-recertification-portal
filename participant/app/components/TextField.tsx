@@ -32,6 +32,7 @@ export type TextFieldProps = {
     | "url";
   defaultValue?: string;
   value?: string;
+  className?: string;
 };
 
 export const TextField = (props: TextFieldProps): ReactElement => {
@@ -46,6 +47,7 @@ export const TextField = (props: TextFieldProps): ReactElement => {
     inputType,
     defaultValue,
     value,
+    className,
     ...otherProps
   } = props;
   const { getInputProps, error } = useField(id);
@@ -64,6 +66,7 @@ export const TextField = (props: TextFieldProps): ReactElement => {
           id: id,
           type: inputType,
           value: value,
+          className: className,
           ...otherProps,
         })}
       />

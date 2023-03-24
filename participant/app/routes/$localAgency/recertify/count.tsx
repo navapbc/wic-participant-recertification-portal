@@ -12,8 +12,10 @@ export default function Count() {
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
     type: "input",
-    inputType: "text",
+    inputType: "number",
     labelKey: "Count.householdSize.label",
+    required: true,
+    className: 'width-8'
   };
   // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion
   const listItems = t("Count.listItems", {
