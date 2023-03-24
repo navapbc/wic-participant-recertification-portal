@@ -27,12 +27,16 @@ export default function Details() {
   const { participantCount } = useLoaderData<loaderData>();
   const participantProps: Omit<ParticipantCardProps, "index"> = {
     adjunctiveKey: "AdjunctiveEligibility",
+    adjunctiveRequired: true,
+    dateHint: true,
     dateKey: "DateOfBirth",
     dateLegendKey: "DateOfBirth.legend",
+    dateRequired: true,
     nameKey: "NameInput",
     participantKey: "Details.participantCard",
+    namePreferred: true,
     relationshipKey: "Relationship",
-    dateHint: true,
+    relationshipRequired: true,
   };
 
   const participantCards: ReactElement[] = Array.from({
