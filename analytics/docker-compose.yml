@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  # Matomo doesn't work with psql, so we use mysql instead
+  # See https://matomo.org/faq/how-to-install/faq_55/
+  mysql:
+    image: mysql:8-debian
+    environment:
+      # Allowing empty root password for local development only.
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: matomo
+      MYSQL_USER: matomo
+      MYSQL_PASSWORD: more_secret_local_passwords
+    healthcheck:
+      test: "mysqladmin ping | grep 'mysqld is alive'"
+      timeout: 10s
+      retries: 20
+    init: true
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  matomo:
+    image: matomo:4.14.1
+    environment:
+      MATOMO_DATABASE_HOST: mysql
+      MATOMO_DATABASE_USERNAME: matomo
+      MATOMO_DATABASE_PASSWORD: more_secret_local_passwords
+      MATOMO_DATABASE_DBNAME: matomo
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - 80:80
+    volumes:
+      - matomo_data:/var/www/html
+
+volumes:
+  mysql_data:
+  matomo_data:
