@@ -10,6 +10,16 @@ variable "admin_password" {
   description = "database admin password"
 }
 
+variable "database_type" {
+  type        = string
+  description = "Whether to configure a postgresql or mysql database"
+  default     = "postgresql"
+  validation {
+    condition     = contains(["postgresql", "mysql"], var.database_type)
+    error_message = "choose either: postgresql or mysql"
+  }
+}
+
 variable "database_port" {
   type        = number
   description = "The port number for accessing the database"
