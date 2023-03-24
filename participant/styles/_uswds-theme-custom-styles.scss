@@ -60,3 +60,9 @@ i.e.
     margin-top: units(0.5)
   }
 }
+
+// USWDS Card Group:
+// Override accidental styling as indented list
+.usa-card-group ul {
+  list-style-type: disc;
+}
