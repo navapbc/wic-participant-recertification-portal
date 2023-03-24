@@ -127,6 +127,7 @@ module "analytics_database" {
   source         = "../../modules/database"
   database_name  = local.analytics_database_name
   database_port  = 3306
+  database_type  = "mysql"
   admin_password = module.analytics_database_password.random_password
 }
 
