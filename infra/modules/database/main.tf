@@ -13,6 +13,42 @@ locals {
   database_name_formatted    = replace("${var.database_name}", "-", "_")
 }
 
+################################################################################
+# Parameters for Query Logging
+################################################################################
+
+# For psql query logging, see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.Concepts.PostgreSQL.html#USER_LogAccess.Concepts.PostgreSQL.Query_Logging
+resource "aws_rds_cluster_parameter_group" "rds_query_logging_postgresql" {
+  count       = var.database_type == "postgresql" ? 1 : 0
+  name        = "${var.database_name}-${var.database_type}"
+  family      = "aurora-postgresql14"
+  description = "Default cluster parameter group"
+
+  parameter {
+    name  = "log_statement"
+    value = "all"
+  }
+
+  parameter {
+    name  = "log_min_duration_statement"
+    value = "1"
+  }
+}
+
+# For mysql query logging, see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.MySQL.LogFileSize.html
+resource "aws_rds_cluster_parameter_group" "rds_query_logging_mysql" {
+  count       = var.database_type == "mysql" ? 1 : 0
+  name        = "${var.database_name}-${var.database_type}"
+  family      = "aurora-mysql8.0"
+  description = "Default cluster parameter group"
+
+  parameter {
+    name  = "general_log"
+    value = "1"
+  }
+}
+
+
 ####################
 ## Security Group ##
 ####################
@@ -58,6 +94,7 @@ resource "aws_rds_cluster" "database" {
   deletion_protection                 = true
   skip_final_snapshot                 = true
   vpc_security_group_ids              = [aws_security_group.database.id]
+  db_cluster_parameter_group_name     = "${var.database_name}-${var.database_type}"
   # final_snapshot_identifier = "${var.database_name}-final"
 
 
@@ -199,40 +236,6 @@ data "aws_iam_policy_document" "rds_enhanced_monitoring" {
   }
 }
 
-################################################################################
-# Parameters for Query Logging
-################################################################################
-
-# For psql query logging, see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.Concepts.PostgreSQL.html#USER_LogAccess.Concepts.PostgreSQL.Query_Logging
-resource "aws_rds_cluster_parameter_group" "rds_query_logging_postgresql" {
-  count       = var.database_type == "postgresql" ? 1 : 0
-  name        = "${var.database_name}-${var.database_type}"
-  family      = "aurora-postgresql14"
-  description = "Default cluster parameter group"
-
-  parameter {
-    name  = "log_statement"
-    value = "all"
-  }
-
-  parameter {
-    name  = "log_min_duration_statement"
-    value = "1"
-  }
-}
-
-# For mysql query logging, see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.MySQL.LogFileSize.html
-resource "aws_rds_cluster_parameter_group" "rds_query_logging_mysql" {
-  count       = var.database_type == "mysql" ? 1 : 0
-  name        = "${var.database_name}-${var.database_type}"
-  family      = "aurora-mysql8.0"
-  description = "Default cluster parameter group"
-
-  parameter {
-    name  = "general_log"
-    value = "1"
-  }
-}
 
 ################################################################################
 # IAM role for user access
