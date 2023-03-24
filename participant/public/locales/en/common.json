@@ -104,5 +104,6 @@
     "foster": "Foster child",
     "other": "Other"
   },
+  "asterisk": "All required questions are marked with an asterisk",
   "routingError": "Some required responses are missing. Please go back through the form and answer all required questions."
 }
