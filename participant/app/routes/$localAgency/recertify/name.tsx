@@ -19,12 +19,6 @@ export default function Index() {
       <h1>
         <Trans i18nKey="Name.title" />
       </h1>
-      <p className="font-sans-lg">
-        <Trans i18nKey="Name.intro" />
-      </p>
-      <p>
-        <Trans i18nKey="Name.body" />
-      </p>
       <Form>
         <NameInput {...nameInputProps} />
         <Button
