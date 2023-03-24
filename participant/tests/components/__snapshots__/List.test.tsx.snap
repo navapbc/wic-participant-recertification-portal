@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders as an ordered list 1`] = `
+<div>
+  <ol
+    class="usa-list"
+  >
+    <li>
+      list-a
+    </li>
+    <li>
+      list-b
+    </li>
+    <li>
+      list-c
+    </li>
+  </ol>
+</div>
+`;
+
+exports[`renders as an unstyled list 1`] = `
+<div>
+  <ul
+    class="usa-list usa-list--unstyled"
+  >
+    <li>
+      list-a
+    </li>
+    <li>
+      list-b
+    </li>
+    <li>
+      list-c
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`renders list component 1`] = `
+<div>
+  <ul
+    class="usa-list"
+  >
+    <li>
+      list-a
+    </li>
+    <li>
+      list-b
+    </li>
+    <li>
+      list-c
+    </li>
+  </ul>
+</div>
+`;
