@@ -16,7 +16,7 @@ export default function Count() {
     inputType: "number",
     labelKey: "Count.householdSize.label",
     required: true,
-    className: 'width-8'
+    className: "width-8",
   };
   // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion
   const listItems = t("Count.listItems", {

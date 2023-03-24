@@ -29,7 +29,7 @@ export default function Index() {
         <Trans i18nKey="Index.time" />
       </p>
       <Button className="display-block margin-top-6" type="button">
-      <Trans i18nKey="Index.button" />
+        <Trans i18nKey="Index.button" />
       </Button>
     </div>
   );
