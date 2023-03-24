@@ -52,3 +52,11 @@ i.e.
 .usa-process-list__item:last-child {
   padding-bottom: 0;
 }
+
+// USWDS Hint + USWDS Memorable Date:
+// Reduce space in between
+.usa-hint + .usa-memorable-date {
+  .usa-form-group {
+    margin-top: units(0.5)
+  }
+}

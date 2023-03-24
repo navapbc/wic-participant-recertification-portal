@@ -32,6 +32,7 @@ export default function Details() {
     nameKey: "NameInput",
     participantKey: "Details.participantCard",
     relationshipKey: "Relationship",
+    dateHint: true,
   };
 
   const participantCards: ReactElement[] = Array.from({
