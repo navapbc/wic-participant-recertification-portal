@@ -60,7 +60,7 @@ services:
     build:
       # Use a different Dockerfile specifically to build a slim container just for playwright
       context: .
-      dockerfile: ../participant/Dockerfile.playwright
+      dockerfile: Dockerfile.playwright
     # lowdefy must be up and running before playwright will start
     depends_on:
       app-e2e:
