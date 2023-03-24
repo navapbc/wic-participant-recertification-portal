@@ -6,7 +6,7 @@ export type ListProps = {
   listKeys: i18nKey[];
   ordered?: boolean;
   unstyled?: boolean;
-\  className?: string;
+  className?: string;
 };
 
 export const List = (props: ListProps): ReactElement => {
