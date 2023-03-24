@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "npx lowdefy@3.23.3 dev",
-    "e2e": "docker compose -f docker-compose.e2e.yml up --build --wait database-e2e && docker compose -f docker-compose.e2e.yml up --build --wait lowdefy-e2e && docker compose -f docker-compose.e2e.yml run --rm playwright npx playwright test --retries=3 --reporter=list",
-    "e2e:update": "docker compose -f docker-compose.e2e.yml up --build --wait database-e2e && docker compose -f docker-compose.e2e.yml up --build --wait lowdefy-e2e && docker compose -f docker-compose.e2e.yml run --rm playwright npx playwright test --update-snapshots --reporter=list",
+    "e2e": "docker compose -f docker-compose.e2e.yml up --build --wait database-e2e && docker compose -f docker-compose.e2e.yml up --build --wait lowdefy-e2e && docker compose -f docker-compose.e2e.yml run --rm --build playwright npx playwright test --retries=3 --reporter=list",
+    "e2e:update": "docker compose -f docker-compose.e2e.yml up --build --wait database-e2e && docker compose -f docker-compose.e2e.yml up --build --wait lowdefy-e2e && docker compose -f docker-compose.e2e.yml run --rm --build playwright npx playwright test --update-snapshots --reporter=list",
     "e2e:cleanup": "docker compose -f docker-compose.e2e.yml down --remove-orphans",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
