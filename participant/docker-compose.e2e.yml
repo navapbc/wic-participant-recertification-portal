@@ -28,7 +28,7 @@ services:
       - participant_portal-e2e
 
   # Create a remix server to run e2e tests against
-  remix-e2e:
+  app-e2e:
     build:
       # This target includes entrypoint-e2e.sh which will force reset the prisma migrations
       target: e2e
@@ -64,7 +64,7 @@ services:
       dockerfile: Dockerfile.playwright
     # Remix must be up and running before playwright will start
     depends_on:
-      remix-e2e:
+      app-e2e:
         condition: service_healthy
     init: true
     networks:
