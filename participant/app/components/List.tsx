@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { i18nKey, legendStyleType } from "app/types";
+import type { i18nKey } from "app/types";
 import { Trans } from "react-i18next";
 
 export type ListProps = {
@@ -9,12 +9,8 @@ export type ListProps = {
 };
 
 export const List = (props: ListProps): ReactElement => {
-  const {
-    listKeys,
-    ordered = false,
-    unstyled = false,
-  } = props;
-  const classNames = `usa-list ${ unstyled ? 'usa-list--unstyled' : ''}`
+  const { listKeys, ordered = false, unstyled = false } = props;
+  const classNames = `usa-list ${unstyled ? "usa-list--unstyled" : ""}`;
   const ListTag = ordered ? "ol" : "ul";
 
   return (

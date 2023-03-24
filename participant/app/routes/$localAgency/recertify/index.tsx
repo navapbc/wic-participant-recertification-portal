@@ -5,7 +5,11 @@ import { List } from "~/components/List";
 
 export default function Index() {
   const { t } = useTranslation();
-  const listUserKeys: string[] = ["Index.ifLink", "Index.ifReceivesWIC", "Index.ifThirtyDays"];
+  const listUserKeys: string[] = [
+    "Index.ifLink",
+    "Index.ifReceivesWIC",
+    "Index.ifThirtyDays",
+  ];
 
   return (
     <div>
