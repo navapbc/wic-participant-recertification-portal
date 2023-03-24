@@ -3,6 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { NameInput } from "~/components/NameInput";
 import type { NameInputProps } from "~/components/NameInput";
+import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
 import { Form } from "@remix-run/react";
 
 export default function Index() {
@@ -19,6 +20,7 @@ export default function Index() {
       <h1>
         <Trans i18nKey="Name.title" />
       </h1>
+      <RequiredQuestionStatement />
       <Form>
         <NameInput {...nameInputProps} />
         <Button

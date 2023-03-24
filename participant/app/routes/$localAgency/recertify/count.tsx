@@ -6,6 +6,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
 import { List } from "app/components/List";
+import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
 
 export default function Count() {
   const { t } = useTranslation();
@@ -24,8 +25,9 @@ export default function Count() {
   return (
     <div>
       <h1>
-      <Trans i18nKey="Count.title" />
+        <Trans i18nKey="Count.title" />
       </h1>
+      <RequiredQuestionStatement />
       <p className="font-sans-lg">
         <Trans i18nKey="Count.intro" />
       </p>

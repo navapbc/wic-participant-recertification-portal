@@ -9,6 +9,7 @@ import { Trans } from "react-i18next";
 import { CardGroup } from "@trussworks/react-uswds";
 import { ParticipantCard } from "app/components/ParticipantCard";
 import type { ParticipantCardProps } from "app/components/ParticipantCard";
+import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
 
 export function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
@@ -54,6 +55,7 @@ export default function Details() {
       <h1>
         <Trans i18nKey="Details.title" />
       </h1>
+      <RequiredQuestionStatement />
       <p className="font-sans-lg">
         <Trans i18nKey="Details.intro" />
       </p>
