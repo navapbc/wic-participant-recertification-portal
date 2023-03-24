@@ -40,3 +40,8 @@ i.e.
 .main {
   flex: 1;
 }
+
+// Override arbitrary list max width
+.usa-list li {
+  max-width: 100%;
+}
