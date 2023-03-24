@@ -1,10 +1,11 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { List } from "~/components/List";
 
 export default function Index() {
   const { t } = useTranslation();
-  const listUserKeys: string[] = ["ifLink", "ifReceivesWIC", "ifThirtyDays"];
+  const listUserKeys: string[] = ["Index.ifLink", "Index.ifReceivesWIC", "Index.ifThirtyDays"];
 
   return (
     <div>
@@ -19,13 +20,7 @@ export default function Index() {
           <Trans i18nKey="Index.eligible" />
         </p>
       </div>
-      <ol className="usa-list">
-        {listUserKeys.map((key: string) => (
-          <li key={key}>
-            <Trans i18nKey={`Index.${key}`} />
-          </li>
-        ))}
-      </ol>
+      <List listKeys={listUserKeys} ordered={true} />
       <div>
         <p>
           <Trans i18nKey="Index.note" />
