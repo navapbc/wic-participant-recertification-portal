@@ -48,6 +48,7 @@ resource "aws_rds_cluster" "database" {
   cluster_identifier                  = var.database_name
   engine                              = "aurora-${var.database_type}"
   engine_mode                         = "provisioned"
+  engine_version                      = var.database_type == "postgresql" ? "14.6" : "8.0.mysql_aurora.3.02.0"
   database_name                       = local.database_name_formatted
   master_username                     = local.admin_user
   master_password                     = var.admin_password
