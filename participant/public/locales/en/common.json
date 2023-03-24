@@ -27,12 +27,14 @@
   "Demo": {
     "alertText": "This site is a demonstration project and for example purposes only"
   },
-  "Detail": {
+  "Details": {
     "participantCard": {
       "cardHeader": "Participant",
       "cardFooter": "Add another participant?"
     },
-    "button": "Continue"
+    "button": "Continue",
+    "intro": "Reminder: We only need to collect information about WIC participants who have a recertification appointment.",
+    "title": "Tell us about who you're recertifying for"
   },
   "DateOfBirth": {
     "month": "Month",
