@@ -27,3 +27,10 @@ it("renders as an unstyled list", () => {
   );
   expect(container).toMatchSnapshot();
 });
+
+it("renders additional class names", () => {
+  const { container } = renderWithRouter(
+    <List {...defaultProps} className="hello there" />
+  );
+  expect(container).toMatchSnapshot();
+});

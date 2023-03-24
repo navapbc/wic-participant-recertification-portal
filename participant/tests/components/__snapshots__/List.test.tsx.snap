@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`renders additional class names 1`] = `
+<div>
+  <ul
+    class="usa-list  hello there"
+  >
+    <li>
+      list-a
+    </li>
+    <li>
+      list-b
+    </li>
+    <li>
+      list-c
+    </li>
+  </ul>
+</div>
+`;
+
 exports[`renders as an ordered list 1`] = `
 <div>
   <ol
