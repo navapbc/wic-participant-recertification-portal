@@ -66,3 +66,11 @@ i.e.
 .usa-card-group ul {
   list-style-type: disc;
 }
+
+// USWDS Card:
+// Drop large first margin-top
+.usa-card__header + .usa-card__body {
+  .usa-fieldset:first-child .usa-legend {
+    margin-top: 0;
+  }
+}
