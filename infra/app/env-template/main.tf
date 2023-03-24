@@ -46,14 +46,9 @@ module "app_config" {
   source = "../app-config"
 }
 
-module "participant_database_password" {
-  source = "../../modules/random-password"
-}
-
 module "participant_database" {
-  source         = "../../modules/database"
-  database_name  = local.participant_database_name
-  admin_password = module.participant_database_password.random_password
+  source        = "../../modules/database"
+  database_name = local.participant_database_name
 }
 
 module "service_cluster" {
@@ -119,16 +114,11 @@ module "staff" {
   ]
 }
 
-module "analytics_database_password" {
-  source = "../../modules/random-password"
-}
-
 module "analytics_database" {
-  source         = "../../modules/database"
-  database_name  = local.analytics_database_name
-  database_port  = 3306
-  database_type  = "mysql"
-  admin_password = module.analytics_database_password.random_password
+  source        = "../../modules/database"
+  database_name = local.analytics_database_name
+  database_port = 3306
+  database_type = "mysql"
 }
 
 module "analytics" {

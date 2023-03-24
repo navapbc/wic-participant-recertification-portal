@@ -4,6 +4,12 @@ data "aws_vpc" "default" {
   default = true
 }
 
+module "random_admin_database_password" {
+  source = "../random-password"
+  # Mysql password is maxed out at 41 chars
+  length = var.database_type == "mysql" ? 41 : 48
+}
+
 locals {
   admin_user                 = "app_usr"
   admin_user_secret_name     = "/metadata/db/${var.database_name}-admin-user"
@@ -11,6 +17,7 @@ locals {
   admin_db_url_secret_name   = "/metadata/db/${var.database_name}-admin-db-url"
   admin_db_host_secret_name  = "/metadata/db/${var.database_name}-admin-db-host"
   database_name_formatted    = replace("${var.database_name}", "-", "_")
+  admin_password             = var.admin_password == "" ? random_admin_database_password.random_password : var.admin_password
 }
 
 ################################################################################
@@ -87,7 +94,7 @@ resource "aws_rds_cluster" "database" {
   engine_version                      = var.database_type == "postgresql" ? "14.6" : "8.0.mysql_aurora.3.02.0"
   database_name                       = local.database_name_formatted
   master_username                     = local.admin_user
-  master_password                     = var.admin_password
+  master_password                     = local.admin_password
   port                                = var.database_port
   storage_encrypted                   = true
   iam_database_authentication_enabled = true
@@ -117,13 +124,13 @@ resource "aws_rds_cluster_instance" "database_instance" {
 resource "aws_ssm_parameter" "admin_password" {
   name  = local.admin_password_secret_name
   type  = "SecureString"
-  value = var.admin_password
+  value = local.admin_password
 }
 
 resource "aws_ssm_parameter" "admin_db_url" {
   name  = local.admin_db_url_secret_name
   type  = "SecureString"
-  value = "${var.database_type}://${local.admin_user}:${urlencode(var.admin_password)}@${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}/${local.database_name_formatted}?schema=public"
+  value = "${var.database_type}://${local.admin_user}:${urlencode(local.admin_password)}@${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}/${local.database_name_formatted}?schema=public"
 
   depends_on = [
     aws_rds_cluster_instance.database_instance
