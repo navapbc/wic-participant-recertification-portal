@@ -47,6 +47,10 @@ i.e.
   max-width: 100%;
 }
 
+p + .usa-list {
+  margin-top: -0.5em;
+}
+
 // USWDS Process List:
 // Remove margin on last child
 .usa-process-list__item:last-child {
