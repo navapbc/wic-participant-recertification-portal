@@ -4,15 +4,16 @@ import { ProcessList } from "@trussworks/react-uswds";
 import { ProcessListHeading } from "@trussworks/react-uswds";
 import { ProcessListItem } from "@trussworks/react-uswds";
 import React from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 
 export default function Index() {
-  const { t } = useTranslation();
   const listProcessKeys: string[] = ["answer", "upload", "appointment"];
 
   return (
     <div>
-      <h1>{t("About.title")}</h1>
+      <h1>
+        <Trans i18nKey="About.title" />
+      </h1>
       <ProcessList>
         {listProcessKeys.map((key: string) => (
           <ProcessListItem key={key}>
@@ -26,10 +27,10 @@ export default function Index() {
         ))}
       </ProcessList>
       <Alert type="warning" headingLevel="h3" slim noIcon>
-        {t("About.note")}
+        <Trans i18nKey="About.note" />
       </Alert>
       <Button className="display-block margin-top-6" type="button">
-        {t("About.button")}
+        <Trans i18nKey="About.button" />
       </Button>
     </div>
   );

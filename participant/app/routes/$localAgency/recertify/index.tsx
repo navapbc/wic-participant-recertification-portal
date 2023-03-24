@@ -1,10 +1,9 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { List } from "~/components/List";
 
 export default function Index() {
-  const { t } = useTranslation();
   const listUserKeys: string[] = [
     "Index.ifLink",
     "Index.ifReceivesWIC",
@@ -13,7 +12,9 @@ export default function Index() {
 
   return (
     <div>
-      <h1>{t("Index.title")}</h1>
+      <h1>
+        <Trans i18nKey="Index.title" />
+      </h1>
       <div className="font-sans-lg">
         <p>
           <Trans i18nKey="Index.intro" />
@@ -34,7 +35,7 @@ export default function Index() {
         </p>
       </div>
       <Button className="display-block margin-top-6" type="button">
-        {t("Index.button")}
+      <Trans i18nKey="Index.button" />
       </Button>
     </div>
   );

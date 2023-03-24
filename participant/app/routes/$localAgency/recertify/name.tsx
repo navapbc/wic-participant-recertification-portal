@@ -1,12 +1,11 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { NameInput } from "~/components/NameInput";
 import type { NameInputProps } from "~/components/NameInput";
 import { Form } from "@remix-run/react";
 
 export default function Index() {
-  const { t } = useTranslation();
   const nameInputProps: NameInputProps = {
     id: "representative",
     nameKey: "NameInput",
@@ -17,13 +16,18 @@ export default function Index() {
 
   return (
     <div>
-      <h1>{t("Name.title")}</h1>
+      <h1>
+        <Trans i18nKey="Name.title" />
+      </h1>
       <div className="font-sans-lg">
-        <Trans i18nKey="Name.intro" />
+        <p>
+          <Trans i18nKey="Name.intro" />
+        </p>
       </div>
-      <br />
       <div>
-        <Trans i18nKey="Name.body" />
+        <p>
+          <Trans i18nKey="Name.body" />
+        </p>
       </div>
       <Form>
         <NameInput {...nameInputProps} />
@@ -32,7 +36,7 @@ export default function Index() {
           type="submit"
           formMethod="post"
         >
-          {t("Name.button")}
+          <Trans i18nKey="Name.button" />
         </Button>
       </Form>
     </div>

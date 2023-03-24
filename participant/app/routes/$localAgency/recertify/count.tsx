@@ -21,17 +21,24 @@ export default function Count() {
   }) as Array<string>;
   return (
     <div>
-      <h1>{t("Count.title")}</h1>
+      <h1>
+      <Trans i18nKey="Count.title" />
+      </h1>
       <div className="font-sans-lg">
-        <Trans i18nKey="Count.intro" />
+        <p>
+          <Trans i18nKey="Count.intro" />
+        </p>
       </div>
-      <br />
       <div>
-        <Trans i18nKey="Count.body" />
+        <p>
+          <Trans i18nKey="Count.body" />
+        </p>
         <List listKeys={listItems} ordered={false} />
       </div>
       <div>
-        <Trans i18nKey="Count.example" />
+        <p>
+          <Trans i18nKey="Count.example" />
+        </p>
       </div>
       <Form>
         <TextField {...householdSizeProps} />
@@ -40,7 +47,7 @@ export default function Count() {
           type="submit"
           formMethod="post"
         >
-          {t("Count.householdSize.button")}
+          <Trans i18nKey="Count.householdSize.button" />
         </Button>
       </Form>
     </div>
