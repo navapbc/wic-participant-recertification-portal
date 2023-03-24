@@ -1,4 +1,21 @@
 {
+  "About": {
+    "title": "How it works",
+    "note": "Note: This form does not guarantee your enrollment in WIC. Your eligibility will be confirmed when you have your recertification appointment with WIC.",
+    "button": "Continue",
+    "answer": {
+      "body": "We only need to collect information about WIC participants who have a recertification appointment.",
+      "header": "Answer questions about who is recertifying in your household"
+    },
+    "upload": {
+      "body": "We will help you figure out which ones you need. If you usually have to show income information, like paystubs or tax returns, have those documents accessible before you start.",
+      "header": "Upload any needed documents"
+    },
+    "appointment": {
+      "body": "Your local WIC clinic staff will confirm the information and documents you sent.",
+      "header": "Later, attend your recertification appointment"
+    }
+  },
   "AdjunctiveEligibility": {
     "label": "Are they enrolled in any of these programs?",
     "programs": [
@@ -54,23 +71,6 @@
     "note": "Not all WIC households can use this form. If you do not have a permanent address, if nobody in your household earns money, or if you do not have identity documents, then you cannot use this form ahead of your recertification appointment.",
     "time": "This form should take about 15 minutes to complete.",
     "title": "Start your recertification for Montana WIC"
-  },
-  "About": {
-    "title": "How it works",
-    "note": "Note: This form does not guarantee your enrollment in WIC. Your eligibility will be confirmed when you have your recertification appointment with WIC.",
-    "button": "Continue",
-    "answer": {
-      "body": "We only need to collect information about WIC participants who have a recertification appointment.",
-      "header": "Answer questions about who is recertifying in your household"
-    },
-    "upload": {
-      "body": "We will help you figure out which ones you need. If you usually have to show income information, like paystubs or tax returns, have those documents accessible before you start.",
-      "header": "Upload any needed documents"
-    },
-    "appointment": {
-      "body": "Your local WIC clinic staff will confirm the information and documents you sent.",
-      "header": "Later, attend your recertification appointment"
-    }
   },
   "Layout": {
     "footer1": {
