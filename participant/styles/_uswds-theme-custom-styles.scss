@@ -41,7 +41,14 @@ i.e.
   flex: 1;
 }
 
-// Override arbitrary list max width
+// USWDS List:
+// Override arbitrary max width
 .usa-list li {
   max-width: 100%;
+}
+
+// USWDS Process List:
+// Remove margin on last child
+.usa-process-list__item:last-child {
+  padding-bottom: 0;
 }
