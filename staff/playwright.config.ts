@@ -1,1 +1,0 @@
-../participant/playwright.config.ts
