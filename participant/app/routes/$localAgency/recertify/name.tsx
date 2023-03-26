@@ -3,7 +3,11 @@ import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { NameInput } from "~/components/NameInput";
 import type { NameInputProps } from "~/components/NameInput";
-import { Form } from "@remix-run/react";
+import { ValidatedForm } from "remix-validated-form";
+import { representativeNameSchema } from "app/utils/validation";
+import { withZod } from "@remix-validated-form/with-zod";
+
+const representativeNameValidator = withZod(representativeNameSchema);
 
 export default function Index() {
   const { t } = useTranslation();
@@ -25,7 +29,7 @@ export default function Index() {
       <div>
         <Trans i18nKey="Name.body" />
       </div>
-      <Form>
+      <ValidatedForm validator={representativeNameValidator}>
         <NameInput {...nameInputProps} />
         <Button
           className="display-block margin-top-6"
@@ -34,7 +38,7 @@ export default function Index() {
         >
           {t("Name.button")}
         </Button>
-      </Form>
+      </ValidatedForm>
     </div>
   );
 }
