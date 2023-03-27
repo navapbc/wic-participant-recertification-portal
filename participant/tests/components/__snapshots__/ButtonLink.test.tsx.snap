@@ -3,7 +3,7 @@
 exports[`should render a button using an external to target 1`] = `
 <div>
   <a
-    class="usa-button "
+    class="usa-button"
     href="https://google.com"
   >
     Button Text
@@ -14,7 +14,7 @@ exports[`should render a button using an external to target 1`] = `
 exports[`should render a button using an internal to target 1`] = `
 <div>
   <a
-    class="usa-button "
+    class="usa-button"
     href="/bogus"
   >
     Button Text
