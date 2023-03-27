@@ -96,3 +96,9 @@ p + .usa-list {
     margin-top: 0;
   }
 }
+
+// USWDS Card:
+// Tell USWDS to use the sans font family instead of default serif
+.usa-card__heading {
+  font-family: family('sans');
+}

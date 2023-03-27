@@ -57,7 +57,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     nameKey,
     nameLegal,
     namePreferred,
-    participantHeaderClassName = "font-sans-lg",
+    participantHeaderClassName,
     participantKey,
     relationshipKey,
     relationshipRequired,
@@ -93,14 +93,14 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     required: adjunctiveRequired,
   };
 
+  const cardHeaderClassName = `usa-card__heading ${participantHeaderClassName ? participantHeaderClassName : ""}`
+
   return (
     <Card>
       <CardHeader>
-        <div className={participantHeaderClassName}>
-          <strong>
-            <Trans i18nKey={`${participantKey}.cardHeader`} /> {index}
-          </strong>
-        </div>
+        <h2 className={cardHeaderClassName.trim()}>
+          <Trans i18nKey={`${participantKey}.cardHeader`} /> {index}
+        </h2>
       </CardHeader>
       <CardBody>
         <RelationshipInput {...relationshipProps} />
