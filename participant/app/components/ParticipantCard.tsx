@@ -93,7 +93,9 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     required: adjunctiveRequired,
   };
 
-  const cardHeaderClassName = `usa-card__heading ${participantHeaderClassName ? participantHeaderClassName : ""}`
+  const cardHeaderClassName = `usa-card__heading ${
+    participantHeaderClassName ? participantHeaderClassName : ""
+  }`;
 
   return (
     <Card>
