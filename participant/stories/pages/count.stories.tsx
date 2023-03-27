@@ -1,5 +1,5 @@
-import Count from "~/routes/count";
-import Layout from "~/components/Layout";
+import Count from "app/routes/$localAgency/recertify/count";
+import Layout from "app/components/Layout";
 export default {
   title: "Pages/Count",
   parameters: {},

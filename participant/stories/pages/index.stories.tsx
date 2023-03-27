@@ -1,5 +1,5 @@
-import Index from "~/routes/index";
-import Layout from "~/components/Layout";
+import Index from "app/routes/$localAgency/recertify/index";
+import Layout from "app/components/Layout";
 export default {
   title: "Pages/Index",
   parameters: {},

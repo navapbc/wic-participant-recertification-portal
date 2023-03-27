@@ -5,6 +5,7 @@ import { Form } from "@remix-run/react";
 import { Trans, useTranslation } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
+import { List } from "app/components/List";
 
 export default function Count() {
   const { t } = useTranslation();
@@ -27,11 +28,7 @@ export default function Count() {
       <br />
       <div>
         <Trans i18nKey="Count.body" />
-        <ul>
-          {listItems.map((item: string, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
+        <List listKeys={listItems} ordered={false} />
       </div>
       <div>
         <Trans i18nKey="Count.example" />

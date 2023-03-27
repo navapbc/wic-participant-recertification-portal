@@ -1,5 +1,5 @@
-import Details from "~/routes/details";
-import Layout from "~/components/Layout";
+import Details from "app/routes/$localAgency/recertify/details";
+import Layout from "app/components/Layout";
 export default {
   title: "Pages/Details",
   parameters: {},

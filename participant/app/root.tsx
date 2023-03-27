@@ -1,7 +1,8 @@
 import type { MetaFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import styles from "~/styles/styles.css";
-
+import { redirect } from "react-router";
+import { validRoute } from "app/utils/redirect";
 import {
   Links,
   LiveReload,
@@ -30,7 +31,8 @@ export function useChangeLanguage(locale: string) {
 export const meta: MetaFunction = ({ location }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks -- This cannot be a component, it mutates headers
   const { t } = useTranslation();
-  const route = location.pathname != "/" ? location.pathname : "index";
+  const trimBase = location.pathname.replace(/^\/(.*?)\/recertify\/?/, "");
+  const route = trimBase != "" ? trimBase : "index";
   const title = t(`${upperFirst(camelCase(route))}.title`);
   return {
     charset: "utf-8",
@@ -48,10 +50,17 @@ export function links() {
 
 type LoaderData = { locale: string; demoMode: string; missingData: string };
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
+  const redirectTarget = await validRoute(request, params);
+  if (redirectTarget) {
+    console.log(`Redirecting to baseUrl ${redirectTarget}`);
+    throw redirect(redirectTarget);
+  }
+
   const locale = await i18next.getLocale(request);
   const demoMode = process.env.PUBLIC_DEMO_MODE ?? "false";
   const url = new URL(request.url);
+
   const missingData =
     url.searchParams.get("missing-data") == "true" ? "true" : "false";
   return json<LoaderData>({ locale, demoMode, missingData });
