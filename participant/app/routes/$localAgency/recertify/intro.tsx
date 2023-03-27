@@ -33,7 +33,7 @@ export default function Index() {
       <h1>
         <Trans i18nKey="Intro.title" />
       </h1>
-      <div className="font-sans-lg">
+      <div className="intro">
         <Trans i18nKey="Intro.intro" />
       </div>
       <div>

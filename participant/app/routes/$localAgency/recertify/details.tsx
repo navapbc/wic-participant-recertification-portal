@@ -56,7 +56,7 @@ export default function Details() {
         <Trans i18nKey="Details.title" />
       </h1>
       <RequiredQuestionStatement />
-      <p className="font-sans-lg">
+      <p className="intro">
         <Trans i18nKey="Details.intro" />
       </p>
       <Form>

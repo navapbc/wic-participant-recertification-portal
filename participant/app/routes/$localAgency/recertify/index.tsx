@@ -15,7 +15,7 @@ export default function Index() {
       <h1>
         <Trans i18nKey="Index.title" />
       </h1>
-      <p className="font-sans-lg">
+      <p className="intro">
         <Trans i18nKey="Index.intro" />
       </p>
       <p>

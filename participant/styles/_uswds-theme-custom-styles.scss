@@ -41,6 +41,24 @@ i.e.
   flex: 1;
 }
 
+// Custom classes
+p {
+  @include typeset('body');
+}
+
+.intro {
+  @include u-font-size('sans', 8); // 20px
+  @include u-line-height('sans', 4); // 30px
+}
+
+.label-large,
+.legend-large {
+  @include u-text('bold');
+  @include u-font-size('sans', 9); // 22px
+  @include u-line-height('sans', 2); // ~25px
+}
+
+
 // USWDS List:
 // Override arbitrary max width
 .usa-list li {

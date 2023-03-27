@@ -28,7 +28,7 @@ export default function Count() {
         <Trans i18nKey="Count.title" />
       </h1>
       <RequiredQuestionStatement />
-      <p className="font-sans-lg">
+      <p className="intro">
         <Trans i18nKey="Count.intro" />
       </p>
       <p>
