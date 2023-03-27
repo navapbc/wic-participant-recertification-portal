@@ -28,7 +28,7 @@ export default function Count() {
       <br />
       <div>
         <Trans i18nKey="Count.body" />
-        <List listKeys={listItems} ordered={false} />
+        <List listKeys={listItems} type="unordered" />
       </div>
       <div>
         <Trans i18nKey="Count.example" />

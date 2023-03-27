@@ -4,17 +4,22 @@ import { Trans } from "react-i18next";
 
 export type ListProps = {
   listKeys: i18nKey[];
-  ordered?: boolean;
+  type: "ordered" | "unordered";
   unstyled?: boolean;
   className?: string;
 };
 
 export const List = (props: ListProps): ReactElement => {
-  const { listKeys, ordered = false, unstyled = false, className = "" } = props;
+  const {
+    listKeys,
+    type = "unordered",
+    unstyled = false,
+    className = "",
+  } = props;
   const classNames = `usa-list ${
     unstyled ? "usa-list--unstyled" : ""
   } ${className}`;
-  const ListTag = ordered ? "ol" : "ul";
+  const ListTag = type == "ordered" ? "ol" : "ul";
 
   return (
     <ListTag className={classNames.trim()}>
