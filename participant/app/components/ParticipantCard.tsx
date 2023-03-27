@@ -93,14 +93,14 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     required: adjunctiveRequired,
   };
 
-  const cardHeaderClassName = `usa-card__heading ${
-    participantHeaderClassName ? participantHeaderClassName : ""
-  }`;
-
   return (
     <Card>
       <CardHeader>
-        <h2 className={cardHeaderClassName.trim()}>
+        <h2
+          className={`usa-card__heading ${
+            participantHeaderClassName || ""
+          }`.trim()}
+        >
           <Trans i18nKey={`${participantKey}.cardHeader`} /> {index}
         </h2>
       </CardHeader>
