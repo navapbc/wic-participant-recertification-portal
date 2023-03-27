@@ -11,7 +11,7 @@ export const ButtonLink = (props: ButtonLinkProps): ReactElement => {
   return (
     <USWDSLink
       asCustom={RemixLink}
-      className={`usa-button ${className}`}
+      className={`usa-button ${className}`.trim()}
       variant={variant}
       to={to}
       {...rest}
