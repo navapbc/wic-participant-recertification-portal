@@ -19,14 +19,9 @@ resource "aws_s3_bucket_public_access_block" "s3_encrypted" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_policy" "s3_encrypted_deny_unencrypted" {
+resource "aws_s3_bucket_policy" "s3_encrypted" {
   bucket = aws_s3_bucket.s3_encrypted.id
-  policy = data.aws_iam_policy_document.deny_unencrypted.json
-}
-
-resource "aws_s3_bucket_policy" "s3_encrypted_require_tls" {
-  bucket = aws_s3_bucket.s3_encrypted.id
-  policy = data.aws_iam_policy_document.require_tls.json
+  policy = data.aws_iam_policy_document.s3_encrypted.json
 }
 
 resource "aws_iam_policy" "read" {
@@ -56,12 +51,12 @@ resource "aws_iam_role_policy_attachment" "read" {
 resource "aws_iam_role_policy_attachment" "write" {
   for_each   = toset(var.write_role_names)
   role       = each.value
-  policy_arn = aws_iam_policy.read.arn
+  policy_arn = aws_iam_policy.write.arn
 }
 resource "aws_iam_role_policy_attachment" "delete" {
   for_each   = toset(var.delete_role_names)
   role       = each.value
-  policy_arn = aws_iam_policy.read.arn
+  policy_arn = aws_iam_policy.delete.arn
 }
 
 resource "aws_s3_bucket_versioning" "s3_encrypted" {
@@ -98,7 +93,7 @@ resource "aws_kms_key" "s3_encrypted" {
 
 # Create the S3 bucket to provide server access logging.
 resource "aws_s3_bucket" "s3_encrypted_log" {
-  bucket = "${var.s3_bucket_name}-upload-logging"
+  bucket = "${var.s3_bucket_name}-logging"
 
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
   # checkov:skip=CKV2_AWS_61:Lifecycle policy will be added in later ticket for post-pilot cleanup
@@ -140,11 +135,6 @@ resource "aws_s3_bucket_public_access_block" "s3_encrypted_log" {
 resource "aws_s3_bucket_policy" "s3_encrypted_log" {
   bucket = aws_s3_bucket.s3_encrypted_log.id
   policy = data.aws_iam_policy_document.s3_encrypted_log.json
-}
-
-resource "aws_s3_bucket_policy" "s3_encrypted_log_require_tls" {
-  bucket = aws_s3_bucket.s3_encrypted_log.id
-  policy = data.aws_iam_policy_document.require_tls_log.json
 }
 
 # ----------------------------------------------------
@@ -208,7 +198,7 @@ data "aws_iam_policy_document" "write_s3" {
   }
 }
 
-data "aws_iam_policy_document" "deny_unencrypted" {
+data "aws_iam_policy_document" "s3_encrypted" {
   statement {
     sid    = "DenyUnEncryptedObjectUploads"
     effect = "Deny"
@@ -226,31 +216,7 @@ data "aws_iam_policy_document" "deny_unencrypted" {
       values   = ["${aws_kms_key.s3_encrypted.arn}"]
     }
   }
-}
 
-data "aws_iam_policy_document" "s3_encrypted_log" {
-
-  statement {
-    sid = "S3ServerAccessLogsPolicy"
-    principals {
-      type = "Service"
-      identifiers = [
-        "logging.s3.amazonaws.com"
-      ]
-    }
-    actions = [
-      "s3:PutObject",
-    ]
-
-    resources = [
-      "${aws_s3_bucket.s3_encrypted_log.arn}/*"
-    ]
-
-    effect = "Allow"
-  }
-}
-
-data "aws_iam_policy_document" "require_tls" {
   statement {
     sid = "RequireTLS"
     principals {
@@ -277,7 +243,27 @@ data "aws_iam_policy_document" "require_tls" {
   }
 }
 
-data "aws_iam_policy_document" "require_tls_log" {
+data "aws_iam_policy_document" "s3_encrypted_log" {
+
+  statement {
+    sid = "S3ServerAccessLogsPolicy"
+    principals {
+      type = "Service"
+      identifiers = [
+        "logging.s3.amazonaws.com"
+      ]
+    }
+    actions = [
+      "s3:PutObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.s3_encrypted_log.arn}/*"
+    ]
+
+    effect = "Allow"
+  }
+
   statement {
     sid = "RequireTLS"
     principals {

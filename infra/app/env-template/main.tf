@@ -141,11 +141,10 @@ data "aws_iam_role" "staff_task_executor" {
 }
 
 module "doc_upload" {
-  source           = "../../modules/s3-encrypted"
-  environment_name = var.environment_name
-  s3_bucket_name   = local.document_upload_s3_name
-  # read_role_arns   = [data.aws_iam_role.staff_task_executor.arn, data.aws_iam_role.participant_task_executor.arn]
+  source            = "../../modules/s3-encrypted"
+  environment_name  = var.environment_name
+  s3_bucket_name    = local.document_upload_s3_name
   read_role_names   = [data.aws_iam_role.staff_task_executor.name, data.aws_iam_role.participant_task_executor.name]
-  write_role_names  = [data.aws_iam_role.staff_task_executor.name, data.aws_iam_role.participant_task_executor.name]
-  delete_role_names = [data.aws_iam_role.staff_task_executor.name, data.aws_iam_role.participant_task_executor.name]
+  write_role_names  = [data.aws_iam_role.participant_task_executor.name]
+  delete_role_names = []
 }
