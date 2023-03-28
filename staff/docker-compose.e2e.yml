@@ -49,11 +49,6 @@ services:
     # Expose a port in case it's useful for debugging
     ports:
       - 3123:3000
-    volumes:
-      # Mount the app directory for faster local development
-      - ./:/home/node/lowdefy
-      # Use a named volume for the node_modules so that the container uses the guest machine's node_modules dir instead of the host machine's node_modules directory, which might be divergent
-      - lowdefy_dev_nodemodules:/home/node/lowdefy/node_modules
 
   # Create the playwright container
   playwright:
@@ -77,6 +72,3 @@ services:
 
 networks:
   staff-e2e:
-
-volumes:
-  lowdefy_dev_nodemodules:
