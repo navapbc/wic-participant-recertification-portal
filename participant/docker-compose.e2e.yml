@@ -50,11 +50,6 @@ services:
     # Expose a port in case it's useful for debugging
     ports:
       - 3000:3000
-    volumes:
-      # Mount the app directory for faster local development
-      - ./:/home/node/remix
-      # Use a named volume for the node_modules so that the container uses the guest machine's node_modules dir instead of the host machine's node_modules directory, which might be divergent
-      - remix_dev_nodemodules:/home/node/remix/node_modules
 
   # Create the playwright container
   playwright:
@@ -78,6 +73,3 @@ services:
 
 networks:
   participant_portal-e2e:
-
-volumes:
-  remix_dev_nodemodules:
