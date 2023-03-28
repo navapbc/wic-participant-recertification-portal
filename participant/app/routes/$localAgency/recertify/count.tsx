@@ -35,7 +35,7 @@ export default function Count() {
       <p>
         <Trans i18nKey="Count.body" />
       </p>
-      <List listKeys={listItems} ordered={false} />
+      <List listKeys={listItems} type="unordered" />
       <p>
         <Trans i18nKey="Count.example" />
       </p>

@@ -20,18 +20,6 @@ const config: PlaywrightTestConfig = {
      * For example in `await expect(locator).toHaveText();`
      */
     timeout: 5000,
-    toHaveScreenshot: {
-      /* Set a default ratio accept rate.
-       * GitHub Actions runs on Linux, and we're faking those screenshots
-       * by copying the Darwin (macos) ones
-       */
-
-      /* Another option is to have a command to update the screenshots from Github with
-       * a specific command:
-       * https://github.com/basarat/demo-playwright-vrt/blob/main/.github/workflows/update-snapshots.yml
-       */
-      maxDiffPixelRatio: 0.01,
-    },
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -49,7 +37,7 @@ const config: PlaywrightTestConfig = {
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://localhost:3000',
-    baseURL: "http://remix-e2e:3000/",
+    baseURL: "http://app-e2e:3000/",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",

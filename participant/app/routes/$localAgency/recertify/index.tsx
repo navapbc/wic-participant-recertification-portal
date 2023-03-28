@@ -21,7 +21,7 @@ export default function Index() {
       <p>
         <Trans i18nKey="Index.eligible" />
       </p>
-      <List listKeys={listUserKeys} ordered={true} />
+      <List listKeys={listUserKeys} type="ordered" />
       <p>
         <Trans i18nKey="Index.note" />
       </p>

@@ -8,7 +8,7 @@ export default {
 
 const defaultProps: ListProps = {
   listKeys: ["list-a", "list-b", "list-c"],
-  ordered: false,
+  type: "unordered",
   unstyled: false,
 };
 
@@ -29,7 +29,7 @@ export const OrderedList = {
   ...ListTemplate,
   args: {
     ...defaultProps,
-    ordered: true,
+    type: "ordered",
   },
 };
 

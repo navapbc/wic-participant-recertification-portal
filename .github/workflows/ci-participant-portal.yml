@@ -122,5 +122,5 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: test-results
+          name: participant-playwright-test-results
           path: participant/test-results
