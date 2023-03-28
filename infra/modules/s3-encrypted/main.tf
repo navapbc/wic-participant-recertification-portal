@@ -241,9 +241,6 @@ data "aws_iam_policy_document" "s3_encrypted" {
       ]
     }
   }
-}
-
-data "aws_iam_policy_document" "s3_encrypted_log" {
 
   statement {
     sid = "S3ServerAccessLogsPolicy"
@@ -263,7 +260,9 @@ data "aws_iam_policy_document" "s3_encrypted_log" {
 
     effect = "Allow"
   }
+}
 
+data "aws_iam_policy_document" "s3_encrypted_log" {
   statement {
     sid = "RequireTLS"
     principals {
