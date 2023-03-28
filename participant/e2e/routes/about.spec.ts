@@ -31,7 +31,7 @@ test("clicking the continue button should take you to /name", async ({
 
   // Click the get started link (button).
   await page.getByRole("link", { name: "Continue" }).click();
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
 
   // Expects the URL to contain /name.
   await expect(page).toHaveURL(/name/);

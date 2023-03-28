@@ -31,7 +31,7 @@ test("clicking the get started link should take you to about", async ({
 
   // Click the get started link (button).
   await page.getByRole("link", { name: "Get started" }).click();
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
 
   // Expects the URL to contain /about.
   await expect(page).toHaveURL(/about/);
