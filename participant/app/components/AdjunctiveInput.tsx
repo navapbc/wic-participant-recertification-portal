@@ -33,7 +33,7 @@ export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
   const programList = t(`${adjunctiveKey}.programs`, {
     returnObjects: true,
   }) as Array<string>;
-  const helpElement = <List listKeys={programList} ordered={false} />;
+  const helpElement = <List listKeys={programList} type="unordered" />;
   return (
     <ChoiceGroupInput
       choices={adjunctiveChoices}
