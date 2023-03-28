@@ -66,6 +66,7 @@ module "participant" {
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
+  healthcheck_path     = "/healthcheck"
   container_secrets = [
     {
       name      = "DATABASE_URL",
@@ -130,6 +131,8 @@ module "analytics" {
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
+  container_port       = 80
+  container_read_only  = false
   container_secrets = [
     {
       name      = "MATOMO_DATABASE_HOST",

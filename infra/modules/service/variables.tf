@@ -39,7 +39,6 @@ variable "memory" {
   description = "Amount (in MiB) of memory used by the task. e.g. 2048"
 }
 
-
 variable "container_port" {
   type        = number
   description = "The port number on the container that's bound to the user-specified"
@@ -56,6 +55,12 @@ variable "container_secrets" {
   type        = list(map(string))
   description = "AWS secrets to pass to the container definition"
   default     = []
+}
+
+variable "container_read_only" {
+  type        = bool
+  description = "Whether the container root filesystem should be read-only"
+  default     = true
 }
 
 variable "vpc_id" {
@@ -77,4 +82,10 @@ variable "service_ssm_resource_paths" {
   type        = list(string)
   description = "A list of ssm resource paths that the ECS task executor should have permission to access"
   default     = []
+}
+
+variable "healthcheck_path" {
+  type        = string
+  description = "The path to the application healthcheck"
+  default     = "/health"
 }

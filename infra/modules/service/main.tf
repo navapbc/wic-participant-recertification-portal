@@ -6,6 +6,7 @@ locals {
   log_group_name          = "service/${var.service_name}"
   task_executor_role_name = "${var.service_name}-task-executor"
   image_url               = "${var.image_repository_url}:${var.image_tag}"
+  healthcheck_path        = trimprefix(var.healthcheck_path, "/")
 }
 
 ###################
@@ -81,15 +82,15 @@ resource "aws_lb_listener_rule" "alb_http_forward" {
 resource "aws_lb_target_group" "alb_target_group" {
   # you must use a prefix, to facilitate successful tg changes
   name_prefix          = "tg-"
-  port                 = "8080"
+  port                 = var.container_port
   protocol             = "HTTP"
   vpc_id               = var.vpc_id
   target_type          = "ip"
   deregistration_delay = "30"
 
   health_check {
-    path                = "/health"
-    port                = 8080
+    path                = "/${local.healthcheck_path}"
+    port                = var.container_port
     healthy_threshold   = 2
     unhealthy_threshold = 10
     interval            = 30
@@ -151,12 +152,12 @@ resource "aws_ecs_task_definition" "app" {
         essential              = true
         entryPoint             = null
         environment            = var.container_env_vars
-        readonlyRootFilesystem = true
+        readonlyRootFilesystem = var.container_read_only
         secrets                = var.container_secrets
         healthCheck = {
           command = [
             "CMD-SHELL",
-            "curl -f http://localhost:${var.container_port}/health || exit 1",
+            "wget --no-verbose --tries=1 --spider http://localhost:${var.container_port}/${local.healthcheck_path} || exit 1",
           ],
           interval = 30,
           retries  = 3,
