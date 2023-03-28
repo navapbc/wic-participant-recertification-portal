@@ -18,6 +18,9 @@
     "legend": "Date of Birth",
     "hintDMY": "For Example: 28 4 1986"
   },
+  "fileinput": {
+    "label": "Upload files"
+  },
   "inputchoice": {
     "label1": "Option 1",
     "label2": "Option 2",

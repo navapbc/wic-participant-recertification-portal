@@ -37,6 +37,10 @@ i.e.
   flex-direction: column;
 }
 
+.usa-file-input__preview-heading {
+  pointer-events: auto;
+}
+
 .main {
   flex: 1;
 }

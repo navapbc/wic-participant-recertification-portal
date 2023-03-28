@@ -43,6 +43,7 @@
     "@remix-validated-form/with-zod": "^2.0.5",
     "@trussworks/react-uswds": "4.1.1",
     "@uswds/uswds": "3.1.0",
+    "classnames": "^2.3.2",
     "i18next": "^22.0.6",
     "i18next-browser-languagedetector": "^7.0.1",
     "i18next-fs-backend": "^2.0.1",
