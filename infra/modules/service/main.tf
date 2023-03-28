@@ -52,18 +52,30 @@ resource "aws_lb_listener" "alb_listener_http" {
   protocol          = "HTTP"
 
   default_action {
-    type = "fixed-response"
+    type = "redirect"
 
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "Not Found"
-      status_code  = "404"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
     }
   }
 }
 
+resource "aws_lb_listener" "alb_listener_https" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn   = "arn:aws:acm:us-west-2:636249768232:certificate/62c0de42-7822-4ab0-90eb-6d59c188cde6"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb_target_group.arn
+  }
+}
+
 resource "aws_lb_listener_rule" "alb_http_forward" {
-  listener_arn = aws_lb_listener.alb_listener_http.arn
+  listener_arn = aws_lb_listener.alb_listener_https.arn
   priority     = 100
 
   action {
@@ -327,9 +339,9 @@ resource "aws_security_group" "alb" {
   # TODO(https://github.com/navapbc/template-infra/issues/163) Disallow incoming traffic to port 80
   # checkov:skip=CKV_AWS_260:Disallow ingress from 0.0.0.0:0 to port 80 when implementing HTTPS support in issue #163
   ingress {
-    description = "Allow HTTP traffic from public internet"
-    from_port   = 80
-    to_port     = 80
+    description = "Allow HTTP# traffic from public internet"
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
