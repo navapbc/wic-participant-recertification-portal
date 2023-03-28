@@ -40,6 +40,6 @@ fi
 if [[ "cleanup" == $COMMAND ]]; then
   # Remove all the docker containers
   echo "Removing e2e containers..."
-  docker compose -f docker-compose.e2e.yml down --remove-orphans
+  docker compose -f docker-compose.e2e.yml down
   echo "...Done!"
 fi
