@@ -103,6 +103,18 @@ resource "aws_lb_target_group" "alb_target_group" {
   }
 }
 
+#################
+## File System ##
+#################
+
+module "fs" {
+  for_each        = var.container_efs_volumes
+  source          = "../file-system"
+  name            = each.value.volume_name
+  subnet_ids      = var.subnet_ids
+  security_groups = [aws_security_group.app.id]
+}
+
 #######################
 ## Service Execution ##
 #######################
