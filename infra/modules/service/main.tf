@@ -4,6 +4,7 @@ data "aws_region" "current" {}
 locals {
   alb_name                = var.service_name
   log_group_name          = "service/${var.service_name}"
+  task_role_name          = "${var.service_name}-task"
   task_executor_role_name = "${var.service_name}-task-executor"
   image_url               = "${var.image_repository_url}:${var.image_tag}"
   healthcheck_path        = trimprefix(var.healthcheck_path, "/")
@@ -150,6 +151,7 @@ resource "aws_ecs_service" "app" {
 resource "aws_ecs_task_definition" "app" {
   family             = var.service_name
   execution_role_arn = aws_iam_role.task_executor.arn
+  task_role_arn      = aws_iam_role.task.arn
 
   # when is this needed?
   # task_role_arn      = aws_iam_role.api_service.arn
@@ -196,10 +198,12 @@ resource "aws_ecs_task_definition" "app" {
             "awslogs-stream-prefix" = var.service_name
           },
         }
-        mountPoints = [
+        # A slightly complicated nested loop to iterate over the var.container_named_valumes list
+        # and create a map for each volume it defines
+        mountPoints = [for key, value in merge(var.container_bind_mounts, var.container_efs_volumes) :
           {
-            containerPath = "/tmp",
-            sourceVolume  = "${var.service_name}-tmp"
+            containerPath = value.container_path,
+            sourceVolume  = value.volume_name
           }
         ]
         volumesFrom = []
@@ -215,12 +219,30 @@ resource "aws_ecs_task_definition" "app" {
   # Reference https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
   network_mode = "awsvpc"
 
-  # TODO: This block should be optionally set and controlled by a variable
-  volume {
-    name = "${var.service_name}-tmp"
+  // Create a bind mount volume for each element in the var.container_bind_mounts list
+  dynamic "volume" {
+    for_each = module.fs
+    content {
+      name = volume.value.name
+      efs_volume_configuration {
+        file_system_id     = volume.value.file_system.id
+        transit_encryption = "ENABLED"
+        authorization_config {
+          access_point_id = volume.value.access_point.id
+          iam             = "ENABLED"
+        }
+      }
+    }
+  }
+
+  // Create an EFS mount volume for each element in the var.container_efs_volumes list
+  dynamic "volume" {
+    for_each = var.container_bind_mounts
+    content {
+      name = volume.value.volume_name
+    }
   }
 }
-
 
 ##########
 ## Logs ##
@@ -312,6 +334,68 @@ data "aws_iam_policy_document" "task_executor" {
         "ssm:GetParameters",
       ]
       resources = ["arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${statement.value}"]
+    }
+  }
+}
+
+resource "aws_iam_role" "task" {
+  name               = local.task_role_name
+  assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_role.json
+}
+
+data "aws_iam_policy_document" "ecs_assume_task_role" {
+  statement {
+    sid = "ECSTask"
+    actions = [
+      "sts:AssumeRole"
+    ]
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "task" {
+  name        = "${var.service_name}-task-role-policy"
+  description = "A policy for ECS task"
+  policy      = data.aws_iam_policy_document.task.json
+}
+
+# Link access policies to the ECS task role.
+resource "aws_iam_role_policy_attachment" "task" {
+  role       = aws_iam_role.task.name
+  policy_arn = aws_iam_policy.task.arn
+}
+
+data "aws_iam_policy_document" "task" {
+  statement {
+    sid = "DenyOtherwise"
+    effect = "Deny"
+    actions = [
+      "elasticfilesystem:Client*",
+    ]
+    resources = ["*"]
+  }
+  # Allow ECS to access EFS access points
+  dynamic "statement" {
+    for_each = module.fs
+    content {
+      sid = "EFSAccess${statement.key}"
+      effect = "Allow"
+      actions = [
+        "elasticfilesystem:Client*",
+      ]
+      resources = [
+        statement.value.file_system.arn
+      ]
+      condition {
+        test     = "StringEquals"
+        variable = "elasticfilesystem:AccessPointArn"
+        values = [
+          statement.value.access_point.arn
+        ]
+      }
     }
   }
 }

@@ -57,6 +57,24 @@ variable "container_secrets" {
   default     = []
 }
 
+variable "container_efs_volumes" {
+  description = "EFS volumes to be created and mounted into the container"
+  type = map(object({
+    volume_name    = string,
+    container_path = string,
+  }))
+  default = {}
+}
+
+variable "container_bind_mounts" {
+  description = "Bind mounts to be mounted into the container"
+  type = map(object({
+    volume_name    = string,
+    container_path = string,
+  }))
+  default = {}
+}
+
 variable "container_read_only" {
   type        = bool
   description = "Whether the container root filesystem should be read-only"

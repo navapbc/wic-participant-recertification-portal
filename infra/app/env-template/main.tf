@@ -92,6 +92,12 @@ module "participant" {
     module.participant_database.admin_password_secret_name,
     module.participant_database.admin_user_secret_name,
   ]
+  container_bind_mounts = {
+    "tmp" : {
+      volume_name    = "${local.participant_service_name}-tmp",
+      container_path = "/tmp",
+    }
+  }
 }
 
 module "staff" {
@@ -158,6 +164,12 @@ module "analytics" {
     module.analytics_database.admin_password_secret_name,
     module.analytics_database.admin_user_secret_name,
   ]
+  container_efs_volumes = {
+    "html" : {
+      volume_name    = "${local.participant_service_name}-html",
+      container_path = "/var/www/html",
+    }
+  }
 }
 
 data "aws_iam_role" "participant_task_executor" {
