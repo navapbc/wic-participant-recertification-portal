@@ -113,11 +113,11 @@ module "staff" {
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.database.admin_db_url_secret_name}"
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}"
     },
   ]
   service_ssm_resource_paths = [
-    module.database.admin_db_url_secret_name,
+    module.participant_database.admin_db_url_secret_name,
   ]
 }
 
