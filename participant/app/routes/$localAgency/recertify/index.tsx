@@ -1,7 +1,7 @@
-import { Button } from "@trussworks/react-uswds";
 import React from "react";
 import { Trans } from "react-i18next";
-import { List } from "~/components/List";
+import { ButtonLink } from "app/components/ButtonLink";
+import { List } from "app/components/List";
 
 export default function Index() {
   const listUserKeys: string[] = [
@@ -28,9 +28,9 @@ export default function Index() {
       <p>
         <Trans i18nKey="Index.time" />
       </p>
-      <Button className="display-block margin-top-6" type="button">
+      <ButtonLink to="about" className="margin-top-6">
         <Trans i18nKey="Index.button" />
-      </Button>
+      </ButtonLink>
     </div>
   );
 }
