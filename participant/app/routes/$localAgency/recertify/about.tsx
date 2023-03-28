@@ -1,10 +1,10 @@
 import { Alert } from "@trussworks/react-uswds";
-import { Button } from "@trussworks/react-uswds";
 import { ProcessList } from "@trussworks/react-uswds";
 import { ProcessListHeading } from "@trussworks/react-uswds";
 import { ProcessListItem } from "@trussworks/react-uswds";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { ButtonLink } from "app/components/ButtonLink";
 
 export default function Index() {
   const { t } = useTranslation();
@@ -28,9 +28,9 @@ export default function Index() {
       <Alert type="warning" headingLevel="h3" slim noIcon>
         {t("About.note")}
       </Alert>
-      <Button className="display-block margin-top-6" type="button">
+      <ButtonLink to="../name" relative="path" className="margin-top-6">
         {t("About.button")}
-      </Button>
+      </ButtonLink>
     </div>
   );
 }

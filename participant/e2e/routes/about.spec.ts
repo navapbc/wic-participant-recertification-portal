@@ -23,3 +23,15 @@ test("the about page sets no cookies", async ({ page }) => {
   const cookies = await page.context().cookies();
   expect(cookies).toHaveLength(0);
 });
+
+test("clicking the continue button should take you to /name", async ({
+  page,
+}) => {
+  await page.goto("/gallatin/recertify/about");
+
+  // Click the get started link (button).
+  await page.getByRole("link", { name: "Continue" }).click();
+
+  // Expects the URL to contain /name.
+  await expect(page).toHaveURL(/name/);
+});

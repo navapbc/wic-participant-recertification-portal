@@ -23,3 +23,15 @@ test("the index page sets no cookies", async ({ page }) => {
   const cookies = await page.context().cookies();
   expect(cookies).toHaveLength(0);
 });
+
+test("clicking the get started link should take you to about", async ({
+  page,
+}) => {
+  await page.goto("/gallatin/recertify");
+
+  // Click the get started link (button).
+  await page.getByRole("link", { name: "Get started" }).click();
+
+  // Expects the URL to contain /about.
+  await expect(page).toHaveURL(/about/);
+});

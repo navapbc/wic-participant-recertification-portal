@@ -1,7 +1,7 @@
-import { Button } from "@trussworks/react-uswds";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { List } from "~/components/List";
+import { ButtonLink } from "app/components/ButtonLink";
+import { List } from "app/components/List";
 
 export default function Index() {
   const { t } = useTranslation();
@@ -33,9 +33,9 @@ export default function Index() {
           <Trans i18nKey="Index.time" />
         </p>
       </div>
-      <Button className="display-block margin-top-6" type="button">
+      <ButtonLink to="about" className="margin-top-6">
         {t("Index.button")}
-      </Button>
+      </ButtonLink>
     </div>
   );
 }
