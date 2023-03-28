@@ -17,7 +17,7 @@ locals {
   admin_db_url_secret_name   = "/metadata/db/${var.database_name}-admin-db-url"
   admin_db_host_secret_name  = "/metadata/db/${var.database_name}-admin-db-host"
   database_name_formatted    = replace("${var.database_name}", "-", "_")
-  admin_password             = var.admin_password == "" ? random_admin_database_password.random_password : var.admin_password
+  admin_password             = var.admin_password == "" ? module.random_admin_database_password.random_password : var.admin_password
 }
 
 ################################################################################
