@@ -107,3 +107,9 @@ variable "healthcheck_path" {
   description = "The path to the application healthcheck"
   default     = "/health"
 }
+
+variable "enable_healthcheck" {
+  type        = bool
+  description = "Enable container healthcheck"
+  default     = true
+}

@@ -1,5 +1,8 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
+data "aws_vpc" "default" {
+  default = true
+}
 
 locals {
   alb_name                = var.service_name
@@ -121,11 +124,12 @@ module "fs" {
 #######################
 
 resource "aws_ecs_service" "app" {
-  name            = var.service_name
-  cluster         = var.service_cluster_arn
-  launch_type     = "FARGATE"
-  task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = var.desired_instance_count
+  name             = var.service_name
+  cluster          = var.service_cluster_arn
+  launch_type      = "FARGATE"
+  task_definition  = aws_ecs_task_definition.app.arn
+  desired_count    = var.desired_instance_count
+  platform_version = "1.4.0"
 
   # Allow changes to the desired_count without differences in terraform plan.
   # This allows autoscaling to manage the desired count for us.
@@ -158,17 +162,17 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode(
     [
       {
-        name                   = var.service_name
-        image                  = local.image_url
-        memory                 = var.memory
-        cpu                    = var.cpu
-        networkMode            = "awsvpc"
-        essential              = true
-        entryPoint             = null
+        name        = var.service_name
+        image       = local.image_url
+        memory      = var.memory
+        cpu         = var.cpu
+        networkMode = "awsvpc"
+        essential   = true
+        # entryPoint             = null
         environment            = var.container_env_vars
         readonlyRootFilesystem = var.container_read_only
         secrets                = var.container_secrets
-        healthCheck = {
+        healthCheck = var.enable_healthcheck ? {
           command = [
             "CMD-SHELL",
             "wget --no-verbose --tries=1 --spider http://localhost:${var.container_port}/${local.healthcheck_path} || exit 1",
@@ -176,7 +180,7 @@ resource "aws_ecs_task_definition" "app" {
           interval = 30,
           retries  = 3,
           timeout  = 5,
-        }
+        } : null
         portMappings = [
           {
             containerPort = var.container_port,
@@ -371,9 +375,11 @@ resource "aws_iam_role_policy_attachment" "task" {
 data "aws_iam_policy_document" "task" {
   statement {
     sid    = "DenyOtherwise"
-    effect = "Deny"
+    effect = "Allow"
     actions = [
-      "elasticfilesystem:Client*",
+      "elasticfilesystem:ClientMount",
+      "elasticfilesystem:ClientWrite",
+      "elasticfilesystem:ClientRootAccess",
     ]
     resources = ["*"]
   }
@@ -457,6 +463,17 @@ resource "aws_security_group" "app" {
     from_port       = var.container_port
     to_port         = var.container_port
     security_groups = [aws_security_group.alb.id]
+  }
+
+  dynamic "ingress" {
+    for_each = length(var.container_efs_volumes) == 0 ? [] : [1]
+    content {
+      description = "Allow HTTP traffic between application container and EFS"
+      from_port   = 2049
+      to_port     = 2049
+      protocol    = "tcp"
+      cidr_blocks = [data.aws_vpc.default.cidr_block]
+    }
   }
 
   egress {
