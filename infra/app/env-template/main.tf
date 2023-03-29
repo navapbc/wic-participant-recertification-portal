@@ -129,18 +129,18 @@ module "analytics_database" {
 }
 
 module "analytics" {
-  source       = "../../modules/service"
-  service_name = local.analytics_service_name
+  source               = "../../modules/service"
+  service_name         = local.analytics_service_name
   image_repository_url = data.aws_ecr_repository.analytics_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.analytics_image_repository.arn
-  image_tag           = var.image_tag
-  vpc_id              = data.aws_vpc.default.id
-  subnet_ids          = data.aws_subnets.default.ids
-  service_cluster_arn = module.service_cluster.service_cluster_arn
-  container_port      = 8080
-  container_read_only = false
-  enable_healthcheck  = false
-  healthcheck_path    = "/"
+  image_tag            = var.image_tag
+  vpc_id               = data.aws_vpc.default.id
+  subnet_ids           = data.aws_subnets.default.ids
+  service_cluster_arn  = module.service_cluster.service_cluster_arn
+  container_port       = 8080
+  container_read_only  = false
+  enable_healthcheck   = false
+  healthcheck_path     = "/"
   container_secrets = [
     {
       name      = "MATOMO_DATABASE_HOST",
