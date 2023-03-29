@@ -155,20 +155,19 @@ resource "aws_ecs_service" "app" {
 resource "aws_ecs_task_definition" "app" {
   family             = var.service_name
   execution_role_arn = aws_iam_role.task_executor.arn
-  task_role_arn      = aws_iam_role.task.arn
+  task_role_arn      = length(var.efs_volume_configuration) == 0 ? null : aws_iam_role.task.arn
 
   # when is this needed?
   # task_role_arn      = aws_iam_role.api_service.arn
   container_definitions = jsonencode(
     [
       {
-        name        = var.service_name
-        image       = local.image_url
-        memory      = var.memory
-        cpu         = var.cpu
-        networkMode = "awsvpc"
-        essential   = true
-        # entryPoint             = null
+        name                   = var.service_name
+        image                  = local.image_url
+        memory                 = var.memory
+        cpu                    = var.cpu
+        networkMode            = "awsvpc"
+        essential              = true
         environment            = var.container_env_vars
         readonlyRootFilesystem = var.container_read_only
         secrets                = var.container_secrets
@@ -202,8 +201,8 @@ resource "aws_ecs_task_definition" "app" {
             "awslogs-stream-prefix" = var.service_name
           },
         }
-        # A slightly complicated nested loop to iterate over the var.container_named_valumes list
-        # and create a map for each volume it defines
+        # A slightly complicated nested loop to iterate over the var.container_bind_mounts list
+        # and the var.container_efs_volumes list and create a map for each volume defined
         mountPoints = [for key, value in merge(var.container_bind_mounts, var.container_efs_volumes) :
           {
             containerPath = value.container_path,
@@ -223,7 +222,7 @@ resource "aws_ecs_task_definition" "app" {
   # Reference https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
   network_mode = "awsvpc"
 
-  // Create a bind mount volume for each element in the var.container_bind_mounts list
+  // Create an EFS mount volume for each element in the var.container_efs_volumes list
   dynamic "volume" {
     for_each = module.fs
     content {
@@ -239,7 +238,7 @@ resource "aws_ecs_task_definition" "app" {
     }
   }
 
-  // Create an EFS mount volume for each element in the var.container_efs_volumes list
+  // Create a bind mount volume for each element in the var.container_efs_volumes list
   dynamic "volume" {
     for_each = var.container_bind_mounts
     content {
@@ -374,8 +373,8 @@ resource "aws_iam_role_policy_attachment" "task" {
 
 data "aws_iam_policy_document" "task" {
   statement {
-    sid    = "DenyOtherwise"
-    effect = "Allow"
+    sid    = "EFSDeny"
+    effect = "Deny"
     actions = [
       "elasticfilesystem:ClientMount",
       "elasticfilesystem:ClientWrite",
@@ -465,6 +464,7 @@ resource "aws_security_group" "app" {
     security_groups = [aws_security_group.alb.id]
   }
 
+  # Create an ingress rule for the EFS port if there are EFS volumes
   dynamic "ingress" {
     for_each = length(var.container_efs_volumes) == 0 ? [] : [1]
     content {
