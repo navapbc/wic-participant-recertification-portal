@@ -1,7 +1,13 @@
-import React, { MouseEventHandler, useEffect, useRef, useState } from "react";
+/* Lifted and lightly edited from @trussworks/react-uswds FilePreview internal only component
+ * This component (in the source) gets displayed as part of the @trussworks/react-uswds
+ * FileInput component after a file (or files) are selected
+ */
+import React, { useEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import classNames from "classnames";
 import { Button } from "@trussworks/react-uswds";
+import { i18nKey } from "~/types";
+import { useTranslation } from "react-i18next";
 /** Moving the SPACER_GIF definition here instead of the constants.ts file,
  * as webpack was exporting that entire file, including use of the File
  * WebAPI; this was causing server-side site generators to break (#1250). */
@@ -13,26 +19,40 @@ export type FilePreviewProps = {
   imageId: string;
   file: File;
   clickHandler: Function;
+  removeFileKey: i18nKey;
+  selectedKey: i18nKey;
+  altTextKey: i18nKey;
 };
 
 export const FilePreview = (props: FilePreviewProps): ReactElement => {
-  const { imageId, file, clickHandler } = props;
+  const {
+    imageId,
+    file,
+    clickHandler,
+    removeFileKey,
+    selectedKey,
+    altTextKey,
+  } = props;
   const fileReaderRef = useRef<FileReader>(new FileReader());
   const [isLoading, setIsLoading] = useState(true);
   const [previewSrc, setPreviewSrc] = useState(SPACER_GIF);
   const [showGenericPreview, setShowGenericPreview] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
-    fileReaderRef.current.onloadend = (): void => {
-      setIsLoading(false);
-      setPreviewSrc(fileReaderRef.current.result as string);
-    };
+    const imgSrc = URL.createObjectURL(file);
+    setIsLoading(false);
+    setPreviewSrc(imgSrc);
+    // fileReaderRef.current.onloadend = (): void => {
+    //   setIsLoading(false);
+    //   setPreviewSrc(fileReaderRef.current.result as string);
+    // };
 
-    fileReaderRef.current.readAsDataURL(file);
+    // fileReaderRef.current.readAsDataURL(file);
 
-    return (): void => {
-      fileReaderRef.current.onloadend = null;
-    };
+    // return (): void => {
+    //   fileReaderRef.current.onloadend = null;
+    // };
   }, []);
 
   const { name } = file;
@@ -56,35 +76,33 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
     "usa-file-input__preview-image--excel": showGenericPreview && isExcel,
     "usa-file-input__preview-image--generic": showGenericPreview && isGeneric,
   });
-
+  const altText = `${t(altTextKey)} ${name}`;
   return (
     <div className="margin-bottom-4 margin-top-2">
       <div className="usa-file-input">
-        <div className="usa-file-input__preview-heading border-bottom-width-0 border-width-1px border-dashed">
-          <div>1 file selected</div>
-          <Button
-            type="button"
-            unstyled
-            className="usa-file-input__choose text-secondary-vivid z-top"
-            onClick={() => clickHandler(name)}
-          >
-            Remove File
-          </Button>
-        </div>
-
-        <div
-          className="usa-file-input__preview border-dashed border-top-width-0 border-width-1px"
-          aria-hidden="true"
-        >
-          <img
-            id={imageId}
-            data-testid="file-input-preview-image"
-            src={previewSrc}
-            alt=""
-            className={imageClasses}
-            onError={onImageError}
-          />
-          {name}
+        <div className="usa-file-input__target">
+          <div className="usa-file-input__preview-heading">
+            <div>{t(selectedKey)}</div>
+            <Button
+              type="button"
+              unstyled
+              className="usa-file-input__choose text-secondary-vivid"
+              onClick={() => clickHandler(name)}
+            >
+              {t(removeFileKey)}
+            </Button>
+          </div>
+          <div className="usa-file-input__preview" aria-hidden="true">
+            <img
+              id={imageId}
+              src={previewSrc}
+              alt={altText}
+              className={imageClasses}
+              onError={onImageError}
+            />
+            {name}
+          </div>
+          <div className="usa-file-input__box" />
         </div>
       </div>
     </div>

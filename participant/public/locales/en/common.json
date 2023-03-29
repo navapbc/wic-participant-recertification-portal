@@ -96,6 +96,19 @@
     "legend": "What's your name?",
     "preferred": "Preferred name (optional)"
   },
+  "FileInput": {
+    "removeFile": "Remove File",
+    "selected": "Selected file",
+    "label": "Upload files",
+    "document": "Document",
+    "ifNeeded": "(if needed)",
+    "noFiles": "Choose or drag a file to upload",
+    "additionalFiles": "Choose or drag another file to upload",
+    "altText": "Image preview for",
+    "fileTypeError": "This is not a valid file type.",
+    "fileSizeError": "This file is over the maximum size",
+    "fileCountError": "You have reached the maximum number of files; <br/> please remove files before adding additional files"
+  },
   "Relationship": {
     "label": "Relationship to you",
     "self": "Self",

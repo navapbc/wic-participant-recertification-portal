@@ -8,8 +8,11 @@ export default {
 
 const defaultProps: FileInputProps = {
   id: "file-input-story",
-  labelKey: "test:fileinput.label",
-  accept: "image/*",
+  name: "file-input-story",
+  labelKey: "test:fileinput",
+  accept: "image/*,.pdf",
+  maxFileCount: 5,
+  maxFileSizeInBytes: 5_242_880,
 };
 
 const FileInputPropsTemplate = {

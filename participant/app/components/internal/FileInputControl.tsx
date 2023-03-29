@@ -1,3 +1,4 @@
+/* Heavily edited from @trussworks/react-uswds FileInput component */
 import React, {
   useState,
   forwardRef,
@@ -5,8 +6,10 @@ import React, {
   useImperativeHandle,
 } from "react";
 import classnames from "classnames";
+import { i18nKey } from "~/types";
+import { useTranslation } from "react-i18next";
 
-type FileInputProps = {
+type FileInputControlProps = {
   id: string;
   name: string;
   disabled?: boolean;
@@ -14,17 +17,21 @@ type FileInputProps = {
   accept?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDrop?: (e: React.DragEvent) => void;
+  emptyKey: i18nKey;
+  notEmptyKey: i18nKey;
+  fileTypeErrorKey: i18nKey;
+  empty?: boolean;
 };
 
-export type FileInputRef = {
+export type FileInputControlRef = {
   clearFiles: () => void;
   input: HTMLInputElement | null;
   files: File[];
 };
 
-export const FileInputForwardRef: React.ForwardRefRenderFunction<
-  FileInputRef,
-  FileInputProps & JSX.IntrinsicElements["input"]
+export const FileInputControlForwardRef: React.ForwardRefRenderFunction<
+  FileInputControlRef,
+  FileInputControlProps & JSX.IntrinsicElements["input"]
 > = (
   {
     name,
@@ -35,6 +42,10 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
     accept,
     onChange,
     onDrop,
+    emptyKey,
+    notEmptyKey,
+    fileTypeErrorKey,
+    empty = true,
     ...inputProps
   },
   ref
@@ -43,7 +54,8 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
   const [isDragging, setIsDragging] = useState(false);
   const [showError, setShowError] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-
+  const { t } = useTranslation();
+  const helpText = empty ? t(emptyKey) : t(notEmptyKey);
   useImperativeHandle(
     ref,
     () => ({
@@ -72,12 +84,6 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
     "border-blue",
     "border-05"
   );
-
-  const hideDragText =
-    /rv:11.0/i.test(navigator.userAgent) ||
-    /Edge\/\d./i.test(navigator.userAgent);
-
-  const dragText = multiple ? "Drag files here or " : "Drag file here or ";
 
   const instructionClasses = classnames("usa-file-input__instructions");
 
@@ -154,10 +160,9 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
           className={instructionClasses}
           aria-hidden="true"
         >
-          {!hideDragText && (
-            <span className="usa-file-input__drag-text">{dragText}</span>
-          )}
-          <span className="usa-file-input__choose">choose from folder</span>
+          <span className="usa-file-input__choose font-sans-lg text-bold">
+            {helpText}
+          </span>
         </div>
         <div data-testid="file-input-box" className="usa-file-input__box"></div>
         {showError && (
@@ -165,7 +170,7 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
             data-testid="file-input-error"
             className="usa-file-input__accepted-files-message"
           >
-            This is not a valid file type.
+            {t(fileTypeErrorKey)}
           </div>
         )}
         <input
@@ -179,10 +184,11 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
           disabled={disabled}
           onChange={handleChange}
           accept={accept}
+          multiple={multiple}
         />
       </div>
     </div>
   );
 };
 
-export const FileInputControl = forwardRef(FileInputForwardRef);
+export const FileInputControl = forwardRef(FileInputControlForwardRef);

@@ -40,7 +40,17 @@ i.e.
 .usa-file-input__preview-heading {
   pointer-events: auto;
 }
+.usa-file-input__target:hover {
+  border-color: #1a4480;
+}
+
+.file-input-error {
+  font-weight: bold;
+  color:  #e41d3d;
+  @include u-margin-top(1)
+}
 
 .main {
   flex: 1;
 }
+
