@@ -23,7 +23,7 @@ locals {
   staff_service_name        = "${local.project_name}-staff-${var.environment_name}"
   analytics_service_name    = "${local.project_name}-analytics-${var.environment_name}"
   analytics_database_name   = "${local.project_name}-analytics-${var.environment_name}"
-  document_upload_s3_name  = "${local.project_name}-doc-upload-${var.environment_name}"
+  document_upload_s3_name   = "${local.project_name}-doc-upload-${var.environment_name}"
 }
 
 module "project_config" {

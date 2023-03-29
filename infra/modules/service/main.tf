@@ -370,7 +370,7 @@ resource "aws_iam_role_policy_attachment" "task" {
 
 data "aws_iam_policy_document" "task" {
   statement {
-    sid = "DenyOtherwise"
+    sid    = "DenyOtherwise"
     effect = "Deny"
     actions = [
       "elasticfilesystem:Client*",
@@ -381,7 +381,7 @@ data "aws_iam_policy_document" "task" {
   dynamic "statement" {
     for_each = module.fs
     content {
-      sid = "EFSAccess${statement.key}"
+      sid    = "EFSAccess${statement.key}"
       effect = "Allow"
       actions = [
         "elasticfilesystem:Client*",
