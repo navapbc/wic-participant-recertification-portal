@@ -10,6 +10,7 @@ variable "admin_password" {
   description = "The admin password for the database. Optional. Will generate a random password if not set"
   type        = string
   default     = ""
+  sensitive   = true
 }
 
 variable "database_type" {
