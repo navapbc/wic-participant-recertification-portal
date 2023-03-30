@@ -176,8 +176,8 @@ resource "aws_ecs_task_definition" "app" {
         }
         portMappings = [
           {
-            containerPort = var.container_port,
-            hostPort      = var.container_port,
+            containerPort = "${var.container_port}",
+            hostPort      = "${var.container_port}",
             protocol      = "tcp",
           }
         ]
@@ -339,13 +339,20 @@ resource "aws_security_group" "alb" {
   # TODO(https://github.com/navapbc/template-infra/issues/163) Disallow incoming traffic to port 80
   # checkov:skip=CKV_AWS_260:Disallow ingress from 0.0.0.0:0 to port 80 when implementing HTTPS support in issue #163
   ingress {
-    description = "Allow HTTP# traffic from public internet"
+    description = "Allow HTTPS traffic from public internet"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Allow HTTP traffic from public internet--Testing onlu"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     description = "Allow all outgoing traffic"
     from_port   = 0

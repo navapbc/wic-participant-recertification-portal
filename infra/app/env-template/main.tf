@@ -59,6 +59,39 @@ module "service_cluster" {
   cluster_name = local.cluster_name
 }
 
+# referencing the record that already exists in the console
+data "aws_route53_zone" "participant_url"{
+  name = "wic-services.org"
+}
+
+data "aws_lb" "alb"{
+  name = local.participant_service_name
+}
+# creating subdomains for each env (except prod)
+resource "aws_route53_zone" "participant_url_envs" {
+  name = "${var.environment_name}.wic-services.org"
+}
+
+# for subdomains a NS record is required
+resource "aws_route53_record" "subdomain_ns_record" {
+  name = "${var.environment_name}.wic-services.org"
+  zone_id = data.aws_route53_zone.participant_url.id
+  type = "NS"
+  ttl =30
+  records = data.aws_route53_zone.participant_url.name_servers
+}
+# ALIAS record for subdomains
+resource "aws_route53_record" "subdomain_alias_record" {
+  name = "${var.environment_name}.wic-services.org"
+  type = "A"
+  zone_id = data.aws_route53_zone.participant_url.id
+  alias {
+    name = data.aws_lb.alb.dns_name # <- this is the service name in the module. make it participant service name
+    zone_id = data.aws_route53_zone.participant_url.id
+    evaluate_target_health = true
+  }
+}
+
 module "participant" {
   source               = "../../modules/service"
   service_name         = local.participant_service_name
