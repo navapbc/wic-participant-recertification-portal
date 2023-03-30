@@ -117,3 +117,8 @@ module "analytics" {
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
 }
+
+module "waf" {
+  source = "../../modules/waf"
+}
+

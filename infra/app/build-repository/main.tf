@@ -71,7 +71,3 @@ module "analytics_image_repository" {
   push_access_role_arn = data.aws_iam_role.github_actions.arn
   app_account_ids      = var.app_environment_account_ids
 }
-
-module "waf" {
-  source = "../../modules/waf"
-}
