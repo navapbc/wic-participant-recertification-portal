@@ -138,6 +138,7 @@ module "analytics" {
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 8080
+  # Matomo/apache needs to be able to write to the rootfs
   container_read_only  = false
   enable_healthcheck   = false
   healthcheck_path     = "/"
