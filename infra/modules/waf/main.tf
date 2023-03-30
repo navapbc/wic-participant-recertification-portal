@@ -54,8 +54,8 @@ resource "aws_wafv2_web_acl" "waf" {
 
   rule {
     # Inspect IPs that have been identified as bots by Amazon
-    name        = "AWSIPReputationList"
-    priority    = 1
+    name     = "AWSIPReputationList"
+    priority = 1
     override_action {
       count {}
     }
@@ -75,8 +75,8 @@ resource "aws_wafv2_web_acl" "waf" {
 
   rule {
     # Inspects IPs for services known to anonymize client information e.g. proxies
-    name        = "AWSAnonList"
-    priority    = 1
+    name     = "AWSAnonList"
+    priority = 1
     override_action { # does this need an override?
       count {}
     }
@@ -96,8 +96,8 @@ resource "aws_wafv2_web_acl" "waf" {
 
   rule {
     # Blocks requests associated with SQL database exploitation
-    name        = "AWSSQLManagement"
-    priority    = 1
+    name     = "AWSSQLManagement"
+    priority = 1
 
     statement {
       managed_rule_group_statement {
@@ -114,8 +114,8 @@ resource "aws_wafv2_web_acl" "waf" {
 
   rule {
     # Blocks requests associated with Linux exploitation
-    name        = "AWSLinuxManagement"
-    priority    = 1
+    name     = "AWSLinuxManagement"
+    priority = 1
 
     statement {
       managed_rule_group_statement {
@@ -132,8 +132,8 @@ resource "aws_wafv2_web_acl" "waf" {
 
   rule {
     # Blocks requests associated with POSIX and POSIX-like OS exploitation
-    name        = "AWSUnixManagement"
-    priority    = 1
+    name     = "AWSUnixManagement"
+    priority = 1
 
     statement {
       managed_rule_group_statement {
@@ -155,8 +155,8 @@ resource "aws_wafv2_web_acl" "waf" {
   # the following are custom rules and arent managed by AWS.
   rule {
     # Applies a rate based rule to IPs originating in the US
-    name        = "AWSRateBasedRuleDomesticDOS"
-    priority    = 1
+    name     = "AWSRateBasedRuleDomesticDOS"
+    priority = 1
 
     action {
       block {}
@@ -183,8 +183,8 @@ resource "aws_wafv2_web_acl" "waf" {
 
   rule {
     # Applies a rate based rule to IPs originating outside of the US
-    name        = "AWSRateBasedRuleGlobalDOS"
-    priority    = 2
+    name     = "AWSRateBasedRuleGlobalDOS"
+    priority = 2
 
     action {
       block {}
@@ -237,15 +237,15 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
   }
   extended_s3_configuration {
     # role arn actually is required :(
-    role_arn = "" # not sure what needs to go here
+    role_arn   = "" # not sure what needs to go here
     bucket_arn = aws_s3_bucket.waf_logging.arn
     # probably don't need to enable data processors
   }
 }
 # IAM Role for Kinesis
 resource "aws_iam_role" "firehose_perms" {
-  name = "placeholder"
-  description = "IAM role for the KDF"
+  name               = "placeholder"
+  description        = "IAM role for the KDF"
   assume_role_policy = "" #TBA
   # what perms are needed
   # s3:Put
@@ -253,7 +253,7 @@ resource "aws_iam_role" "firehose_perms" {
 }
 # role policy
 data "aws_iam_policy_document" "firehose_perms" {
-  
+
 }
 # KMS key config
 resource "aws_kms_key" "waf_logging" {
