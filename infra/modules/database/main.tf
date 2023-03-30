@@ -109,6 +109,11 @@ resource "aws_rds_cluster" "database" {
     max_capacity = 1.0
     min_capacity = 0.5
   }
+
+  # Allow RDS to update engine minor versions, so ignore changes to engine_version
+  lifecycle {
+    ignore_changes = [engine_version]
+  }
 }
 
 resource "aws_rds_cluster_instance" "database_instance" {
