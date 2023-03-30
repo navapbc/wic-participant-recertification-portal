@@ -155,7 +155,7 @@ resource "aws_ecs_service" "app" {
 resource "aws_ecs_task_definition" "app" {
   family             = var.service_name
   execution_role_arn = aws_iam_role.task_executor.arn
-  task_role_arn      = length(var.efs_volume_configuration) == 0 ? null : aws_iam_role.task.arn
+  task_role_arn      = length(var.container_efs_volumes) == 0 ? null : aws_iam_role.task[0].arn
 
   # when is this needed?
   # task_role_arn      = aws_iam_role.api_service.arn
@@ -267,6 +267,7 @@ resource "aws_cloudwatch_log_group" "service_logs" {
 ## Access Control ##
 ####################
 
+# ECS task executor IAM role & policy
 resource "aws_iam_role" "task_executor" {
   name               = local.task_executor_role_name
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_executor_role.json
@@ -341,7 +342,10 @@ data "aws_iam_policy_document" "task_executor" {
   }
 }
 
+# ECS task role and policy
+# Only needed if EFS volumes are defined
 resource "aws_iam_role" "task" {
+  count              = length(var.container_efs_volumes) > 0 ? 1 : 0
   name               = local.task_role_name
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_role.json
 }
@@ -360,6 +364,7 @@ data "aws_iam_policy_document" "ecs_assume_task_role" {
 }
 
 resource "aws_iam_policy" "task" {
+  count       = length(var.container_efs_volumes) > 0 ? 1 : 0
   name        = "${var.service_name}-task-role-policy"
   description = "A policy for ECS task"
   policy      = data.aws_iam_policy_document.task.json
@@ -367,21 +372,12 @@ resource "aws_iam_policy" "task" {
 
 # Link access policies to the ECS task role.
 resource "aws_iam_role_policy_attachment" "task" {
-  role       = aws_iam_role.task.name
-  policy_arn = aws_iam_policy.task.arn
+  count      = length(var.container_efs_volumes) > 0 ? 1 : 0
+  role       = aws_iam_role.task[0].name
+  policy_arn = aws_iam_policy.task[0].arn
 }
 
 data "aws_iam_policy_document" "task" {
-  statement {
-    sid    = "EFSDeny"
-    effect = "Deny"
-    actions = [
-      "elasticfilesystem:ClientMount",
-      "elasticfilesystem:ClientWrite",
-      "elasticfilesystem:ClientRootAccess",
-    ]
-    resources = ["*"]
-  }
   # Allow ECS to access EFS access points
   dynamic "statement" {
     for_each = module.fs
@@ -389,7 +385,9 @@ data "aws_iam_policy_document" "task" {
       sid    = "EFSAccess${statement.key}"
       effect = "Allow"
       actions = [
-        "elasticfilesystem:Client*",
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientWrite",
+        "elasticfilesystem:ClientRootAccess",
       ]
       resources = [
         statement.value.file_system.arn
