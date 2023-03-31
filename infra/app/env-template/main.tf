@@ -138,9 +138,7 @@ module "analytics" {
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 8080
-  # Matomo/apache needs to be able to write to the rootfs
-  container_read_only  = false
-  enable_healthcheck   = false
+  container_read_only  = false # Matomo/apache needs to be able to write to the rootfs
   healthcheck_path     = "/"
   container_secrets = [
     {
@@ -178,7 +176,6 @@ module "analytics" {
 data "aws_iam_role" "participant_task_executor" {
   # Referencing the task executor of the ECS services so that they have the ability to upload documents to s3
   name = "${local.participant_service_name}-task-executor"
-
 }
 
 data "aws_iam_role" "staff_task_executor" {
