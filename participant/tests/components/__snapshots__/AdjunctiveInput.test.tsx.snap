@@ -13,7 +13,9 @@ exports[`renders the default adjunctive eligibility field 1`] = `
         Are they enrolled in any of these programs?
       </div>
     </legend>
-    <ul>
+    <ul
+      class="usa-list"
+    >
       <li>
         Medicaid / Healthy Montana Kids Plus
       </li>

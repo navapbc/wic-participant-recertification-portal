@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import type { ChangeEvent, ReactElement } from "react";
 
 import Required from "app/components/Required";
@@ -32,6 +32,7 @@ export type TextFieldProps = {
     | "url";
   defaultValue?: string;
   value?: string;
+  className?: string;
 };
 
 export const TextField = (props: TextFieldProps): ReactElement => {
@@ -46,15 +47,15 @@ export const TextField = (props: TextFieldProps): ReactElement => {
     inputType,
     defaultValue,
     value,
+    className,
     ...otherProps
   } = props;
-  const { t } = useTranslation();
   const { getInputProps, error } = useField(id);
   const TextTypeClass = type == "textarea" ? Textarea : TextInput;
   return (
     <>
       <Label htmlFor={id} className={labelClassName} hint={hint}>
-        {t(labelKey)}
+        <Trans i18nKey={labelKey} />
         {required && <Required />}
       </Label>
       {error && <ErrorMessage id={`${id}-error-message`}>{error}</ErrorMessage>}
@@ -65,6 +66,7 @@ export const TextField = (props: TextFieldProps): ReactElement => {
           id: id,
           type: inputType,
           value: value,
+          className: className,
           ...otherProps,
         })}
       />

@@ -9,6 +9,7 @@ import {
   CardFooter,
 } from "@trussworks/react-uswds";
 import { RelationshipInput } from "~/components/RelationshipInput";
+import type { RelationshipInputProps } from "app/components/RelationshipInput";
 import { NameInput } from "app/components/NameInput";
 import type { NameInputProps } from "app/components/NameInput";
 import { DateInput } from "app/components/DateInput";
@@ -21,12 +22,14 @@ export type ParticipantCardProps = {
 
   adjunctiveKey: i18nKey;
   adjunctiveLegendStyle?: legendStyleType;
+  adjunctiveRequired?: boolean;
 
   dateKey: i18nKey;
   dateLegendKey: i18nKey;
   dateLegendStyle?: legendStyleType;
   dateHint?: boolean;
   dateDMYOrder?: boolean;
+  dateRequired?: boolean;
 
   nameKey: i18nKey;
   nameLegal?: boolean;
@@ -36,6 +39,7 @@ export type ParticipantCardProps = {
   participantKey: i18nKey;
 
   relationshipKey: i18nKey;
+  relationshipRequired?: boolean;
 };
 
 export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
@@ -43,19 +47,28 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     index,
     adjunctiveKey,
     adjunctiveLegendStyle = "default",
+    adjunctiveRequired,
     dateKey,
     dateLegendKey,
     dateLegendStyle,
     dateHint,
     dateDMYOrder,
+    dateRequired,
     nameKey,
     nameLegal,
     namePreferred,
-    participantHeaderClassName = "font-sans-lg",
+    participantHeaderClassName,
     participantKey,
     relationshipKey,
+    relationshipRequired,
   } = props;
 
+  const relationshipProps: RelationshipInputProps = {
+    relationshipKey: relationshipKey,
+    legendKey: `${relationshipKey}.label`,
+    name: `participant-${index}-relationship`,
+    required: relationshipRequired,
+  };
   const nameProps: NameInputProps = {
     id: `participant-${index}`,
     nameKey: nameKey,
@@ -71,28 +84,28 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     legendStyle: dateLegendStyle,
     DMYorder: dateDMYOrder,
     hint: dateHint,
+    required: dateRequired,
   };
   const adjunctiveProps: AdjunctiveInputProps = {
     name: `participant-${index}-adjunctive`,
     adjunctiveKey: adjunctiveKey,
     legendStyle: adjunctiveLegendStyle,
+    required: adjunctiveRequired,
   };
 
   return (
     <Card>
       <CardHeader>
-        <div className={participantHeaderClassName}>
-          <strong>
-            <Trans i18nKey={`${participantKey}.cardHeader`} /> {index}
-          </strong>
-        </div>
+        <h2
+          className={`usa-card__heading ${
+            participantHeaderClassName || ""
+          }`.trim()}
+        >
+          <Trans i18nKey={`${participantKey}.cardHeader`} /> {index}
+        </h2>
       </CardHeader>
       <CardBody>
-        <RelationshipInput
-          relationshipKey={relationshipKey}
-          legendKey={`${relationshipKey}.label`}
-          name={`participant-${index}-relationship`}
-        />
+        <RelationshipInput {...relationshipProps} />
         <NameInput {...nameProps} />
         <DateInput {...dateProps} />
         <AdjunctiveInput {...adjunctiveProps} />

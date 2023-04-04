@@ -15,6 +15,8 @@ in the form $setting: value,
   // Same paths are successfully used for both Next.js and Storybook.
   $theme-font-path: '/uswds/fonts',
   $theme-image-path: '/uswds/img',
-  $theme-type-scale-lg: 7,
-  $theme-header-logo-text-width: 100%
+  $theme-header-logo-text-width: 100%,
+  $theme-font-type-sans: 'public-sans',
+  $theme-body-font-size: "sm",
+  $theme-body-line-height: 4
 );

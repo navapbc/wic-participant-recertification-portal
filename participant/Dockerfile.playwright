@@ -7,5 +7,6 @@ RUN npm install @playwright/test @axe-core/playwright uuid js-image-generator tm
 COPY playwright.config.ts .
 COPY e2e e2e
 COPY tests/fixtures /srv/fixtures
+
 # Run playwright tests
 CMD [ "npx", "playwright", "test", "--retries=3" ]
