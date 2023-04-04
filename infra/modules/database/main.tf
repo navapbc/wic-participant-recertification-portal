@@ -43,6 +43,7 @@ resource "aws_security_group" "database" {
 resource "aws_rds_cluster" "postgresql" {
   # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
   # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
+  # checkov:skip=CKV_AWS_313: This is literally a new check; more research needed
   cluster_identifier                  = var.database_name
   engine                              = "aurora-postgresql"
   engine_mode                         = "provisioned"

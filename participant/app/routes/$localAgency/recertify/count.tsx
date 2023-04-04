@@ -5,14 +5,19 @@ import { Form } from "@remix-run/react";
 import { Trans, useTranslation } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
+import { List } from "app/components/List";
+import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
 
 export default function Count() {
   const { t } = useTranslation();
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
     type: "input",
-    inputType: "text",
+    inputType: "number",
     labelKey: "Count.householdSize.label",
+    required: true,
+    className: "width-8",
+    labelClassName: "label-large",
   };
   // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion
   const listItems = t("Count.listItems", {
@@ -20,22 +25,20 @@ export default function Count() {
   }) as Array<string>;
   return (
     <div>
-      <h1>{t("Count.title")}</h1>
-      <div className="font-sans-lg">
+      <h1>
+        <Trans i18nKey="Count.title" />
+      </h1>
+      <RequiredQuestionStatement />
+      <p className="intro">
         <Trans i18nKey="Count.intro" />
-      </div>
-      <br />
-      <div>
+      </p>
+      <p>
         <Trans i18nKey="Count.body" />
-        <ul>
-          {listItems.map((item: string, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      </div>
-      <div>
+      </p>
+      <List listKeys={listItems} type="unordered" />
+      <p>
         <Trans i18nKey="Count.example" />
-      </div>
+      </p>
       <Form>
         <TextField {...householdSizeProps} />
         <Button
@@ -43,7 +46,7 @@ export default function Count() {
           type="submit"
           formMethod="post"
         >
-          {t("Count.householdSize.button")}
+          <Trans i18nKey="Count.householdSize.button" />
         </Button>
       </Form>
     </div>

@@ -114,12 +114,13 @@ jobs:
           useLockFile: false
           working-directory: ./participant
 
-      - name: 🖨 Copy the Darwin screenshots as Linux (faking it until we make it)
-        run: find participant/e2e -name "*.png" -exec bash -c 'cp "$0" "${0/darwin/linux}"' {} \;
-
-      - name: 🎭 Install Playwright browsers
-        run: npx playwright install --with-deps
-
       - name: 🐳 Run Playwright in Docker Compose
-        run: npx playwright test --retries=3
+        run: npm run e2e
         working-directory: participant
+
+      - name: 🗃 Archive test results
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: participant-playwright-test-results
+          path: participant/test-results

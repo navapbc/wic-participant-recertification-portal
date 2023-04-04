@@ -20,18 +20,6 @@ const config: PlaywrightTestConfig = {
      * For example in `await expect(locator).toHaveText();`
      */
     timeout: 5000,
-    toHaveScreenshot: {
-      /* Set a default ratio accept rate.
-       * GitHub Actions runs on Linux, and we're faking those screenshots
-       * by copying the Darwin (macos) ones
-       */
-
-      /* Another option is to have a command to update the screenshots from Github with
-       * a specific command:
-       * https://github.com/basarat/demo-playwright-vrt/blob/main/.github/workflows/update-snapshots.yml
-       */
-      maxDiffPixelRatio: 0.01,
-    },
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -42,13 +30,14 @@ const config: PlaywrightTestConfig = {
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: "list",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://localhost:3000',
+    baseURL: "http://app-e2e:3000/",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -114,22 +103,12 @@ const config: PlaywrightTestConfig = {
   /* Run your local dev server before starting the tests */
   /* This command is what gets run by playwright automatically
    * (and implicitly when you run `npm run e2e`)
+   * This is for running playwright outside of docker, which is usually NOT
+   * what you want because you want to create snapshots in a linux environment.
+   * See https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
    */
-  webServer: {
-    command:
-      "docker compose -f docker-compose.e2e.yml up database-e2e --wait && \
-       docker compose -f docker-compose.e2e.yml run --rm remix-migrate-reset && \
-       npm run css && \
-       npm run dev:remix",
-    port: 5556,
-    timeout: 450 * 1000,
-    reuseExistingServer: !process.env.CI,
-    env: {
-      DATABASE_URL:
-        "postgresql://postgres:incredible_local_secret_phrase@localhost:5555/postgres?schema=public",
-      PORT: "5556",
-    },
-  },
+  // webServer: {
+  // },
 };
 
 export default config;

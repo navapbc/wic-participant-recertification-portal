@@ -1,4 +1,21 @@
 {
+  "About": {
+    "title": "How it works",
+    "note": "Note: This form does not guarantee your enrollment in WIC. Your eligibility will be confirmed when you have your recertification appointment with WIC.",
+    "button": "Continue",
+    "answer": {
+      "body": "We only need to collect information about WIC participants who have a recertification appointment.",
+      "header": "Answer questions about who is recertifying in your household"
+    },
+    "upload": {
+      "body": "We will help you figure out which ones you need. If you usually have to show income information, like paystubs or tax returns, have those documents accessible before you start.",
+      "header": "Upload any needed documents"
+    },
+    "appointment": {
+      "body": "Your local WIC clinic staff will confirm the information and documents you sent.",
+      "header": "Later, attend your recertification appointment"
+    }
+  },
   "AdjunctiveEligibility": {
     "label": "Are they enrolled in any of these programs?",
     "programs": [
@@ -27,12 +44,14 @@
   "Demo": {
     "alertText": "This site is a demonstration project and for example purposes only"
   },
-  "Detail": {
+  "Details": {
     "participantCard": {
       "cardHeader": "Participant",
-      "cardFooter": "Add another participant?"
+      "cardFooter": "Remove Participant #"
     },
-    "button": "Continue"
+    "button": "Continue",
+    "intro": "Reminder: We only need to collect information about WIC participants who have a recertification appointment.",
+    "title": "Tell us about who you're recertifying for"
   },
   "DateOfBirth": {
     "month": "Month",
@@ -43,16 +62,15 @@
     "hintDMY": "For Example: 28 4 1986"
   },
   "Index": {
-    "title": "Title",
-    "intro": "<strong>Remix</strong> is a framework for server-rendered, fast web applications",
-    "body": "<p>This is an introductory paragraph</p><p>There will be useful information here</p>",
-    "button": "Call to Action"
-  },
-  "Intro": {
-    "title": "Title",
-    "intro": "Blue mountain, grinder fair trade, coffee et strong bar  roast pumpkin spice robust siphon french press. White as, coffee macchiato spoon coffee crema single shot lungo seasonal latte. Id cortado, breve, carajillo, macchiato blue mountain so a cream. Caramelization, foam shop, spoon cappuccino at galão café au lait. Crema, cream viennese body turkish instant plunger pot that trifecta.    ",
-    "body": "Aged, a acerbic viennese aroma, black crema milk french press cup aftertaste. Java, milk fair trade café au lait skinny, dripper breve in roast aftertaste sweet. Cappuccino froth, fair trade affogato saucer dark sugar. Crema wings half and half, cultivar bar  et single origin, doppio blue mountain sweet extra  saucer. Cup roast beans, cream cultivar instant as percolator cultivar trifecta.",
-    "button": "Do the thing!"
+    "button": "Get started",
+    "eligible": "You can fill out this form if:",
+    "intro": "You can now prepare for your recertification appointment with your local Montana WIC clinic.",
+    "ifLink": "You have received this link from your local WIC clinic.",
+    "ifReceivesWIC": "You or someone in your household currently receives WIC benefits.",
+    "ifThirtyDays": "You or someone in your household is eligible for a recertification in the next 30 days.",
+    "note": "Not all WIC households can use this form. If you do not have a permanent address, if nobody in your household earns money, or if you do not have identity documents, then you cannot use this form ahead of your recertification appointment.",
+    "time": "This form should take about 15 minutes to complete.",
+    "title": "Start your recertification for Montana WIC"
   },
   "Layout": {
     "footer1": {
@@ -65,12 +83,10 @@
       ],
       "text": "This institution is an equal opportunity provider. <0>USDA Non-Discrimination Statement</0>"
     },
-    "header": "Montana WIC<br />Recertification Portal"
+    "header": "Montana WIC Recertification Portal"
   },
   "Name": {
     "title": "What's your name?",
-    "intro": "Why are we asking this?",
-    "body": "Staff collect the information for authorized representatives and check to make sure the authorized representative is on the child's chart",
     "button": "Continue"
   },
   "NameInput": {
@@ -88,5 +104,6 @@
     "foster": "Foster child",
     "other": "Other"
   },
+  "asterisk": "All required questions are marked with an asterisk",
   "routingError": "Some required responses are missing. Please go back through the form and answer all required questions."
 }

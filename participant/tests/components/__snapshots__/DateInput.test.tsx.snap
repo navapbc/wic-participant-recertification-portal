@@ -9,7 +9,9 @@ exports[`renders the default date component 1`] = `
     <legend
       class="usa-legend"
     >
-      Date of Birth
+      <div>
+        Date of Birth
+      </div>
     </legend>
     <div
       class="usa-memorable-date"

@@ -1,10 +1,12 @@
 # -------- Image: base -------- #
 # Base node image with package updates and dependencies
 FROM node:18-slim as base
-# Install openssl for Prisma
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-  openssl
+    # Install curl for healthcheck
+    curl \
+    # Install openssl for Prisma
+    openssl
 # Set working directory and node user
 WORKDIR /home/node/remix
 
@@ -21,6 +23,13 @@ COPY --from=deps /home/node/remix/node_modules ./node_modules
 COPY --chown=node:node prisma .
 RUN npx prisma generate
 COPY --chown=node:node . .
+CMD ["npm", "run", "dev:docker"]
+
+# -------- Image: e2e -------- #
+# Provide an e2e image
+FROM dev as e2e
+ENTRYPOINT ["./entrypoint-e2e.sh"]
+RUN npm run css
 CMD ["npm", "run", "dev:docker"]
 
 # -------- Image: build -------- #

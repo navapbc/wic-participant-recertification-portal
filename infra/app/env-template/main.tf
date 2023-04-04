@@ -23,6 +23,7 @@ locals {
   staff_service_name       = "${local.project_name}-staff-${var.environment_name}"
   analytics_service_name   = "${local.project_name}-analytics-${var.environment_name}"
   waf_name                 = "${local.project_name}-${local.app_name}-waf"
+  document_upload_s3_name  = "${local.project_name}-doc-upload-${var.environment_name}"
 }
 
 module "project_config" {
@@ -106,6 +107,16 @@ module "staff" {
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
+  container_port       = 3000
+  container_secrets = [
+    {
+      name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.database.admin_db_url_secret_name}"
+    },
+  ]
+  service_ssm_resource_paths = [
+    module.database.admin_db_url_secret_name,
+  ]
 }
 
 module "analytics" {
@@ -124,3 +135,22 @@ module "waf" {
   waf_name = local.waf_name
 }
 
+data "aws_iam_role" "participant_task_executor" {
+  # Referencing the task executor of the ECS services so that they have the ability to upload documents to s3
+  name = "${local.participant_service_name}-task-executor"
+
+}
+
+data "aws_iam_role" "staff_task_executor" {
+  # Referencing the task executor of the ECS services so that they have the ability to upload documents to s3
+  name = "${local.staff_service_name}-task-executor"
+}
+
+module "doc_upload" {
+  source            = "../../modules/s3-encrypted"
+  environment_name  = var.environment_name
+  s3_bucket_name    = local.document_upload_s3_name
+  read_role_names   = [data.aws_iam_role.staff_task_executor.name, data.aws_iam_role.participant_task_executor.name]
+  write_role_names  = [data.aws_iam_role.participant_task_executor.name]
+  delete_role_names = []
+}
