@@ -26,13 +26,13 @@ resource "aws_wafv2_web_acl" "waf" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "waf-rules-metrics"
-      sampled_requests_enabled   = true
+      sampled_requests_enabled   = false
     }
   }
 
   rule {
     name     = "AWSManageKnownBadInputs"
-    priority = 1
+    priority = 2
     # setting to none re this solution here: https://github.com/bridgecrewio/checkov/issues/2101
     # count rule override: https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-rule-group-override-options.html#web-acl-rule-group-override-options-rule-group
     override_action {
@@ -48,14 +48,14 @@ resource "aws_wafv2_web_acl" "waf" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "vulnerability-metrics"
-      sampled_requests_enabled   = true
+      sampled_requests_enabled   = false
     }
   }
 
   rule {
     # Inspect IPs that have been identified as bots by Amazon
     name     = "AWSIPReputationList"
-    priority = 1
+    priority = 3
     override_action {
       count {}
     }
@@ -69,14 +69,14 @@ resource "aws_wafv2_web_acl" "waf" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "ip-vulnerability-metrics"
-      sampled_requests_enabled   = true
+      sampled_requests_enabled   = false
     }
   }
 
   rule {
     # Inspects IPs for services known to anonymize client information e.g. proxies
     name     = "AWSAnonList"
-    priority = 1
+    priority = 4
     override_action { # does this need an override?
       count {}
     }
@@ -97,8 +97,11 @@ resource "aws_wafv2_web_acl" "waf" {
   rule {
     # Blocks requests associated with SQL database exploitation
     name     = "AWSSQLManagement"
-    priority = 1
-
+    priority = 5
+    override_action {
+      count {}
+    }
+    # add a block block here
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesSQLiRuleSet"
@@ -108,15 +111,17 @@ resource "aws_wafv2_web_acl" "waf" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "sql-vulnerability-metrics"
-      sampled_requests_enabled   = true
+      sampled_requests_enabled   = false
     }
   }
 
   rule {
     # Blocks requests associated with Linux exploitation
     name     = "AWSLinuxManagement"
-    priority = 1
-
+    priority = 6
+    override_action {
+      count {}
+    }
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesLinuxRuleSet"
@@ -126,15 +131,17 @@ resource "aws_wafv2_web_acl" "waf" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "linux-vulnerability-metrics"
-      sampled_requests_enabled   = true
+      sampled_requests_enabled   = false
     }
   }
 
   rule {
     # Blocks requests associated with POSIX and POSIX-like OS exploitation
     name     = "AWSUnixManagement"
-    priority = 1
-
+    priority = 7
+    override_action {
+      count {}
+    }
     statement {
       managed_rule_group_statement {
         name        = "AWSManagedRulesUnixRuleSet"
@@ -144,19 +151,19 @@ resource "aws_wafv2_web_acl" "waf" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "unix-vulnerability-metrics"
-      sampled_requests_enabled   = true
+      sampled_requests_enabled   = false
     }
   }
   visibility_config {
     cloudwatch_metrics_enabled = true
     metric_name                = "waf-general-metrics"
-    sampled_requests_enabled   = true
+    sampled_requests_enabled   = false
   }
   # the following are custom rules and arent managed by AWS.
   rule {
     # Applies a rate based rule to IPs originating in the US
     name     = "AWSRateBasedRuleDomesticDOS"
-    priority = 1
+    priority = 8
 
     action {
       block {}
@@ -177,14 +184,14 @@ resource "aws_wafv2_web_acl" "waf" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "domestic-dos-metrics"
-      sampled_requests_enabled   = true
+      sampled_requests_enabled   = false
     }
   }
 
   rule {
     # Applies a rate based rule to IPs originating outside of the US
     name     = "AWSRateBasedRuleGlobalDOS"
-    priority = 2
+    priority = 9
 
     action {
       block {}
@@ -210,25 +217,19 @@ resource "aws_wafv2_web_acl" "waf" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "global-dos-metrics"
-      sampled_requests_enabled   = true
+      sampled_requests_enabled   = false
     }
   }
 }
 
-# AWS 31 (WAF needs a logging config) Needs three services:
-# 1. WAF to generate logs [x]
-# 2. Kinesis Firehose to recieve logs [x]
-# firehose must be created with a PUT in us-west-2
-# 3. S3 to store the logs. [x]
-
 # logging configuration resource
 resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
-  log_destination_configs = [aws_s3_bucket.waf_logging.arn, aws_kinesis_firehose_delivery_stream.waf_logging.arn] # bucket and firehose arns go here
+  log_destination_configs = [aws_kinesis_firehose_delivery_stream.waf_logging.arn]
   resource_arn            = aws_wafv2_web_acl.waf.arn
 }
 # firehose to recieve logs
 resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
-  name        = "waf-logging-metrics-stream"
+  name        = "aws-waf-logs-metrics-stream"
   destination = "extended_s3"
   server_side_encryption {
     enabled  = true
@@ -236,25 +237,45 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
     key_arn  = aws_kms_key.waf_logging.arn
   }
   extended_s3_configuration {
-    # role arn actually is required :(
-    role_arn   = "" # not sure what needs to go here
+    role_arn   = aws_iam_role.firehose_perms.arn
     bucket_arn = aws_s3_bucket.waf_logging.arn
-    # probably don't need to enable data processors
   }
 }
+
 # IAM Role for Kinesis
 resource "aws_iam_role" "firehose_perms" {
   name               = "placeholder"
   description        = "IAM role for the KDF"
-  assume_role_policy = "" #TBA
-  # what perms are needed
-  # s3:Put
-  # kinesis:*
+  assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
 }
+
+# assume role
+data "aws_iam_policy_document" "firehose_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["firehose.amazonaws.com"]
+    }
+  }
+}
+
 # role policy
 data "aws_iam_policy_document" "firehose_perms" {
-
+  statement {
+    sid    = "AccessKDF"
+    effect = "Allow"
+    actions = [
+      "kinesis:Get*",
+      "kinesis:PutRecord",
+      "s3:GetBucket",
+      "s3:PutObject"
+    ]
+    resources = [aws_s3_bucket.waf_logging.arn, "${aws_s3_bucket.waf_logging.arn}/*"]
+  }
 }
+
 # KMS key config
 resource "aws_kms_key" "waf_logging" {
   enable_key_rotation = true
@@ -264,7 +285,7 @@ resource "aws_kms_key" "waf_logging" {
 resource "aws_s3_bucket" "waf_logging" {
   # checkov:skip=CKV2_AWS_62:Disable SNS requirement
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
-  bucket = "waf_logs"
+  bucket = "${var.waf_name}-logs"
 
   lifecycle {
     prevent_destroy = true
@@ -298,9 +319,34 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "waf_logging" {
   }
 }
 
+# give permission to upload into logging bucket
+resource "aws_s3_bucket_policy" "waf_logging" {
+  bucket = aws_s3_bucket.waf_logging.id
+  policy = data.aws_iam_policy_document.waf_logging_bucket.json
+}
+
+data "aws_iam_policy_document" "waf_logging_bucket" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUploads",
+      "s3:PutObject"
+    ]
+    resources = [aws_s3_bucket.waf_logging.arn, "${aws_s3_bucket.waf_logging.arn}/*"]
+    principals {
+      type        = "AWS"
+      identifiers = [data.aws_caller_identity.current.account_id]
+    }
+  }
+}
+
 resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
   bucket                = aws_s3_bucket.waf_logging.id
-  expected_bucket_owner = data.aws_caller_identity.current.account_id # this threw an error based on where it was called
+  expected_bucket_owner = data.aws_caller_identity.current.account_id
 
   rule {
     id     = "move-s3-to-ia"

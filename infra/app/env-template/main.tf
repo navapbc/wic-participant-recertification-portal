@@ -22,6 +22,7 @@ locals {
   participant_service_name = "${local.project_name}-participant-${var.environment_name}"
   staff_service_name       = "${local.project_name}-staff-${var.environment_name}"
   analytics_service_name   = "${local.project_name}-analytics-${var.environment_name}"
+  waf_name                 = "${local.project_name}-${local.app_name}-waf"
 }
 
 module "project_config" {
@@ -119,6 +120,7 @@ module "analytics" {
 }
 
 module "waf" {
-  source = "../../modules/waf"
+  source   = "../../modules/waf"
+  waf_name = local.waf_name
 }
 
