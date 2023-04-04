@@ -1,10 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import type { LocalAgency, Submission } from "@prisma/client";
 import invariant from "tiny-invariant";
-
+import { readFileSync } from "fs";
 type SubmissionWithAgencyNoNull = Submission & {
   localAgency: LocalAgency;
 };
+
+export function getTestImage(fileName: string): File {
+  const data = readFileSync(
+    "tests/fixtures/fns-stock-produce-shopper.jpg",
+    "utf8"
+  );
+  return new File([data], fileName);
+}
 
 export function getLocalAgency(urlId: string = "agency") {
   return {

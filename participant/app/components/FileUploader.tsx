@@ -1,6 +1,7 @@
 import { FormGroup, Label } from "@trussworks/react-uswds";
 import { FilePreview } from "app/components/internal/FilePreview";
-import { FileInputControl } from "app/components/internal/FileInputControl";
+import { FileInput } from "app/components/internal/FileInput";
+import { Trans, useTranslation } from "react-i18next";
 import React, {
   useState,
   useRef,
@@ -8,10 +9,11 @@ import React, {
   useEffect,
   forwardRef,
 } from "react";
-import { i18nKey } from "~/types";
-import { Trans, useTranslation } from "react-i18next";
+import type { i18nKey } from "~/types";
+import type { FileInputRef } from "app/components/internal/FileInput";
+export type { FileInputRef } from "app/components/internal/FileInput";
 
-export type FileInputProps = {
+export type FileUploaderProps = {
   className?: string;
   id: string;
   name: string;
@@ -26,18 +28,13 @@ export type FileState = {
   [key: string]: File;
 };
 
-export type FileInputRef = {
-  input: HTMLInputElement | null;
-  files: File[];
-};
-
 export type FileError = {
   errorType?: "count" | "size" | "type";
 };
 
-export const FileInputForwardRef: React.ForwardRefRenderFunction<
+export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
   FileInputRef,
-  FileInputProps & JSX.IntrinsicElements["input"]
+  FileUploaderProps & JSX.IntrinsicElements["input"]
 > = (
   {
     className,
@@ -47,13 +44,13 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
     accept,
     required,
     maxFileSizeInBytes = 26_214_400,
-    maxFileCount = 25,
+    maxFileCount = 20,
     ...inputProps
   },
   ref
 ): React.ReactElement => {
   const { t } = useTranslation();
-  const [files, setFiles] = useState({} as FileState);
+  const [files, setFiles] = useState<FileState>({});
   const [previews, setPreviews] = useState(<></>);
   const fileInputRef = useRef(null);
   const documentString = t(`${labelKey}.document`);
@@ -70,21 +67,12 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
     }),
     [files]
   );
-  const makeSafeForID = (name: string): string => {
-    return name.replace(/[^a-z0-9]/g, function replaceName(s) {
-      const c = s.charCodeAt(0);
-      if (c === 32) return "-";
-      if (c >= 65 && c <= 90) return `img_${s.toLowerCase()}`;
-      return `__${c.toString(16).slice(-4)}`;
-    });
-  };
 
   const renderPreviews = () => {
     setPreviews(
       <>
         {Object.keys(files).map((fileName, index) => {
           let file = files[fileName];
-          const imageId = makeSafeForID(fileName);
           return (
             <div key={`document-${index + 1}`}>
               <span className="font-sans-lg">{`${documentString} ${
@@ -104,7 +92,8 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
       </>
     );
   };
-  useEffect(renderPreviews, [files]);
+  // eslint-disable-next-line   react-hooks/exhaustive-deps -- (deps list is correct)
+  useEffect(renderPreviews, [files, documentString, labelKey]);
   const fileTypeCheck = (newFile: File): boolean => {
     if (!accept || accept == "*") {
       return true;
@@ -166,7 +155,7 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
   return (
     <FormGroup>
       {previews}
-      <Label htmlFor="file-input-async" className="font-sans-lg">
+      <Label htmlFor={id} className="font-sans-lg">
         {currentDocumentString}
       </Label>
       {errorMessage && (
@@ -174,7 +163,7 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
           <Trans i18nKey={errorMessage} />
         </div>
       )}
-      <FileInputControl
+      <FileInput
         {...inputProps}
         ref={fileInputRef}
         id={id}
@@ -190,8 +179,11 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
         fileTypeErrorKey={`${labelKey}.fileTypeError`}
         empty={currentDocumentNumber == 0}
       />
+      <noscript>
+        <Trans i18nKey={`${labelKey}.noScriptMessage`} />
+      </noscript>
     </FormGroup>
   );
 };
 
-export const FileInput = forwardRef(FileInputForwardRef);
+export const FileUploader = forwardRef(FileUploaderForwardRef);

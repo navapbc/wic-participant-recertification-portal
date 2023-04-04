@@ -2,14 +2,15 @@
 import React, {
   useState,
   forwardRef,
+  useEffect,
   useRef,
   useImperativeHandle,
 } from "react";
 import classnames from "classnames";
-import { i18nKey } from "~/types";
+import type { i18nKey } from "~/types";
 import { useTranslation } from "react-i18next";
 
-type FileInputControlProps = {
+export type FileInputProps = {
   id: string;
   name: string;
   disabled?: boolean;
@@ -23,15 +24,14 @@ type FileInputControlProps = {
   empty?: boolean;
 };
 
-export type FileInputControlRef = {
-  clearFiles: () => void;
+export type FileInputRef = {
   input: HTMLInputElement | null;
   files: File[];
 };
 
-export const FileInputControlForwardRef: React.ForwardRefRenderFunction<
-  FileInputControlRef,
-  FileInputControlProps & JSX.IntrinsicElements["input"]
+export const FileInputForwardRef: React.ForwardRefRenderFunction<
+  FileInputRef,
+  FileInputProps & JSX.IntrinsicElements["input"]
 > = (
   {
     name,
@@ -53,6 +53,7 @@ export const FileInputControlForwardRef: React.ForwardRefRenderFunction<
   const internalRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [javascriptDisabled, setjavascriptDisabled] = useState(true);
   const [files, setFiles] = useState<File[]>([]);
   const { t } = useTranslation();
   const helpText = empty ? t(emptyKey) : t(notEmptyKey);
@@ -66,9 +67,12 @@ export const FileInputControlForwardRef: React.ForwardRefRenderFunction<
     [files]
   );
 
+  useEffect(() => {
+    setjavascriptDisabled(false);
+  }, []);
   const fileInputClasses = classnames(
-    "usa-file-input",
     {
+      "usa-file-input": !javascriptDisabled,
       "usa-file-input--disabled": disabled,
     },
     className
@@ -123,7 +127,9 @@ export const FileInputControlForwardRef: React.ForwardRefRenderFunction<
     setIsDragging(false);
     if (onDrop) onDrop(e);
   };
-
+  const inputBoxClass = classnames({
+    "usa-file-input__box": !javascriptDisabled,
+  });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setShowError(false);
 
@@ -154,17 +160,21 @@ export const FileInputControlForwardRef: React.ForwardRefRenderFunction<
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        hidden={javascriptDisabled}
       >
         <div
           data-testid="file-input-instructions"
           className={instructionClasses}
           aria-hidden="true"
         >
-          <span className="usa-file-input__choose font-sans-lg text-bold">
+          <span
+            className="usa-file-input__choose font-sans-lg text-bold"
+            hidden={javascriptDisabled}
+          >
             {helpText}
           </span>
         </div>
-        <div data-testid="file-input-box" className="usa-file-input__box"></div>
+        <div data-testid="file-input-box" className={inputBoxClass}></div>
         {showError && (
           <div
             data-testid="file-input-error"
@@ -184,11 +194,11 @@ export const FileInputControlForwardRef: React.ForwardRefRenderFunction<
           disabled={disabled}
           onChange={handleChange}
           accept={accept}
-          multiple={multiple}
+          multiple={multiple || javascriptDisabled}
         />
       </div>
     </div>
   );
 };
 
-export const FileInputControl = forwardRef(FileInputControlForwardRef);
+export const FileInput = forwardRef(FileInputForwardRef);

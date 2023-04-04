@@ -18,7 +18,7 @@
     "legend": "Date of Birth",
     "hintDMY": "For Example: 28 4 1986"
   },
-  "fileinput": {
+  "fileuploader": {
     "removeFile": "Remove File",
     "selected": "Selected file",
     "label": "Upload files",
@@ -29,7 +29,8 @@
     "altText": "Image preview for",
     "fileTypeError": "This is not a valid file type.",
     "fileSizeError": "This file is over the maximum size",
-    "fileCountError": "You have reached the maximum number of files; <br/> please remove files before adding additional files"
+    "fileCountError": "You have reached the maximum number of files; <br/> please remove files before adding additional files",
+    "noScriptMessage": "File previews will not work with JavaScript disabled, but you may still upload files"
   },
   "inputchoice": {
     "label1": "Option 1",

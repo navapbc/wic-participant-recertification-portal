@@ -1,12 +1,11 @@
-/* Lifted and lightly edited from @trussworks/react-uswds FilePreview internal only component
+/* Lifted and edited from @trussworks/react-uswds FilePreview internal only component
  * This component (in the source) gets displayed as part of the @trussworks/react-uswds
  * FileInput component after a file (or files) are selected
  */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import classNames from "classnames";
-import { Button } from "@trussworks/react-uswds";
-import { i18nKey } from "~/types";
+import type { i18nKey } from "~/types";
 import { useTranslation } from "react-i18next";
 /** Moving the SPACER_GIF definition here instead of the constants.ts file,
  * as webpack was exporting that entire file, including use of the File
@@ -33,7 +32,7 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
     selectedKey,
     altTextKey,
   } = props;
-  const fileReaderRef = useRef<FileReader>(new FileReader());
+
   const [isLoading, setIsLoading] = useState(true);
   const [previewSrc, setPreviewSrc] = useState(SPACER_GIF);
   const [showGenericPreview, setShowGenericPreview] = useState(false);
@@ -43,17 +42,7 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
     const imgSrc = URL.createObjectURL(file);
     setIsLoading(false);
     setPreviewSrc(imgSrc);
-    // fileReaderRef.current.onloadend = (): void => {
-    //   setIsLoading(false);
-    //   setPreviewSrc(fileReaderRef.current.result as string);
-    // };
-
-    // fileReaderRef.current.readAsDataURL(file);
-
-    // return (): void => {
-    //   fileReaderRef.current.onloadend = null;
-    // };
-  }, []);
+  }, [file]);
 
   const { name } = file;
 
@@ -83,14 +72,13 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
         <div className="usa-file-input__target">
           <div className="usa-file-input__preview-heading">
             <div>{t(selectedKey)}</div>
-            <Button
+            <button
               type="button"
-              unstyled
-              className="usa-file-input__choose text-secondary-vivid"
+              className="text-secondary-vivid usa-button--unstyled"
               onClick={() => clickHandler(name)}
             >
               {t(removeFileKey)}
-            </Button>
+            </button>
           </div>
           <div className="usa-file-input__preview" aria-hidden="true">
             <img

@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders a file input correctly 1`] = `
+<div>
+  <div
+    class="usa-file-input"
+    data-testid="file-input"
+  >
+    <div
+      class="usa-file-input__target border-dashed border-blue border-05"
+      data-testid="file-input-droptarget"
+    >
+      <div
+        aria-hidden="true"
+        class="usa-file-input__instructions"
+        data-testid="file-input-instructions"
+      >
+        <span
+          class="usa-file-input__choose font-sans-lg text-bold"
+        >
+          Choose or drag a file to upload
+        </span>
+      </div>
+      <div
+        class="usa-file-input__box"
+        data-testid="file-input-box"
+      />
+      <input
+        class="usa-file-input__input"
+        data-testid="file-input-input"
+        id="fileinput-test"
+        name="fileinput-test"
+        type="file"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders a file input with the 'not empty' text correctly 1`] = `
+<div>
+  <div
+    class="usa-file-input"
+    data-testid="file-input"
+  >
+    <div
+      class="usa-file-input__target border-dashed border-blue border-05"
+      data-testid="file-input-droptarget"
+    >
+      <div
+        aria-hidden="true"
+        class="usa-file-input__instructions"
+        data-testid="file-input-instructions"
+      >
+        <span
+          class="usa-file-input__choose font-sans-lg text-bold"
+        >
+          Choose or drag another file to upload
+        </span>
+      </div>
+      <div
+        class="usa-file-input__box"
+        data-testid="file-input-box"
+      />
+      <input
+        class="usa-file-input__input"
+        data-testid="file-input-input"
+        id="fileinput-test"
+        name="fileinput-test"
+        type="file"
+      />
+    </div>
+  </div>
+</div>
+`;

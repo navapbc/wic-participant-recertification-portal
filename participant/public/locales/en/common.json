@@ -96,7 +96,7 @@
     "legend": "What's your name?",
     "preferred": "Preferred name (optional)"
   },
-  "FileInput": {
+  "FileUploader": {
     "removeFile": "Remove File",
     "selected": "Selected file",
     "label": "Upload files",
@@ -107,7 +107,8 @@
     "altText": "Image preview for",
     "fileTypeError": "This is not a valid file type.",
     "fileSizeError": "This file is over the maximum size",
-    "fileCountError": "You have reached the maximum number of files; <br/> please remove files before adding additional files"
+    "fileCountError": "You have reached the maximum number of files; <br/> please remove files before adding additional files",
+    "noScriptMessage": "File previews will not work with JavaScript disabled, but you may still upload files"
   },
   "Relationship": {
     "label": "Relationship to you",
@@ -116,6 +117,9 @@
     "grandchild": "Grandchild",
     "foster": "Foster child",
     "other": "Other"
+  },
+  "Upload": {
+    "title": "You need to upload documents."
   },
   "routingError": "Some required responses are missing. Please go back through the form and answer all required questions."
 }
