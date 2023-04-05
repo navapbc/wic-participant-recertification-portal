@@ -7,7 +7,7 @@ exports[`renders a file uploader 1`] = `
     data-testid="formGroup"
   >
     <label
-      class="usa-label font-sans-lg"
+      class="usa-label"
       data-testid="label"
       for="file-uploader-story"
     >
@@ -27,7 +27,7 @@ exports[`renders a file uploader 1`] = `
           data-testid="file-input-instructions"
         >
           <span
-            class="usa-file-input__choose font-sans-lg text-bold"
+            class="usa-file-input__choose text-bold"
           >
             Choose or drag a file to upload
           </span>

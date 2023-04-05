@@ -168,7 +168,7 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
           aria-hidden="true"
         >
           <span
-            className="usa-file-input__choose font-sans-lg text-bold"
+            className="usa-file-input__choose text-bold"
             hidden={javascriptDisabled}
           >
             {helpText}

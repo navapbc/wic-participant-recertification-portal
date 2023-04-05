@@ -16,7 +16,7 @@ exports[`renders a file input correctly 1`] = `
         data-testid="file-input-instructions"
       >
         <span
-          class="usa-file-input__choose font-sans-lg text-bold"
+          class="usa-file-input__choose text-bold"
         >
           Choose or drag a file to upload
         </span>
@@ -53,7 +53,7 @@ exports[`renders a file input with the 'not empty' text correctly 1`] = `
         data-testid="file-input-instructions"
       >
         <span
-          class="usa-file-input__choose font-sans-lg text-bold"
+          class="usa-file-input__choose text-bold"
         >
           Choose or drag another file to upload
         </span>

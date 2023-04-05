@@ -75,9 +75,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
           let file = files[fileName];
           return (
             <div key={`document-${index + 1}`}>
-              <span className="font-sans-lg">{`${documentString} ${
-                index + 1
-              }`}</span>
+              <span>{`${documentString} ${index + 1}`}</span>
               <FilePreview
                 imageId={`preview-${index}`}
                 file={file}
@@ -155,9 +153,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
   return (
     <FormGroup>
       {previews}
-      <Label htmlFor={id} className="font-sans-lg">
-        {currentDocumentString}
-      </Label>
+      <Label htmlFor={id}>{currentDocumentString}</Label>
       {errorMessage && (
         <div data-testid="file-input-error" className="file-input-error">
           <Trans i18nKey={errorMessage} />
