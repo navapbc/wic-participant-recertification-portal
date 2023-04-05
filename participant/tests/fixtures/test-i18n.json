@@ -41,6 +41,9 @@
     "helpHeader": "What does this mean?",
     "helpBody": "<p><strong>Here is some information about what it means</strong></p><p>This is very helpful</p>"
   },
+  "list": {
+    "listItems": ["list-a", "list-b", "list-c"]
+  },
   "nameinput": {
     "firstname": "First name",
     "lastname": "Last name",

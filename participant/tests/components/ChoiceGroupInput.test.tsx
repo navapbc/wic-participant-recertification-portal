@@ -7,6 +7,11 @@ import type {
   ChoiceGroupInputProps,
   Choice,
 } from "app/components/ChoiceGroupInput";
+import { useField } from "remix-validated-form";
+jest.mock("remix-validated-form");
+import { mockUseField } from "tests/helpers/remixValidatedFormMock";
+const mockedUseField = jest.mocked(useField);
+mockedUseField.mockImplementation(mockUseField);
 
 const choices: Choice[] = ["a", "b", "c"].map((option) => {
   return {

@@ -68,8 +68,8 @@ p {
   @include u-line-height('sans', 4); // 30px
 }
 
-.label-large,
-.legend-large {
+.usa-label--large,
+.usa-legend--large {
   @include u-text('bold');
   @include u-font-size('sans', 9); // 22px
   @include u-line-height('sans', 2); // ~25px

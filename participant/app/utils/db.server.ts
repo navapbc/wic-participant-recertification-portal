@@ -1,6 +1,6 @@
 import db from "app/utils/db.connection";
 import type { Prisma } from "@prisma/client";
-
+import type { RouteType } from "app/types";
 export type SubmissionWithAgency = Prisma.PromiseReturnType<
   typeof findSubmission
 >;
@@ -35,6 +35,57 @@ export const upsertSubmission = async (submissionID: string, urlId: string) => {
     },
   });
   return existingSubmission;
+};
+
+export const findSubmissionFormData = async (
+  submissionID: string,
+  formRoute: RouteType
+) => {
+  const submissionForm = await db.submissionForm.findFirst({
+    where: {
+      submissionId: submissionID,
+      formRoute: formRoute,
+    },
+    select: {
+      formData: true,
+    },
+  });
+  return submissionForm?.formData;
+};
+
+export const upsertSubmissionForm = async (
+  submissionID: string,
+  formRoute: string,
+  formData: any
+) => {
+  const submissionForm = await db.submissionForm.findFirst({
+    where: {
+      submissionId: submissionID,
+      formRoute: formRoute,
+    },
+  });
+  await db.submission.update({
+    where: { submissionId: submissionID },
+    data: { updatedAt: new Date() },
+  });
+  if (submissionForm) {
+    return await db.submissionForm.update({
+      where: {
+        submissionFormId: submissionForm.submissionFormId,
+      },
+      data: {
+        formData: formData,
+        updatedAt: new Date(),
+      },
+    });
+  }
+  return await db.submissionForm.create({
+    data: {
+      submissionId: submissionID,
+      formRoute: formRoute,
+      formData: formData,
+    },
+  });
 };
 
 export const findLocalAgency = async (urlId: string) => {

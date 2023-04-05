@@ -27,6 +27,22 @@
     "yes": "Yes",
     "no": "No"
   },
+  "Changes": {
+    "title": "Household changes",
+    "nameIdQuestion": {
+      "situations": [
+        "Name change",
+        "The ID document shared previously with WIC has expired"
+      ],
+      "legend": "Have you or any WIC participants in your household experienced any of these situations in the past year?"
+    },
+    "moveQuestion": {
+      "legend": "Have you moved in the past year?"
+    },
+    "yesAnswer": "Yes",
+    "noAnswer": "No",
+    "button": "Continue"
+  },
   "Count": {
     "title": "Who in your household is recertifying?",
     "intro": "We only need to collect information about WIC participants who have a recertification appointment.",
@@ -65,9 +81,11 @@
     "button": "Get started",
     "eligible": "You can fill out this form if:",
     "intro": "You can now prepare for your recertification appointment with your local Montana WIC clinic.",
-    "ifLink": "You have received this link from your local WIC clinic.",
-    "ifReceivesWIC": "You or someone in your household currently receives WIC benefits.",
-    "ifThirtyDays": "You or someone in your household is eligible for a recertification in the next 30 days.",
+    "ifList": [
+      "You have received this link from your local WIC clinic.",
+      "You or someone in your household currently receives WIC benefits.",
+      "You or someone in your household is eligible for a recertification in the next 30 days."
+    ],
     "note": "Not all WIC households can use this form. If you do not have a permanent address, if nobody in your household earns money, or if you do not have identity documents, then you cannot use this form ahead of your recertification appointment.",
     "time": "This form should take about 15 minutes to complete.",
     "title": "Start your recertification for Montana WIC"

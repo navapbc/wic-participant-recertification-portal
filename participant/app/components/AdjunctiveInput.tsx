@@ -30,10 +30,8 @@ export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
     },
   ];
   // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion
-  const programList = t(`${adjunctiveKey}.programs`, {
-    returnObjects: true,
-  }) as Array<string>;
-  const helpElement = <List listKeys={programList} type="unordered" />;
+  const programListKey = `${adjunctiveKey}.programs`;
+  const helpElement = <List i18nKey={programListKey} type="unordered" />;
   return (
     <ChoiceGroupInput
       choices={adjunctiveChoices}

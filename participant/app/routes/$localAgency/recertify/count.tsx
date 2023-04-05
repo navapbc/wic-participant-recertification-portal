@@ -1,15 +1,18 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
-import { Form } from "@remix-run/react";
 
 import { Trans, useTranslation } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
 import { List } from "app/components/List";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
+import { countSchema } from "~/utils/validation";
+import { withZod } from "@remix-validated-form/with-zod";
+import { ValidatedForm } from "remix-validated-form";
+
+const countValidator = withZod(countSchema);
 
 export default function Count() {
-  const { t } = useTranslation();
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
     type: "input",
@@ -17,12 +20,8 @@ export default function Count() {
     labelKey: "Count.householdSize.label",
     required: true,
     className: "width-8",
-    labelClassName: "label-large",
+    labelClassName: "usa-label--large",
   };
-  // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion
-  const listItems = t("Count.listItems", {
-    returnObjects: true,
-  }) as Array<string>;
   return (
     <div>
       <h1>
@@ -35,11 +34,15 @@ export default function Count() {
       <p>
         <Trans i18nKey="Count.body" />
       </p>
-      <List listKeys={listItems} type="unordered" />
+      <List i18nKey="Count.listItems" type="unordered" />
       <p>
         <Trans i18nKey="Count.example" />
       </p>
-      <Form>
+      <ValidatedForm
+        validator={countValidator}
+        id="householdSizeForm"
+        method="post"
+      >
         <TextField {...householdSizeProps} />
         <Button
           className="display-block margin-top-6"
@@ -48,7 +51,7 @@ export default function Count() {
         >
           <Trans i18nKey="Count.householdSize.button" />
         </Button>
-      </Form>
+      </ValidatedForm>
     </div>
   );
 }

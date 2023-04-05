@@ -4,6 +4,12 @@ import type { RelationshipInputProps } from "app/components/RelationshipInput";
 import { screen } from "@testing-library/react";
 import { renderWithRouter } from "tests/helpers/setup";
 
+import { useField } from "remix-validated-form";
+jest.mock("remix-validated-form");
+import { mockUseField } from "tests/helpers/remixValidatedFormMock";
+const mockedUseField = jest.mocked(useField);
+mockedUseField.mockImplementation(mockUseField);
+
 const testProps: RelationshipInputProps = {
   relationshipKey: "test:relationship",
   required: false,

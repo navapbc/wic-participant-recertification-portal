@@ -4,7 +4,7 @@ import { List } from "app/components/List";
 import type { ListProps } from "app/components/List";
 
 const defaultProps: ListProps = {
-  listKeys: ["list-a", "list-b", "list-c"],
+  i18nKey: "test:list.listItems",
   type: "unordered",
   unstyled: false,
 };

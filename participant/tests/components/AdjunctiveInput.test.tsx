@@ -3,6 +3,12 @@ import { renderWithRouter } from "tests/helpers/setup";
 import { AdjunctiveInput } from "app/components/AdjunctiveInput";
 import type { AdjunctiveInputProps } from "app/components/AdjunctiveInput";
 
+import { useField } from "remix-validated-form";
+jest.mock("remix-validated-form");
+import { mockUseField } from "tests/helpers/remixValidatedFormMock";
+const mockedUseField = jest.mocked(useField);
+mockedUseField.mockImplementation(mockUseField);
+
 const testProps: AdjunctiveInputProps = {
   adjunctiveKey: "test:adjunctive",
   required: false,
