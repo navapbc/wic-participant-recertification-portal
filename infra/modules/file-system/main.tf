@@ -23,8 +23,74 @@
 # >     }
 # > Unless you have made equivalent changes to your configuration, or ignored the relevant attributes using ignore_changes, the following plan may include actions to undo or respond to these changes.
 
+################################################################################
+# Backup Configuration
+################################################################################
+
+# resource "aws_backup_plan" "database" {
+#   name = "${var.database_name}-backup-plan"
+
+#   rule {
+#     rule_name         = "${var.database_name}-backup-rule"
+#     target_vault_name = "${var.database_name}-vault"
+#     schedule          = "cron(0 12 ? * SUN *)"
+#   }
+# }
+
+# KMS Key for the vault
+# This key was created by AWS by default alongside the vault
+data "aws_kms_key" "fs" {
+  key_id = "alias/aws/backup"
+}
+# create backup vault
+# resource "aws_backup_vault" "database" {
+#   name        = "${var.database_name}-vault"
+#   kms_key_arn = data.aws_kms_key.database.arn
+# }
+
+# # create IAM role
+# resource "aws_iam_role" "database_backup" {
+#   name               = "${var.database_name}-database-backup"
+#   assume_role_policy = data.aws_iam_policy_document.database_backup.json
+# }
+
+# resource "aws_iam_role_policy_attachment" "database_backup" {
+#   role       = aws_iam_role.database_backup.name
+#   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+# }
+
+# data "aws_iam_policy_document" "database_backup" {
+#   statement {
+#     actions = [
+#       "sts:AssumeRole",
+#     ]
+
+#     effect = "Allow"
+
+#     principals {
+#       type        = "Service"
+#       identifiers = ["backup.amazonaws.com"]
+#     }
+#   }
+# }
+# # backup selection
+# resource "aws_backup_selection" "database_backup" {
+#   iam_role_arn = aws_iam_role.database_backup.arn
+#   name         = "${var.database_name}-backup"
+#   plan_id      = aws_backup_plan.database.id
+
+#   resources = [
+#     aws_rds_cluster.database.arn
+#   ]
+# }
+
+################################################################################
+# EFS configuration
+################################################################################
+
 resource "aws_efs_file_system" "fs" {
   encrypted = true
+  # kms_key_id = ...
 }
 
 resource "aws_efs_access_point" "fs" {

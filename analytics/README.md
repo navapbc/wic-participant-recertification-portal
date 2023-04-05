@@ -28,6 +28,8 @@ After the first time setup is complete, usage is as follows:
 
 To deploy to AWS, we use ECS Fargate to host the matomo server and an Aurora mysql database.
 
+Note: Because ECS Fargate does not allow linux permissions such as `SETGID` and because the Matomo docker image is based on the PHP docker image which
+
 ### First time setup
 
 For each environment, do the following:
