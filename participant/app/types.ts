@@ -8,7 +8,3 @@ export type ChangesData = {
   idChange: string;
   addressChange: string;
 };
-
-export type HouseholdSizeData = {
-  householdSize: number;
-};

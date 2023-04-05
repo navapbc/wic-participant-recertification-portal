@@ -74,7 +74,7 @@ test(`the changes form submits a POST request, and on return to the page,
   // Check that we've moved to the Upload page based on our changes
   await expect(page).toHaveURL("/gallatin/recertify/upload");
 
-  // Capture the GET request when we load the /eligibility page again by clicking "Back"
+  // Capture the GET request when we load the /changes page again by clicking "Back"
   const [getRequest] = await Promise.all([
     page.waitForResponse(
       (response) =>
