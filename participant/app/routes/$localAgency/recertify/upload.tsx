@@ -71,7 +71,7 @@ export default function Upload() {
         onSubmit={(event) => handleSubmit(event)}
       >
         <FileUploader {...defaultProps} ref={fileInputRef} />
-        <Button type="submit" value="action" name="action">
+        <Button type="submit" value="submit" name="action">
           Upload
         </Button>
       </Form>
