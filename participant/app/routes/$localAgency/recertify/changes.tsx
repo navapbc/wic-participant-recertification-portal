@@ -11,17 +11,19 @@ import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import type { Params } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
+import { Trans } from "react-i18next";
+
+import List from "app/components/List";
+import RequiredQuestionStatement from "app/components/RequiredQuestionStatement";
 import { cookieParser } from "app/cookies.server";
 import { changesSchema } from "app/utils/validation";
-
-import { Trans } from "react-i18next";
-import List from "app/components/List";
+import type { ChangesData } from "app/types";
+import { routeFromChanges } from "~/utils/routing";
 import {
   upsertSubmissionForm,
   findSubmissionFormData,
 } from "app/utils/db.server";
-import type { ChangesData } from "app/types";
-import { routeFromChanges } from "~/utils/routing";
+
 const changesValidator = withZod(changesSchema);
 
 export const loader: LoaderFunction = async ({
@@ -36,7 +38,6 @@ export const loader: LoaderFunction = async ({
     submissionID,
     "changes"
   )) as ChangesData;
-  console.log(`Found existing changes ${existingChangesData}`);
   return json(
     {
       submissionID: submissionID,
@@ -82,6 +83,7 @@ export default function Changes() {
       <h1>
         <Trans i18nKey="Changes.title" />
       </h1>
+      <RequiredQuestionStatement />
       <ValidatedForm
         validator={changesValidator}
         id="changesForm"
@@ -94,6 +96,7 @@ export default function Changes() {
           legendStyle="large"
           helpElement={idChangeHelp}
           choices={ChangeChoices}
+          required={true}
         />
         <ChoiceGroupInput
           name="addressChange"
@@ -101,6 +104,7 @@ export default function Changes() {
           legendStyle="large"
           legendKey="Changes.moveQuestion.legend"
           choices={ChangeChoices}
+          required={true}
         />
         <Button type="submit" value="submit" className="margin-top-6">
           <Trans i18nKey="Changes.button" />
