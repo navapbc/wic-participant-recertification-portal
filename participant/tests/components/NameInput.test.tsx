@@ -5,8 +5,9 @@ import { NameInput } from "app/components/NameInput";
 import type { NameInputProps } from "app/components/NameInput";
 
 import { useField } from "remix-validated-form";
-jest.mock("remix-validated-form");
 import { mockUseField } from "tests/helpers/remixValidatedFormMock";
+
+jest.mock("remix-validated-form");
 const mockedUseField = jest.mocked(useField);
 mockedUseField.mockImplementation(mockUseField);
 

@@ -5,8 +5,9 @@ import { screen } from "@testing-library/react";
 import { renderWithRouter } from "tests/helpers/setup";
 
 import { useField } from "remix-validated-form";
-jest.mock("remix-validated-form");
 import { mockUseField } from "tests/helpers/remixValidatedFormMock";
+
+jest.mock("remix-validated-form");
 const mockedUseField = jest.mocked(useField);
 mockedUseField.mockImplementation(mockUseField);
 

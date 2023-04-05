@@ -1,7 +1,7 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
 
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
 import { List } from "app/components/List";

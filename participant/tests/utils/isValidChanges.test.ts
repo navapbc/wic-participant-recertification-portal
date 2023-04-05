@@ -1,4 +1,5 @@
-import { createForm, FormObject } from "tests/helpers/setup";
+import { createForm } from "tests/helpers/setup";
+import type { FormObject } from "tests/helpers/setup";
 import { changesSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
 

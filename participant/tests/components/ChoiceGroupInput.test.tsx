@@ -8,8 +8,9 @@ import type {
   Choice,
 } from "app/components/ChoiceGroupInput";
 import { useField } from "remix-validated-form";
-jest.mock("remix-validated-form");
 import { mockUseField } from "tests/helpers/remixValidatedFormMock";
+
+jest.mock("remix-validated-form");
 const mockedUseField = jest.mocked(useField);
 mockedUseField.mockImplementation(mockUseField);
 

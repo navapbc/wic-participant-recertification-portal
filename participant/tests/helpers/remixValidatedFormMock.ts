@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // As this is a mock for types we don't entirely control, disable no-explicit-any
 
-import { FieldProps } from "remix-validated-form";
-import { ValidationBehaviorOptions } from "remix-validated-form/dist/types/internal/getInputProps";
+import type { FieldProps } from "remix-validated-form";
+import type { ValidationBehaviorOptions } from "remix-validated-form/dist/types/internal/getInputProps";
 
 // This file is the Jest mock for supporting remix-validated-form
 // The useField hook will not work out of the box, and it returns a prop-getter -

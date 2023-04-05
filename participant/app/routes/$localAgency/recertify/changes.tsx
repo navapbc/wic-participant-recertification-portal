@@ -8,12 +8,13 @@ import { ChoiceGroupInput } from "app/components/ChoiceGroupInput";
 import type { Choice } from "app/components/ChoiceGroupInput";
 import { Button } from "@trussworks/react-uswds";
 import { json, redirect } from "@remix-run/node";
-import { Params, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
+import type { Params } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { cookieParser } from "app/cookies.server";
 import { changesSchema } from "app/utils/validation";
 
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import List from "app/components/List";
 import {
   upsertSubmissionForm,
@@ -64,8 +65,7 @@ export const action = async ({ request }: { request: Request }) => {
 };
 
 export default function Changes() {
-  const { t } = useTranslation();
-  const { submissionID } = useLoaderData<loaderData>();
+  useLoaderData<loaderData>();
   const idChangeHelp = (
     <List type="unordered" i18nKey="Changes.nameIdQuestion.situations" />
   );
