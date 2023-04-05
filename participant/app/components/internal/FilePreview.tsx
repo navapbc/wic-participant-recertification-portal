@@ -1,6 +1,14 @@
 /* Lifted and edited from @trussworks/react-uswds FilePreview internal only component
  * This component (in the source) gets displayed as part of the @trussworks/react-uswds
  * FileInput component after a file (or files) are selected
+ * Added:
+ * * Localization strings for the text
+ * * Button that triggers a callback (currently used as "Remove File")
+ * * clickHandler for the callback
+ * * Props definition
+ * Changed:
+ * * Replaced use of fileReaderRef with URL.createObjectURL
+ * * Minor className changes for styling
  */
 import React, { useEffect, useState } from "react";
 import type { ReactElement } from "react";

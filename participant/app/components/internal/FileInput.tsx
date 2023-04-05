@@ -1,4 +1,10 @@
 /* Heavily edited from @trussworks/react-uswds FileInput component */
+/* Added:
+ *  * Internationalization
+ *  * Noscript behavior
+ * Removed:
+ *  * FilePreview components (now controlled by FileUploader)
+ */
 import React, {
   useState,
   forwardRef,

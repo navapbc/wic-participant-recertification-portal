@@ -47,8 +47,9 @@ p {
   @include typeset('body');
 }
 
-// File Input styling
-
+// USWDS File Input:
+// - Override USWDS CSS that sets pointer-events: none
+// - Change border and error styling
 .usa-file-input__preview-heading {
   pointer-events: auto;
 }
@@ -58,9 +59,9 @@ p {
 }
 
 .file-input-error {
-  font-weight: bold;
-  color:  #e41d3d;
-  @include u-margin-top(1)
+  @include u-text('bold');
+  @include u-text('secondary-vivid');
+  @include u-margin-top(1);
 }
 
 .intro {

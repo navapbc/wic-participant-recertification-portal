@@ -59,6 +59,14 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
   const ifNeeded = t(`${labelKey}.ifNeeded`);
   const currentDocumentNumber = Object.keys(files).length;
 
+  /* This allows us to add callable methods and values to a reference
+   * passed in by the rendering page, instead of relying on a callback
+   * passed in on the page to pass objects held in state (in this case, files)
+   * out to the parent.
+   * We're also adding a ref directly to the input component rendered here -
+   * so if we need to manage its state or settings, that can be done.
+   * For more, see: https://blog.webdevsimplified.com/2022-06/use-imperative-handle/
+   */
   useImperativeHandle(
     ref,
     () => ({
@@ -98,15 +106,14 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
     }
     const acceptedTypes = accept.split(",");
     let fileTypeAllowed = true;
-    if (fileTypeAllowed) {
-      for (let j = 0; j < acceptedTypes.length; j += 1) {
-        const fileType = acceptedTypes[parseInt(`${j}`)];
-        fileTypeAllowed =
-          newFile.name.indexOf(fileType) > 0 ||
-          newFile.type.includes(fileType.replace(/\*/g, ""));
-        if (fileTypeAllowed) break;
-      }
+    for (let j = 0; j < acceptedTypes.length; j += 1) {
+      const fileType = acceptedTypes[parseInt(`${j}`)];
+      fileTypeAllowed =
+        newFile.name.indexOf(fileType) > 0 ||
+        newFile.type.includes(fileType.replace(/\*/g, ""));
+      if (fileTypeAllowed) break;
     }
+
     return fileTypeAllowed;
   };
   const addNewFiles = (newFiles: FileList) => {
@@ -156,7 +163,9 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
       <Label htmlFor={id}>{currentDocumentString}</Label>
       {errorMessage && (
         <div data-testid="file-input-error" className="file-input-error">
-          <Trans i18nKey={errorMessage} />
+          <span className="display-block">
+            <Trans i18nKey={errorMessage} />
+          </span>
         </div>
       )}
       <FileInput
