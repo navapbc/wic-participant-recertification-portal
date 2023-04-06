@@ -346,7 +346,7 @@ data "aws_iam_policy_document" "task_executor" {
 }
 
 # ECS task role and policy
-# Only needed if EFS volumes are defined
+# Only defined if needed
 resource "aws_iam_role" "task" {
   count              = local.define_ecs_task_role ? 1 : 0
   name               = local.task_role_name

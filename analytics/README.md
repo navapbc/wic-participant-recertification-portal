@@ -26,9 +26,17 @@ After the first time setup is complete, usage is as follows:
 
 ## Deploy to AWS
 
-To deploy to AWS, we use ECS Fargate to host the matomo server and an Aurora mysql database.
+To deploy to AWS, we use ECS Fargate to host the matomo server, an Aurora mysql database, and an EFS docker volume for persistent files. Deploying to AWS required making some adjustments, including:
 
-Note: Because ECS Fargate does not allow linux permissions such as `SETGID` and because the Matomo docker image is based on the PHP docker image which
+- The matomo image by default uses a privileged port (80), which causes issues on AWS ECS Fargate. This is addressed by building a Docker image that injects a `sed` command to change the apache port to 8080, but that can be adjusted with an environment variable.
+- The matomo image is built on the PHP docker image which deploys using Apache. Apache needs to be able to write to `/var/www/html`. This results in a few changes:
+  - Mapping an EFS docker volume to `/var/www/html`
+  - Allowing non-read-only docker root volume
+  - Allowing matomo to keep the root user (a future @todo would be to refactor this to a non-privileged user)
+  - Allow the ECS task to have all EFS IAM permissions (a future @todo would be to refactor this to a more limited scope)
+  - Allow the ECS container to talk to the EFS docker volume on default EFS port 2049
+
+Note: The ECS logs will show errors like: `Operation not permitted: AH02156: setgid: unable to set group id to Group 33`. In addition, the Matomo system check will ...
 
 ### First time setup
 

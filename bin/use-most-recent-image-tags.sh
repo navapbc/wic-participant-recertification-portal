@@ -9,17 +9,17 @@
 # 1. Run this script to retrieve the most recent image tags for each application:
 #    `./use-most-recent-image-tags.sh`
 # 2. Move the .tfvars file to the environment you want to update:
-#    `mv image_tag.tfvars infra/app/envs/dev`
+#    `mv image_tags.tfvars infra/app/envs/dev`
 # 3. Temporarily disable the lifecycle ignore by editing /infra/modules/service/main.tf
 #    and commenting the appropriate line in aws_ecs_service.app.
 # 4. Apply the terraform changes:
-#    `cd infra/app/envs/dev && terraform apply -var-file="image_tag.tfvars`
+#    `cd infra/app/envs/dev && terraform apply -var-file="image_tags.tfvars`
 # 5. Uncomment the line from step 3 in aws_ecs_service.app in /infra/modules/service/main.tf
 #
 # Note: There are occasions when the image tag to deploy should NOT be the most recently
 #       built image, such as avoiding deploying a dev image to prod! In that case,
 #       you probably shouldn't be updating the ECS task definition anyway! If you still
-#       need to, then manually set the correct image tag in the image_tag.tfvars file!
+#       need to, then manually set the correct image tag in the image_tags.tfvars file!
 
 set -euo pipefail
 
@@ -37,6 +37,6 @@ participant_image_tag=$(aws ecr describe-images  --repository-name wic-prp-parti
 staff_image_tag=$(aws ecr describe-images  --repository-name wic-prp-staff --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq . --raw-output)
 analytics_image_tag=$(aws ecr describe-images  --repository-name wic-prp-analytics --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq . --raw-output)
 
-echo "participant_image_tag=\"$participant_image_tag\"" > image_tag.tfvars
-echo "staff_image_tag=\"$staff_image_tag\"" >> image_tag.tfvars
-echo "analytics_image_tag=\"$analytics_image_tag\"" >> image_tag.tfvars
+echo "participant_image_tag=\"$participant_image_tag\"" > image_tags.tfvars
+echo "staff_image_tag=\"$staff_image_tag\"" >> image_tags.tfvars
+echo "analytics_image_tag=\"$analytics_image_tag\"" >> image_tags.tfvars
