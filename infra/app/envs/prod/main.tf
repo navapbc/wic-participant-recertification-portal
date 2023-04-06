@@ -54,5 +54,4 @@ module "project_config" {
 module "app" {
   source           = "../../env-template"
   environment_name = local.environment_name
-  image_tag        = local.environment_name
 }

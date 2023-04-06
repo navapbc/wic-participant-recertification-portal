@@ -137,7 +137,11 @@ resource "aws_ecs_service" "app" {
   # This allows autoscaling to manage the desired count for us.
   # Ignoring the task_definition allows the task revision to not get reverted if a rew revision is created outside of terraform.
   lifecycle {
-    ignore_changes = [task_definition, desired_count]
+    ignore_changes = [
+      desired_count,
+      # Comment out the following line to allow terraform to temporarily update the task definition.
+      task_definition,
+    ]
   }
 
   network_configuration {

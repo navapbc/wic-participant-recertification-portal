@@ -54,6 +54,8 @@ module "project_config" {
 module "app" {
   source           = "../../env-template"
   environment_name = local.environment_name
-  image_tag        = local.environment_name
   enable_exec      = true
+  participant_image_tag = var.participant_image_tag
+  staff_image_tag       = var.staff_image_tag
+  analytics_image_tag   = var.analytics_image_tag
 }

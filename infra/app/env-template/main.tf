@@ -61,7 +61,7 @@ module "participant" {
   service_name         = local.participant_service_name
   image_repository_url = data.aws_ecr_repository.participant_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.participant_image_repository.arn
-  image_tag            = var.image_tag
+  image_tag            = var.participant_image_tag
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
@@ -106,7 +106,7 @@ module "staff" {
   service_name         = local.staff_service_name
   image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
-  image_tag            = var.image_tag
+  image_tag            = var.staff_image_tag
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
@@ -135,7 +135,7 @@ module "analytics" {
   service_name         = local.analytics_service_name
   image_repository_url = data.aws_ecr_repository.analytics_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.analytics_image_repository.arn
-  image_tag            = var.image_tag
+  image_tag            = var.analytics_image_tag
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
