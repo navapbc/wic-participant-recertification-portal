@@ -18,6 +18,20 @@
     "legend": "Date of Birth",
     "hintDMY": "For Example: 28 4 1986"
   },
+  "fileuploader": {
+    "removeFile": "Remove File",
+    "selected": "Selected file",
+    "label": "Upload files",
+    "document": "Document",
+    "ifNeeded": "(if needed)",
+    "noFiles": "Choose or drag a file to upload",
+    "additionalFiles": "Choose or drag another file to upload",
+    "altText": "Image preview for",
+    "fileTypeError": "This is not a valid file type.",
+    "fileSizeError": "This file is over the maximum size",
+    "fileCountError": "You have reached the maximum number of files; please remove files before adding additional files",
+    "noScriptMessage": "File previews will not work with JavaScript disabled, but you may still upload files"
+  },
   "inputchoice": {
     "label1": "Option 1",
     "label2": "Option 2",
@@ -26,6 +40,9 @@
     "labelCheckbox": "Example Checkbox",
     "helpHeader": "What does this mean?",
     "helpBody": "<p><strong>Here is some information about what it means</strong></p><p>This is very helpful</p>"
+  },
+  "list": {
+    "listItems": ["list-a", "list-b", "list-c"]
   },
   "nameinput": {
     "firstname": "First name",
