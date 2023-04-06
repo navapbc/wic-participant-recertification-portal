@@ -11,8 +11,6 @@ services:
       timeout: 10s
       retries: 20
     init: true
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -33,6 +31,21 @@ services:
       - ./:/home/node/lowdefy
       # Use a named volume for the node_modules so that the container uses the guest machine's node_modules dir instead of the host machine's node_modules directory, which might be divergent.
       - lowdefy_dev_nodemodules:/home/node/lowdefy/node_modules
+
+  # Include a prod remix container to set the db schema and seed the db.
+  remix_prod:
+    build:
+      target: prod
+      context: ../participant
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+    init: true
+    read_only: true
+    ports:
+      - "3053:3000"
 
   lowdefy_prod:
     build:
