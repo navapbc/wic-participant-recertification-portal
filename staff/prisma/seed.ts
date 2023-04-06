@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import {
   findSubmission,
   upsertSubmission,
+  upsertSubmissionForm,
   findLocalAgency,
   firstLocalAgency,
 } from "app/utils/db.server";
@@ -18,6 +19,46 @@ const agencyData = [
     name: "Missoula WIC",
   },
 ];
+const submissionsData = {
+  gallatin: [
+    {
+      submissionId: uuidv4(),
+      forms: {
+        name: {
+          firstName: "Abigail",
+          lastName: "Cho",
+        },
+        changes: {
+          idChange: "no",
+          addressChange: "no",
+        },
+        count: {
+          householdSize: 1,
+        },
+        details: {
+          1: {
+            relationship: "child",
+            firstName: "Mandy",
+            lastName: "Cho",
+            dateOfBirth: "04/02/2022",
+            adjunctive: "fdpir",
+          },
+        },
+        contact: {
+          phoneNumber: "(406) 987 - 6543",
+          updates: "",
+        },
+        documents: [
+          {
+            name: "hello.png",
+          },
+        ],
+      },
+    },
+  ],
+  missoula: [],
+};
+
 // Any interactions with Prisma will be async
 // eslint-disable-next-line @typescript-eslint/require-await
 async function seed() {
@@ -38,10 +79,24 @@ async function seed() {
   }
 
   // Create development submission seed records.
-  const firstAgency = await firstLocalAgency();
-  if (firstAgency) {
-    console.log(`found agency: ${firstAgency.localAgencyId}`);
-    await upsertSubmission(uuidv4(), firstAgency.urlId);
+  const gallatin = await findLocalAgency("gallatin");
+  const missoula = await findLocalAgency("missoula");
+
+  if (gallatin && missoula) {
+    for (let [localAgencyUrlId, submissions] of Object.entries(
+      submissionsData
+    )) {
+      for (const submission of submissions) {
+        await upsertSubmission(submission.submissionId, localAgencyUrlId);
+        for (let [formRoute, formData] of Object.entries(submission.forms)) {
+          await upsertSubmissionForm(
+            submission.submissionId,
+            formRoute,
+            formData
+          );
+        }
+      }
+    }
   }
 }
 
