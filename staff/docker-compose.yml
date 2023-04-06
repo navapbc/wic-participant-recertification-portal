@@ -46,6 +46,8 @@ services:
     read_only: true
     ports:
       - "3053:3000"
+    volumes:
+      - ./prisma/seed.ts:/home/node/remix/prisma/seed.ts:ro
 
   lowdefy_prod:
     build:
