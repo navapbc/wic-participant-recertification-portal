@@ -11,6 +11,7 @@ locals {
   task_executor_role_name = "${var.service_name}-task-executor"
   image_url               = "${var.image_repository_url}:${var.image_tag}"
   healthcheck_path        = trimprefix(var.healthcheck_path, "/")
+  define_ecs_task_role    = length(var.container_efs_volumes) > 0 || var.enable_exec
 }
 
 ###################
@@ -124,12 +125,13 @@ module "fs" {
 #######################
 
 resource "aws_ecs_service" "app" {
-  name             = var.service_name
-  cluster          = var.service_cluster_arn
-  launch_type      = "FARGATE"
-  task_definition  = aws_ecs_task_definition.app.arn
-  desired_count    = var.desired_instance_count
-  platform_version = "1.4.0"
+  name                   = var.service_name
+  cluster                = var.service_cluster_arn
+  launch_type            = "FARGATE"
+  task_definition        = aws_ecs_task_definition.app.arn
+  desired_count          = var.desired_instance_count
+  platform_version       = "1.4.0"
+  enable_execute_command = var.enable_exec ? true : null
 
   # Allow changes to the desired_count without differences in terraform plan.
   # This allows autoscaling to manage the desired count for us.
@@ -155,10 +157,7 @@ resource "aws_ecs_service" "app" {
 resource "aws_ecs_task_definition" "app" {
   family             = var.service_name
   execution_role_arn = aws_iam_role.task_executor.arn
-  task_role_arn      = length(var.container_efs_volumes) == 0 ? null : aws_iam_role.task[0].arn
-
-  # when is this needed?
-  # task_role_arn      = aws_iam_role.api_service.arn
+  task_role_arn      = local.define_ecs_task_role ? aws_iam_role.task[0].arn : null
   container_definitions = jsonencode(
     [
       {
@@ -345,7 +344,7 @@ data "aws_iam_policy_document" "task_executor" {
 # ECS task role and policy
 # Only needed if EFS volumes are defined
 resource "aws_iam_role" "task" {
-  count              = length(var.container_efs_volumes) > 0 ? 1 : 0
+  count              = local.define_ecs_task_role ? 1 : 0
   name               = local.task_role_name
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_role.json
 }
@@ -364,7 +363,7 @@ data "aws_iam_policy_document" "ecs_assume_task_role" {
 }
 
 resource "aws_iam_policy" "task" {
-  count       = length(var.container_efs_volumes) > 0 ? 1 : 0
+  count       = local.define_ecs_task_role ? 1 : 0
   name        = "${var.service_name}-task-role-policy"
   description = "A policy for ECS task"
   policy      = data.aws_iam_policy_document.task.json
@@ -372,12 +371,29 @@ resource "aws_iam_policy" "task" {
 
 # Link access policies to the ECS task role.
 resource "aws_iam_role_policy_attachment" "task" {
-  count      = length(var.container_efs_volumes) > 0 ? 1 : 0
+  count      = local.define_ecs_task_role ? 1 : 0
   role       = aws_iam_role.task[0].name
   policy_arn = aws_iam_policy.task[0].arn
 }
 
 data "aws_iam_policy_document" "task" {
+  # Allow ECS to access SSM Messages so that ECS Exec works
+  # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html
+  dynamic "statement" {
+    for_each = var.enable_exec ? [0] : []
+    content {
+      sid    = "SSMAccess"
+      effect = "Allow"
+      actions = [
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel",
+      ]
+      resources = ["*"]
+    }
+  }
+
   # Allow ECS to access EFS access points
   dynamic "statement" {
     for_each = module.fs

@@ -67,6 +67,7 @@ module "participant" {
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
   healthcheck_path     = "/healthcheck"
+  enable_exec          = var.enable_exec
   container_secrets = [
     {
       name      = "DATABASE_URL",
@@ -110,6 +111,7 @@ module "staff" {
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
+  enable_exec          = var.enable_exec
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
@@ -140,6 +142,7 @@ module "analytics" {
   container_port       = 8080
   container_read_only  = false # Matomo/apache needs to be able to write to the rootfs
   healthcheck_path     = "/"
+  enable_exec          = var.enable_exec
   container_secrets = [
     {
       name      = "MATOMO_DATABASE_HOST",

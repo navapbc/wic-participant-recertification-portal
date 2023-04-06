@@ -108,8 +108,24 @@ variable "healthcheck_path" {
   default     = "/health"
 }
 
+variable "healthcheck_type" {
+  type        = string
+  description = "Whether to configure a curl or wget healthcheck. curl is more common. use wget for alpine-based images"
+  default     = "curl"
+  validation {
+    condition     = contains(["curl", "wget"], var.healthcheck_type)
+    error_message = "choose either: curl or wget"
+  }
+}
+
 variable "enable_healthcheck" {
   type        = bool
   description = "Enable container healthcheck"
   default     = true
+}
+
+variable "enable_exec" {
+  type        = bool
+  description = "Enable exec access to ECS task"
+  default     = false
 }
