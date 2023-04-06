@@ -34,5 +34,10 @@
     "/.lowdefy",
     "/node_modules",
     "/public"
-  ]
+  ],
+  "overrides": {
+    "lowdefy": {
+      "sqlite3": "^5.1.1"
+    }
+  }
 }
