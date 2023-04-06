@@ -1,4 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import {
+  findSubmission,
+  upsertSubmission,
+  findLocalAgency,
+  firstLocalAgency,
+} from "app/utils/db.server";
+import { v4 as uuidv4 } from "uuid";
 
 const prisma = new PrismaClient();
 const agencyData = [
@@ -28,6 +35,13 @@ async function seed() {
     console.log(
       `Skipping localAgency seed; found ${existingAgencyRecords} agencies 🪴`
     );
+  }
+
+  // Create development submission seed records.
+  const firstAgency = await firstLocalAgency();
+  if (firstAgency) {
+    console.log(`found agency: ${firstAgency.localAgencyId}`);
+    await upsertSubmission(uuidv4(), firstAgency.urlId);
   }
 }
 

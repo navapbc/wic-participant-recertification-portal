@@ -6,6 +6,7 @@
     "build": "remix build",
     "dev": "run-s dev:startdb css dev:remix",
     "dev:docker": "npm install && run-s css dev:remix",
+    "dev:dbseed": "npx prisma db push && npx prisma db seed",
     "dev:remix": "remix dev",
     "dev:startdb": "docker compose up postgres --wait && npx prisma db push && npx prisma db seed",
     "css": "run-s css:build css:post",
