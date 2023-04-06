@@ -21,8 +21,20 @@ variable "analytics_image_tag" {
   default     = "latest"
 }
 
-variable "enable_exec" {
+variable "participant_enable_exec" {
   type        = bool
-  description = "Enables ECS exec for all ECS services"
+  description = "Enables ECS exec for the participant service"
+  default     = false
+}
+
+variable "staff_enable_exec" {
+  type        = bool
+  description = "Enables ECS exec for the staff service"
+  default     = false
+}
+
+variable "analytics_enable_exec" {
+  type        = bool
+  description = "Enables ECS exec for the analytics service"
   default     = false
 }
