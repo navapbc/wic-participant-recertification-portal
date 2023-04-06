@@ -50,7 +50,8 @@
     "additionalInfo": {
       "label": "Is there anything else you'd like to share with WIC staff?",
       "hint": "<br>For example: Nutrition updates, household changes, or questions."
-    },
+    }
+  },
   "Count": {
     "title": "Who in your household is recertifying?",
     "intro": "We only need to collect information about WIC participants who have a recertification appointment.",

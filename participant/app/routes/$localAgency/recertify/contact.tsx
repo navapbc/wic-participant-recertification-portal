@@ -3,7 +3,6 @@ import { Form } from "@remix-run/react";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { TextField } from "app/components/TextField";
-//import type { TextFieldProps } from "app/components/TextField";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
 //import { ValidatedForm } from "remix-validated-form";
 //import { representativeNameSchema } from "app/utils/validation";
@@ -11,22 +10,6 @@ import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatemen
 
 export default function Contact() {
   const { t } = useTranslation();
-  /**  const phoneNumberProps: TextFieldProps = {
-         id: "phoneNumberSize",
-         type: "input",
-         inputType: "tel",
-         labelKey: "Contact.phoneNumber",
-         required: true,
-     };
-     const additionalInfoProps: TextFieldProps = {
-         id: "additionalInfo",
-         type: "textarea",
-         inputType: "text",
-         labelKey: "Contact.additionalInfo.label",
-         //hint: "Contact.additionalInfo.hint",
-         required: false,
-         labelClassName: "label-large",
-     }; */
   return (
     <div>
       <h1>
