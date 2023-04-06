@@ -64,6 +64,19 @@ export const TextInputLargeStyleRequired = {
   },
 };
 
+export const TextInputLargeStyleWithHint = {
+  ...TextFieldTemplate,
+  args: {
+    ...defaultProps,
+    labelClassName: "usa-label--large",
+    hint: (
+      <div>
+        <em>Helper text</em>
+      </div>
+    ),
+  },
+};
+
 export const TextArea = {
   ...TextFieldTemplate,
   args: {
