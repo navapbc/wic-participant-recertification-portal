@@ -40,14 +40,15 @@ export default function Contact() {
                     labelKey="Contact.phoneNumber"
                     required
                     type="input"
+                    labelClassName="usa-label--large"
                 />
                 <TextField
                     id="additional-ifno"
                     inputType="text"
                     labelKey="Contact.additionalInfo.label"
+                    labelClassName="usa-label--large"
                     hint={<Trans i18nKey="Contact.additionalInfo.hint" />}
                     type="textarea"
-                    labelClassName="font-lg"
                 />
 
                 <Button
