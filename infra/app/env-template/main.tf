@@ -141,7 +141,7 @@ module "analytics" {
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 8080
   container_read_only  = false # Matomo/apache needs to be able to write to the rootfs
-  healthcheck_path     = "/"
+  healthcheck_path     = "/matomo.php"
   enable_exec          = var.enable_exec
   container_secrets = [
     {

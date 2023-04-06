@@ -1,11 +1,5 @@
 FROM matomo:4.14.1 as prod
 
-# Install wget for healthcheck
-RUN set -eux pipefail; \
-  apt-get update \
-  && apt-get install \
-    wget
-
 # Set an environment variable that defaults to a non-privileged port
 ENV PORT 8080
 
