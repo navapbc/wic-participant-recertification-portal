@@ -36,7 +36,7 @@ blocks:
           type: CallMethod
           params:
             blockId: table
-            method: sizeColumnsToFit
+            method: autoSize
   - id: Download
     type: Button
     events:
@@ -66,7 +66,7 @@ blocks:
               - _state: debug_clipboard.value
   - id: table
     type: AgGridAlpine # A supporting component type that uses https://www.ag-grid.com
-    # events:
+    events:
     #   onRowClick:
     #     - id: notification
     #       type: CallMethod
@@ -85,6 +85,9 @@ blocks:
       # See https://ag-grid.com/react-data-grid/clipboard/#using-the-browsers-text-selection
       enableCellTextSelection: true
       ensureDomOrder: true
+      domLayout: autoHeight
+      # paginationPageSize: 2
+      pagination: true
       defaultColDef: # The table columns are sortable, resizable, and filterable
         sortable: true
         resizable: true
@@ -233,10 +236,7 @@ blocks:
                   <div class="documents">
                     {% if documents %}
                       {% for doc in documents %}
-                        <a href="{{doc.href}}" target="_blank" rel="noopener noreferrer">{{ doc.name }}</a>
-                        {% if not loop.last -%}
-                          ,
-                        {%- endif %}
+                        <a href="{{doc.href}}" target="_blank" rel="noopener noreferrer">{{ doc.name }}</a>{% if not loop.last -%},{%- endif %}
                       {% endfor %}
                     {% else %}
                       No documents required
@@ -271,3 +271,4 @@ blocks:
                 on:
                   __args: 0.data.form_data
           wrapText: true
+          maxWidth: 500

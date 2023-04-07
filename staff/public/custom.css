@@ -7,3 +7,7 @@
 .ag-cell-wrap-text {
   word-break: normal !important;
 }
+
+.ag-cell-wrapper {
+  align-items: normal !important;
+}
