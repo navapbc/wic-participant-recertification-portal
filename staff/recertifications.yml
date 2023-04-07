@@ -20,6 +20,11 @@ events:
     - id: fetch_data
       type: Request
       params: get_data # Execute the `get_data` request
+    - id: single_value
+      type: SetState
+      params:
+        message: Hello
+    # @TODO fix auto resize
     # - id: auto_size
     #   type: CallMethod
     #   params:
@@ -27,15 +32,15 @@ events:
     #     method: autoSize
 
 blocks:
-  # - id: Size To Fit
-  #   type: Button
-  #   events:
-  #     onClick:
-  #       - id: download
-  #         type: CallMethod
-  #         params:
-  #           blockId: table
-  #           method: sizeColumnsToFit
+  - id: Size To Fit
+    type: Button
+    events:
+      onClick:
+        - id: download
+          type: CallMethod
+          params:
+            blockId: table
+            method: sizeColumnsToFit
   - id: Download
     type: Button
     events:
@@ -45,8 +50,54 @@ blocks:
           params:
             blockId: table
             method: exportDataAsCsv
+  - id: copy_notification
+    type: Notification
+    properties:
+      message:
+        - "Copied!"
+  - id: show something
+    type: Button
+    events:
+      onClick:
+      - id: open
+        type: CallMethod
+        params:
+          blockId: copy_notification
+          method: open
+
+
+          # type: Message
+          #   params:
+          #     content: Success
+  - id: selection # This part isn't in the mockup, but demonstrates the ability to display data based on user action
+    type: Paragraph
+    properties:
+      level: 4 # Shows the data as an h4
+      content:
+        _if: # Show the participant name and household ID from the selected row
+          test:
+            _eq:
+              - _state: message
+              - null
+          else:
+            _log:
+              - _state: message.value
   - id: table
     type: AgGridAlpine # A supporting component type that uses https://www.ag-grid.com
+    events:
+      onCellClick:
+        - id: notification
+          type: CallMethod
+          params:
+            blockId: copy_notification
+            method: open
+        - id: set_selected
+          type: SetState
+          params:
+            # - message:
+            #   _event: cell
+            message: # Update 'selected_cell' in state with the event cell data.
+              _event: cell
     properties:
       rowData:
         _request: get_data.rows # Send all the data returned by the query `get_data`. KnexRaw requests need to call `rows`; KnexBuilder requests don't
@@ -94,6 +145,7 @@ blocks:
                   __args: 0.data
           wrapText: true
         - headerName: WIC Participant(s)
+          # @TODO fix value formatting if copying or exporting
           valueGetter:
             _function:
               __array.map:
@@ -172,24 +224,24 @@ blocks:
                 on:
                   __args: 0.data.form_data
           wrapText: true
+        # @TODO: use S3 links
         - headerName: Documents
           valueGetter:
             _function:
-              __log:
-                __if:
-                  test:
-                    __eq:
-                      - __args: 0.data.form_data.documents
-                      - null
-                  then:
-                    - "No documents required"
-                  else:
-                    __array.map:
-                      on:
-                        __args: 0.data.form_data.documents
-                      callback:
-                        __function:
-                          - ___args: 0.name
+              __if:
+                test:
+                  __eq:
+                    - __args: 0.data.form_data.documents
+                    - null
+                then:
+                  - "No documents required"
+                else:
+                  __array.map:
+                    on:
+                      __args: 0.data.form_data.documents
+                    callback:
+                      __function:
+                        - ___args: 0.name
           cellRenderer:
             _function:
               __nunjucks:
