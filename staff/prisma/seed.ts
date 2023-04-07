@@ -51,6 +51,11 @@ const submissionsData = {
         documents: [
           {
             name: "hello.png",
+            href: "https://google.com"
+          },
+          {
+            name: "world.png",
+            href: "https://duckduckgo.com"
           },
         ],
       },

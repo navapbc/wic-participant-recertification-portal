@@ -96,18 +96,17 @@ blocks:
         - headerName: WIC Participant(s)
           valueGetter:
             _function:
-              __log:
-                __array.map:
-                  on:
-                    __args: 0.data.form_data.details
-                  callback:
-                    __function:
-                      - ___args: 0.firstName
-                      - ___args: 0.lastName
-                      - ___args: 0.preferredName
-                      - ___args: 0.relationship
-                      - ___args: 0.dateOfBirth
-                      - ___args: 0.adjunctive
+              __array.map:
+                on:
+                  __args: 0.data.form_data.details
+                callback:
+                  __function:
+                    - ___args: 0.firstName
+                    - ___args: 0.lastName
+                    - ___args: 0.preferredName
+                    - ___args: 0.relationship
+                    - ___args: 0.dateOfBirth
+                    - ___args: 0.adjunctive
           cellRenderer:
             _function:
               __nunjucks:
@@ -174,20 +173,41 @@ blocks:
                   __args: 0.data.form_data
           wrapText: true
         - headerName: Documents
-          field: form_data
+          valueGetter:
+            _function:
+              __log:
+                __if:
+                  test:
+                    __eq:
+                      - __args: 0.data.form_data.documents
+                      - null
+                  then:
+                    - "No documents required"
+                  else:
+                    __array.map:
+                      on:
+                        __args: 0.data.form_data.documents
+                      callback:
+                        __function:
+                          - ___args: 0.name
           cellRenderer:
             _function:
               __nunjucks:
                 template: |
                   <div class="documents">
                     {% if documents %}
-                      Documents go here
+                      {% for doc in documents %}
+                        <a href="{{doc.href}}" target="_blank" rel="noopener noreferrer">{{ doc.name }}</a>
+                        {% if not loop.last -%}
+                          ,
+                        {%- endif %}
+                      {% endfor %}
                     {% else %}
                       No documents required
                     {% endif %}
                   </div>
                 on:
-                  __args: 0.value
+                  __args: 0.data.form_data
           wrapText: true
         - headerName: Updates from participant
           valueGetter:
