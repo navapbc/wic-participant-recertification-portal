@@ -8,9 +8,9 @@ requests: # Requests defines all the data requests made available in this page c
     properties:
       # query: SELECT * FROM submission_forms GROUP_BY submission_id; # The sql query being sent to postgres
       # query: select format('%s %s', form_data->>'firstName', form_data->>'lastName') as contact_person from submission_forms;
-      query: select jsonb_object_agg(sf.form_route, sf.form_data) as form_data,  
-          s.updated_at, 
-          la.name as agency_name
+      query: select jsonb_object_agg(sf.form_route, sf.form_data) as form_data,
+        s.updated_at,
+        la.name as agency_name
         from submissions s
         left join submission_forms sf on (s.submission_id = sf.submission_id)
         left join local_agencies la on (s.local_agency_id = la.local_agency_id)
@@ -53,7 +53,7 @@ blocks:
         sortable: true
         resizable: true
         filter: true
-      autoSize: 
+      autoSize:
         - skipHeader: true
       columnDefs: # Define each table column
         - headerName: Submission date
@@ -65,8 +65,8 @@ blocks:
                   __args: 0.value
                 params:
                   options:
-                    dateStyle: 'short'
-                    timeStyle: 'long'
+                    dateStyle: "short"
+                    timeStyle: "long"
         - headerName: Contact person
           field: form_data
           cellRenderer:
@@ -176,5 +176,3 @@ blocks:
                   __args: 0.value
           autoHeight: true
           wrapText: true
-
-

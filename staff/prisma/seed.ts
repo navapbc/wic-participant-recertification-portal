@@ -61,7 +61,7 @@ const submissionsData = {
         name: {
           firstName: "Elizabeth",
           lastName: "Schneider",
-          preferredName: "Liz"
+          preferredName: "Liz",
         },
         changes: {
           idChange: "no",
@@ -86,10 +86,11 @@ const submissionsData = {
         ],
         contact: {
           phoneNumber: "(406) 321 - 7654",
-          updates: "Seth is healthy and spirited! But I’m having issues with latching."
-        }
-      }
-    }
+          updates:
+            "Seth is healthy and spirited! But I’m having issues with latching.",
+        },
+      },
+    },
   ],
   missoula: [],
 };
