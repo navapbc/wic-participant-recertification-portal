@@ -20,7 +20,8 @@ requests: # Requests defines all the data requests made available in this page c
         from submissions s
         left join submission_forms sf on (s.submission_id = sf.submission_id)
         left join local_agencies la on (s.local_agency_id = la.local_agency_id)
-        group by sf.submission_id, s.updated_at, la.name;
+        group by sf.submission_id, s.updated_at, la.name
+        order by s.updated_at desc;
 
 events:
   onInitAsync: # A list of actions that gets completed each time a user visits this page
@@ -43,6 +44,15 @@ blocks:
   #         params:
   #           blockId: table
   #           method: sizeColumnsToFit
+  - id: Download
+    type: Button
+    events:
+      onClick:
+        - id: download
+          type: CallMethod
+          params:
+            blockId: table
+            method: exportDataAsCsv
   - id: table
     type: AgGridAlpine # A supporting component type that uses https://www.ag-grid.com
     properties:
@@ -53,30 +63,12 @@ blocks:
         resizable: true
         filter: true
       columnDefs: # Define each table column
-        - headerName: Simple
-          valueGetter:
-            _function:
-              __log:
-                - __args: 0.data.form_data.name.firstName
-                - __args: 0.data.form_data.name.lastName
-                - __args: 0.data.form_data.contact.phoneNumber
-          cellRenderer:
-            _function:
-              __nunjucks:
-                template: |
-                  <div class="contact">
-                    <div class="name">{{ name.firstName }} {{ name.lastName }}</div>
-                    <div class="phone">{{ contact.phoneNumber }}</div>
-                  </div>
-                on:
-                  __args: 0.data.form_data
         - headerName: Submission date
-          field: updated_at # The returned data field name
-          valueFormatter:
+          valueGetter:
             _function:
               __format.intlDateTimeFormat: # Use date time formatting https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
                 on:
-                  __args: 0.value
+                  __args: 0.data.updated_at
                 params:
                   options:
                     dateStyle: "short"
@@ -88,6 +80,7 @@ blocks:
                 - __args: 0.data.form_data.name.firstName
                 - __args: 0.data.form_data.name.lastName
                 - __args: 0.data.form_data.contact.phoneNumber
+                - __args: 0.data.form_data.details
           cellRenderer:
             _function:
               __nunjucks:
@@ -106,7 +99,7 @@ blocks:
               __nunjucks:
                 template: |
                   {% for participant in details %}
-                    <div class="participant">              
+                    <div class="participant">
                       <div class="name">{{ participant.firstName }} {{ participant.lastName }}</div>
                       <ul>
                         <li class="relationship">Relationship to contact person:
@@ -128,7 +121,7 @@ blocks:
                             Yes
                           {% else %}
                             No
-                          {% endif %}                          
+                          {% endif %}
                         </li>
                       </ul>
                     </div>
@@ -139,19 +132,26 @@ blocks:
           autoHeight: true
         - headerName: Household changes
           field: form_data
+          valueGetter:
+            _function:
+              __log:
+                - "Name change or expired ID doc"
+                - __args: 0.data.form_data.changes.idChange
+                - "Moved"
+                - __args: 0.data.form_data.changes.addressChange
           cellRenderer:
             _function:
               __nunjucks:
                 template: |
                   <div class="changes">
-                    <div class="id-change">Name change or expired ID doc: 
+                    <div class="id-change">Name change or expired ID doc:
                       {% if changes.idChange == "yes" %}
                         Yes
                       {% else %}
                         No
                       {% endif %}
                     </div>
-                    <div class="address-change">Moved: 
+                    <div class="address-change">Moved:
                       {% if changes.addressChange == "yes" %}
                         Yes
                       {% else %}
@@ -160,7 +160,7 @@ blocks:
                     </div>
                   </div>
                 on:
-                  __args: 0.value
+                  __args: 0.data.form_data
           wrapText: true
         - headerName: Documents
           field: form_data
@@ -178,19 +178,28 @@ blocks:
                 on:
                   __args: 0.value
           wrapText: true
-        - headerName: Updates from participant
-          field: form_data
-          cellRenderer:
-            _function:
-              __nunjucks:
-                template: |
-                  <div class="notes">
-                    {% if contact.updates == "" %}
-                      No updates provided
-                    {% else %}
-                      {{ contact.updates }}
-                    {% endif %}
-                  </div>
-                on:
-                  __args: 0.value
-          wrapText: true
+        # - headerName: Updates from participant
+        #   valueGetter:
+        #     _function:
+        #       - __args: 0.data.form_data.contact.updates
+        #       # __log:
+        #       #   __if:
+        #       #     test: true
+        #       #     then:
+        #       #       - __args: 0.data.form_data.contact.updates
+        #       #     else:
+        #       #       - "No updates provided"
+        #   cellRenderer:
+        #     _function:
+        #       __nunjucks:
+        #         template: |
+        #           <div class="notes">
+        #             {% if contact.updates == "" %}
+        #               No updates provided
+        #             {% else %}
+        #               {{ contact.updates }}
+        #             {% endif %}
+        #           </div>
+        #         on:
+        #           __args: 0.data.form_data
+        #   wrapText: true

@@ -30,7 +30,7 @@ const submissionsData = {
         },
         changes: {
           idChange: "no",
-          addressChange: "no",
+          addressChange: "yes",
         },
         count: {
           householdSize: 1,
