@@ -20,10 +20,6 @@ events:
     - id: fetch_data
       type: Request
       params: get_data # Execute the `get_data` request
-    - id: single_value
-      type: SetState
-      params:
-        message: Hello
     # @TODO fix auto resize
     # - id: auto_size
     #   type: CallMethod
@@ -36,7 +32,7 @@ blocks:
     type: Button
     events:
       onClick:
-        - id: download
+        - id: sizeMe
           type: CallMethod
           params:
             blockId: table
@@ -55,21 +51,7 @@ blocks:
     properties:
       message:
         - "Copied!"
-  - id: show something
-    type: Button
-    events:
-      onClick:
-      - id: open
-        type: CallMethod
-        params:
-          blockId: copy_notification
-          method: open
-
-
-          # type: Message
-          #   params:
-          #     content: Success
-  - id: selection # This part isn't in the mockup, but demonstrates the ability to display data based on user action
+  - id: debug_selection
     type: Paragraph
     properties:
       level: 4 # Shows the data as an h4
@@ -77,11 +59,11 @@ blocks:
         _if: # Show the participant name and household ID from the selected row
           test:
             _eq:
-              - _state: message
+              - _state: debug_clipboard
               - null
           else:
             _log:
-              - _state: message.value
+              - _state: debug_clipboard.value
   - id: table
     type: AgGridAlpine # A supporting component type that uses https://www.ag-grid.com
     events:
@@ -94,9 +76,7 @@ blocks:
         - id: set_selected
           type: SetState
           params:
-            # - message:
-            #   _event: cell
-            message: # Update 'selected_cell' in state with the event cell data.
+            debug_clipboard:
               _event: cell
     properties:
       rowData:
