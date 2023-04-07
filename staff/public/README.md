@@ -11,3 +11,11 @@
 	- https://stackoverflow.com/questions/2757549/org-postgresql-util-psqlexception-fatal-sorry-too-many-clients-already
 - Filter by local agency for cognito users
 - Why is the height of the table so small?
+
+
+----
+
+- sticky header?
+- Montana WIC Recertification Staff Portal
+	- image
+	- favicon
