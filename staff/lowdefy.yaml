@@ -22,7 +22,8 @@ connections:
         _secret: PG_CONNECTION_STRING
 
 pages:
-  - _ref: recertifications.yaml
+  - _ref: simpletable.yml
+  - _ref: recertifications.yml
   - id: welcome
     type: PageHeaderMenu
     properties:
