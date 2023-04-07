@@ -39,7 +39,7 @@ services:
     build:
       target: dev
       context: ../participant
-    command: ["npm", "run", "dev:dbseed"]
+    command: ["npm", "run", "dev:dbreset"]
     depends_on:
       postgres:
         condition: service_healthy
