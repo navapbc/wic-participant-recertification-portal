@@ -11,3 +11,15 @@
 .ag-cell-wrapper {
   align-items: normal !important;
 }
+
+.name {
+  font-weight: bold;
+}
+
+a {
+  color: #005ea2;
+}
+
+a:hover {
+  color: #162e51;
+}
