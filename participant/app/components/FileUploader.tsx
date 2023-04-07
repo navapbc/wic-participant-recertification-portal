@@ -8,8 +8,8 @@ import React, {
   useImperativeHandle,
   useEffect,
   forwardRef,
-  ReactElement,
 } from "react";
+import type { ReactElement } from "react";
 import type { i18nKey } from "~/types";
 import type { FileInputRef } from "app/components/internal/FileInput";
 export type { FileInputRef } from "app/components/internal/FileInput";

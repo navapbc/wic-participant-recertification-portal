@@ -1,29 +1,27 @@
-import React, { ReactElement } from "react";
+import React, { useRef } from "react";
 
-import { FileUploader } from "~/components/FileUploader";
+import { FileUploader } from "app/components/FileUploader";
 import type {
   FileUploaderProps,
   FileInputRef,
-} from "~/components/FileUploader";
-
+} from "app/components/FileUploader";
 import { Accordion, Button } from "@trussworks/react-uswds";
-import { Form, Params, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useSubmit } from "@remix-run/react";
+import type { Params } from "@remix-run/react";
 import {
-  LoaderFunction,
   json,
   unstable_parseMultipartFormData as parseMultipartFormData,
   redirect,
 } from "@remix-run/server-runtime";
-import type { UploadHandler } from "@remix-run/server-runtime";
-import { useRef } from "react";
-import { useSubmit } from "@remix-run/react";
+import type { UploadHandler, LoaderFunction } from "@remix-run/server-runtime";
 import { Trans, useTranslation } from "react-i18next";
-import { List } from "~/components/List";
-import { cookieParser } from "~/cookies.server";
-import { findSubmissionFormData } from "~/utils/db.server";
-import type { ChangesData, Proofs } from "~/types";
-import { determineProof } from "~/utils/determineProof";
-import { routeRelative } from "~/utils/routing";
+
+import { List } from "app/components/List";
+import { cookieParser } from "app/cookies.server";
+import { findSubmissionFormData } from "app/utils/db.server";
+import type { ChangesData, Proofs } from "app/types";
+import { determineProof } from "app/utils/determineProof";
+import { routeRelative } from "app/utils/routing";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -83,17 +81,25 @@ const buildDocumentHelp = (proofRequired: Proofs[]) => {
   return allProofs.map((value) => {
     if (proofRequired.includes(value)) {
       return (
-        <div>
+        <div key={`${value}-instructions`}>
           <h2>
-            <Trans i18nKey={`Upload.${value}.label`} />
+            <Trans i18nKey={`Upload.${value}.label`} key={`${value}-label`} />
           </h2>
           <div>
-            <Trans i18nKey={`Upload.${value}.heading`} />
+            <Trans
+              i18nKey={`Upload.${value}.heading`}
+              key={`${value}-heading`}
+            />
           </div>
-          <List i18nKey={`Upload.${value}.examples`} type="unordered" />
+          <List
+            i18nKey={`Upload.${value}.examples`}
+            key={`${value}-examples`}
+            type="unordered"
+          />
         </div>
       );
     }
+    return "";
   });
 };
 
