@@ -10,3 +10,4 @@
 	- https://github.com/lowdefy/lowdefy/discussions/877
 	- https://stackoverflow.com/questions/2757549/org-postgresql-util-psqlexception-fatal-sorry-too-many-clients-already
 - Filter by local agency for cognito users
+- Why is the height of the table so small?
