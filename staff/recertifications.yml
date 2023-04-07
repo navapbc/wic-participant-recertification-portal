@@ -76,24 +76,37 @@ blocks:
         - headerName: Contact person
           valueGetter:
             _function:
-              __log:
-                - __args: 0.data.form_data.name.firstName
-                - __args: 0.data.form_data.name.lastName
-                - __args: 0.data.form_data.contact.phoneNumber
-                - __args: 0.data.form_data.details
+              - __args: 0.data.form_data.name.firstName
+              - __args: 0.data.form_data.name.lastName
+              - __args: 0.data.form_data.contact.phoneNumber
+              - __args: 0.data.agency_name
           cellRenderer:
             _function:
               __nunjucks:
                 template: |
                   <div class="contact">
-                    <div class="name">{{ name.firstName }} {{ name.lastName }}</div>
-                    <div class="phone">{{ contact.phoneNumber }}</div>
+                    <div class="name">{{ form_data.name.firstName }} {{ form_data.name.lastName }}</div>
+                    <div class="phone">{{ form_data.contact.phoneNumber }}</div>
+                    <div class="local-agency">Agency: {{ agency_name }}</div>
                   </div>
                 on:
-                  __args: 0.data.form_data
+                  __args: 0.data
           wrapText: true
         - headerName: WIC Participant(s)
-          field: form_data
+          valueGetter:
+            _function:
+              __log:
+                __array.map:
+                  on:
+                    __args: 0.data.form_data.details
+                  callback:
+                    __function:
+                      - ___args: 0.firstName
+                      - ___args: 0.lastName
+                      - ___args: 0.preferredName
+                      - ___args: 0.relationship
+                      - ___args: 0.dateOfBirth
+                      - ___args: 0.adjunctive
           cellRenderer:
             _function:
               __nunjucks:
@@ -127,18 +140,17 @@ blocks:
                     </div>
                   {% endfor %}
                 on:
-                  __args: 0.value
+                  __args: 0.data.form_data
           wrapText: true
           autoHeight: true
         - headerName: Household changes
           field: form_data
           valueGetter:
             _function:
-              __log:
-                - "Name change or expired ID doc"
-                - __args: 0.data.form_data.changes.idChange
-                - "Moved"
-                - __args: 0.data.form_data.changes.addressChange
+              - "Name change or expired ID doc"
+              - __args: 0.data.form_data.changes.idChange
+              - "Moved"
+              - __args: 0.data.form_data.changes.addressChange
           cellRenderer:
             _function:
               __nunjucks:
@@ -178,28 +190,29 @@ blocks:
                 on:
                   __args: 0.value
           wrapText: true
-        # - headerName: Updates from participant
-        #   valueGetter:
-        #     _function:
-        #       - __args: 0.data.form_data.contact.updates
-        #       # __log:
-        #       #   __if:
-        #       #     test: true
-        #       #     then:
-        #       #       - __args: 0.data.form_data.contact.updates
-        #       #     else:
-        #       #       - "No updates provided"
-        #   cellRenderer:
-        #     _function:
-        #       __nunjucks:
-        #         template: |
-        #           <div class="notes">
-        #             {% if contact.updates == "" %}
-        #               No updates provided
-        #             {% else %}
-        #               {{ contact.updates }}
-        #             {% endif %}
-        #           </div>
-        #         on:
-        #           __args: 0.data.form_data
-        #   wrapText: true
+        - headerName: Updates from participant
+          valueGetter:
+            _function:
+              __if:
+                test:
+                  __eq:
+                    - __args: 0.data.form_data.contact.updates
+                    - ""
+                then:
+                  - "No updates provided"
+                else:
+                  - __args: 0.data.form_data.contact.updates
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="notes">
+                    {% if contact.updates == "" %}
+                      No updates provided
+                    {% else %}
+                      {{ contact.updates }}
+                    {% endif %}
+                  </div>
+                on:
+                  __args: 0.data.form_data
+          wrapText: true
