@@ -76,6 +76,9 @@ p {
   @include u-line-height('sans', 2); // ~25px
 }
 
+.usa-accordion span {
+  @include u-text('bold')
+}
 
 // USWDS List:
 // Override arbitrary max width

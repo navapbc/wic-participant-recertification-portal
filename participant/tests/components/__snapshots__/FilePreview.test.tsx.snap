@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders a file preview correctly 1`] = `
+<div>
+  <div
+    class="margin-bottom-4 margin-top-2"
+  >
+    <div
+      class="usa-file-input"
+    >
+      <div
+        class="usa-file-input__target"
+      >
+        <div
+          class="usa-file-input__preview-heading"
+        >
+          <div>
+            Selected file
+          </div>
+          <button
+            class="text-secondary-vivid usa-button--unstyled"
+            type="button"
+          >
+            Remove File
+          </button>
+        </div>
+        <div
+          aria-hidden="true"
+          class="usa-file-input__preview"
+        >
+          <img
+            alt="Image preview for test-file.jpg"
+            class="usa-file-input__preview-image"
+            id="test-image"
+            src="file://fixtures/fns-stock-produce-shopper.jpg"
+          />
+          test-file.jpg
+        </div>
+        <div
+          class="usa-file-input__box"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders a file preview from a file URL correctly 1`] = `
+<div>
+  <div
+    class="margin-bottom-4 margin-top-2"
+  >
+    <div
+      class="usa-file-input"
+    >
+      <div
+        class="usa-file-input__target"
+      >
+        <div
+          class="usa-file-input__preview-heading"
+        >
+          <div>
+            Selected file
+          </div>
+          <button
+            class="text-secondary-vivid usa-button--unstyled"
+            type="button"
+          >
+            Remove File
+          </button>
+        </div>
+        <div
+          aria-hidden="true"
+          class="usa-file-input__preview"
+        >
+          <img
+            alt="Image preview for test-file.jpg"
+            class="usa-file-input__preview-image"
+            id="test-image"
+            src="file://fixtures/fns-stock-produce-shopper.jpg"
+          />
+          test-file.jpg
+        </div>
+        <div
+          class="usa-file-input__box"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

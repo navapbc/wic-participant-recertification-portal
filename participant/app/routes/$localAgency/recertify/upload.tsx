@@ -4,13 +4,14 @@ import type {
   FileInputRef,
 } from "~/components/FileUploader";
 
-import { Button } from "@trussworks/react-uswds";
+import { Accordion, Button } from "@trussworks/react-uswds";
 import { Form } from "@remix-run/react";
 import { unstable_parseMultipartFormData as parseMultipartFormData } from "@remix-run/server-runtime";
 import type { UploadHandler } from "@remix-run/server-runtime";
 import { useRef } from "react";
 import { useSubmit } from "@remix-run/react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
+import List from "~/components/List";
 
 export const action = async ({ request }: { request: Request }) => {
   const uploadHandler: UploadHandler = async ({
@@ -70,7 +71,51 @@ export default function Upload() {
         name="documents-form"
         onSubmit={(event) => handleSubmit(event)}
       >
-        <FileUploader {...defaultProps} ref={fileInputRef} />
+        <FileUploader {...defaultProps} ref={fileInputRef}>
+          <div>
+            <div className="font-sans-lg">
+              <Trans i18nKey="FileUploader.label" />
+            </div>
+            <div className="usa-hint">
+              <Trans i18nKey="FileUploader.filetypehint" />
+            </div>
+            <Accordion
+              items={[
+                {
+                  title: <Trans i18nKey={"Upload.filetips.title"} />,
+                  content: (
+                    <div>
+                      <span>
+                        <Trans i18nKey="Upload.filetips.accepts.title" />
+                      </span>
+                      <List
+                        i18nKey="Upload.filetips.accepts.items"
+                        type="unordered"
+                      />
+                      <span>
+                        <Trans i18nKey="Upload.filetips.format.title" />
+                      </span>
+                      <List
+                        i18nKey="Upload.filetips.format.items"
+                        type="unordered"
+                      />
+                      <span>
+                        <Trans i18nKey="Upload.filetips.email.title" />
+                      </span>
+                      <List
+                        i18nKey="Upload.filetips.email.items"
+                        type="ordered"
+                      />
+                    </div>
+                  ),
+                  id: "upload-tips-accordion",
+                  expanded: false,
+                  headingLevel: "h3",
+                },
+              ]}
+            />
+          </div>
+        </FileUploader>
         <Button type="submit" value="submit" name="action">
           Upload
         </Button>

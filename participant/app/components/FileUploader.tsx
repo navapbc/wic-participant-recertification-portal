@@ -1,5 +1,5 @@
 import { FormGroup, Label } from "@trussworks/react-uswds";
-import { FilePreview } from "app/components/internal/FilePreview";
+import { FilePreview } from "app/components/FilePreview";
 import { FileInput } from "app/components/internal/FileInput";
 import { Trans, useTranslation } from "react-i18next";
 import React, {
@@ -8,6 +8,7 @@ import React, {
   useImperativeHandle,
   useEffect,
   forwardRef,
+  ReactElement,
 } from "react";
 import type { i18nKey } from "~/types";
 import type { FileInputRef } from "app/components/internal/FileInput";
@@ -22,6 +23,7 @@ export type FileUploaderProps = {
   required?: boolean;
   maxFileSizeInBytes?: number;
   maxFileCount?: number;
+  children?: ReactElement;
 };
 
 export type FileState = {
@@ -45,6 +47,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
     required,
     maxFileSizeInBytes = 26_214_400,
     maxFileCount = 20,
+    children,
     ...inputProps
   },
   ref
@@ -87,6 +90,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
               <FilePreview
                 imageId={`preview-${index}`}
                 file={file}
+                name={file.name}
                 clickHandler={removeFile}
                 removeFileKey={`${labelKey}.removeFile`}
                 selectedKey={`${labelKey}.selected`}
@@ -159,6 +163,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
       : `${documentString} ${currentDocumentNumber + 1}`;
   return (
     <FormGroup>
+      {children}
       {previews}
       <Label htmlFor={id}>{currentDocumentString}</Label>
       {errorMessage && (

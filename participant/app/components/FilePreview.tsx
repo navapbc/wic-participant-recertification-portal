@@ -13,7 +13,7 @@
 import React, { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import classNames from "classnames";
-import type { i18nKey } from "~/types";
+import type { i18nKey } from "app/types";
 import { useTranslation } from "react-i18next";
 /** Moving the SPACER_GIF definition here instead of the constants.ts file,
  * as webpack was exporting that entire file, including use of the File
@@ -24,7 +24,8 @@ const SPACER_GIF =
 
 export type FilePreviewProps = {
   imageId: string;
-  file: File;
+  file: File | Blob | string;
+  name: string;
   clickHandler: Function;
   removeFileKey: i18nKey;
   selectedKey: i18nKey;
@@ -35,6 +36,7 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
   const {
     imageId,
     file,
+    name,
     clickHandler,
     removeFileKey,
     selectedKey,
@@ -47,12 +49,15 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const imgSrc = URL.createObjectURL(file);
+    let imgSrc;
+    if (typeof file === "string") {
+      imgSrc = file;
+    } else {
+      imgSrc = URL.createObjectURL(file);
+    }
     setIsLoading(false);
     setPreviewSrc(imgSrc);
   }, [file]);
-
-  const { name } = file;
 
   const onImageError = (): void => {
     setPreviewSrc(SPACER_GIF);

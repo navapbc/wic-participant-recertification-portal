@@ -117,11 +117,12 @@
   "FileUploader": {
     "removeFile": "Remove File",
     "selected": "Selected file",
-    "label": "Upload files",
+    "label": "Upload documents",
     "document": "Document",
     "ifNeeded": "(if needed)",
     "noFiles": "Choose or drag a file to upload",
     "additionalFiles": "Choose or drag another file to upload",
+    "filetypehint": "You can select a PDF, JPEG, PNG, or GIF file.",
     "altText": "Image preview for",
     "fileTypeError": "This is not a valid file type.",
     "fileSizeError": "This file is over the maximum size",
@@ -137,7 +138,72 @@
     "other": "Other"
   },
   "Upload": {
-    "title": "You need to upload documents."
+    "title": "You need to upload documents.",
+    "address": {
+      "label": "Proof of address",
+      "heading": "Documents that show your address include:",
+      "examples": [
+        "Utility or phone bill",
+        "Driver's license or ID card with current address",
+        "Paystub with address",
+        "Lease or mortgage statement",
+        "Tribal ID Card or Tribal Enrollment Letter"
+      ]
+    },
+    "identity": {
+      "label": "Proof of identity",
+      "heading": "Documents that show identity include:",
+      "examples": [
+        "Birth Certificate",
+        "Passport or Green Card",
+        "Driver's License or ID card",
+        "Insurance Card",
+        "Tribal ID Card or Tribal Enrollment Letter",
+        "Public assistance card or eligibility letter (Medicaid, HMK Plus, SNAP or TANF)",
+        "For infants and children: Certificate of Live Birth, Crib Card, Hospital Identification (bracelet)"
+      ]
+    },
+    "income": {
+      "label": "Proof of income",
+      "hint": "Upload proof of income for each member of your household that earns money.",
+      "heading": "Documents that show income include:",
+      "examples": [
+        "Pay stubs from the past 60 days",
+        "Most recent tax return",
+        "Award letter from unemployment, SSI, etc",
+        "Child support payments"
+      ]
+    },
+    "previouslyuploaded": {
+      "filepreview": {
+        "selected": "Previously uploaded file",
+        "removeFile": "Remove File",
+        "altText": "Image preview for"
+      },
+      "label": "These are files you submitted previously:"
+    },
+    "filetips": {
+      "title": "Tips for uploading images or PDFs",
+      "accepts": {
+        "title": "This website only accepts:",
+        "items": ["PDF documents", "Images (.jpg, .jpeg, .png, .tiff, .heic)"]
+      },
+      "format": {
+        "title": "If your file is not in one of these formats, try one of the following:",
+        "items": [
+          "Take a picture of the document",
+          "Take a screenshot of the document",
+          "Save the document as a PDF or image, and try uploading again"
+        ]
+      },
+      "email": {
+        "title": "If your document is attached to an email:",
+        "items": [
+          "Open the file on your computer or phone",
+          "Save it as a PDF or image, and try uploading again"
+        ]
+      }
+    }
   },
   "asterisk": "All required questions are marked with an asterisk",
   "routingError": "Some required responses are missing. Please go back through the form and answer all required questions."

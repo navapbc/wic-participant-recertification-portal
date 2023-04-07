@@ -18,6 +18,11 @@
     "legend": "Date of Birth",
     "hintDMY": "For Example: 28 4 1986"
   },
+  "filepreview": {
+    "altText": "Image preview for",
+    "selected": "Selected file",
+    "removeFile": "Remove File"
+  },
   "fileuploader": {
     "removeFile": "Remove File",
     "selected": "Selected file",
