@@ -35,15 +35,15 @@ const submissionsData = {
         count: {
           householdSize: 1,
         },
-        details: {
-          1: {
+        details: [
+          {
             relationship: "child",
             firstName: "Mandy",
             lastName: "Cho",
             dateOfBirth: "04/02/2022",
             adjunctive: "fdpir",
           },
-        },
+        ],
         contact: {
           phoneNumber: "(406) 987 - 6543",
           updates: "",
@@ -55,6 +55,41 @@ const submissionsData = {
         ],
       },
     },
+    {
+      submissionId: uuidv4(),
+      forms: {
+        name: {
+          firstName: "Elizabeth",
+          lastName: "Schneider",
+          preferredName: "Liz"
+        },
+        changes: {
+          idChange: "no",
+          addressChange: "no",
+        },
+        details: [
+          {
+            relationship: "self",
+            firstName: "Elizabeth",
+            lastName: "Schneider",
+            preferredName: "Liz",
+            dateOfBirth: "11/21/1990",
+            adjunctive: "",
+          },
+          {
+            relationship: "child",
+            firstName: "Seth",
+            lastName: "Schneider",
+            dateOfBirth: "02/23/2023",
+            adjunctive: "",
+          },
+        ],
+        contact: {
+          phoneNumber: "(406) 321 - 7654",
+          updates: "Seth is healthy and spirited! But I’m having issues with latching."
+        }
+      }
+    }
   ],
   missoula: [],
 };

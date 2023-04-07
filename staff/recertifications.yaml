@@ -1,0 +1,180 @@
+id: recertifications # Lowdefy page ID
+type: PageHeaderMenu # Lowdefy page type
+
+requests: # Requests defines all the data requests made available in this page context
+  - id: get_data # Request ID
+    type: KnexRaw # The type of request. Lowdefy uses Knex to talk to Postgresql. The particular request type for `get_id` is the KnexRaw flavor, as opposed to KnexBuilder
+    connectionId: postgres # This is the ID of the connection. The connection itself is defined in `lowdefy.yml`
+    properties:
+      # query: SELECT * FROM submission_forms GROUP_BY submission_id; # The sql query being sent to postgres
+      # query: select format('%s %s', form_data->>'firstName', form_data->>'lastName') as contact_person from submission_forms;
+      query: select jsonb_object_agg(sf.form_route, sf.form_data) as form_data,  
+          s.updated_at, 
+          la.name as agency_name
+        from submissions s
+        left join submission_forms sf on (s.submission_id = sf.submission_id)
+        left join local_agencies la on (s.local_agency_id = la.local_agency_id)
+        group by sf.submission_id, s.updated_at, la.name;
+
+events:
+  onInitAsync: # A list of actions that gets completed each time a user visits this page
+    - id: fetch_data
+      type: Request
+      params: get_data # Execute the `get_data` request
+    # - id: auto_size
+    #   type: CallMethod
+    #   params:
+    #     blockId: table
+    #     method: autoSize
+
+blocks:
+  - id: Size To Fit
+    type: Button
+    events:
+      onClick:
+        - id: download
+          type: CallMethod
+          params:
+            blockId: table
+            method: sizeColumnsToFit
+  - id: table
+    type: AgGridAlpine # A supporting component type that uses https://www.ag-grid.com
+    events:
+      onMountAsync:
+        - id: size
+          type: CallMethod
+          params:
+            blockId: table
+            method: sizeColumnsToFit
+    properties:
+      rowData:
+        _request: get_data.rows # Send all the data returned by the query `get_data`
+      defaultColDef: # The table columns are sortable, resizable, and filterable
+        sortable: true
+        resizable: true
+        filter: true
+      autoSize: 
+        - skipHeader: true
+      columnDefs: # Define each table column
+        - headerName: Submission date
+          field: created_at # The returned data field name
+          valueFormatter:
+            _function:
+              __format.intlDateTimeFormat: # Use date time formatting https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+                on:
+                  __args: 0.value
+                params:
+                  options:
+                    dateStyle: 'short'
+                    timeStyle: 'long'
+        - headerName: Contact person
+          field: form_data
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="contact">
+                    <div class="name">{{ name.firstName }} {{ name.lastName }}</div>
+                    <div class="phone">{{ contact.phoneNumber }}</div>
+                  </div>
+                on:
+                  __args: 0.value
+          wrapText: true
+        - headerName: WIC Participant(s)
+          field: form_data
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  {% for participant in details %}
+                    <div class="participant">              
+                      <div class="name">{{ participant.firstName }} {{ participant.lastName }}</div>
+                      <ul>
+                        <li class="relationship">Relationship to contact person:
+                          {% if participant.relationship == "self" %}
+                            Self
+                          {% elif participant.relationship == "child" %}
+                            Child
+                          {% elif participant.relationship == "grandchild" %}
+                            Grandchild
+                          {% elif participant.relationship == "foster" %}
+                            Foster child
+                          {% else %}
+                            Other
+                          {% endif %}
+                        </li>
+                        <li class="date-of-birth">Date of birth: {{ participant.dateOfBirth }}</li>
+                        <li class="adjunctive">Adjunctive eligibility:
+                          {% if participant.adjunctive != "" %}
+                            Yes
+                          {% else %}
+                            No
+                          {% endif %}                          
+                        </li>
+                      </ul>
+                    </div>
+                  {% endfor %}
+                on:
+                  __args: 0.value
+          autoHeight: true
+          wrapText: true
+        - headerName: Household changes
+          field: form_data
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="changes">
+                    <div class="id-change">Name change or expired ID doc: 
+                      {% if changes.idChange == "yes" %}
+                        Yes
+                      {% else %}
+                        No
+                      {% endif %}
+                    </div>
+                    <div class="address-change">Moved: 
+                      {% if changes.addressChange == "yes" %}
+                        Yes
+                      {% else %}
+                        No
+                      {% endif %}
+                    </div>
+                  </div>
+                on:
+                  __args: 0.value
+          autoHeight: true
+          wrapText: true
+        - headerName: Documents
+          field: form_data
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="documents">
+                    {% if documents %}
+                      Documents go here
+                    {% else %}
+                      No documents required
+                    {% endif %}
+                  </div>
+                on:
+                  __args: 0.value
+        - headerName: Updates from participant
+          field: form_data
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="notes">
+                    {% if contact.updates == "" %}
+                      No updates provided
+                    {% else %}
+                      {{ contact.updates }}
+                    {% endif %}
+                  </div>
+                on:
+                  __args: 0.value
+          autoHeight: true
+          wrapText: true
+
+
