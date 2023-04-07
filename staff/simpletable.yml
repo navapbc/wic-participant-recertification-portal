@@ -1,0 +1,29 @@
+id: test # Lowdefy page ID
+type: PageHeaderMenu # Lowdefy page type
+
+blocks:
+  - id: table
+    type: AgGridAlpine # A supporting component type that uses https://www.ag-grid.com
+    properties:
+      rowData:
+        - title: One more thing
+          year: 2010
+          viewerReviews: 30
+        - title: Two stuff
+          year: 2011
+          viewerReviews: 20
+      defaultColDef: # The table columns are sortable, resizable, and filterable
+        sortable: true
+        resizable: true
+        filter: true
+      columnDefs:
+        - headerName: Title
+          field: title
+  - id: testwhy
+    type: Paragraph
+    properties:
+      content: >-
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat.
