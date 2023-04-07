@@ -7,6 +7,7 @@
     "dev": "run-s dev:startdb css dev:remix",
     "dev:docker": "npm install && run-s css dev:remix",
     "dev:remix": "remix dev",
+    "dev:starts3": "docker compose up s3_local --wait",
     "dev:startdb": "docker compose up postgres --wait && npx prisma db push && npx prisma db seed",
     "css": "run-s css:build css:post",
     "css:build": "sass -I ./styles -I ./node_modules/@uswds -I ./node_modules/@uswds/uswds/packages styles:app/styles/unprefixed --style compressed",
@@ -22,7 +23,8 @@
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook",
     "storybook:docker": "docker compose up -d remix_dev && docker compose exec remix_dev npm run storybook",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "chromatic": "npx chromatic --project-token f2d5a7998246"
   },
   "browserslist": [
     "defaults"

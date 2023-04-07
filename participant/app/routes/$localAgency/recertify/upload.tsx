@@ -41,6 +41,11 @@ export const loader: LoaderFunction = async ({
     return redirect(returnToChanges);
   }
   const proofRequired = determineProof(existingChangesData);
+  if (proofRequired.length == 0) {
+    const skipToContact = routeRelative(request, "contact");
+    console.log(`No proof required; routing to ${skipToContact}`);
+    return redirect(skipToContact);
+  }
   return json(
     {
       submissionID: submissionID,
