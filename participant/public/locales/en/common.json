@@ -165,8 +165,7 @@
     },
     "income": {
       "label": "Proof of income",
-      "hint": "Upload proof of income for each member of your household that earns money.",
-      "heading": "Documents that show income include:",
+      "heading": "<p>Upload proof of income for each member of your household that earns money.</p><p>Documents that show income include:</p>",
       "examples": [
         "Pay stubs from the past 60 days",
         "Most recent tax return",

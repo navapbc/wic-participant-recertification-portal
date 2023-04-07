@@ -30,6 +30,7 @@ export function useLoaderData<T>() {
   return {
     // Insert your useLoaderData variable names / values here
     participantCount: 2,
+    proofRequired: ["address", "identity", "income"],
   };
 }
 

@@ -1,3 +1,5 @@
+import React, { ReactElement } from "react";
+
 import { FileUploader } from "~/components/FileUploader";
 import type {
   FileUploaderProps,
@@ -5,13 +7,52 @@ import type {
 } from "~/components/FileUploader";
 
 import { Accordion, Button } from "@trussworks/react-uswds";
-import { Form } from "@remix-run/react";
-import { unstable_parseMultipartFormData as parseMultipartFormData } from "@remix-run/server-runtime";
+import { Form, Params, useLoaderData } from "@remix-run/react";
+import {
+  LoaderFunction,
+  json,
+  unstable_parseMultipartFormData as parseMultipartFormData,
+  redirect,
+} from "@remix-run/server-runtime";
 import type { UploadHandler } from "@remix-run/server-runtime";
 import { useRef } from "react";
 import { useSubmit } from "@remix-run/react";
 import { Trans, useTranslation } from "react-i18next";
-import List from "~/components/List";
+import { List } from "~/components/List";
+import { cookieParser } from "~/cookies.server";
+import { findSubmissionFormData } from "~/utils/db.server";
+import type { ChangesData, Proofs } from "~/types";
+import { determineProof } from "~/utils/determineProof";
+import { routeRelative } from "~/utils/routing";
+
+export const loader: LoaderFunction = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: Params<string>;
+}) => {
+  const { submissionID, headers } = await cookieParser(request, params);
+  const existingChangesData = (await findSubmissionFormData(
+    submissionID,
+    "changes"
+  )) as ChangesData;
+  if (!existingChangesData) {
+    const returnToChanges = routeRelative(request, "changes");
+    console.log(`No changes data; returning to ${returnToChanges}`);
+    return redirect(returnToChanges);
+  }
+  const proofRequired = determineProof(existingChangesData);
+  return json(
+    {
+      submissionID: submissionID,
+      proofRequired: proofRequired,
+    },
+    { headers: headers }
+  );
+};
+
+type loaderData = Awaited<ReturnType<typeof loader>>;
 
 export const action = async ({ request }: { request: Request }) => {
   const uploadHandler: UploadHandler = async ({
@@ -37,9 +78,28 @@ export const action = async ({ request }: { request: Request }) => {
   return null;
 };
 
+const buildDocumentHelp = (proofRequired: Proofs[]) => {
+  const allProofs: Proofs[] = ["address", "identity", "income"];
+  return allProofs.map((value) => {
+    if (proofRequired.includes(value)) {
+      return (
+        <div>
+          <h2>
+            <Trans i18nKey={`Upload.${value}.label`} />
+          </h2>
+          <div>
+            <Trans i18nKey={`Upload.${value}.heading`} />
+          </div>
+          <List i18nKey={`Upload.${value}.examples`} type="unordered" />
+        </div>
+      );
+    }
+  });
+};
+
 export default function Upload() {
   const { t } = useTranslation();
-
+  const { proofRequired } = useLoaderData<loaderData>();
   const defaultProps: FileUploaderProps = {
     id: "file-input-documents",
     name: "documents",
@@ -48,6 +108,8 @@ export default function Upload() {
     maxFileCount: 20,
     maxFileSizeInBytes: 5_242_880,
   };
+  const documentProofElements = buildDocumentHelp(proofRequired);
+
   const fileInputRef = useRef<FileInputRef>(null);
   const formSubmit = useSubmit();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -63,6 +125,7 @@ export default function Upload() {
   return (
     <div>
       <h1>{t("Upload.title")}</h1>
+      {documentProofElements}
       <Form
         method="post"
         id="uploadForm"
