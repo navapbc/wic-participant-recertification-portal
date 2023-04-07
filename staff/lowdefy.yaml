@@ -1,6 +1,11 @@
 lowdefy: 3.23.3
 name: WIC Staff Portal
 
+app:
+  html:
+    appendHead:
+      _ref: public/header.html
+
 cli:
   disableTelemetry: true
 
