@@ -3,17 +3,9 @@ type: PageHeaderMenu # Lowdefy page type
 
 requests: # Requests defines all the data requests made available in this page context
   - id: get_data # Request ID
-    type: KnexRaw # The type of request. Lowdefy uses Knex to talk to Postgresql. The particular request type for `get_id` is the KnexRaw flavor, as opposed to KnexBuilder
+    type: KnexRaw # The type of request. Lowdefy uses Knex to talk to Postgresql
     connectionId: postgres # This is the ID of the connection. The connection itself is defined in `lowdefy.yml`
     properties:
-      # query: SELECT * FROM submission_forms GROUP_BY submission_id; # The sql query being sent to postgres
-      # query: select format('%s %s', form_data->>'firstName', form_data->>'lastName') as contact_person from submission_forms;
-      #       query: select s.updated_at, la.name as agency_name
-      # from submissions s
-      # left join submission_forms sf on (s.submission_id = sf.submission_id)
-      # left join local_agencies la on (s.local_agency_id = la.local_agency_id)
-      # group by sf.submission_id, s.updated_at, la.name;
-
       query: select jsonb_object_agg(sf.form_route, sf.form_data) as form_data,
         s.updated_at,
         la.name as agency_name
@@ -57,7 +49,7 @@ blocks:
     type: AgGridAlpine # A supporting component type that uses https://www.ag-grid.com
     properties:
       rowData:
-        _request: get_data.rows # Send all the data returned by the query `get_data`
+        _request: get_data.rows # Send all the data returned by the query `get_data`. KnexRaw requests need to call `rows`; KnexBuilder requests don't
       defaultColDef: # The table columns are sortable, resizable, and filterable
         sortable: true
         resizable: true
@@ -76,16 +68,25 @@ blocks:
         - headerName: Contact person
           valueGetter:
             _function:
-              - __args: 0.data.form_data.name.firstName
-              - __args: 0.data.form_data.name.lastName
-              - __args: 0.data.form_data.contact.phoneNumber
-              - __args: 0.data.agency_name
+              __string.concat:
+                - __args: 0.data.form_data.name.firstName
+                - " "
+                - __args: 0.data.form_data.name.lastName
+                - ", "
+                - __args: 0.data.form_data.contact.phoneNumber
+                - ", "
+                - __args: 0.data.agency_name
           cellRenderer:
             _function:
               __nunjucks:
                 template: |
                   <div class="contact">
-                    <div class="name">{{ form_data.name.firstName }} {{ form_data.name.lastName }}</div>
+                    <div class="name">
+                      {{ form_data.name.firstName }} {{ form_data.name.lastName }}
+                      {% if form_data.name.preferredName -%}
+                        ({{ form_data.name.preferredName }})
+                      {%- endif %}
+                    </div>
                     <div class="phone">{{ form_data.contact.phoneNumber }}</div>
                     <div class="local-agency">Agency: {{ agency_name }}</div>
                   </div>
@@ -113,7 +114,12 @@ blocks:
                 template: |
                   {% for participant in details %}
                     <div class="participant">
-                      <div class="name">{{ participant.firstName }} {{ participant.lastName }}</div>
+                      <div class="name">
+                        {{ participant.firstName }} {{ participant.lastName }}
+                        {% if participant.preferredName -%}
+                          ({{ participant.preferredName }})
+                        {%- endif %}
+                      </div>
                       <ul>
                         <li class="relationship">Relationship to contact person:
                           {% if participant.relationship == "self" %}
@@ -147,28 +153,21 @@ blocks:
           field: form_data
           valueGetter:
             _function:
-              - "Name change or expired ID doc"
-              - __args: 0.data.form_data.changes.idChange
-              - "Moved"
-              - __args: 0.data.form_data.changes.addressChange
+              __string.concat:
+                - "Name change or expired ID doc: "
+                - __args: 0.data.form_data.changes.idChange
+                - ", Moved: "
+                - __args: 0.data.form_data.changes.addressChange
           cellRenderer:
             _function:
               __nunjucks:
                 template: |
                   <div class="changes">
                     <div class="id-change">Name change or expired ID doc:
-                      {% if changes.idChange == "yes" %}
-                        Yes
-                      {% else %}
-                        No
-                      {% endif %}
+                      {{ changes.idChange | title }}
                     </div>
                     <div class="address-change">Moved:
-                      {% if changes.addressChange == "yes" %}
-                        Yes
-                      {% else %}
-                        No
-                      {% endif %}
+                      {{ changes.addressChange | title }}
                     </div>
                   </div>
                 on:
