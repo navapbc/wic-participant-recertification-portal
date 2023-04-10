@@ -25,9 +25,8 @@ services:
       timeout: 5s
       retries: 20
     networks:
-      - participant_portal-e2e
+      - participant_portal-e2e # Create a remix server to run e2e tests against
 
-  # Create a remix server to run e2e tests against
   app-e2e:
     build:
       # This target includes entrypoint-e2e.sh which will force reset the prisma migrations
@@ -37,8 +36,11 @@ services:
     depends_on:
       database-e2e:
         condition: service_healthy
+      s3_local-e2e:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
+      S3_ENDPOINT_URL: http://s3.localhost.localstack.cloud:4566
     # Check that the remix server is up and running
     healthcheck:
       test: "curl -f http://localhost:3000/healthcheck || exit 1"
@@ -50,6 +52,26 @@ services:
     # Expose a port in case it's useful for debugging
     ports:
       - 3000:3000
+
+  # Create an S3 Localstack server for e2e tests
+  s3_local-e2e:
+    image: localstack/localstack:latest
+    environment:
+      SERVICES: s3
+      AWS_DEFAULT_REGION: us-west-2
+      DATA_DIR: /tmp/localstack/data
+      S3_DIR: /tmp/localstack/s3
+    healthcheck:
+      test: "curl -f http://localhost.localstack.cloud:4566/_localstack/health || exit 1"
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5566:4566"
+    networks:
+      participant_portal-e2e:
+        aliases:
+          - s3.localhost.localstack.cloud
+          - participant-uploads.localhost.localstack.cloud
 
   # Create the playwright container
   playwright:

@@ -12,4 +12,5 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     console.log(`Redirecting to recertify ${redirectTarget}`);
     throw redirect(redirectTarget);
   }
+  return null;
 };

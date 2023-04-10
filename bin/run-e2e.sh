@@ -16,6 +16,9 @@ if [[ "test" == $COMMAND ]]; then
   # Start the database and wait until it's ready
   echo "Starting database..."
   docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
+  # Start the S3 local server and wait until it's ready
+  echo "Starting S3 Localstack..."
+  docker compose -f docker-compose.e2e.yml up --build --wait s3_local-e2e
   # Start the application and wait until it's ready
   echo "Starting app to test against..."
   docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
@@ -29,6 +32,9 @@ if [[ "update" == $COMMAND ]]; then
   # Start the database and wait until it's ready
   echo "Starting database..."
   docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
+  # Start the S3 local server and wait until it's ready
+  echo "Starting S3 Localstack..."
+  docker compose -f docker-compose.e2e.yml up --build --wait s3_local-e2e
   # Start the application and wait until it's ready
   echo "Starting app to test against..."
   docker compose -f docker-compose.e2e.yml up --build --wait app-e2e

@@ -27,6 +27,7 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+      S3_ENDPOINT_URL: s3.localhost.localstack.cloud:4566
     init: true
     ports:
       - "3003:3000"
@@ -64,6 +65,11 @@ services:
       - "4566:4566"
     volumes:
       - "./mock_s3:/tmp/localstack/s3"
+    networks:
+      default:
+        aliases:
+          - s3.localhost.localstack.cloud
+          - participant-uploads.localhost.localstack.cloud
 
 volumes:
   remix_dev_nodemodules:

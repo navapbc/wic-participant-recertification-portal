@@ -22,6 +22,7 @@ import { findSubmissionFormData } from "app/utils/db.server";
 import type { ChangesData, Proofs } from "app/types";
 import { determineProof } from "app/utils/determineProof";
 import { routeRelative } from "app/utils/routing";
+import { uploadStreamToS3, getURLFromS3 } from "app/utils/s3.server";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -70,7 +71,9 @@ export const action = async ({ request }: { request: Request }) => {
     console.log(
       `NAME ${name} FILENAME ${filename} CONTENT TYPE ${contentType}`
     );
-    return filename;
+    const fileLocation = await uploadStreamToS3(data, filename!);
+    console.log(`FILENAME ${filename} uploaded to ${fileLocation}`);
+    return fileLocation;
   };
 
   const formData = await parseMultipartFormData(request, uploadHandler);

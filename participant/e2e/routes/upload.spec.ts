@@ -4,6 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { readFileSync, writeFileSync } from "fs";
 import imgGen from "js-image-generator";
 import { fileSync } from "tmp";
+import { fillChangesForm } from "../helpers/formFillers";
 
 const getFileFormImage = (name: string) => {
   return {
@@ -16,20 +17,20 @@ const getFileFormImage = (name: string) => {
 test("upload has no automatically detectable accessibility errors", async ({
   page,
 }) => {
-  await page.goto("/gallatin/recertify/upload");
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
 test("has title", async ({ page }) => {
-  await page.goto("/gallatin/recertify/upload");
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   // Expect a title "to contain" a correct page title.
   await expect(page).toHaveTitle(/You need to upload documents./);
   await expect(page).toHaveScreenshot();
 });
 
 test("add one image file", async ({ page }) => {
-  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const file = getFileFormImage("test-img.jpg");
   const uploadBox = page.locator("input[type='file']");
   await uploadBox.setInputFiles([file]);
@@ -38,7 +39,7 @@ test("add one image file", async ({ page }) => {
 });
 
 test("add TWO image files", async ({ page }) => {
-  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const fileOne = getFileFormImage("test-img.jpg");
   const fileTwo = getFileFormImage("test-img-2.jpg");
   const uploadBox = page.locator("input[type='file']");
@@ -51,7 +52,7 @@ test("add TWO image files", async ({ page }) => {
 });
 
 test("add TWO image files, then remove them", async ({ page }) => {
-  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const fileOne = getFileFormImage("test-img.jpg");
   const fileTwo = getFileFormImage("test-img-2.jpg");
   const uploadBox = page.locator("input[type='file']");
@@ -73,7 +74,7 @@ test("add TWO image files, then remove them", async ({ page }) => {
 });
 
 test("max out file count", async ({ page }) => {
-  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const uploadBox = page.locator("input[type='file']");
   for (let fileNum = 0; fileNum < 20; fileNum++) {
     const fileName = `test-${fileNum}.jpg`;
@@ -96,7 +97,7 @@ test("max out file count", async ({ page }) => {
 });
 
 test("a large image is rejected", async ({ page }) => {
-  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const uploadBox = page.locator("input[type='file']");
   const tmpFile = fileSync();
   imgGen.generateImage(3000, 2000, 100, function (err, image) {
@@ -115,7 +116,7 @@ test("a large image is rejected", async ({ page }) => {
 });
 
 test("an unacceptable file is un-accepted", async ({ page }) => {
-  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const uploadBox = page.locator("input[type='file']");
   const badFile = {
     name: "badFile.ts",
