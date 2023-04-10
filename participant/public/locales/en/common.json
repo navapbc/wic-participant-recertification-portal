@@ -1,4 +1,21 @@
 {
+  "About": {
+    "title": "How it works",
+    "note": "Note: This form does not guarantee your enrollment in WIC. Your eligibility will be confirmed when you have your recertification appointment with WIC.",
+    "button": "Continue",
+    "answer": {
+      "body": "We only need to collect information about WIC participants who have a recertification appointment.",
+      "header": "Answer questions about who is recertifying in your household"
+    },
+    "upload": {
+      "body": "We will help you figure out which ones you need. If you usually have to show income information, like paystubs or tax returns, have those documents accessible before you start.",
+      "header": "Upload any needed documents"
+    },
+    "appointment": {
+      "body": "Your local WIC clinic staff will confirm the information and documents you sent.",
+      "header": "Later, attend your recertification appointment"
+    }
+  },
   "AdjunctiveEligibility": {
     "label": "Are they enrolled in any of these programs?",
     "programs": [
@@ -9,6 +26,22 @@
     ],
     "yes": "Yes",
     "no": "No"
+  },
+  "Changes": {
+    "title": "Household changes",
+    "nameIdQuestion": {
+      "situations": [
+        "Name change",
+        "The ID document shared previously with WIC has expired"
+      ],
+      "legend": "Have you or any WIC participants in your household experienced any of these situations in the past year?"
+    },
+    "moveQuestion": {
+      "legend": "Have you moved in the past year?"
+    },
+    "yesAnswer": "Yes",
+    "noAnswer": "No",
+    "button": "Continue"
   },
   "Count": {
     "title": "Who in your household is recertifying?",
@@ -27,12 +60,14 @@
   "Demo": {
     "alertText": "This site is a demonstration project and for example purposes only"
   },
-  "Detail": {
+  "Details": {
     "participantCard": {
       "cardHeader": "Participant",
-      "cardFooter": "Add another participant?"
+      "cardFooter": "Remove Participant #"
     },
-    "button": "Continue"
+    "button": "Continue",
+    "intro": "Reminder: We only need to collect information about WIC participants who have a recertification appointment.",
+    "title": "Tell us about who you're recertifying for"
   },
   "DateOfBirth": {
     "month": "Month",
@@ -46,29 +81,14 @@
     "button": "Get started",
     "eligible": "You can fill out this form if:",
     "intro": "You can now prepare for your recertification appointment with your local Montana WIC clinic.",
-    "ifLink": "You have received this link from your local WIC clinic.",
-    "ifReceivesWIC": "You or someone in your household currently receives WIC benefits.",
-    "ifThirtyDays": "You or someone in your household is eligible for a recertification in the next 30 days.",
+    "ifList": [
+      "You have received this link from your local WIC clinic.",
+      "You or someone in your household currently receives WIC benefits.",
+      "You or someone in your household is eligible for a recertification in the next 30 days."
+    ],
     "note": "Not all WIC households can use this form. If you do not have a permanent address, if nobody in your household earns money, or if you do not have identity documents, then you cannot use this form ahead of your recertification appointment.",
     "time": "This form should take about 15 minutes to complete.",
     "title": "Start your recertification for Montana WIC"
-  },
-  "About": {
-    "title": "How it works",
-    "note": "Note: This form does not guarantee your enrollment in WIC. Your eligibility will be confirmed when you have your recertification appointment with WIC.",
-    "button": "Continue",
-    "answer": {
-      "body": "We only need to collect information about WIC participants who have a recertification appointment.",
-      "header": "Answer questions about who is recertifying in your household"
-    },
-    "upload": {
-      "body": "We will help you figure out which ones you need. If you usually have to show income information, like paystubs or tax returns, have those documents accessible before you start.",
-      "header": "Upload any needed documents"
-    },
-    "appointment": {
-      "body": "Your local WIC clinic staff will confirm the information and documents you sent.",
-      "header": "Later, attend your recertification appointment"
-    }
   },
   "Layout": {
     "footer1": {
@@ -81,12 +101,10 @@
       ],
       "text": "This institution is an equal opportunity provider. <0>USDA Non-Discrimination Statement</0>"
     },
-    "header": "Montana WIC<br />Recertification Portal"
+    "header": "Montana WIC Recertification Portal"
   },
   "Name": {
     "title": "What's your name?",
-    "intro": "Why are we asking this?",
-    "body": "Staff collect the information for authorized representatives and check to make sure the authorized representative is on the child's chart",
     "button": "Continue"
   },
   "NameInput": {
@@ -96,6 +114,20 @@
     "legend": "What's your name?",
     "preferred": "Preferred name (optional)"
   },
+  "FileUploader": {
+    "removeFile": "Remove File",
+    "selected": "Selected file",
+    "label": "Upload files",
+    "document": "Document",
+    "ifNeeded": "(if needed)",
+    "noFiles": "Choose or drag a file to upload",
+    "additionalFiles": "Choose or drag another file to upload",
+    "altText": "Image preview for",
+    "fileTypeError": "This is not a valid file type.",
+    "fileSizeError": "This file is over the maximum size",
+    "fileCountError": "You have reached the maximum number of files; please remove files before adding additional files",
+    "noScriptMessage": "File previews will not work with JavaScript disabled, but you may still upload files"
+  },
   "Relationship": {
     "label": "Relationship to you",
     "self": "Self",
@@ -104,5 +136,9 @@
     "foster": "Foster child",
     "other": "Other"
   },
+  "Upload": {
+    "title": "You need to upload documents."
+  },
+  "asterisk": "All required questions are marked with an asterisk",
   "routingError": "Some required responses are missing. Please go back through the form and answer all required questions."
 }

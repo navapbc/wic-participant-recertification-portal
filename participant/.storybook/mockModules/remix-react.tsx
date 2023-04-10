@@ -6,7 +6,6 @@ export {
   useLocation,
   useCatch,
   useTransition,
-  useSubmit,
   useMatches,
 } from "../../node_modules/@remix-run/react";
 import { FormProps } from "../../node_modules/@remix-run/react";
@@ -17,6 +16,9 @@ import { ReactElement } from "react";
 // ALL useActionData calls in all routes rendered in Storybook
 // receive the contents of this response
 export const useActionData = () => {};
+
+// Can't use a real submit hook in Storybook
+export const useSubmit = () => {};
 
 // There are almost certainly more elegant or flexible solutions
 // to providing loader data to pages in Storybook, but I

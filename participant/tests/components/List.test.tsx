@@ -4,8 +4,8 @@ import { List } from "app/components/List";
 import type { ListProps } from "app/components/List";
 
 const defaultProps: ListProps = {
-  listKeys: ["list-a", "list-b", "list-c"],
-  ordered: false,
+  i18nKey: "test:list.listItems",
+  type: "unordered",
   unstyled: false,
 };
 
@@ -16,7 +16,7 @@ it("renders list component", () => {
 
 it("renders as an ordered list", () => {
   const { container } = renderWithRouter(
-    <List {...defaultProps} ordered={true} />
+    <List {...defaultProps} type="ordered" />
   );
   expect(container).toMatchSnapshot();
 });

@@ -2,8 +2,8 @@ import { createCookie } from "@remix-run/node"; // or "@remix-run/cloudflare"
 import type { Params } from "@remix-run/react";
 import { redirect } from "react-router";
 import { v4 as uuidv4 } from "uuid";
-import { findSubmission, upsertSubmission } from "./utils/db.server";
-import { validRoute } from "./utils/redirect";
+import { findSubmission, upsertSubmission } from "app/utils/db.server";
+import { validRoute } from "app/utils/redirect";
 const MAX_SESSION_SECONDS = Number(process.env.MAX_SESSION_SECONDS) || 1800;
 
 type ParticipantCookieContents = {

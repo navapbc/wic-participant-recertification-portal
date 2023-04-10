@@ -5,7 +5,7 @@ import type { Params } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import { cookieParser } from "app/cookies.server";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -26,20 +26,21 @@ export const loader: LoaderFunction = async ({
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 export default function Index() {
-  const { t } = useTranslation();
   const { submissionID } = useLoaderData<loaderData>();
 
   return (
     <div>
-      <h1>{t("Intro.title")}</h1>
-      <div className="font-sans-lg">
+      <h1>
+        <Trans i18nKey="Intro.title" />
+      </h1>
+      <div className="intro">
         <Trans i18nKey="Intro.intro" />
       </div>
       <div>
         <Trans i18nKey="Intro.body" />
       </div>
       <Button className="display-block margin-top-6" type="button">
-        {t("Intro.button")}
+        <Trans i18nKey="Intro.button" />
       </Button>
     </div>
   );

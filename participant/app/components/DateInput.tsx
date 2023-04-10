@@ -4,6 +4,7 @@ import {
   Fieldset,
   DateInputGroup,
 } from "@trussworks/react-uswds";
+import Required from "app/components/Required";
 import type { i18nKey, legendStyleType } from "~/types";
 import { Trans, useTranslation } from "react-i18next";
 
@@ -17,6 +18,7 @@ export type DateInputProps = {
   legendKey: i18nKey;
   legendStyle?: legendStyleType;
   hint?: boolean;
+  required?: boolean;
 };
 
 export const DateInput = (props: DateInputProps): ReactElement => {
@@ -28,8 +30,15 @@ export const DateInput = (props: DateInputProps): ReactElement => {
     legendStyle = "default",
     hint = false,
     DMYorder = false,
+    required = false,
   } = props;
   const { t } = useTranslation();
+  const legendElement = (
+    <div>
+      <Trans i18nKey={legendKey} />
+      {required ? <Required /> : ""}
+    </div>
+  );
   const hintKey = DMYorder ? `${dateKey}.hintDMY` : `${dateKey}.hintMDY`;
   const hintElement =
     hint && t(hintKey) ? (
@@ -56,7 +65,7 @@ export const DateInput = (props: DateInputProps): ReactElement => {
     );
   });
   return (
-    <Fieldset legend={t(legendKey)} legendStyle={legendStyle}>
+    <Fieldset legend={legendElement} legendStyle={legendStyle}>
       {hintElement}
       <DateInputGroup>{orderedDateFields}</DateInputGroup>
     </Fieldset>

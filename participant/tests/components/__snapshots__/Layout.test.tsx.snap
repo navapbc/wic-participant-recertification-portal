@@ -22,9 +22,7 @@ exports[`should match snapshot 1`] = `
             <em
               class="usa-logo__text"
             >
-              Montana WIC
-              <br />
-              Recertification Portal
+              Montana WIC Recertification Portal
             </em>
           </em>
         </div>

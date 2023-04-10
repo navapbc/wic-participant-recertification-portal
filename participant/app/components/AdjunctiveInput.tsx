@@ -1,7 +1,8 @@
 import type { i18nKey } from "~/types";
 import type { ReactElement } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { ChoiceGroupInput } from "~/components/ChoiceGroupInput";
+import { List } from "app/components/List";
 import type {
   Choice,
   ChoiceGroupInputProps,
@@ -15,8 +16,6 @@ export type AdjunctiveInputProps = Omit<
 };
 
 export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
-  const { t } = useTranslation();
-
   const { name, adjunctiveKey, legendStyle, ...rest } = props;
   const adjunctiveChoices: Choice[] = [
     {
@@ -29,16 +28,8 @@ export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
     },
   ];
   // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion
-  const programList = t(`${adjunctiveKey}.programs`, {
-    returnObjects: true,
-  }) as Array<string>;
-  const helpElement = (
-    <ul>
-      {programList.map((item) => (
-        <li key={item}>{item}</li>
-      ))}
-    </ul>
-  );
+  const programListKey = `${adjunctiveKey}.programs`;
+  const helpElement = <List i18nKey={programListKey} type="unordered" />;
   return (
     <ChoiceGroupInput
       choices={adjunctiveChoices}

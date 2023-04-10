@@ -29,6 +29,7 @@ CMD ["npm", "run", "dev:docker"]
 # Provide an e2e image
 FROM dev as e2e
 ENTRYPOINT ["./entrypoint-e2e.sh"]
+RUN npm run css
 CMD ["npm", "run", "dev:docker"]
 
 # -------- Image: build -------- #

@@ -2,9 +2,6 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 
 const nameSchemaFactory = (idPrefix: string) => {
-  /* eslint-disable-rule @typescript-eslint/no-unused-vars
-     I do not understand why eslint thinks we're not using these vars
-  */
   const firstNameKey = `${idPrefix}-firstName`;
   const lastNameKey = `${idPrefix}-lastName`;
   const preferredNameKey = `${idPrefix}-preferredName`;
@@ -20,3 +17,14 @@ const nameSchemaFactory = (idPrefix: string) => {
 };
 
 export const representativeNameSchema = nameSchemaFactory("representative");
+
+export const changesSchema = zfd.formData({
+  idChange: zfd.text(z.enum(["yes", "no"])),
+  addressChange: zfd.text(z.enum(["yes", "no"])),
+});
+
+export const countSchema = zfd.formData({
+  householdSize: zfd.numeric(
+    z.number().min(1, { message: "You must recertify for at least one person" })
+  ),
+});

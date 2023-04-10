@@ -1,26 +1,36 @@
 import type { ReactElement } from "react";
 import type { i18nKey } from "app/types";
-import { Trans } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 
 export type ListProps = {
-  listKeys: i18nKey[];
-  ordered?: boolean;
+  i18nKey: i18nKey;
+  type: "ordered" | "unordered";
   unstyled?: boolean;
   className?: string;
 };
 
 export const List = (props: ListProps): ReactElement => {
-  const { listKeys, ordered = false, unstyled = false, className = "" } = props;
+  const { t } = useTranslation();
+
+  const {
+    i18nKey,
+    type = "unordered",
+    unstyled = false,
+    className = "",
+  } = props;
+  const listItems: string[] = t(i18nKey, {
+    returnObjects: true,
+  });
   const classNames = `usa-list ${
     unstyled ? "usa-list--unstyled" : ""
   } ${className}`;
-  const ListTag = ordered ? "ol" : "ul";
+  const ListTag = type == "ordered" ? "ol" : "ul";
 
   return (
     <ListTag className={classNames.trim()}>
-      {listKeys.map((key: string) => (
-        <li key={key}>
-          <Trans i18nKey={key} />
+      {listItems.map((item: string) => (
+        <li key={item}>
+          <Trans>{item}</Trans>
         </li>
       ))}
     </ListTag>
