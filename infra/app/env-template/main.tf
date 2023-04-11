@@ -15,17 +15,17 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  project_name                   = module.project_config.project_name
-  app_name                       = module.app_config.app_name
-  cluster_name                   = "${local.project_name}-${local.app_name}-${var.environment_name}"
-  participant_database_name      = "${local.project_name}-participant-${var.environment_name}"
-  participant_service_name       = "${local.project_name}-participant-${var.environment_name}"
-  participant_task_executor_name = "${local.participant_service_name}-task-executor"
-  staff_service_name             = "${local.project_name}-staff-${var.environment_name}"
-  staff_task_executor_name       = "${local.staff_service_name}-task-executor"
-  analytics_service_name         = "${local.project_name}-analytics-${var.environment_name}"
-  analytics_database_name        = "${local.project_name}-analytics-${var.environment_name}"
-  document_upload_s3_name        = "${local.project_name}-doc-upload-${var.environment_name}"
+  project_name                        = module.project_config.project_name
+  app_name                            = module.app_config.app_name
+  cluster_name                        = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  participant_database_name           = "${local.project_name}-participant-${var.environment_name}"
+  participant_service_name            = "${local.project_name}-participant-${var.environment_name}"
+  participant_task_executor_role_name = "${local.participant_service_name}-task-executor"
+  staff_service_name                  = "${local.project_name}-staff-${var.environment_name}"
+  staff_task_executor_role_name       = "${local.staff_service_name}-task-executor"
+  analytics_service_name              = "${local.project_name}-analytics-${var.environment_name}"
+  analytics_database_name             = "${local.project_name}-analytics-${var.environment_name}"
+  document_upload_s3_name             = "${local.project_name}-doc-upload-${var.environment_name}"
 }
 
 module "project_config" {
@@ -59,17 +59,18 @@ module "service_cluster" {
 }
 
 module "participant" {
-  source               = "../../modules/service"
-  service_name         = local.participant_service_name
-  image_repository_url = data.aws_ecr_repository.participant_image_repository.repository_url
-  image_repository_arn = data.aws_ecr_repository.participant_image_repository.arn
-  image_tag            = var.participant_image_tag
-  vpc_id               = data.aws_vpc.default.id
-  subnet_ids           = data.aws_subnets.default.ids
-  service_cluster_arn  = module.service_cluster.service_cluster_arn
-  container_port       = 3000
-  healthcheck_path     = "/healthcheck"
-  enable_exec          = var.participant_enable_exec
+  source                  = "../../modules/service"
+  service_name            = local.participant_service_name
+  image_repository_url    = data.aws_ecr_repository.participant_image_repository.repository_url
+  image_repository_arn    = data.aws_ecr_repository.participant_image_repository.arn
+  image_tag               = var.participant_image_tag
+  task_executor_role_name = var.participant_task_executor_role_name
+  vpc_id                  = data.aws_vpc.default.id
+  subnet_ids              = data.aws_subnets.default.ids
+  service_cluster_arn     = module.service_cluster.service_cluster_arn
+  container_port          = 3000
+  healthcheck_path        = "/healthcheck"
+  enable_exec             = var.participant_enable_exec
   container_secrets = [
     {
       name      = "DATABASE_URL",
@@ -104,16 +105,17 @@ module "participant" {
 }
 
 module "staff" {
-  source               = "../../modules/service"
-  service_name         = local.staff_service_name
-  image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
-  image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
-  image_tag            = var.staff_image_tag
-  vpc_id               = data.aws_vpc.default.id
-  subnet_ids           = data.aws_subnets.default.ids
-  service_cluster_arn  = module.service_cluster.service_cluster_arn
-  container_port       = 3000
-  enable_exec          = var.staff_enable_exec
+  source                  = "../../modules/service"
+  service_name            = local.staff_service_name
+  image_repository_url    = data.aws_ecr_repository.staff_image_repository.repository_url
+  image_repository_arn    = data.aws_ecr_repository.staff_image_repository.arn
+  image_tag               = var.staff_image_tag
+  task_executor_role_name = local.staff_task_executor_role_name
+  vpc_id                  = data.aws_vpc.default.id
+  subnet_ids              = data.aws_subnets.default.ids
+  service_cluster_arn     = module.service_cluster.service_cluster_arn
+  container_port          = 3000
+  enable_exec             = var.staff_enable_exec
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
@@ -137,7 +139,7 @@ module "analytics" {
   service_name         = local.analytics_service_name
   image_repository_url = data.aws_ecr_repository.analytics_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.analytics_image_repository.arn
-  image_tag            = var.analytics_image_tag
+  image_tag            = local.analytics_image_tag
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
@@ -182,7 +184,7 @@ module "doc_upload" {
   source            = "../../modules/s3-encrypted"
   environment_name  = var.environment_name
   s3_bucket_name    = local.document_upload_s3_name
-  read_role_names   = [local.participant_task_executor_name, local.staff_task_executor_name]
-  write_role_names  = [local.participant_task_executor_name]
+  read_role_names   = [local.participant_task_executor_role_name, local.staff_task_executor_role_name]
+  write_role_names  = [local.participant_task_executor_role_name]
   delete_role_names = []
 }

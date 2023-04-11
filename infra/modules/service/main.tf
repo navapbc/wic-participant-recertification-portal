@@ -8,7 +8,7 @@ locals {
   alb_name                = var.service_name
   log_group_name          = "service/${var.service_name}"
   task_role_name          = "${var.service_name}-task"
-  task_executor_role_name = "${var.service_name}-task-executor"
+  task_executor_role_name = var.task_executor_role_name != "" ? var.task_executor_role_name : "${var.service_name}-task-executor"
   image_url               = "${var.image_repository_url}:${var.image_tag}"
   healthcheck_path        = trimprefix(var.healthcheck_path, "/")
   define_ecs_task_role    = length(var.container_efs_volumes) > 0 || var.enable_exec
