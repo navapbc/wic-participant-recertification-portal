@@ -170,6 +170,10 @@ resource "aws_backup_plan" "database" {
     target_vault_name = "${var.database_name}-vault"
     schedule          = "cron(0 12 ? * SUN *)"
   }
+
+  depends_on = [
+    aws_backup_vault.database
+  ]
 }
 
 # KMS Key for the vault

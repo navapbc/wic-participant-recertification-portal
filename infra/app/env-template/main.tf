@@ -15,15 +15,17 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  project_name              = module.project_config.project_name
-  app_name                  = module.app_config.app_name
-  cluster_name              = "${local.project_name}-${local.app_name}-${var.environment_name}"
-  participant_database_name = "${local.project_name}-participant-${var.environment_name}"
-  participant_service_name  = "${local.project_name}-participant-${var.environment_name}"
-  staff_service_name        = "${local.project_name}-staff-${var.environment_name}"
-  analytics_service_name    = "${local.project_name}-analytics-${var.environment_name}"
-  analytics_database_name   = "${local.project_name}-analytics-${var.environment_name}"
-  document_upload_s3_name   = "${local.project_name}-doc-upload-${var.environment_name}"
+  project_name                   = module.project_config.project_name
+  app_name                       = module.app_config.app_name
+  cluster_name                   = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  participant_database_name      = "${local.project_name}-participant-${var.environment_name}"
+  participant_service_name       = "${local.project_name}-participant-${var.environment_name}"
+  participant_task_executor_name = "${local.participant_service_name}-task-executor"
+  staff_service_name             = "${local.project_name}-staff-${var.environment_name}"
+  staff_task_executor_name       = "${local.staff_service_name}-task-executor"
+  analytics_service_name         = "${local.project_name}-analytics-${var.environment_name}"
+  analytics_database_name        = "${local.project_name}-analytics-${var.environment_name}"
+  document_upload_s3_name        = "${local.project_name}-doc-upload-${var.environment_name}"
 }
 
 module "project_config" {
@@ -176,21 +178,11 @@ module "analytics" {
   }
 }
 
-data "aws_iam_role" "participant_task_executor" {
-  # Referencing the task executor of the ECS services so that they have the ability to upload documents to s3
-  name = "${local.participant_service_name}-task-executor"
-}
-
-data "aws_iam_role" "staff_task_executor" {
-  # Referencing the task executor of the ECS services so that they have the ability to upload documents to s3
-  name = "${local.staff_service_name}-task-executor"
-}
-
 module "doc_upload" {
   source            = "../../modules/s3-encrypted"
   environment_name  = var.environment_name
   s3_bucket_name    = local.document_upload_s3_name
-  read_role_names   = [data.aws_iam_role.staff_task_executor.name, data.aws_iam_role.participant_task_executor.name]
-  write_role_names  = [data.aws_iam_role.participant_task_executor.name]
+  read_role_names   = [local.participant_task_executor_name, local.staff_task_executor_name]
+  write_role_names  = [local.participant_task_executor_name]
   delete_role_names = []
 }

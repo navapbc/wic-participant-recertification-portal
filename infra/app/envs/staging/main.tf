@@ -50,6 +50,10 @@ module "project_config" {
 
 # Add application modules below
 module "app" {
-  source           = "../../env-template"
-  environment_name = local.environment_name
+  source                = "../../env-template"
+  environment_name      = local.environment_name
+  participant_image_tag = var.participant_image_tag
+  staff_image_tag       = var.staff_image_tag
+  analytics_image_tag   = var.analytics_image_tag
+  analytics_enable_exec = true
 }
