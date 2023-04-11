@@ -41,9 +41,27 @@ i.e.
   flex: 1;
 }
 
+
 // Custom classes
 p {
   @include typeset('body');
+}
+
+// USWDS File Input:
+// - Override USWDS CSS that sets pointer-events: none
+// - Change border and error styling
+.usa-file-input__preview-heading {
+  pointer-events: auto;
+}
+
+.usa-file-input__target:hover {
+  border-color: #1a4480;
+}
+
+.file-input-error {
+  @include u-text('bold');
+  @include u-text('secondary-vivid');
+  @include u-margin-top(1);
 }
 
 .intro {
@@ -51,8 +69,8 @@ p {
   @include u-line-height('sans', 4); // 30px
 }
 
-.label-large,
-.legend-large {
+.usa-label--large,
+.usa-legend--large {
   @include u-text('bold');
   @include u-font-size('sans', 9); // 22px
   @include u-line-height('sans', 2); // ~25px

@@ -1,8 +1,11 @@
 # -------- Image: base -------- #
 # Base node image with package updates and dependencies
-FROM node:18-slim as base
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
+# Use alpine to force using openssl@3 for prisma segfault issue
+# See https://github.com/prisma/prisma/issues/10649#issuecomment-1430379940
+FROM node:18-alpine as base
+RUN apk update \
+  && apk upgrade \
+  && apk add --no-cache \
     # Install curl for healthcheck
     curl \
     # Install openssl for Prisma

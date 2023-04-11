@@ -4,6 +4,13 @@ import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
 import type { ChangeEvent } from "react";
 
+import { useField } from "remix-validated-form";
+import { mockUseField } from "tests/helpers/remixValidatedFormMock";
+
+jest.mock("remix-validated-form");
+const mockedUseField = jest.mocked(useField);
+mockedUseField.mockImplementation(mockUseField);
+
 const testProps: TextFieldProps = {
   id: "input-id",
   labelKey: "input label",

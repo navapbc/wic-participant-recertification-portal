@@ -4,12 +4,6 @@ import { ButtonLink } from "app/components/ButtonLink";
 import { List } from "app/components/List";
 
 export default function Index() {
-  const listUserKeys: string[] = [
-    "Index.ifLink",
-    "Index.ifReceivesWIC",
-    "Index.ifThirtyDays",
-  ];
-
   return (
     <div>
       <h1>
@@ -21,7 +15,7 @@ export default function Index() {
       <p>
         <Trans i18nKey="Index.eligible" />
       </p>
-      <List listKeys={listUserKeys} type="ordered" />
+      <List i18nKey={"Index.ifList"} type="ordered" />
       <p>
         <Trans i18nKey="Index.note" />
       </p>

@@ -3,6 +3,7 @@
 set -euo pipefail
 
 COMMAND=$1
+EXTRA_ARG=${2:-""}
 
 available_commands=(test update cleanup)
 
@@ -20,7 +21,7 @@ if [[ "test" == $COMMAND ]]; then
   docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
   # Start Playwright and run the tests in a one-off container
   echo "Running playwright tests..."
-  docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --retries=3 --reporter=list
+  docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --retries=3 --reporter=list ${EXTRA_ARG}
   echo "...Done!"
 fi
 
