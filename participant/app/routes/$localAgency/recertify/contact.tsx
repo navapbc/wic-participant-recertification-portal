@@ -1,22 +1,26 @@
 import { Button } from "@trussworks/react-uswds";
-import { Form } from "@remix-run/react";
 import React from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
-//import { ValidatedForm } from "remix-validated-form";
-//import { representativeNameSchema } from "app/utils/validation";
-//import { withZod } from "@remix-validated-form/with-zod";
+import { ValidatedForm } from "remix-validated-form";
+import { contactSchema } from "app/utils/validation";
+import { withZod } from "@remix-validated-form/with-zod";
+
+const contactValidator = withZod(contactSchema);
 
 export default function Contact() {
-  const { t } = useTranslation();
   return (
     <div>
       <h1>
         <Trans i18nKey="Contact.title" />
       </h1>
       <RequiredQuestionStatement />
-      <Form>
+      <ValidatedForm 
+        validator={contactValidator}
+        id="contactForm"
+        method="post"
+      >
         <TextField
           id="phone-number"
           inputType="tel"
@@ -24,6 +28,7 @@ export default function Contact() {
           required
           type="input"
           labelClassName="usa-label--large"
+          className="width-card-lg"
         />
         <TextField
           id="additional-ifno"
@@ -41,7 +46,7 @@ export default function Contact() {
         >
           <Trans i18nKey="Contact.button" />
         </Button>
-      </Form>
+      </ValidatedForm>
     </div>
   );
 }

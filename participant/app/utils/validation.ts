@@ -23,6 +23,12 @@ export const changesSchema = zfd.formData({
   addressChange: zfd.text(z.enum(["yes", "no"])),
 });
 
+export const contactSchema = zfd.formData({
+  phoneNumber: zfd.text(
+    z.string().min(1, { message: "Phone number is required" })
+  ),
+});
+
 export const countSchema = zfd.formData({
   householdSize: zfd.numeric(
     z.number().min(1, { message: "You must recertify for at least one person" })
