@@ -12,6 +12,7 @@ on:
           - dev
           - staging
           - prod
+          - test20230411
       app_name:
         description: "The app to deploy"
         required: true
