@@ -148,19 +148,19 @@ module "analytics_file_system" {
 }
 
 module "analytics" {
-  source               = "../../modules/service"
-  service_name         = local.analytics_service_name
-  image_repository_url = data.aws_ecr_repository.analytics_image_repository.repository_url
-  image_repository_arn = data.aws_ecr_repository.analytics_image_repository.arn
-  image_tag            = var.analytics_image_tag
-  vpc_id               = data.aws_vpc.default.id
-  subnet_ids           = data.aws_subnets.default.ids
-  service_cluster_arn  = module.service_cluster.service_cluster_arn
-  container_port       = 8080
-  container_read_only  = false # Matomo/apache needs to be able to write to the rootfs
-  healthcheck_path     = "/matomo.php"
+  source                   = "../../modules/service"
+  service_name             = local.analytics_service_name
+  image_repository_url     = data.aws_ecr_repository.analytics_image_repository.repository_url
+  image_repository_arn     = data.aws_ecr_repository.analytics_image_repository.arn
+  image_tag                = var.analytics_image_tag
+  vpc_id                   = data.aws_vpc.default.id
+  subnet_ids               = data.aws_subnets.default.ids
+  service_cluster_arn      = module.service_cluster.service_cluster_arn
+  container_port           = 8080
+  container_read_only      = false # Matomo/apache needs to be able to write to the rootfs
+  healthcheck_path         = "/matomo.php"
   healthcheck_start_period = 300
-  enable_exec          = var.analytics_enable_exec
+  enable_exec              = var.analytics_enable_exec
   container_secrets = [
     {
       name      = "MATOMO_DATABASE_HOST",

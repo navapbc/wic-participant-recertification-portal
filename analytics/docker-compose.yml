@@ -16,6 +16,8 @@ services:
       timeout: 10s
       retries: 20
     init: true
+    # Uncomment to run on M1 macs
+    # platform: linux/amd64
     volumes:
       - mysql_data:/var/lib/mysql
 

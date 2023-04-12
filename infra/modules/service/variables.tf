@@ -135,9 +135,9 @@ variable "healthcheck_type" {
 }
 
 variable "healthcheck_start_period" {
-  type = string
+  type        = number
   description = "The optional grace period to provide containers time to bootstrap in before failed health checks count towards the maximum number of retries."
-  default = ""
+  default     = 0
 }
 
 variable "enable_exec" {

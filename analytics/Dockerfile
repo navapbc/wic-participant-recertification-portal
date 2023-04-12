@@ -8,8 +8,5 @@ ENV PORT 8080
 # Overwrite apache default port 80.
 RUN sed -i "s/80/$PORT/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
-# # Copy files from /usr/src/matomo and set permissions.
-# RUN cp -r /usr/src/matomo/* /var/www/html \
-#   && chown -R www-data:www-data /var/www/html
-
+# Don't run as root
 USER www-data

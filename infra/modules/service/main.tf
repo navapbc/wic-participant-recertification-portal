@@ -179,10 +179,10 @@ resource "aws_ecs_task_definition" "app" {
             "CMD-SHELL",
             var.healthcheck_type == "curl" ? "curl --fail http://localhost:${var.container_port}/${local.healthcheck_path} || exit 1" : "wget --no-verbose --tries=1 --spider http://localhost:${var.container_port}/${local.healthcheck_path} || exit 1",
           ],
-          interval = 30,
-          retries  = 3,
-          timeout  = 5,
-          startPeriod = var.healthcheck_start_period != "" ? var.healthcheck_start_period : null
+          interval    = 30,
+          retries     = 3,
+          timeout     = 5,
+          startPeriod = var.healthcheck_start_period,
         } : null
         portMappings = [
           {
