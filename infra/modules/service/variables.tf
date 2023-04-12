@@ -134,16 +134,10 @@ variable "healthcheck_type" {
   }
 }
 
-variable "healthcheck_interval" {
-  type = number
-  description = "Approximate amount of time, in seconds, between health checks of an individual target. Should be greater than healthcheck_timeout in case type is lambda"
-  default = 30
-}
-
-variable "healthcheck_timeout" {
-  type = number
-  description = "Amount of time, in seconds, during which no response from a target means a failed health check. Should be less than healthcheck_interval in case type is lambda."
-  default = 30
+variable "healthcheck_start_period" {
+  type = string
+  description = "The optional grace period to provide containers time to bootstrap in before failed health checks count towards the maximum number of retries."
+  default = ""
 }
 
 variable "enable_exec" {

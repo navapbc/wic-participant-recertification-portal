@@ -92,13 +92,15 @@ resource "aws_lb_target_group" "alb_target_group" {
 
   dynamic "health_check" {
     for_each = var.enable_healthcheck ? [0] : []
-    path                = "/${local.healthcheck_path}"
-    port                = var.container_port
-    healthy_threshold   = 2
-    unhealthy_threshold = 10
-    interval            = var.healthcheck_interval
-    timeout             = var.healthcheck_timeout
-    matcher             = "200-299"
+    content {
+      path                = "/${local.healthcheck_path}"
+      port                = var.container_port
+      healthy_threshold   = 2
+      unhealthy_threshold = 10
+      interval            = 30
+      timeout             = 29
+      matcher             = "200-299"
+    }
   }
 
   lifecycle {
@@ -177,9 +179,10 @@ resource "aws_ecs_task_definition" "app" {
             "CMD-SHELL",
             var.healthcheck_type == "curl" ? "curl --fail http://localhost:${var.container_port}/${local.healthcheck_path} || exit 1" : "wget --no-verbose --tries=1 --spider http://localhost:${var.container_port}/${local.healthcheck_path} || exit 1",
           ],
-          interval = var.healthcheck_interval,
+          interval = 30,
           retries  = 3,
-          timeout  = var.healthcheck_timeout,
+          timeout  = 5,
+          startPeriod = var.healthcheck_start_period != "" ? var.healthcheck_start_period : null
         } : null
         portMappings = [
           {
