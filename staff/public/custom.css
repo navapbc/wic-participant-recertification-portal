@@ -23,3 +23,7 @@ main a {
 main a:hover {
   color: #162e51 !important;
 }
+
+.ant-menu {
+  display: none !important;
+}
