@@ -49,7 +49,6 @@ module "app_config" {
 module "participant_database" {
   source              = "../../modules/database"
   database_name       = local.participant_database_name
-  deletion_protection = var.participant_database_deletion_protection
 }
 
 module "service_cluster" {
@@ -129,7 +128,6 @@ module "analytics_database" {
   database_name       = local.analytics_database_name
   database_port       = 3306
   database_type       = "mysql"
-  deletion_protection = var.analytics_database_deletion_protection
 }
 
 module "analytics_file_system" {

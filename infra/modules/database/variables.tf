@@ -28,9 +28,3 @@ variable "database_port" {
   description = "The port number for accessing the database"
   default     = 5432
 }
-
-variable "deletion_protection" {
-  type        = bool
-  description = "Whether to enable database deletion protection. Defaults to true"
-  default     = true
-}

@@ -53,9 +53,7 @@ module "app" {
   source                                   = "../../env-template"
   environment_name                         = local.environment_name
   participant_image_tag                    = var.participant_image_tag
-  participant_database_deletion_protection = false
   staff_image_tag                          = var.staff_image_tag
   analytics_image_tag                      = var.analytics_image_tag
   analytics_enable_exec                    = true
-  analytics_database_deletion_protection   = false
 }
