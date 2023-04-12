@@ -1,0 +1,33 @@
+id:
+  _var: id
+type: Context
+
+properties:
+  title:
+    _var: title
+
+blocks:
+  - id: layout
+    type: PageHeaderMenu
+    properties:
+      logo:
+        src: public/wic-logo.svg
+        alt: Montana WIC logo
+        style:
+          maxWidth: 100
+    areas:
+      header:
+        blocks:
+          - id: test_logout
+            type: Button
+            properties:
+              title: Log out
+            events:
+              onClick:
+                - id: sizeMe
+                  type: Link
+                  params:
+                    pageId: nowhere
+      content:
+        blocks:
+          _var: content
