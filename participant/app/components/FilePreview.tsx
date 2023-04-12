@@ -30,6 +30,7 @@ export type FilePreviewProps = {
   removeFileKey: i18nKey;
   selectedKey: i18nKey;
   altTextKey: i18nKey;
+  buttonType?: "button" | "submit";
 };
 
 export const FilePreview = (props: FilePreviewProps): ReactElement => {
@@ -41,6 +42,7 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
     removeFileKey,
     selectedKey,
     altTextKey,
+    buttonType = "button",
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -86,7 +88,9 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
           <div className="usa-file-input__preview-heading">
             <div>{t(selectedKey)}</div>
             <button
-              type="button"
+              type={buttonType}
+              name="remove_file"
+              value={name}
               className="text-secondary-vivid usa-button--unstyled"
               onClick={() => clickHandler(name)}
             >

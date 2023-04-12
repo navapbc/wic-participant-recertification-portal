@@ -76,7 +76,7 @@ test("add TWO image files, then remove them", async ({ page }) => {
 test("max out file count", async ({ page }) => {
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const uploadBox = page.locator("input[type='file']");
-  for (let fileNum = 0; fileNum < 20; fileNum++) {
+  for (let fileNum = 0; fileNum < 5; fileNum++) {
     const fileName = `test-${fileNum}.jpg`;
     const file = getFileFormImage(fileName);
     await uploadBox.setInputFiles([file]);
@@ -86,7 +86,7 @@ test("max out file count", async ({ page }) => {
   const removeButtons = await page
     .getByRole("button", { name: "Remove" })
     .all();
-  expect(removeButtons.length).toBe(20);
+  expect(removeButtons.length).toBe(5);
   const oneTooMany = getFileFormImage("reject-me.jpg");
   await uploadBox.setInputFiles([oneTooMany]);
   await expect(page.getByAltText("Preview for reject-me.jpg")).toHaveCount(0);

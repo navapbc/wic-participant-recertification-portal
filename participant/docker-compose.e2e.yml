@@ -41,6 +41,8 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
       S3_ENDPOINT_URL: http://s3.localhost.localstack.cloud:4566
+      MAX_UPLOAD_FILECOUNT: 5
+      MAX_UPLOAD_SIZE_BYTES: 5242880
     # Check that the remix server is up and running
     healthcheck:
       test: "curl -f http://localhost:3000/healthcheck || exit 1"

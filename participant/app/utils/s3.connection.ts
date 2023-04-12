@@ -3,10 +3,9 @@
 import {
   S3Client,
   CreateBucketCommand,
-  HeadBucketCommand,
   S3ServiceException,
 } from "@aws-sdk/client-s3";
-const REGION = process.env.MAX_SESSION_SECONDS || "us-west-2";
+const REGION = process.env.AWS_REGION || "us-west-2";
 export const ENDPOINT_URL = process.env.S3_ENDPOINT_URL || "";
 export const BUCKET = process.env.S3_BUCKET || "participant-uploads";
 
@@ -31,7 +30,7 @@ const createS3Client = (): S3Client => {
 
 export const ensureBucketExists = async (s3Client: S3Client) => {
   if (!global.__bucket_ensured) {
-    console.log(`Trying to create S3 Bucket 🪣 ${BUCKET}`);
+    console.log(`🪣 🛠️ Trying to create S3 Bucket ${BUCKET}`);
     try {
       await s3Client.send(new CreateBucketCommand({ Bucket: BUCKET }));
       console.log(`Created S3Client 💾 for endpoint url ${ENDPOINT_URL}`);
@@ -44,7 +43,7 @@ export const ensureBucketExists = async (s3Client: S3Client) => {
           error.name == "BucketAlreadyOwnedByYou"
         ) {
           console.log(`Created S3Client 💾 for endpoint url ${ENDPOINT_URL}`);
-          console.log(`S3 Bucket 🪣  ${BUCKET} already exists`);
+          console.log(`🪣 ✅ S3 Bucket ${BUCKET} already exists`);
           global.__bucket_ensured = true;
           return;
         } else {

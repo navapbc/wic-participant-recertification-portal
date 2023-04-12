@@ -28,6 +28,8 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
       S3_ENDPOINT_URL: s3.localhost.localstack.cloud:4566
+      MAX_UPLOAD_FILECOUNT: 5
+      MAX_UPLOAD_SIZE_BYTES: 5242880
     init: true
     ports:
       - "3003:3000"

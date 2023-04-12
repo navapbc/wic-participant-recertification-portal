@@ -4,7 +4,7 @@ import { redirect } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { findSubmission, upsertSubmission } from "app/utils/db.server";
 import { validRoute } from "app/utils/redirect";
-const MAX_SESSION_SECONDS = Number(process.env.MAX_SESSION_SECONDS) || 1800;
+import { MAX_SESSION_SECONDS } from "app/utils/config.server";
 
 type ParticipantCookieContents = {
   submissionID?: string;
