@@ -33,7 +33,7 @@ export const contactSchema = zfd.formData({
       if (parsed.length != 10) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Phone number should be 10 digits",
+          message: "Enter your 10-digit phone number, with the area code first.",
         });
         return z.NEVER;
       }
