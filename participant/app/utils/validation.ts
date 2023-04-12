@@ -25,8 +25,20 @@ export const changesSchema = zfd.formData({
 
 export const contactSchema = zfd.formData({
   phoneNumber: zfd.text(
-    z.string().min(1, { message: "Phone number is required" })
-  ),
+    z
+    .string()
+    .transform((val, ctx) => {
+      const parsed = val!.replace(/[^0-9]/g, "");
+      if (parsed.length != 10) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Phone number should be 10 digits",
+        });
+        return z.NEVER;
+      }
+      return parsed;
+    })
+),
 });
 
 export const countSchema = zfd.formData({
