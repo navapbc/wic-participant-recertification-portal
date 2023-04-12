@@ -39,10 +39,3 @@ variable "access_point_root_dir" {
   description = "EFS access point root directory"
   default     = "/"
 }
-
-
-# variable "security_groups" {
-#   description = "The security groups in effect for the file system mount target"
-#   type        = list(any)
-#   default = []
-# }

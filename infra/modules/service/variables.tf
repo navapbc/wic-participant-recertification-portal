@@ -85,12 +85,6 @@ variable "container_read_only" {
   default     = true
 }
 
-variable "task_executor_role_name" {
-  type        = string
-  description = "Name of the ECS service task executor role"
-  default     = ""
-}
-
 variable "vpc_id" {
   type        = string
   description = "Uniquely identifies the VPC."

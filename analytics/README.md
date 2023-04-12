@@ -8,7 +8,7 @@ For local development, there is a `docker-compose.yml` file that will set up a [
 
 ### First time setup
 
-Matomo does not support automated installation. Instead, a human must manually walk through the browser installer the first time. In addition, the easiest way to work with Matomo on a development machine is to allow it to run on port 80.
+Matomo does not support automated installation. Instead, a human must manually walk through the browser installer the first time.
 
 1. Start docker
 2. Run `docker compose up -d` and wait for the containers to be ready
@@ -28,21 +28,19 @@ After the first time setup is complete, usage is as follows:
 
 To deploy to AWS, we use ECS Fargate to host the matomo server, an Aurora mysql database, and an EFS docker volume for persistent files. Deploying to AWS required making some adjustments, including:
 
-- The matomo image by default uses a privileged port (80), which causes issues on AWS ECS Fargate. This is addressed by building a Docker image that injects a `sed` command to change the apache port to 8080, but that can be adjusted with an environment variable.
+- The matomo image by default uses a privileged port (80), which causes issues on AWS ECS Fargate. This is addressed by building a Docker image that uses a `sed` command to change the apache port to 8080, but that can be adjusted with an environment variable.
 - The matomo image is built on the PHP docker image which deploys using Apache. Apache needs to be able to write to `/var/www/html`. This results in a few changes:
   - Mapping an EFS docker volume to `/var/www/html`
   - Allowing non-read-only docker root volume
-  - Allowing matomo to keep the root user (a future @todo would be to refactor this to a non-privileged user)
   - Allow the ECS task to have all EFS IAM permissions (a future @todo would be to refactor this to a more limited scope)
-  - Allow the ECS container to talk to the EFS docker volume on default EFS port 2049
 
-Note: The ECS logs will show errors like: `Operation not permitted: AH02156: setgid: unable to set group id to Group 33`. In addition, the Matomo system check will ...
+Note: The ECS logs will show errors like: `Operation not permitted: AH02156: setgid: unable to set group id to Group 33`. In addition, the Matomo system check will not return all results until DNS is configured because amazonaws.com is in the blocked hosts list.
 
 ### First time setup
 
 For each environment, do the following:
 
-1. Use terraform to deploy the environment as usual (see @TODO documentation)
+1. Use terraform to deploy the environment as usual (see @TODO documentation). For matomo, be sure to wait several minutes to allow the docker entrypoint to complete
 2. Navigate to the AWS Console for [ECS clusters](https://us-west-2.console.aws.amazon.com/ecs/v2/clusters?region=us-west-2) for the region you have deployed your environment to
   1. Click on the cluster for the environment you are setting up
   2. Click on the `analytics` service

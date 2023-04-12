@@ -5,7 +5,7 @@ locals {
   alb_name                = var.service_name
   log_group_name          = "service/${var.service_name}"
   task_role_name          = "${var.service_name}-task"
-  task_executor_role_name = var.task_executor_role_name != "" ? var.task_executor_role_name : "${var.service_name}-task-executor"
+  task_executor_role_name = "${var.service_name}-task-executor"
   image_url               = "${var.image_repository_url}:${var.image_tag}"
   healthcheck_path        = trimprefix(var.healthcheck_path, "/")
   define_ecs_task_role    = length(var.container_efs_volumes) > 0 || var.enable_exec
@@ -108,18 +108,6 @@ resource "aws_lb_target_group" "alb_target_group" {
   }
 }
 
-#################
-## File System ##
-#################
-
-# module "fs" {
-#   for_each        = var.container_efs_volumes
-#   source          = "../file-system"
-#   name            = each.value.volume_name
-#   subnet_ids      = var.subnet_ids
-#   security_groups = [aws_security_group.app.id]
-# }
-
 #######################
 ## Service Execution ##
 #######################
@@ -139,7 +127,7 @@ resource "aws_ecs_service" "app" {
   lifecycle {
     ignore_changes = [
       desired_count,
-      # Comment out the following line to allow terraform to temporarily update the task definition.
+      # Comment out the following line to allow terraform to TEMPORARILY update the task definition.
       task_definition,
     ]
   }
@@ -205,7 +193,7 @@ resource "aws_ecs_task_definition" "app" {
             "awslogs-stream-prefix" = var.service_name
           },
         }
-        # A slightly complicated nested loop to iterate over the var.container_bind_mounts list
+        # A slightly complicated loop to iterate over the var.container_bind_mounts list
         # and the var.container_efs_volumes list and create a map for each volume defined
         mountPoints = [for key, value in merge(var.container_bind_mounts, var.container_efs_volumes) :
           {
