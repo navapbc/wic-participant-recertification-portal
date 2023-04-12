@@ -31,7 +31,7 @@ export default function Contact() {
           className="width-card-lg"
         />
         <TextField
-          id="additional-ifno"
+          id="additionalInfo"
           inputType="text"
           labelKey="Contact.additionalInfo.label"
           labelClassName="usa-label--large"

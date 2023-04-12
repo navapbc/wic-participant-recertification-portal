@@ -27,6 +27,7 @@ export const contactSchema = zfd.formData({
   phoneNumber: zfd.text(
     z
     .string()
+    .optional()
     .transform((val, ctx) => {
       const parsed = val!.replace(/[^0-9]/g, "");
       if (parsed.length != 10) {
@@ -39,6 +40,10 @@ export const contactSchema = zfd.formData({
       return parsed;
     })
 ),
+});
+
+export const additionalInfoSchema = zfd.formData({
+  additionalInfo: zfd.text(z.string().optional()),
 });
 
 export const countSchema = zfd.formData({
