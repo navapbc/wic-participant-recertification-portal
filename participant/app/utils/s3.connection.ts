@@ -16,11 +16,13 @@ declare global {
 
 const createS3Client = (): S3Client => {
   if (process.env.NODE_ENV === "production") {
+    console.log(`🖥️ 🚢 Created S3Client in production mode`);
     return new S3Client({ region: REGION });
   } else {
     if (!ENDPOINT_URL) {
       console.error("No ENDPOINT_URL environment var defined!");
     }
+    console.log(`🖥️ 🛠️ Created S3Client for endpoint url ${ENDPOINT_URL}`);
     return new S3Client({
       region: REGION,
       endpoint: ENDPOINT_URL,
@@ -33,8 +35,7 @@ export const ensureBucketExists = async (s3Client: S3Client) => {
     console.log(`🪣 🛠️ Trying to create S3 Bucket ${BUCKET}`);
     try {
       await s3Client.send(new CreateBucketCommand({ Bucket: BUCKET }));
-      console.log(`Created S3Client 💾 for endpoint url ${ENDPOINT_URL}`);
-      console.log(`Created S3 Bucket 🪣 ${BUCKET}`);
+      console.log(`🪣 ✅ Created S3 Bucket ${BUCKET}`);
       global.__bucket_ensured = true;
     } catch (error) {
       if (error instanceof S3ServiceException) {
@@ -42,7 +43,6 @@ export const ensureBucketExists = async (s3Client: S3Client) => {
           error.name == "BucketAlreadyExists" ||
           error.name == "BucketAlreadyOwnedByYou"
         ) {
-          console.log(`Created S3Client 💾 for endpoint url ${ENDPOINT_URL}`);
           console.log(`🪣 ✅ S3 Bucket ${BUCKET} already exists`);
           global.__bucket_ensured = true;
           return;
