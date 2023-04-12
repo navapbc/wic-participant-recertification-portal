@@ -49,8 +49,9 @@ module "app_config" {
 }
 
 module "participant_database" {
-  source        = "../../modules/database"
-  database_name = local.participant_database_name
+  source              = "../../modules/database"
+  database_name       = local.participant_database_name
+  deletion_protection = var.participant_database_deletion_protection
 }
 
 module "service_cluster" {
@@ -64,7 +65,7 @@ module "participant" {
   image_repository_url    = data.aws_ecr_repository.participant_image_repository.repository_url
   image_repository_arn    = data.aws_ecr_repository.participant_image_repository.arn
   image_tag               = var.participant_image_tag
-  task_executor_role_name = var.participant_task_executor_role_name
+  task_executor_role_name = local.participant_task_executor_role_name
   vpc_id                  = data.aws_vpc.default.id
   subnet_ids              = data.aws_subnets.default.ids
   service_cluster_arn     = module.service_cluster.service_cluster_arn
@@ -128,10 +129,11 @@ module "staff" {
 }
 
 module "analytics_database" {
-  source        = "../../modules/database"
-  database_name = local.analytics_database_name
-  database_port = 3306
-  database_type = "mysql"
+  source              = "../../modules/database"
+  database_name       = local.analytics_database_name
+  database_port       = 3306
+  database_type       = "mysql"
+  deletion_protection = var.analytics_database_deletion_protection
 }
 
 module "analytics" {
@@ -139,7 +141,7 @@ module "analytics" {
   service_name         = local.analytics_service_name
   image_repository_url = data.aws_ecr_repository.analytics_image_repository.repository_url
   image_repository_arn = data.aws_ecr_repository.analytics_image_repository.arn
-  image_tag            = local.analytics_image_tag
+  image_tag            = var.analytics_image_tag
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn

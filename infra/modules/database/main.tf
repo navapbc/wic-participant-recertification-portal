@@ -98,7 +98,7 @@ resource "aws_rds_cluster" "database" {
   port                                = var.database_port
   storage_encrypted                   = true
   iam_database_authentication_enabled = true
-  deletion_protection                 = true
+  deletion_protection                 = var.deletion_protection
   skip_final_snapshot                 = true
   vpc_security_group_ids              = [aws_security_group.database.id]
   db_cluster_parameter_group_name     = "${var.database_name}-${var.database_type}"
