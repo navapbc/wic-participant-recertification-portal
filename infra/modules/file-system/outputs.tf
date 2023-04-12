@@ -1,5 +1,5 @@
-output "name" {
-  value = var.name
+output "resource_name" {
+  value = var.resource_name
 }
 
 output "file_system" {

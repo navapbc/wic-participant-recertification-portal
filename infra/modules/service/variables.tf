@@ -60,8 +60,12 @@ variable "container_secrets" {
 variable "container_efs_volumes" {
   description = "EFS volumes to be created and mounted into the container"
   type = map(object({
-    volume_name    = string,
-    container_path = string,
+    volume_name      = string,
+    container_path   = string,
+    file_system_id   = string,
+    file_system_arn  = string,
+    access_point_id  = string,
+    access_point_arn = string,
   }))
   default = {}
 }

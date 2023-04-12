@@ -1,8 +1,5 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
-data "aws_vpc" "default" {
-  default = true
-}
 
 locals {
   alb_name                = var.service_name
@@ -112,13 +109,13 @@ resource "aws_lb_target_group" "alb_target_group" {
 ## File System ##
 #################
 
-module "fs" {
-  for_each        = var.container_efs_volumes
-  source          = "../file-system"
-  name            = each.value.volume_name
-  subnet_ids      = var.subnet_ids
-  security_groups = [aws_security_group.app.id]
-}
+# module "fs" {
+#   for_each        = var.container_efs_volumes
+#   source          = "../file-system"
+#   name            = each.value.volume_name
+#   subnet_ids      = var.subnet_ids
+#   security_groups = [aws_security_group.app.id]
+# }
 
 #######################
 ## Service Execution ##
@@ -209,7 +206,8 @@ resource "aws_ecs_task_definition" "app" {
         mountPoints = [for key, value in merge(var.container_bind_mounts, var.container_efs_volumes) :
           {
             containerPath = value.container_path,
-            sourceVolume  = value.volume_name
+            sourceVolume  = value.volume_name,
+            readOnly      = false,
           }
         ]
         volumesFrom = []
@@ -227,14 +225,14 @@ resource "aws_ecs_task_definition" "app" {
 
   // Create an EFS mount volume for each element in the var.container_efs_volumes list
   dynamic "volume" {
-    for_each = module.fs
+    for_each = var.container_efs_volumes
     content {
-      name = volume.value.name
+      name = volume.value.volume_name
       efs_volume_configuration {
-        file_system_id     = volume.value.file_system.id
+        file_system_id     = volume.value.file_system_id
         transit_encryption = "ENABLED"
         authorization_config {
-          access_point_id = volume.value.access_point.id
+          access_point_id = volume.value.access_point_id
           iam             = "ENABLED"
         }
       }
@@ -400,7 +398,7 @@ data "aws_iam_policy_document" "task" {
 
   # Allow ECS to access EFS access points
   dynamic "statement" {
-    for_each = module.fs
+    for_each = var.container_efs_volumes
     content {
       sid    = "EFSAccess${statement.key}"
       effect = "Allow"
@@ -410,13 +408,13 @@ data "aws_iam_policy_document" "task" {
         "elasticfilesystem:ClientRootAccess",
       ]
       resources = [
-        statement.value.file_system.arn
+        statement.value.file_system_arn
       ]
       condition {
         test     = "StringEquals"
         variable = "elasticfilesystem:AccessPointArn"
         values = [
-          statement.value.access_point.arn
+          statement.value.access_point_arn
         ]
       }
     }
@@ -480,18 +478,6 @@ resource "aws_security_group" "app" {
     from_port       = var.container_port
     to_port         = var.container_port
     security_groups = [aws_security_group.alb.id]
-  }
-
-  # Create an ingress rule for the EFS port if there are EFS volumes
-  dynamic "ingress" {
-    for_each = length(var.container_efs_volumes) == 0 ? [] : [1]
-    content {
-      description = "Allow HTTP traffic between application container and EFS"
-      from_port   = 2049
-      to_port     = 2049
-      protocol    = "tcp"
-      cidr_blocks = [data.aws_vpc.default.cidr_block]
-    }
   }
 
   egress {

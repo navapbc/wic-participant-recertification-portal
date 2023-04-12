@@ -30,23 +30,65 @@
 resource "aws_efs_file_system" "fs" {
   # checkov:skip=CKV_AWS_184:@TODO use a customer managed kms key for encryption
   # checkov:skip=CKV2_AWS_18:@TODO set up backup plan
-  encrypted = true
+  encrypted      = true
+  creation_token = var.resource_name
 }
 
 resource "aws_efs_access_point" "fs" {
   file_system_id = aws_efs_file_system.fs.id
+  posix_user {
+    uid = var.access_point_posix_uid
+    gid = var.access_point_posix_gid
+  }
+  root_directory {
+    path = var.access_point_root_dir
+    creation_info {
+      owner_uid   = var.access_point_posix_uid
+      owner_gid   = var.access_point_posix_gid
+      permissions = var.access_point_posix_permissions
+    }
+  }
 }
 
 resource "aws_efs_mount_target" "fs" {
   for_each        = toset(var.subnet_ids)
   file_system_id  = aws_efs_file_system.fs.id
   subnet_id       = each.value
-  security_groups = var.security_groups
+  security_groups = [aws_security_group.fs.id]
 }
 
 resource "aws_efs_backup_policy" "fs" {
   file_system_id = aws_efs_file_system.fs.id
   backup_policy {
     status = "ENABLED"
+  }
+}
+
+################################################################################
+# Network configuration
+################################################################################
+
+resource "aws_security_group" "fs" {
+  # Specify name_prefix instead of name because when a change requires creating a new
+  # security group, sometimes the change requires the new security group to be created
+  # before the old one is destroyed. In this situation, the new one needs a unique name
+  name_prefix = "${var.resource_name}-sg"
+  description = "Allow EFS inbound traffic from VPC"
+  vpc_id      = var.vpc_id
+
+  lifecycle {
+    create_before_destroy = true
+
+    # changing the description is a destructive change
+    # just ignore it
+    ignore_changes = [description]
+  }
+
+  ingress {
+    description = "NFS traffic from VPC"
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+    cidr_blocks = var.cidr_blocks
   }
 }

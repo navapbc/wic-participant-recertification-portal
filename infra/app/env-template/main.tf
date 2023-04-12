@@ -136,6 +136,17 @@ module "analytics_database" {
   deletion_protection = var.analytics_database_deletion_protection
 }
 
+module "analytics_file_system" {
+  source                 = "../../modules/file-system"
+  resource_name          = "${local.analytics_service_name}-fs"
+  vpc_id                 = data.aws_vpc.default.id
+  subnet_ids             = data.aws_subnets.default.ids
+  cidr_blocks            = [data.aws_vpc.default.cidr_block]
+  access_point_posix_uid = 33
+  access_point_posix_gid = 33
+  access_point_root_dir  = "/fargate"
+}
+
 module "analytics" {
   source               = "../../modules/service"
   service_name         = local.analytics_service_name
@@ -176,8 +187,12 @@ module "analytics" {
   ]
   container_efs_volumes = {
     "html" : {
-      volume_name    = "${local.participant_service_name}-html",
-      container_path = "/var/www/html",
+      volume_name      = "${local.analytics_service_name}-html",
+      container_path   = "/var/www/html",
+      file_system_id   = module.analytics_file_system.file_system.id,
+      file_system_arn  = module.analytics_file_system.file_system.arn,
+      access_point_id  = module.analytics_file_system.access_point.id,
+      access_point_arn = module.analytics_file_system.access_point.arn,
     }
   }
 }
