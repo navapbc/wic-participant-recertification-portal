@@ -51,11 +51,11 @@ const submissionsData = {
         documents: [
           {
             name: "febpaystubs.pdf",
-            href: "https://google.com"
+            href: "https://google.com",
           },
           {
             name: "marchpaystub.png",
-            href: "https://duckduckgo.com"
+            href: "https://duckduckgo.com",
           },
         ],
       },
