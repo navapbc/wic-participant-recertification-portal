@@ -34,19 +34,25 @@ To deploy to AWS, we use ECS Fargate to host the matomo server, an Aurora mysql 
   - Allowing non-read-only docker root volume
   - Allow the ECS task to have all EFS IAM permissions (a future @todo would be to refactor this to a more limited scope)
 
-Note: The ECS logs will show errors like: `Operation not permitted: AH02156: setgid: unable to set group id to Group 33`. In addition, the Matomo system check will not return all results until DNS is configured because amazonaws.com is in the blocked hosts list.
+Notes:
+- The ECS logs will show errors like: `Operation not permitted: AH02156: setgid: unable to set group id to Group 33`. This is because Apache will want to try to run SETGID, but because AWS ECS Fargate does not support privileged capabilities such as `SETGID`. See https://docs.aws.amazon.com/AmazonECS/latest/bestpracticesguide/security-tasks-containers.html#security-tasks-containers-recommendations-avoid-privileged-containers for more info. Instead, the EFS has been configured to automatically set posix uid and gid to 33 (e.g. the `www-data` user and group). See infra/modules/file-system/main.tf lines 39-48 and infra/app/env-template/main.tf lines 147-148.
+- The Matomo system check will not return all results until DNS is configured because amazonaws.com is in the blocked hosts list. See https://github.com/matomo-org/matomo/blob/9cb2258632948a3dddc0da92f7d29239a8020b06/config/global.php#L221 This issue should resolve once DNS is configured.
 
 ### First time setup
 
 For each environment, do the following:
 
 1. Use terraform to deploy the environment as usual (see @TODO documentation). For matomo, be sure to wait several minutes to allow the docker entrypoint to complete
-2. Navigate to the AWS Console for [ECS clusters](https://us-west-2.console.aws.amazon.com/ecs/v2/clusters?region=us-west-2) for the region you have deployed your environment to
+2. Use the "Deploy" Github Action to build and deploy a docker image for matomo
+3. Navigate to the AWS Console for [ECS clusters](https://us-west-2.console.aws.amazon.com/ecs/v2/clusters?region=us-west-2) for the region you have deployed your environment to
   1. Click on the cluster for the environment you are setting up
   2. Click on the `analytics` service
   3. Click on the "Networking" tab
   4. Click on the "open address" link in the "DNS names" section
-3. Walk through the installation wizard to install the database tables and setup the configuration file
+  5. Walk through the installation wizard to install the database tables and setup the configuration file
+4. (Optional) Apply any custom configuration needed, such as updating the `trusted_hosts[]` in `config/config.ini.php` using ECS Exec or terraform
+5. Configure matomo settings in the browser, such as creating additional users or additional sites to track
+6. Instrument analytics into the site(s) to track
 
 ## Notes
 
