@@ -1,13 +1,16 @@
 lowdefy: 3.23.3
-name: WIC Staff Portal
+name: Montana WIC Staff Portal
+
+cli:
+  disableTelemetry: true
 
 app:
   html:
     appendHead:
       _ref: public/header.html
 
-cli:
-  disableTelemetry: true
+config:
+  homePageId: recertifications
 
 types:
   AgGridAlpine:
@@ -22,50 +25,10 @@ connections:
         _secret: PG_CONNECTION_STRING
 
 pages:
-  - _ref: simpletable.yml
-  - _ref: recertifications.yml
-  - id: welcome
-    type: PageHeaderMenu
-    properties:
-      title: Welcome
-    areas:
-      content:
-        justify: center
-        blocks:
-          - id: content_card
-            type: Card
-            style:
-              maxWidth: 800
-            blocks:
-              - id: content
-                type: Result
-                properties:
-                  title: Welcome to your Lowdefy app
-                  subTitle: We are excited to see what you are going to build
-                  icon:
-                    name: HeartTwoTone
-                    color: "#f00"
-                areas:
-                  extra:
-                    blocks:
-                      - id: docs_button
-                        type: Button
-                        properties:
-                          size: large
-                          title: Let's build something
-                          color: "#1890ff"
-                        events:
-                          onClick:
-                            - id: link_to_docs
-                              type: Link
-                              params:
-                                url: https://docs.lowdefy.com
-                                newTab: true
-      footer:
-        blocks:
-          - id: footer
-            type: Paragraph
-            properties:
-              type: secondary
-              content: |
-                Made by a Lowdefy 🤖
+  - _ref:
+      path: templates/page_template.yml
+      vars:
+        id: recertifications
+        title: Montana WIC Staff Portal
+        content:
+          - _ref: pages/recert.yml
