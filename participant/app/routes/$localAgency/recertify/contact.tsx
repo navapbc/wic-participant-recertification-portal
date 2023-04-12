@@ -22,7 +22,7 @@ export default function Contact() {
         method="post"
       >
         <TextField
-          id="phone-number"
+          id="phoneNumber"
           inputType="tel"
           labelKey="Contact.phoneNumber"
           required
