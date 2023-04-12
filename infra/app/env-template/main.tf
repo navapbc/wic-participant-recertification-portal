@@ -160,7 +160,10 @@ module "analytics" {
   container_read_only  = false # Matomo/apache needs to be able to write to the rootfs
   healthcheck_path     = "/matomo.php"
   enable_exec          = var.analytics_enable_exec
-  enable_healthcheck = false
+  enable_healthcheck   = true
+  # # Use really large healthcheck ranges for matomo so that the initial entrypoint/startup has time to run
+  # healthcheck_timeout = 120
+  # healthcheck_interval = 300
   container_secrets = [
     {
       name      = "MATOMO_DATABASE_HOST",

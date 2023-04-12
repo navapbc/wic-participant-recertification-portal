@@ -49,9 +49,6 @@ jobs:
       id-token: write
 
     steps:
-      - name: ℹ️ Show Github context
-        run: echo "${{ toJson(github.event.inputs.env_name) }}"
-
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 

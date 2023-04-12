@@ -90,13 +90,14 @@ resource "aws_lb_target_group" "alb_target_group" {
   target_type          = "ip"
   deregistration_delay = "30"
 
-  health_check {
+  dynamic "health_check" {
+    for_each = var.enable_healthcheck ? [0] : []
     path                = "/${local.healthcheck_path}"
     port                = var.container_port
     healthy_threshold   = 2
     unhealthy_threshold = 10
-    interval            = 30
-    timeout             = 29
+    interval            = var.healthcheck_interval
+    timeout             = var.healthcheck_timeout
     matcher             = "200-299"
   }
 
@@ -176,9 +177,9 @@ resource "aws_ecs_task_definition" "app" {
             "CMD-SHELL",
             var.healthcheck_type == "curl" ? "curl --fail http://localhost:${var.container_port}/${local.healthcheck_path} || exit 1" : "wget --no-verbose --tries=1 --spider http://localhost:${var.container_port}/${local.healthcheck_path} || exit 1",
           ],
-          interval = 30,
+          interval = var.healthcheck_interval,
           retries  = 3,
-          timeout  = 5,
+          timeout  = var.healthcheck_timeout,
         } : null
         portMappings = [
           {

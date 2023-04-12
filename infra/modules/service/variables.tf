@@ -112,6 +112,12 @@ variable "service_ssm_resource_paths" {
   default     = []
 }
 
+variable "enable_healthcheck" {
+  type        = bool
+  description = "Enable container healthcheck"
+  default     = true
+}
+
 variable "healthcheck_path" {
   type        = string
   description = "The path to the application healthcheck"
@@ -128,10 +134,16 @@ variable "healthcheck_type" {
   }
 }
 
-variable "enable_healthcheck" {
-  type        = bool
-  description = "Enable container healthcheck"
-  default     = true
+variable "healthcheck_interval" {
+  type = number
+  description = "Approximate amount of time, in seconds, between health checks of an individual target. Should be greater than healthcheck_timeout in case type is lambda"
+  default = 30
+}
+
+variable "healthcheck_timeout" {
+  type = number
+  description = "Amount of time, in seconds, during which no response from a target means a failed health check. Should be less than healthcheck_interval in case type is lambda."
+  default = 30
 }
 
 variable "enable_exec" {
