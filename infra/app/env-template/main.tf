@@ -99,6 +99,10 @@ module "participant" {
       container_path = "/tmp",
     }
   }
+
+  depends_on = [
+    module.participant_database,
+  ]
 }
 
 module "staff" {
@@ -120,6 +124,10 @@ module "staff" {
   ]
   service_ssm_resource_paths = [
     module.participant_database.admin_db_url_secret_name,
+  ]
+
+  depends_on = [
+    module.participant_database,
   ]
 }
 
@@ -192,7 +200,8 @@ module "analytics" {
   }
 
   depends_on = [
-    module.analytics_file_system
+    module.analytics_database,
+    module.analytics_file_system,
   ]
 }
 
