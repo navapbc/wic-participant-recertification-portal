@@ -47,8 +47,8 @@ module "app_config" {
 }
 
 module "participant_database" {
-  source              = "../../modules/database"
-  database_name       = local.participant_database_name
+  source        = "../../modules/database"
+  database_name = local.participant_database_name
 }
 
 module "service_cluster" {
@@ -124,10 +124,10 @@ module "staff" {
 }
 
 module "analytics_database" {
-  source              = "../../modules/database"
-  database_name       = local.analytics_database_name
-  database_port       = 3306
-  database_type       = "mysql"
+  source        = "../../modules/database"
+  database_name = local.analytics_database_name
+  database_port = 3306
+  database_type = "mysql"
 }
 
 module "analytics_file_system" {
