@@ -160,6 +160,7 @@ module "analytics" {
   container_read_only  = false # Matomo/apache needs to be able to write to the rootfs
   healthcheck_path     = "/matomo.php"
   enable_exec          = var.analytics_enable_exec
+  enable_healthcheck = false
   container_secrets = [
     {
       name      = "MATOMO_DATABASE_HOST",
@@ -195,6 +196,10 @@ module "analytics" {
       access_point_arn = module.analytics_file_system.access_point.arn,
     }
   }
+
+  depends_on = [
+    module.analytics_file_system
+  ]
 }
 
 module "doc_upload" {
