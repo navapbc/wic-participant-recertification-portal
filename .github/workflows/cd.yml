@@ -49,6 +49,9 @@ jobs:
       id-token: write
 
     steps:
+      - name: ℹ️ Show Github context
+        run: echo "$GITHUB_CONTEXT"
+
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
