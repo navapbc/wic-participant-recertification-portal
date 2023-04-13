@@ -1,23 +1,34 @@
+# Set the page id
 id:
   _var: id
+
+# Set the page as a "Context" type
+# See https://docs.lowdefy.com/Context
 type: Context
 
+# Set the page title
 properties:
   title:
     _var: title
 
 blocks:
+  # The main block for the page should be a PageHeaderMenu
+  # See https://docs.lowdefy.com/Context
   - id: layout
     type: PageHeaderMenu
     properties:
+      # Configure logo settings
       logo:
         src: public/wic-logo.svg
         alt: Montana WIC logo
         style:
           maxWidth: 100
     areas:
+      # In the header region:
       header:
         blocks:
+          # @TODO add a test logout button
+          # Will be configured with cognito
           - id: test_logout
             type: Button
             properties:
@@ -28,6 +39,9 @@ blocks:
                   type: Link
                   params:
                     pageId: nowhere
+      # In the content region:
       content:
         blocks:
+          # The `content` variable should be a list of blocks to be
+          # rendered in the content region of the page
           _var: content

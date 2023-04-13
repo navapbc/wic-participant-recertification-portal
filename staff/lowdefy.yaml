@@ -1,3 +1,5 @@
+# Main lowdefy entrypoint
+# See schema at: https://docs.lowdefy.com/lowdefy-schema
 lowdefy: 3.23.3
 name: Montana WIC Staff Portal
 
@@ -7,15 +9,18 @@ cli:
 app:
   html:
     appendHead:
+      # Include a custom header to add custom CSS
       _ref: public/header.html
 
 config:
   homePageId: recertifications
 
+# Include the list of non-out-of-the-box block types this application uses
 types:
   AgGridAlpine:
     url: https://blocks-cdn.lowdefy.com/v3.23.4/blocks-aggrid/meta/AgGridAlpine.json
 
+# Configure connection to postgresql via environment variable (handled by lowdefy as a secret)
 connections:
   - id: postgres
     type: Knex
@@ -26,9 +31,12 @@ connections:
 
 pages:
   - _ref:
+      # Use a page template for the page header, footer, etc
       path: templates/page_template.yml
+      # Pass in variables that the template ingests
       vars:
         id: recertifications
         title: Montana WIC Staff Portal
         content:
+          # The content for this page that gets injected into the template
           - _ref: pages/recert.yml
