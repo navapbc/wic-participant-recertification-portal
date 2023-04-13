@@ -1,3 +1,5 @@
+// @TODO Temporarily put this seed data in a separate seed file just for the staff portal.
+// This should get dynamically seeded to the database for lower environments and for local development.
 import { PrismaClient } from "@prisma/client";
 import {
   findSubmission,

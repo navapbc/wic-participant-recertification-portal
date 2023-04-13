@@ -15,12 +15,15 @@ requests: # Requests defines all the data requests made available in this page c
         group by sf.submission_id, s.updated_at, la.name
         order by s.updated_at desc;
 events:
-  onInitAsync: # A list of actions that gets completed each time a user visits this page
+  # A list of actions that gets completed each time this lowdefy context is loaded
+  onInitAsync:
     - id: fetch_data
       type: Request
-      params: get_data # Execute the `get_data` request
+      # Execute the `get_data` request
+      params: get_data
 
 blocks:
+  # @TODO Temporary button to handle table sizing issues.
   - id: Autosize
     type: Button
     events:
@@ -30,34 +33,46 @@ blocks:
           params:
             blockId: table
             method: autoSize
+
+  # The main table that shows the recertifications data
   - id: table
-    type: AgGridAlpine # A supporting component type that uses https://www.ag-grid.com
+    # A supporting component type that uses https://www.ag-grid.com
+    type: AgGridAlpine
+
     properties:
       rowData:
-        _request: get_data.rows # Send all the data returned by the query `get_data`. KnexRaw requests need to call `rows`; KnexBuilder requests don't
-      # These next two settings allow the user to select text in the grid.
+        # Send all the data returned by the query `get_data`. KnexRaw requests need to call `rows`; KnexBuilder requests don't
+        _request: get_data.rows
+      # `enableCellTextSelection` and `ensureDomOrder` allow the user to select text in the grid.
       # See https://ag-grid.com/react-data-grid/clipboard/#using-the-browsers-text-selection
       enableCellTextSelection: true
       ensureDomOrder: true
+      # Tell the table to automatically fill the full height of its parent element
       domLayout: autoHeight
-      # paginationPageSize: 2
+      # Enable table pagination. Defaults to 10 records per page
       pagination: true
-      defaultColDef: # The table columns are sortable, resizable, and filterable
+      # Set all columns to be sortable, resizable, and filterable by default
+      defaultColDef:
         sortable: true
         resizable: true
         filter: true
-      columnDefs: # Define each table column
+
+      # Define each table column
+      columnDefs:
         - headerName: Submission date
           valueGetter:
             _function:
-              __format.intlDateTimeFormat: # Use date time formatting https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+              # Use date time formatting https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+              __format.intlDateTimeFormat:
                 on:
                   __args: 0.data.updated_at
                 params:
                   options:
                     dateStyle: "short"
                     timeStyle: "long"
+
         - headerName: Contact person
+          wrapText: true
           valueGetter:
             _function:
               __string.concat:
@@ -84,8 +99,11 @@ blocks:
                   </div>
                 on:
                   __args: 0.data
-          wrapText: true
+
         - headerName: WIC participant(s)
+          wrapText: true
+          # This column has the most vertical content so tell the table to automatically size the row to this cell's height
+          autoHeight: true
           # @TODO fix value formatting if copying or exporting
           valueGetter:
             _function:
@@ -139,10 +157,11 @@ blocks:
                   {% endfor %}
                 on:
                   __args: 0.data.form_data
-          wrapText: true
-          autoHeight: true
+
         - headerName: Household changes
-          field: form_data
+          wrapText: true
+          # This column is not sortable
+          sortable: false
           valueGetter:
             _function:
               __string.concat:
@@ -166,10 +185,12 @@ blocks:
                   </div>
                 on:
                   __args: 0.data.form_data
-          wrapText: true
-          sortable: false
-        # @TODO: use S3 links
+
+        # @TODO: use S3 links. Using placeholder data for now
         - headerName: Documents
+          wrapText: true
+          # This column is not sortable
+          sortable: false
           valueGetter:
             _function:
               __if:
@@ -201,9 +222,11 @@ blocks:
                   </div>
                 on:
                   __args: 0.data.form_data
-          wrapText: true
-          sortable: false
+
         - headerName: Updates from participant
+          wrapText: true
+          # Set the max width for this column to be no more than 500px
+          maxWidth: 500
           valueGetter:
             _function:
               __if:
@@ -228,5 +251,3 @@ blocks:
                   </div>
                 on:
                   __args: 0.data.form_data
-          wrapText: true
-          maxWidth: 500
