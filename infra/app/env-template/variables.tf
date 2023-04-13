@@ -38,3 +38,18 @@ variable "analytics_enable_exec" {
   description = "Enables ECS exec for the analytics service"
   default     = false
 }
+variable "participant_url" {
+  type        = string
+  description = "URL to access the application"
+  default     = "dev.wic-services.org"
+}
+variable "staff_url" {
+  type        = string
+  description = "URL to access the application"
+  default     = "dev-staff.wic-services.org"
+}
+variable "analytics_url" {
+  type        = string
+  description = "URL to access the application"
+  default     = "dev-analytics.wic-services.org"
+}

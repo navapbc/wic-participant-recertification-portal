@@ -213,3 +213,15 @@ module "doc_upload" {
   write_role_names  = [module.participant.task_executor_role_name]
   delete_role_names = []
 }
+
+# todo: cleanup service names
+module "dns" {
+  source                   = "../../modules/dns-config"
+  environment_name         = var.environment_name
+  analytics_service_name   = local.analytics_service_name
+  participant_service_name = local.participant_service_name
+  staff_service_name       = local.staff_service_name
+  participant_url          = var.participant_url
+  staff_url                = var.staff_url
+  analytics_url            = var.analytics_url
+}
