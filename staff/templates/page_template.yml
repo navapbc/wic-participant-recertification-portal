@@ -42,6 +42,16 @@ blocks:
       # In the content region:
       content:
         blocks:
-          # The `content` variable should be a list of blocks to be
-          # rendered in the content region of the page
-          _var: content
+          - id: content_first
+            type: Context
+            blocks:
+              - id: site_title
+                type: Title
+                properties:
+                  content: WIC Montana Staff Portal
+          - id: content_second
+            type: Context
+            blocks:
+              # The `content` variable should be a list of blocks to be
+              # rendered in the content region of the page
+              _var: content
