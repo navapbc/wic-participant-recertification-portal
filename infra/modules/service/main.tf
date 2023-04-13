@@ -9,6 +9,8 @@ locals {
   image_url               = "${var.image_repository_url}:${var.image_tag}"
   healthcheck_path        = trimprefix(var.healthcheck_path, "/")
   define_ecs_task_role    = length(var.container_efs_volumes) > 0 || var.enable_exec
+  service_lifecycle_ignore = var.redeploy_service ? [] : [task_definition]
+  task_definition_lifecycle_ignore = var.redeploy_service ? [] : [container_definitions]
 }
 
 ###################
@@ -125,11 +127,7 @@ resource "aws_ecs_service" "app" {
   # This allows autoscaling to manage the desired count for us.
   # Ignoring the task_definition allows the task revision to not get reverted if a rew revision is created outside of terraform.
   lifecycle {
-    ignore_changes = [
-      desired_count,
-      # Comment out the following line to allow terraform to TEMPORARILY update the task definition.
-      task_definition,
-    ]
+    ignore_changes = merge([desired_count], local.service_lifecycle_ignore)
   }
 
   network_configuration {
@@ -237,6 +235,10 @@ resource "aws_ecs_task_definition" "app" {
     content {
       name = volume.value.volume_name
     }
+  }
+
+  lifecycle {
+    ignore_changes = local.task_definition_lifecycle_ignore
   }
 }
 

@@ -139,3 +139,9 @@ variable "enable_exec" {
   description = "Enable exec access to ECS task"
   default     = false
 }
+
+variable "redeploy_service" {
+  type = bool
+  description = "By default, this module ignores changes to the ECS service task definition and ignores changes to the ECS task definition container definitions. Set this variable to true to OVERRIDE these ignores and actively update the container definitions and redeploy the service"
+  default = false
+}
