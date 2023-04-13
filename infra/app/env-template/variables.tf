@@ -48,3 +48,8 @@ variable "staff_url" {
   description = "URL to access the application"
   default     = "dev-staff.wic-services.org"
 }
+variable "analytics_url" {
+  type        = string
+  description = "URL to access the application"
+  default     = "dev-analytics.wic-services.org"
+}

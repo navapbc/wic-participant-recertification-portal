@@ -32,3 +32,7 @@ variable "staff_url" {
   type        = string
   description = "URL to access the application"
 }
+variable "analytics_url" {
+  type        = string
+  description = "URL to access the application"
+}

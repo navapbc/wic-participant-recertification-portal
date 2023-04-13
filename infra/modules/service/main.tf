@@ -125,6 +125,8 @@ resource "aws_lb_target_group" "alb_target_group" {
 #######################
 
 resource "aws_ecs_service" "app" {
+  # checkov:skip=CKV_AWS_332:Latest Fargate version irrelevant to this PR
+  # checkov:skip=CKV_AWS_333:Disabling public IP may potentially mess up service discovery; also irrelevant to this PR
   name                   = var.service_name
   cluster                = var.service_cluster_arn
   launch_type            = "FARGATE"

@@ -223,4 +223,5 @@ module "dns" {
   staff_service_name       = local.staff_service_name
   participant_url          = var.participant_url
   staff_url                = var.staff_url
+  analytics_url            = var.analytics_url
 }

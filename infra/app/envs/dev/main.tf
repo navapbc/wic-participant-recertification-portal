@@ -60,4 +60,5 @@ module "app" {
   analytics_enable_exec = true
   participant_url       = "${local.environment_name}.wic-services.org"
   staff_url             = "${local.environment_name}-staff.wic-services.org"
+  analytics_url         = "${local.environment_name}-analytics.wic-services.org"
 }

@@ -59,4 +59,5 @@ module "app" {
   analytics_image_tag   = var.analytics_image_tag
   participant_url       = "wic-services.org"
   staff_url             = "staff.wic-services.org"
+  analytics_url         = "analytics.wic-services.org"
 }
