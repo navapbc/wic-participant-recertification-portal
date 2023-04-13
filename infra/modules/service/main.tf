@@ -115,14 +115,14 @@ resource "aws_lb_target_group" "alb_target_group" {
 resource "aws_ecs_service" "app" {
   # checkov:skip=CKV_AWS_333: This is literally a new check; more research needed
 
+  # Fargate platform_version must be at least 1.4.0 for Fargate + EFS to work
+  # LATEST is currently 1.4.0
+  # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform-linux-fargate.html
   name                   = var.service_name
   cluster                = var.service_cluster_arn
   launch_type            = "FARGATE"
   task_definition        = aws_ecs_task_definition.app.arn
   desired_count          = var.desired_instance_count
-  # Fargate platform_version must be at least 1.4.0 for Fargate + EFS to work
-  # LATEST is currently 1.4.0
-  # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform-linux-fargate.html
   platform_version       = "LATEST"
   enable_execute_command = var.enable_exec ? true : null
 
