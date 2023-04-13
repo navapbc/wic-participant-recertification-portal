@@ -24,7 +24,6 @@ resource "aws_lb" "alb" {
   subnets         = var.subnet_ids
 
   # TODO(https://github.com/navapbc/template-infra/issues/163) Implement HTTPS
-  # checkov:skip=CKV2_AWS_20:Redirect HTTP to HTTPS as part of implementing HTTPS support
 
   # TODO(https://github.com/navapbc/template-infra/issues/161) Prevent deletion protection
   # checkov:skip=CKV_AWS_150:Allow deletion until we can automate deletion for automated tests
@@ -47,8 +46,6 @@ resource "aws_lb" "alb" {
 # In a production system we would provision an https listener
 resource "aws_lb_listener" "alb_listener_http" {
   # TODO(https://github.com/navapbc/template-infra/issues/163) Use HTTPS protocol
-  # checkov:skip=CKV_AWS_2:Implement HTTPS in issue #163
-  # checkov:skip=CKV_AWS_103:Require TLS 1.2 as part of implementing HTTPS support
 
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
@@ -449,7 +446,6 @@ resource "aws_security_group" "alb" {
   vpc_id = var.vpc_id
 
   # TODO(https://github.com/navapbc/template-infra/issues/163) Disallow incoming traffic to port 80
-  # checkov:skip=CKV_AWS_260:Disallow ingress from 0.0.0.0:0 to port 80 when implementing HTTPS support in issue #163
   ingress {
     description = "Allow HTTPS traffic from public internet"
     from_port   = 443
@@ -458,13 +454,6 @@ resource "aws_security_group" "alb" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    description = "Allow HTTP traffic from public internet--Testing onlu"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
   egress {
     description = "Allow all outgoing traffic"
     from_port   = 0
