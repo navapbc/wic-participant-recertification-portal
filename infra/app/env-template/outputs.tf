@@ -1,5 +1,5 @@
 output "cluster_name" {
-  value = local.database_name
+  value = local.cluster_name
 }
 
 output "participant_service_name" {

@@ -241,25 +241,6 @@ data "aws_iam_policy_document" "s3_encrypted" {
       ]
     }
   }
-
-  statement {
-    sid = "S3ServerAccessLogsPolicy"
-    principals {
-      type = "Service"
-      identifiers = [
-        "logging.s3.amazonaws.com"
-      ]
-    }
-    actions = [
-      "s3:PutObject",
-    ]
-
-    resources = [
-      "${aws_s3_bucket.s3_encrypted_log.arn}/*"
-    ]
-
-    effect = "Allow"
-  }
 }
 
 data "aws_iam_policy_document" "s3_encrypted_log" {
@@ -288,5 +269,24 @@ data "aws_iam_policy_document" "s3_encrypted_log" {
         false
       ]
     }
+  }
+  // Allow logging.s3.amazonaws.com put objects into the s3_encrypted_log bucket.
+  statement {
+    sid = "S3ServerAccessLogsPolicy"
+    principals {
+      type = "Service"
+      identifiers = [
+        "logging.s3.amazonaws.com"
+      ]
+    }
+    actions = [
+      "s3:PutObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.s3_encrypted_log.arn}/*"
+    ]
+
+    effect = "Allow"
   }
 }

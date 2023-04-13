@@ -36,8 +36,8 @@ env:
   PROJECT_NAME: 'wic-prp'
   IMAGE_TAG: ${{ github.sha }}-${{ github.run_number }}-${{ github.run_attempt }}
 
-# Need to repeat the expression since env.WHATEVER is not accessible in this context
-concurrency: cd-${{ inputs.env_name || 'dev' }}-${{ inputs.app_name || 'participant' }}
+# env vars and inputs aren't evaluated here, so we need to use this toJson
+concurrency: cd-${{ toJson(github.event.inputs.env_name) || 'dev' }}-${{ toJson(github.event.inputs.app_name) || 'participant' }}
 
 jobs:
   deploy:

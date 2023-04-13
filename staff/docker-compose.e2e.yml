@@ -15,7 +15,7 @@ version: "3.7"
 services:
   # Create a database to run e2e tests against
   database-e2e:
-    image: postgres
+    image: postgres:14
     environment:
       POSTGRES_PASSWORD: incredible_local_secret_phrase
       POSTGRES_USER: postgres

@@ -6,16 +6,19 @@ variable "environment_name" {
 variable "write_role_names" {
   type        = list(string)
   description = "role names that have access to write s3 permissions"
+  default     = []
 }
 
 variable "delete_role_names" {
   type        = list(string)
   description = "role names that have access to delete s3 permissions"
+  default     = []
 }
 
 variable "read_role_names" {
   type        = list(string)
   description = "role names that have access to read s3 permissions"
+  default     = []
 }
 
 variable "s3_bucket_name" {
