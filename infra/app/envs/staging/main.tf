@@ -56,4 +56,6 @@ module "app" {
   staff_image_tag       = var.staff_image_tag
   analytics_image_tag   = var.analytics_image_tag
   analytics_enable_exec = true
+  participant_url       = "${local.environment_name}.wic-services.org"
+  staff_url             = "${local.environment_name}-staff.wic-services.org"
 }

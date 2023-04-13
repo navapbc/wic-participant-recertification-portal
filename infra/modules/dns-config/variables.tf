@@ -23,3 +23,12 @@ variable "environment_name" {
   type        = string
   description = "name of the application environment"
 }
+
+variable "participant_url" {
+  type = string
+  description = "URL to access the application"
+}
+variable "staff_url" {
+  type = string
+  description = "URL to access the application"
+}

@@ -17,10 +17,11 @@ data "aws_lb" "analytics_alb" {
 #
 
 # creating subdomains for each env (except prod)
-
+# create var for url
 # ALIAS record for subdomains
 resource "aws_route53_record" "participant_alias_record" {
-  name    = "${var.environment_name}.wic-services.org"
+  name = var.participant_url
+  # name    = "${var.environment_name}.wic-services.org"
   type    = "A"
   zone_id = data.aws_route53_zone.project_url.id
   alias {
@@ -37,7 +38,8 @@ resource "aws_route53_record" "participant_alias_record" {
 
 # ALIAS record for subdomains
 resource "aws_route53_record" "staff_alias_record" {
-  name    = "${var.environment_name}-staff.wic-services.org"
+  name = var.staff_url
+  # name    = "${var.environment_name}-staff.wic-services.org"
   type    = "A"
   zone_id = data.aws_route53_zone.project_url.id
   alias {
