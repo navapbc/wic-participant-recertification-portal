@@ -1,10 +1,6 @@
 # -------- Image: base -------- #
 # Base node image with package updates and dependencies
 FROM node:18-slim as base
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    # Install curl for healthcheck
-    curl
 # Set working directory and node user
 WORKDIR /home/node/lowdefy
 
