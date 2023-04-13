@@ -3,10 +3,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { FileUploader } from "app/components/FileUploader";
 import type {
   FileUploaderProps,
-  FileInputRef,
+  FileUploaderRef,
 } from "app/components/FileUploader";
 import { Accordion, Button } from "@trussworks/react-uswds";
-import { Form, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useLocation,
+  useSubmit,
+} from "@remix-run/react";
 import type { Params } from "@remix-run/react";
 import {
   json,
@@ -44,6 +50,22 @@ import {
   MAX_UPLOAD_SIZE_BYTES,
 } from "app/utils/config.server";
 import { FilePreview } from "~/components/FilePreview";
+
+const createPreviewData = async (
+  submissionID: string
+): Promise<PreviousUpload[]> => {
+  const previousDocuments = await listDocuments(submissionID);
+  const previousUploads = await Promise.all(
+    previousDocuments.map(async (document) => {
+      const downloadUrl = await getURLFromS3(document.s3Key);
+      return {
+        url: downloadUrl,
+        name: document.originalFilename,
+      } as PreviousUpload;
+    })
+  );
+  return previousUploads;
+};
 
 export const loader: LoaderFunction = async ({
   request,
@@ -86,16 +108,7 @@ export const loader: LoaderFunction = async ({
     console.log(`No proof required; routing to ${skipToContact}`);
     return redirect(skipToContact);
   }
-  const previousDocuments = await listDocuments(submissionID);
-  const previousUploads = await Promise.all(
-    previousDocuments.map(async (document) => {
-      const downloadUrl = await getURLFromS3(document.s3Key);
-      return {
-        url: downloadUrl,
-        name: document.originalFilename,
-      } as PreviousUpload;
-    })
-  );
+  const previousUploads = await createPreviewData(submissionID);
   return json(
     {
       submissionID: submissionID,
@@ -107,8 +120,6 @@ export const loader: LoaderFunction = async ({
     { headers: headers }
   );
 };
-
-type loaderData = Awaited<ReturnType<typeof loader>>;
 
 export const action = async ({
   request,
@@ -173,28 +184,29 @@ export const action = async ({
   const rejectedDocuments = submittedDocuments.filter((value) => {
     return value?.accepted == false;
   });
-  if (acceptedDocuments.length > MAX_UPLOAD_FILECOUNT) {
+  const previousUploads = await listDocuments(submissionID);
+  const totalUploads = previousUploads.length + acceptedDocuments.length;
+  if (totalUploads > MAX_UPLOAD_FILECOUNT) {
+    const availableUploads = MAX_UPLOAD_FILECOUNT - previousUploads.length;
     console.log(
-      `❌ Received ${acceptedDocuments.length} files; max is ${MAX_UPLOAD_FILECOUNT}`
+      `❌ Received ${totalUploads} files; max is ${MAX_UPLOAD_FILECOUNT}`
     );
     const newRejectedDocuments = await Promise.all(
-      acceptedDocuments
-        .slice(MAX_UPLOAD_FILECOUNT)
-        .map(async (fileToDelete) => {
-          if (fileToDelete?.key) {
-            await deleteFileFromS3(fileToDelete.key);
-          }
-          return {
-            accepted: false,
-            filename: fileToDelete!.filename,
-            error: "fileCount",
-            size: fileToDelete!?.size,
-          } as SubmittedFile;
-        })
+      acceptedDocuments.slice(availableUploads).map(async (fileToDelete) => {
+        if (fileToDelete?.key) {
+          await deleteFileFromS3(fileToDelete.key);
+        }
+        return {
+          accepted: false,
+          filename: fileToDelete!.filename,
+          error: "fileCount",
+          size: fileToDelete!?.size,
+        } as SubmittedFile;
+      })
     );
     rejectedDocuments.push.apply(rejectedDocuments, newRejectedDocuments);
     formData.delete("documents");
-    acceptedDocuments = acceptedDocuments.slice(0, MAX_UPLOAD_FILECOUNT);
+    acceptedDocuments = acceptedDocuments.slice(0, availableUploads);
   }
   console.log(
     `Accepted ${JSON.stringify(acceptedDocuments)}, Rejected ${JSON.stringify(
@@ -204,21 +216,20 @@ export const action = async ({
   acceptedDocuments.map(async (acceptedFile) => {
     await upsertDocument(submissionID, acceptedFile!);
   });
-  let needsDocuments = true;
   if (!rejectedDocuments.length) {
     if (acceptedDocuments.length) {
-      needsDocuments = false;
+      throw redirect(routeRelative(request, "/contact"));
     } else {
       const previousUploads = await listDocuments(submissionID);
       if (previousUploads.length) {
-        needsDocuments = false;
+        throw redirect(routeRelative(request, "/contact"));
       }
     }
   }
-  if (needsDocuments) {
-    return redirect(routeRelative(request, "/upload"));
-  }
-  return redirect(routeRelative(request, "/contact"));
+  return {
+    acceptedUploads: await createPreviewData(submissionID),
+    rejectedUploads: rejectedDocuments,
+  };
 };
 
 const buildDocumentHelp = (proofRequired: Proofs[]) => {
@@ -252,8 +263,10 @@ export default function Upload() {
   const { t } = useTranslation();
   const location = useLocation();
   const { proofRequired, maxFileSize, maxFileCount, previousUploads } =
-    useLoaderData<loaderData>();
+    useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const formSubmit = useSubmit();
+
   const [previousUploadPreviews, setPreviousUploadPreviews] = useState(<></>);
   const removePreviousFile = (fileName: string) => {};
   const renderPreviews = () => {
@@ -309,7 +322,7 @@ export default function Upload() {
   };
   const documentProofElements = buildDocumentHelp(proofRequired);
 
-  const fileInputRef = useRef<FileInputRef>(null);
+  const fileInputRef = useRef<FileUploaderRef>(null);
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     let data = new FormData(event.currentTarget);
@@ -324,6 +337,9 @@ export default function Upload() {
       action: location.pathname,
     });
   };
+  if (actionData?.acceptedUploads && fileInputRef?.current) {
+    fileInputRef.current.removeFileList(actionData.acceptedUploads);
+  }
   return (
     <div>
       <h1>{t("Upload.title")}</h1>

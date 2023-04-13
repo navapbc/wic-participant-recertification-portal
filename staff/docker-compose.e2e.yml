@@ -11,10 +11,10 @@
 # Note: This usage *requires* running docker-compose down; otherwise containers are
 #       will hang around forever. Not suitable for CI.
 version: "3.7"
-
+name: staff-e2e
 services:
   # Create a database to run e2e tests against
-  database-e2e:
+  database:
     image: postgres
     environment:
       POSTGRES_PASSWORD: incredible_local_secret_phrase
@@ -34,10 +34,10 @@ services:
       context: .
     # The database must be up and running before the lowdefy server will start
     depends_on:
-      database-e2e:
+      database:
         condition: service_healthy
     environment:
-      LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
+      LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@database:5432/postgres?schema=public
     # Check that the lowdefy server is up and running
     healthcheck:
       test: "curl -f http://localhost:3000 || exit 1"
@@ -49,6 +49,27 @@ services:
     # Expose a port in case it's useful for debugging
     ports:
       - 3123:3000
+
+  # Create an S3 Localstack server for e2e tests
+  s3_local:
+    image: localstack/localstack:latest
+    environment:
+      SERVICES: s3
+      AWS_DEFAULT_REGION: us-west-2
+      EDGE_PORT: 6566
+      HOSTNAME_EXTERNAL: s3_local
+    healthcheck:
+      test: "curl -f http://localhost.localstack.cloud:6566/_localstack/health || exit 1"
+      timeout: 5s
+      retries: 5
+    ports:
+      - "6566:6566"
+    networks:
+      staff-e2e:
+        aliases:
+          - s3.localhost.localstack.cloud
+          - s3.s3_local
+          - participant-uploads.s3.s3_local
 
   # Create the playwright container
   playwright:

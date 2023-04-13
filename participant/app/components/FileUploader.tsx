@@ -10,9 +10,8 @@ import React, {
   forwardRef,
 } from "react";
 import type { ReactElement } from "react";
-import type { i18nKey } from "~/types";
+import type { PreviousUpload, i18nKey } from "~/types";
 import type { FileInputRef } from "app/components/internal/FileInput";
-export type { FileInputRef } from "app/components/internal/FileInput";
 
 export type FileUploaderProps = {
   className?: string;
@@ -26,6 +25,11 @@ export type FileUploaderProps = {
   children?: ReactElement;
 };
 
+export type FileUploaderRef = {
+  files: File[];
+  removeFileList: (removeList: PreviousUpload[]) => void;
+};
+
 export type FileState = {
   [key: string]: File;
 };
@@ -35,7 +39,7 @@ export type FileError = {
 };
 
 export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
-  FileInputRef,
+  FileUploaderRef,
   FileUploaderProps & JSX.IntrinsicElements["input"]
 > = (
   {
@@ -55,7 +59,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
   const { t } = useTranslation();
   const [files, setFiles] = useState<FileState>({});
   const [previews, setPreviews] = useState(<></>);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<FileInputRef>(null);
   const documentString = t(`${labelKey}.document`);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -73,9 +77,10 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
   useImperativeHandle(
     ref,
     () => ({
-      input: fileInputRef.current,
       files: Object.keys(files).map((key) => files[key]),
+      removeFileList: removeFileList,
     }),
+    // eslint-disable-next-line   react-hooks/exhaustive-deps -- (deps list is correct)
     [files]
   );
 
@@ -142,6 +147,14 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
       setErrorMessage(`${labelKey}.fileCountError`);
     }
     return { ...files };
+  };
+  const removeFileList = (removeList: PreviousUpload[]) => {
+    setErrorMessage("");
+    setFiles({});
+    for (let file of removeList) {
+      delete files[file.name];
+      setFiles({ ...files });
+    }
   };
   const handleNewFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMessage("");
