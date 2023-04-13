@@ -4,6 +4,7 @@ set -euo pipefail
 
 COMMAND=$1
 EXTRA_ARG=${2:-""}
+RESET_DB=${3:-""}
 
 available_commands=(test update cleanup)
 
@@ -16,9 +17,17 @@ if [[ "test" == $COMMAND ]]; then
   # Start the database and wait until it's ready
   echo "Starting database..."
   docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
+
+  # If an argument "dbreset" is passed in, start the dbreset container
+  if [[ "dbreset" == $RESET_DB ]]; then
+    echo "Resetting database..."
+    docker compose -f docker-compose.e2e.yml up --build --wait dbreset-e2e
+  fi
+
   # Start the application and wait until it's ready
   echo "Starting app to test against..."
   docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
+
   # Start Playwright and run the tests in a one-off container
   echo "Running playwright tests..."
   docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --retries=3 --reporter=list ${EXTRA_ARG}
@@ -29,6 +38,10 @@ if [[ "update" == $COMMAND ]]; then
   # Start the database and wait until it's ready
   echo "Starting database..."
   docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
+  # If an argument "dbreset" is passed in, run the dbreset container
+  if [[ "dbreset" == $RESET_DB ]]; then
+    docker compose -f docker-compose.e2e.yml run --build --rm dbreset-e2e
+  fi
   # Start the application and wait until it's ready
   echo "Starting app to test against..."
   docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
