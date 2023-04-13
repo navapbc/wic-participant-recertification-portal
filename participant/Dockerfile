@@ -26,6 +26,7 @@ COPY --from=deps /home/node/remix/node_modules ./node_modules
 COPY --chown=node:node prisma .
 RUN npx prisma generate
 COPY --chown=node:node . .
+RUN cp ./prisma/seed.not-prod.ts ./prisma/seed.ts
 CMD ["npm", "run", "dev:docker"]
 
 # -------- Image: e2e -------- #
@@ -64,5 +65,6 @@ COPY --from=build /home/node/remix/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /home/node/remix/build ./build
 COPY --from=build /home/node/remix/public/build ./public/build
 COPY --chown=node:node . .
+RUN cp ./prisma/seed.prod.ts ./prisma/seed.ts
 VOLUME ["/tmp"]
 CMD ["/home/node/remix/bin/prod-start.sh"]
