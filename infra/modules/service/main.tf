@@ -9,8 +9,6 @@ locals {
   image_url               = "${var.image_repository_url}:${var.image_tag}"
   healthcheck_path        = trimprefix(var.healthcheck_path, "/")
   define_ecs_task_role    = length(var.container_efs_volumes) > 0 || var.enable_exec
-  service_lifecycle_ignore = var.redeploy_service ? [] : [task_definition]
-  task_definition_lifecycle_ignore = var.redeploy_service ? [] : [container_definitions]
 }
 
 ###################
@@ -125,9 +123,20 @@ resource "aws_ecs_service" "app" {
 
   # Allow changes to the desired_count without differences in terraform plan.
   # This allows autoscaling to manage the desired count for us.
-  # Ignoring the task_definition allows the task revision to not get reverted if a rew revision is created outside of terraform.
   lifecycle {
-    ignore_changes = merge([desired_count], local.service_lifecycle_ignore)
+    ignore_changes = [
+      desired_count,
+      # NOTE: By default, this module ignores changes to the ECS service task definition and ignores changes to the ECS task
+      # definition container definitions so that Github Actions can manage deploys by creating new task definition versions.
+      # Sometimes we need to deploy updates to container definitions and update the ECS service. Normally, we would control
+      # this behavior with a variable. However, terraform currently doesn't support expression evaluation in the `lifecycle`
+      # block. See https://github.com/hashicorp/terraform/issues/3116
+      #
+      # To deploy general updates to the task definition, **TEMPORARILY** uncomment the next line.
+      # To deploy general updates to the task definition and/or updates to the task's container definition,
+      #   **TEMPORARILY** uncomment the next line AND the `ignore_changes` line in the aws_ecs_task_definition below.
+      task_definition,
+    ]
   }
 
   network_configuration {
@@ -238,7 +247,21 @@ resource "aws_ecs_task_definition" "app" {
   }
 
   lifecycle {
-    ignore_changes = local.task_definition_lifecycle_ignore
+    ignore_changes = [
+      # NOTE: By default, this module ignores changes to the ECS service task definition and ignores changes to the ECS task
+      # definition container definitions so that Github Actions can manage deploys by creating new task definition versions.
+      # Sometimes we need to deploy updates to container definitions and update the ECS service. Normally, we would control
+      # this behavior with a variable. However, terraform currently doesn't support expression evaluation in the `lifecycle`
+      # block. See https://github.com/hashicorp/terraform/issues/3116
+      #
+      # If you uncomment the container_definitions line, pass in -var="image_tag=<correct_image_tag>". Otherwise, the task
+      # will deploy with a non-existent image tag "latest".
+      #
+      # To deploy general updates to the container definition, **TEMPORARILY** uncomment
+      # - the next line
+      # - AND the `ignore_changes` line in the aws_ecs_service above
+      container_definitions,
+    ]
   }
 }
 
