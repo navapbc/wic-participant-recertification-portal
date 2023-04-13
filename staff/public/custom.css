@@ -23,7 +23,8 @@ main a:hover {
 }
 
 /* Disable the menu because we don't have a lot of pages */
-.ant-menu {
+.ant-menu,
+#layout_mobile_menu {
   display: none !important;
 }
 
