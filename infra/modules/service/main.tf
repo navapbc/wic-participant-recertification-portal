@@ -1,3 +1,12 @@
+# NOTE: By default, this module ignores changes to the ECS service task definition and ignores changes to the ECS task
+# definition container definitions so that Github Actions can manage deploys by creating new task definition versions.
+# Sometimes we need to deploy updates to container definitions and update the ECS service. Normally, we would control
+# this behavior with a variable. However, terraform currently doesn't support expression evaluation in the `lifecycle`
+# block. See https://github.com/hashicorp/terraform/issues/3116
+#
+# To change this, TEMPORARILY comment out the lines following:
+#  `IGNORE_GITHUB_CHANGES - comment out next line to deploy changes via terraform`
+
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
@@ -131,15 +140,7 @@ resource "aws_ecs_service" "app" {
   lifecycle {
     ignore_changes = [
       desired_count,
-      # NOTE: By default, this module ignores changes to the ECS service task definition and ignores changes to the ECS task
-      # definition container definitions so that Github Actions can manage deploys by creating new task definition versions.
-      # Sometimes we need to deploy updates to container definitions and update the ECS service. Normally, we would control
-      # this behavior with a variable. However, terraform currently doesn't support expression evaluation in the `lifecycle`
-      # block. See https://github.com/hashicorp/terraform/issues/3116
-      #
-      # To deploy general updates to the task definition, **TEMPORARILY** uncomment the next line.
-      # To deploy general updates to the task definition and/or updates to the task's container definition,
-      #   **TEMPORARILY** uncomment the next line AND the `ignore_changes` line in the aws_ecs_task_definition below.
+      # IGNORE_GITHUB_CHANGES - comment out next line to deploy changes via terraform
       task_definition,
     ]
   }
@@ -253,18 +254,7 @@ resource "aws_ecs_task_definition" "app" {
 
   lifecycle {
     ignore_changes = [
-      # NOTE: By default, this module ignores changes to the ECS service task definition and ignores changes to the ECS task
-      # definition container definitions so that Github Actions can manage deploys by creating new task definition versions.
-      # Sometimes we need to deploy updates to container definitions and update the ECS service. Normally, we would control
-      # this behavior with a variable. However, terraform currently doesn't support expression evaluation in the `lifecycle`
-      # block. See https://github.com/hashicorp/terraform/issues/3116
-      #
-      # If you uncomment the container_definitions line, pass in -var="image_tag=<correct_image_tag>". Otherwise, the task
-      # will deploy with a non-existent image tag "latest".
-      #
-      # To deploy general updates to the container definition, **TEMPORARILY** uncomment
-      # - the next line
-      # - AND the `ignore_changes` line in the aws_ecs_service above
+      # IGNORE_GITHUB_CHANGES - comment out next line to deploy changes via terraform
       container_definitions,
     ]
   }
