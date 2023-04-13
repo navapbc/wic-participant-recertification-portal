@@ -216,11 +216,11 @@ module "doc_upload" {
 
 # todo: cleanup service names
 module "dns" {
-  source           = "../../modules/dns-config"
-  environment_name = var.environment_name
-  analytics_service_name     = local.analytics_service_name
+  source                   = "../../modules/dns-config"
+  environment_name         = var.environment_name
+  analytics_service_name   = local.analytics_service_name
   participant_service_name = local.participant_service_name
-  staff_service_name = local.staff_service_name
-  participant_url = var.participant_url
-  staff_url = var.staff_url
+  staff_service_name       = local.staff_service_name
+  participant_url          = var.participant_url
+  staff_url                = var.staff_url
 }

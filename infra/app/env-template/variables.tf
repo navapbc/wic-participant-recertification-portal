@@ -39,12 +39,12 @@ variable "analytics_enable_exec" {
   default     = false
 }
 variable "participant_url" {
-  type = string
+  type        = string
   description = "URL to access the application"
-  default = "dev.wic-services.org"
+  default     = "dev.wic-services.org"
 }
 variable "staff_url" {
-  type = string
+  type        = string
   description = "URL to access the application"
-  default = "dev-staff.wic-services.org"
+  default     = "dev-staff.wic-services.org"
 }

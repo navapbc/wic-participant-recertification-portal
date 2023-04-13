@@ -25,10 +25,10 @@ variable "environment_name" {
 }
 
 variable "participant_url" {
-  type = string
+  type        = string
   description = "URL to access the application"
 }
 variable "staff_url" {
-  type = string
+  type        = string
   description = "URL to access the application"
 }

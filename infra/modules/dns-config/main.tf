@@ -25,7 +25,7 @@ resource "aws_route53_record" "participant_alias_record" {
   type    = "A"
   zone_id = data.aws_route53_zone.project_url.id
   alias {
-    name                   = data.aws_lb.participant_alb.dns_name 
+    name                   = data.aws_lb.participant_alb.dns_name
     zone_id                = data.aws_lb.participant_alb.zone_id
     evaluate_target_health = true
   }
@@ -62,7 +62,7 @@ resource "aws_route53_record" "analytics_alias_record" {
   zone_id = data.aws_route53_zone.project_url.id
   alias {
     name                   = data.aws_lb.analytics_alb.dns_name
-    zone_id                = data.aws_lb.analytics_alb.zone_id# this needs to be the load balancer
+    zone_id                = data.aws_lb.analytics_alb.zone_id # this needs to be the load balancer
     evaluate_target_health = true
   }
 }
