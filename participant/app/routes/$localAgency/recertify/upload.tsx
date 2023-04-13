@@ -5,7 +5,7 @@ import type {
   FileUploaderProps,
   FileUploaderRef,
 } from "app/components/FileUploader";
-import { Accordion, Button } from "@trussworks/react-uswds";
+import { Accordion, Alert, Button } from "@trussworks/react-uswds";
 import {
   Form,
   useActionData,
@@ -233,12 +233,13 @@ export const action = async ({
 };
 
 const buildDocumentHelp = (proofRequired: Proofs[]) => {
-  const allProofs: Proofs[] = ["address", "identity", "income"];
-  return allProofs.map((value) => {
+  const shouldNumber = proofRequired.length > 1;
+  return proofRequired.sort().map((value, index) => {
     if (proofRequired.includes(value)) {
       return (
         <div key={`${value}-instructions`}>
           <h2>
+            {shouldNumber && `${index + 1}.  `}
             <Trans i18nKey={`Upload.${value}.label`} key={`${value}-label`} />
           </h2>
           <div>
@@ -343,6 +344,7 @@ export default function Upload() {
   return (
     <div>
       <h1>{t("Upload.title")}</h1>
+      <div>{t("Upload.intro")}</div>
       {documentProofElements}
       <Form method="get" id="previousFiles" name="previous-uploads-form">
         {previousUploadPreviews}
@@ -399,6 +401,11 @@ export default function Upload() {
                 },
               ]}
             />
+            {/* <Alert slim={true} noIcon={false} type="error" headingLevel="h3">
+              You can only upload up to {maxFileCount} files. If you need to
+              upload more than {maxFileCount} files, you must go through this
+              form again.
+            </Alert> */}
           </div>
         </FileUploader>
         <Button type="submit" value="submit" name="action">

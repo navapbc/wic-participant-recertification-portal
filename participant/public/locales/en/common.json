@@ -120,8 +120,8 @@
     "label": "Upload documents",
     "document": "Document",
     "ifNeeded": "(if needed)",
-    "noFiles": "Choose or drag a file to upload",
-    "additionalFiles": "Choose or drag another file to upload",
+    "noFiles": "Choose a file to upload",
+    "additionalFiles": "Choose another file to upload",
     "filetypehint": "You can select a PDF, JPEG, PNG, or GIF file.",
     "altText": "Image preview for",
     "fileTypeError": "This is not a valid file type.",
@@ -139,8 +139,9 @@
   },
   "Upload": {
     "title": "You need to upload documents.",
+    "intro": "We’ve listed out what kind of information you need to provide and which documents you can use.",
     "address": {
-      "label": "Proof of address",
+      "label": "Show proof of address",
       "heading": "Documents that show your address include:",
       "examples": [
         "Utility or phone bill",
@@ -151,7 +152,7 @@
       ]
     },
     "identity": {
-      "label": "Proof of identity",
+      "label": "Show proof of identity",
       "heading": "Documents that show identity include:",
       "examples": [
         "Birth Certificate",
@@ -164,7 +165,7 @@
       ]
     },
     "income": {
-      "label": "Proof of income",
+      "label": "Show proof of income",
       "heading": "<p>Upload proof of income for each member of your household that earns money.</p><p>Documents that show income include:</p>",
       "examples": [
         "Pay stubs from the past 60 days",
