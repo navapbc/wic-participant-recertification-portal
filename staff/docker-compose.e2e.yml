@@ -91,6 +91,5 @@ services:
       - ./test-results:/srv/test-results
       - ./playwright.config.ts:/srv/playwright.config.ts
 
-
 networks:
   staff-e2e:
