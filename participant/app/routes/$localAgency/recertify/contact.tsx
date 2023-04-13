@@ -3,13 +3,62 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
-import { ValidatedForm } from "remix-validated-form";
+import { ValidatedForm, setFormDefaults, validationError } from "remix-validated-form";
 import { contactSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
+import type { Params } from "@remix-run/react";
+import type { LoaderFunction} from "@remix-run/server-runtime";
+import { json, redirect } from "@remix-run/node";
+import { cookieParser } from "~/cookies.server";
+import type { ContactData } from "~/types";
+import { findSubmissionFormData, upsertSubmissionForm } from "~/utils/db.server";
+import { routeFromContact } from "~/utils/routing";
+import { useLoaderData, useActionData } from "@remix-run/react";
 
 const contactValidator = withZod(contactSchema);
+export const loader: LoaderFunction = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: Params<string>;
+}) => {
+  const { submissionID, headers } = await cookieParser(request, params);
+  const existingContactData = (await findSubmissionFormData(
+    submissionID,
+    "contact"
+  )) as ContactData;
+  return json(
+    {
+      submissionID: submissionID,
+      ...setFormDefaults("contactForm", existingContactData),
+    },
+    { headers: headers }
+  );
+};
+
+type loaderData = Awaited<ReturnType<typeof loader>>;
+
+export const action = async ({ request }: { request: Request }) => {
+  const formData = await request.formData();
+  const validationResult = await contactValidator.validate(formData);
+  if (validationResult.error) {
+    console.log(`Validation error: ${validationResult.error}`);
+    return validationError(validationResult.error, validationResult.data);
+  }
+  const parsedForm = contactSchema.parse(formData);
+  const { submissionID } = await cookieParser(request);
+  console.log(`Got submission ${JSON.stringify(parsedForm)}`);
+  await upsertSubmissionForm(submissionID, "contact", parsedForm);
+  const routeTarget = routeFromContact(request);
+  console.log(`Completed contact form; routing to ${routeTarget}`);
+  return redirect(routeTarget);
+};
+
 
 export default function Contact() {
+  useLoaderData<loaderData>();
+  useActionData<typeof action>();
   return (
     <div>
       <h1>
