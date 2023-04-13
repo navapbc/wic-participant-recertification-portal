@@ -34,8 +34,8 @@ test(`the contact form submits a POST request, and on return to the page,
   const submissionID = await parseSubmissionID(cookies[0]);
 
   // Fill in the form with basic answers and test that the screenshot for the filled out form matches
-  await page.getByTestId('textInput').fill('1234563432');
-  await page.getByTestId('textarea').fill('Test');
+  await page.getByTestId("textInput").fill("1234563432");
+  await page.getByTestId("textarea").fill("Test");
   await expect(page).toHaveScreenshot({ fullPage: true });
 
   // Catch the POST request to the API with the form data while we click "Continue"
@@ -93,10 +93,6 @@ test(`the contact form submits a POST request, and on return to the page,
 
   // This is not verifying Playwright checked the boxes, but that the form repopulates
   // from the database record created by submitting the form
-  expect(
-    await page.getByTestId('textInput').inputValue()
-  ).toBe("1234563432")
-  expect(
-    await  page.getByTestId('textarea').inputValue()
-  ).toBe("Test")
+  expect(await page.getByTestId("textInput").inputValue()).toBe("1234563432");
+  expect(await page.getByTestId("textarea").inputValue()).toBe("Test");
 });

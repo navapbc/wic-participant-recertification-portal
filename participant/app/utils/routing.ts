@@ -20,8 +20,6 @@ export function routeFromChanges(
   return routeRelative(request, "contact");
 }
 
-export function routeFromContact(
-  request: Request,
-): string {
-    return routeRelative(request, "review");
+export function routeFromContact(request: Request): string {
+  return routeRelative(request, "review");
 }

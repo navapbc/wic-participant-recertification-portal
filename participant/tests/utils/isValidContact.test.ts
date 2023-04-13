@@ -25,7 +25,7 @@ it("should have a parsed contact object if all requirements are met", async () =
 
 it("should have an error if a field is missing", async () => {
   const validationResult = await contactValidator.validate(
-    createForm({ phoneNumber: "", additionalInfo: "Test"} as FormObject)
+    createForm({ phoneNumber: "", additionalInfo: "Test" } as FormObject)
   );
-  expect(validationResult.data).toBeUndefined()
+  expect(validationResult.data).toBeUndefined();
 });

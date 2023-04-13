@@ -3,15 +3,22 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
-import { ValidatedForm, setFormDefaults, validationError } from "remix-validated-form";
+import {
+  ValidatedForm,
+  setFormDefaults,
+  validationError,
+} from "remix-validated-form";
 import { contactSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
 import type { Params } from "@remix-run/react";
-import type { LoaderFunction} from "@remix-run/server-runtime";
+import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/node";
 import { cookieParser } from "~/cookies.server";
 import type { ContactData } from "~/types";
-import { findSubmissionFormData, upsertSubmissionForm } from "~/utils/db.server";
+import {
+  findSubmissionFormData,
+  upsertSubmissionForm,
+} from "~/utils/db.server";
 import { routeFromContact } from "~/utils/routing";
 import { useLoaderData, useActionData } from "@remix-run/react";
 
@@ -55,7 +62,6 @@ export const action = async ({ request }: { request: Request }) => {
   return redirect(routeTarget);
 };
 
-
 export default function Contact() {
   useLoaderData<loaderData>();
   useActionData<typeof action>();
@@ -65,7 +71,7 @@ export default function Contact() {
         <Trans i18nKey="Contact.title" />
       </h1>
       <RequiredQuestionStatement />
-      <ValidatedForm 
+      <ValidatedForm
         validator={contactValidator}
         id="contactForm"
         method="post"
