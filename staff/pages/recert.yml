@@ -60,6 +60,7 @@ blocks:
       # Define each table column
       columnDefs:
         - headerName: Submission date
+          wrapText: true
           valueGetter:
             _function:
               # Use date time formatting https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
