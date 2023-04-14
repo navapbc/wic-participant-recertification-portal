@@ -30,28 +30,26 @@ services:
       - "3003:3000"
       - "6066:6006"
     volumes:
-      # Mount the app directory for faster local development.
-      # - ./:/home/node/remix
+      # Selectively mount directories for faster local development.
       - ./app:/home/node/remix/app
       - ./prisma:/home/node/remix/prisma
-      # Use a named volume for the node_modules so that the container uses the guest machine's node_modules dir instead of the host machine's node_modules directory, which might be divergent.
-      #- remix_dev_nodemodules:/home/node/remix/node_modules
+      - ./public:/home/node/remix/public
 
-  # remix_prod:
-  #   build:
-  #     target: prod
-  #     context: .
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   environment:
-  #     DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
-  #   init: true
-  #   ports:
-  #     - "3010:3000"
-  #   read_only: true
-  #   volumes:
-  #     - remix_prod_tmp:/tmp
+  remix_prod:
+    build:
+      target: prod
+      context: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+    init: true
+    ports:
+      - "3010:3000"
+    read_only: true
+    volumes:
+      - remix_prod_tmp:/tmp
 
 volumes:
   remix_dev_nodemodules:
