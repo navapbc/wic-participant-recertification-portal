@@ -1,0 +1,45 @@
+# Beware:
+# - This is the id for the content block that is nested inside the page_template.yml
+# - This is NOT the id for the page
+# - This must be a globally unique ID
+id: login_context
+type: Context
+
+events:
+  onEnter:
+    # Redirect to "recertifications" if user is already logged in.
+    - id: logged_in_redirect
+      type: Link
+      skip:
+        _eq:
+          - _user: sub
+          - null
+      params: recertifications
+
+areas:
+  content:
+    justify: center
+    blocks:
+      - id: login_card
+        type: Card
+        style:
+          maxWidth: 300
+        blocks:
+          - id: login_result
+            type: Result
+            properties:
+              title: Welcome
+              icon:
+                name: HomeTwoTone
+                color: "#36bc5c"
+            areas:
+              extra:
+                blocks:
+                  - id: login_button
+                    type: Button
+                    properties:
+                      title: Log in
+                    events:
+                      onClick:
+                        - id: login
+                          type: Login

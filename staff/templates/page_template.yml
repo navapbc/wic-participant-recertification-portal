@@ -27,18 +27,19 @@ blocks:
       # In the header region:
       header:
         blocks:
-          # @TODO add a test logout button
-          # Will be configured with cognito
-          - id: test_logout
+          - id: logout
             type: Button
             properties:
-              title: Log out
+              title: Logout
+            visible:
+              _ne:
+                - _user: sub
+                - null
             events:
               onClick:
-                - id: sizeMe
-                  type: Link
-                  params:
-                    pageId: nowhere
+                - id: logout
+                  type: Logout
+
       # In the content region:
       content:
         blocks:
