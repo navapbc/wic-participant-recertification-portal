@@ -76,9 +76,9 @@ blocks:
           valueGetter:
             _function:
               __string.concat:
-                - __args: 0.data.form_data.name.firstName
-                - " "
                 - __args: 0.data.form_data.name.lastName
+                - ", "
+                - __args: 0.data.form_data.name.firstName
                 - ", "
                 - __args: 0.data.form_data.contact.phoneNumber
                 - ", "
