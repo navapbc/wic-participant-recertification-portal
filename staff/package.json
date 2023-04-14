@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "npx lowdefy@3.23.3 dev",
-    "e2e": "../bin/run-e2e.sh test '' dbreset",
+    "e2e": "../bin/run-e2e.sh test",
     "e2e:update": "../bin/run-e2e.sh update",
     "e2e:cleanup": "../bin/run-e2e.sh cleanup",
     "format": "prettier --write .",
