@@ -205,11 +205,6 @@ module "analytics" {
   ]
 }
 
-module "waf" {
-  source   = "../../modules/waf"
-  waf_name = local.waf_name
-}
-
 module "doc_upload" {
   source            = "../../modules/s3-encrypted"
   environment_name  = var.environment_name

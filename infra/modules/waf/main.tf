@@ -154,11 +154,6 @@ resource "aws_wafv2_web_acl" "waf" {
       sampled_requests_enabled   = false
     }
   }
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "waf-general-metrics"
-    sampled_requests_enabled   = false
-  }
   # the following are custom rules and arent managed by AWS.
   rule {
     # Applies a rate based rule to IPs originating in the US
@@ -220,6 +215,11 @@ resource "aws_wafv2_web_acl" "waf" {
       sampled_requests_enabled   = false
     }
   }
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "waf-general-metrics"
+    sampled_requests_enabled   = false
+  }
 }
 
 # logging configuration resource
@@ -244,7 +244,7 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
 
 # IAM Role for Kinesis
 resource "aws_iam_role" "firehose_perms" {
-  name               = "placeholder"
+  name               = "waf-firehose-role"
   description        = "IAM role for the KDF"
   assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
 }
