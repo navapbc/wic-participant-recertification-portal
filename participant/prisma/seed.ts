@@ -16,25 +16,25 @@ export type NameFormType = {
   firstName: string;
   lastName: string;
   preferredName?: string;
-}
+};
 
 export type SeedDataType = {
   [key: string]: string;
-}
+};
 
 export type SeedSubmissionFormsType = {
   name: NameFormType;
   [key: string]: SeedDataType | SeedDataType[];
-}
+};
 
 export type SeedAgencySubmissionsType = {
   submissionId: string;
   forms: SeedSubmissionFormsType;
-}
+};
 
 export type SeedSubmissionsType = {
   [key: string]: SeedAgencySubmissionsType[];
-}
+};
 
 const prisma = new PrismaClient();
 // Any interactions with Prisma will be async
