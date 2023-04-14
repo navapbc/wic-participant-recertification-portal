@@ -1,4 +1,8 @@
-id: recerts
+# Beware:
+# - This is the id for the content block that is nested inside the page_template.yml
+# - This is NOT the id for the page
+# - This must be a globally unique ID
+id: recert_context
 type: Context
 
 requests: # Requests defines all the data requests made available in this page context
@@ -89,7 +93,7 @@ blocks:
             _function:
               __nunjucks:
                 template: |
-                  {{ form_data.name.firstName }} {{ form_data.name.lastName }} {{ "(" + form_data.name.preferredName + ")" if form_data.name.preferredName }}
+                  {{ form_data.name.lastName }}, {{ form_data.name.firstName }} {{ "(" + form_data.name.preferredName + ")" if form_data.name.preferredName }}
                   {{ form_data.contact.phoneNumber }}
                   Agency: {{ agency_name }}
                 on:
