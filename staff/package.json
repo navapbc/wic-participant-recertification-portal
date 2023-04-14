@@ -8,8 +8,7 @@
     "e2e:cleanup": "../bin/run-e2e.sh cleanup",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
-    "prisma:prepare": "mkdir -p prisma/migrations && cp -r ../participant/prisma/migrations prisma && cp ../participant/prisma/schema.prisma prisma && cp ../participant/prisma/seed.ts prisma"
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint ."
   },
   "dependencies": {
     "knex": "^2.4.2",
