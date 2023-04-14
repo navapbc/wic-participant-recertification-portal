@@ -7,7 +7,34 @@ import {
   upsertSubmissionForm,
 } from "app/utils/db.server";
 import seedAgencies from "public/data/local-agencies.json";
-import seedSubmissions from "public/data/submissions.not-prod.json";
+import seedSubmissions from "public/data/submissions.json";
+
+// Define a bunch of types to make typescript happy for the case where
+// seedSubmissions is empty. Otherwise, typescript is usually able to
+// infer all the types.
+export type NameFormType = {
+  firstName: string;
+  lastName: string;
+  preferredName?: string;
+}
+
+export type SeedDataType = {
+  [key: string]: string;
+}
+
+export type SeedSubmissionFormsType = {
+  name: NameFormType;
+  [key: string]: SeedDataType | SeedDataType[];
+}
+
+export type SeedAgencySubmissionsType = {
+  submissionId: string;
+  forms: SeedSubmissionFormsType;
+}
+
+export type SeedSubmissionsType = {
+  [key: string]: SeedAgencySubmissionsType[];
+}
 
 const prisma = new PrismaClient();
 // Any interactions with Prisma will be async
@@ -28,7 +55,7 @@ async function seed() {
 
   // Seed submissions.
   for (const [seedAgencyUrlId, seedAgencySubmissions] of Object.entries(
-    seedSubmissions
+    seedSubmissions as unknown as SeedSubmissionsType
   )) {
     const localAgency = await findLocalAgency(seedAgencyUrlId);
     if (localAgency) {
