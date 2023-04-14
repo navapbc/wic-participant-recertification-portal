@@ -43,8 +43,6 @@ services:
     init: true
     networks:
       - staff-e2e
-    volumes:
-      - ./prisma/seed.ts:/home/node/remix/prisma/seed.ts:ro
 
   # Create a lowdefy server to run e2e tests against
   app-e2e:
