@@ -33,7 +33,6 @@ services:
       # Selectively mount directories for faster local development.
       - ./app:/home/node/remix/app
       - ./prisma:/home/node/remix/prisma
-      - ./public:/home/node/remix/public
 
   remix_prod:
     build:
