@@ -23,7 +23,7 @@ RUN npm install --production=false
 # Provide a development image
 FROM base as dev
 COPY --from=deps /home/node/remix/node_modules ./node_modules
-COPY --chown=node:node prisma .
+COPY --chown=node:node prisma prisma
 RUN npx prisma generate
 COPY --chown=node:node . .
 RUN cp public/data/submissions.not-prod.json public/data/submissions.json
