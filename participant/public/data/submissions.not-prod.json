@@ -87,8 +87,7 @@
         ],
         "contact": {
           "phoneNumber": "(406) 123 - 4567",
-          "updates":
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+          "updates": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         },
         "documents": [
           {
@@ -134,8 +133,7 @@
         ],
         "contact": {
           "phoneNumber": "(406) 321 - 7654",
-          "updates":
-            "Seth is healthy and spirited! But I’m having issues with latching."
+          "updates": "Seth is healthy and spirited! But I’m having issues with latching."
         }
       }
     }

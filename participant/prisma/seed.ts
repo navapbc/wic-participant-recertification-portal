@@ -4,10 +4,10 @@ import {
   findSubmission,
   upsertLocalAgency,
   upsertSubmission,
-  upsertSubmissionForm
+  upsertSubmissionForm,
 } from "app/utils/db.server";
-import seedAgencies from "public/data/local-agencies.json"
-import seedSubmissions from "public/data/submissions.not-prod.json"
+import seedAgencies from "public/data/local-agencies.json";
+import seedSubmissions from "public/data/submissions.not-prod.json";
 
 const prisma = new PrismaClient();
 // Any interactions with Prisma will be async
@@ -27,21 +27,30 @@ async function seed() {
   }
 
   // Seed submissions.
-  for (const [seedAgencyUrlId, seedAgencySubmissions] of Object.entries(seedSubmissions)) {
+  for (const [seedAgencyUrlId, seedAgencySubmissions] of Object.entries(
+    seedSubmissions
+  )) {
     const localAgency = await findLocalAgency(seedAgencyUrlId);
     if (localAgency) {
       for (const seedSubmission of seedAgencySubmissions) {
         const submission = await findSubmission(seedSubmission.submissionId);
         if (!submission) {
-          await upsertSubmission(seedSubmission.submissionId, localAgency.urlId);
-          for (let [seedFormRoute, seedFormData] of Object.entries(seedSubmission.forms)) {
+          await upsertSubmission(
+            seedSubmission.submissionId,
+            localAgency.urlId
+          );
+          for (let [seedFormRoute, seedFormData] of Object.entries(
+            seedSubmission.forms
+          )) {
             await upsertSubmissionForm(
               seedSubmission.submissionId,
               seedFormRoute,
               seedFormData
             );
           }
-          console.log(`Seeding submission: ${seedSubmission.forms.name.firstName} ${seedSubmission.forms.name.lastName} 🌱`);
+          console.log(
+            `Seeding submission: ${seedSubmission.forms.name.firstName} ${seedSubmission.forms.name.lastName} 🌱`
+          );
         }
       }
     }
