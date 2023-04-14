@@ -9,10 +9,7 @@ RUN apk update \
     # Install curl for healthcheck
     curl \
     # Install openssl for Prisma
-    openssl \
-    # Install for debug
-    libunwind-dev \
-    python3 g++ make
+    openssl
 # Set working directory and node user
 WORKDIR /home/node/remix
 
