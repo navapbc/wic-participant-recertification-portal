@@ -24,7 +24,6 @@ locals {
   analytics_service_name    = "${local.project_name}-analytics-${var.environment_name}"
   analytics_database_name   = "${local.project_name}-analytics-${var.environment_name}"
   document_upload_s3_name   = "${local.project_name}-doc-upload-${var.environment_name}"
-  waf_name                 = "${local.project_name}-${local.app_name}-waf"
 }
 
 module "project_config" {
