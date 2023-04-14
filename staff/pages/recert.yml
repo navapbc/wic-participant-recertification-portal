@@ -27,27 +27,42 @@ events:
       params: get_data
 
 blocks:
-  # @TODO Temporary button to handle table sizing issues.
-  - id: Autosize
-    type: Button
-    events:
-      onClick:
-        - id: autosize_table
-          type: CallMethod
-          params:
-            blockId: table
-            method: autoSize
-
-  # If we want to export the data.
-  # - id: Download
+  # We prefer sizeColumnsToFit over autoSize, but leaving this in case we change our mind.
+  # - id: Autosize
   #   type: Button
   #   events:
   #     onClick:
-  #       - id: download
+  #       - id: autosize_table
   #         type: CallMethod
   #         params:
   #           blockId: table
-  #           method: exportDataAsCsv
+  #           method: autoSize
+
+  - id: fit_to_size_button
+    type: Button
+    properties:
+      title: Resize table
+    events:
+      onClick:
+        - id: fit_to_size_click
+          type: CallMethod
+          params:
+            blockId: table
+            method: sizeColumnsToFit
+
+  - id: download_button
+    type: Button
+    properties:
+      title: Download .csv
+    events:
+      onClick:
+        - id: download_click
+          type: CallMethod
+          params:
+            blockId: table
+            method: exportDataAsCsv
+            args:
+              - fileName: wic-mt-recertification-export.csv
 
   # The main table that shows the recertifications data
   - id: table
