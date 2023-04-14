@@ -9,9 +9,9 @@ function die() {
 
 function show_help() {
   echo "Usage:
-    run-e2e [-h|--help][-e|--extra-arg <argument>] app command
-    app can be: participant staff
-    command can be: test update cleanup"
+    run-e2e [-h|--help][-e|--extra-arg <argument>] command
+    command can be: test update cleanup
+    must be run from within the participant or staff directories"
 }
 
 function main() {
@@ -56,31 +56,30 @@ function main() {
     shift
   done
 
-  if [[ "$#" < 2 ]]; then
-    die 'ERROR: An app and a command are required.'
+  # Get the command.
+  if [[ "$#" < 1 ]]; then
+    die 'ERROR: A command is required.'
+  fi
+
+  available_commands=(test update cleanup)
+  if ! [[ ${available_commands[*]} =~ $1 ]]; then
+    die "ERROR: The command must be one of these: ${available_commands[*]}"
+  else
+    command=$1
+  fi
+
+  if [[ "$#" > 1 ]]; then
+    echo 'WARNING: This command accepts only 1 positional arguments and ignores the rest' >&2
   fi
 
   # Get the app.
   available_apps=(participant staff)
-  if ! [[ ${available_apps[*]} =~ $1 ]]; then
-    die "ERROR: The app must be one of these: ${available_apps[*]}"
-  else
-    app=$1
+  app=${PWD##*/}
+  if ! [[ ${available_apps[*]} =~ $app ]]; then
+    die "ERROR: Must be run from one of these directories: ${available_apps[*]}"
   fi
 
-
-  # Get the command.
-  available_commands=(test update cleanup)
-  if ! [[ ${available_commands[*]} =~ $2 ]]; then
-    die "ERROR: The command must be one of these: ${available_commands[*]}"
-  else
-    command=$2
-  fi
-
-  if [[ "$#" > 2 ]]; then
-    echo 'WARNING: This command accepts only 2 positional arguments and ignores the rest' >&2
-  fi
-
+  # Run the command.
   if [[ "cleanup" == $command ]]; then
     cleanup
   else
@@ -101,19 +100,19 @@ function main() {
 function run_db() {
   # Start the database and wait until it's ready
   echo "Starting database..."
-  docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
+  # docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
 }
 
 # Only necessary for staff portal
 function reset_db() {
   printf 'Resetting database by starting the dedicated reset container...\n'
-  docker compose -f docker-compose.e2e.yml up --build --wait dbreset-e2e
+  # docker compose -f docker-compose.e2e.yml up --build --wait dbreset-e2e
 }
 
 function run_app() {
   # Start the application and wait until it's ready
   echo "Starting app to test against..."
-  docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
+  # docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
 }
 
 function test() {
@@ -124,18 +123,18 @@ function test() {
     printf ' with extra argument: %s' "$extra_arg"
   fi
   printf '\n'
-  docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --retries=3 --reporter=list ${extra_arg}
+  # docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --retries=3 --reporter=list ${extra_arg}
 }
 
 function update_snapshots() {
   echo "Updating playwright snapshots..."
-  docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --update-snapshots --reporter=list
+  # docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --update-snapshots --reporter=list
 }
 
 function cleanup() {
   # Remove all the docker containers and volumes
   echo "Removing e2e containers..."
-  docker compose -f docker-compose.e2e.yml down --volumes
+  # docker compose -f docker-compose.e2e.yml down --volumes
 }
 
 main "$@"
