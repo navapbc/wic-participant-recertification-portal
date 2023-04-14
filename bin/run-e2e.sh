@@ -9,7 +9,7 @@ function die() {
 
 function show_help() {
   echo "Usage:
-    run-e2e [-h|--help][-r|--reset-db][-e|--extra-arg <argument>] app command
+    run-e2e [-h|--help][-e|--extra-arg <argument>] app command
     app can be: participant staff
     command can be: test update cleanup"
 }
@@ -19,7 +19,6 @@ function main() {
   command=
   app=
   extra_arg=
-  reset_db=false
 
   # Parse arguments.
   while :; do
@@ -28,10 +27,6 @@ function main() {
       -h|--help)
         show_help
         exit
-        ;;
-      # Handle resetting the database.
-      -r|--reset-db)
-        reset_db=true
         ;;
       # Handle extra argument that we want to pass to the test function.
       -e|--extra-arg)
@@ -90,8 +85,8 @@ function main() {
     cleanup
   else
     run_db
-    if $reset_db ; then
-      reset_db $app
+    if [[ "staff" == $app ]]; then
+      reset_db
     fi
     run_app
     if [[ "test" == $command ]]; then
@@ -109,16 +104,10 @@ function run_db() {
   docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
 }
 
+# Only necessary for staff portal
 function reset_db() {
-  app=$1
-  printf 'Resetting database'
-  if [[ "participant" == $app ]]; then
-    printf ' by running an ephemeral container...\n'
-    docker compose -f docker-compose.e2e.yml run --build --rm app-e2e npm run dev:dbreset
-  elif [[ "staff" == $app ]]; then
-    printf ' by starting the dedicated reset container...\n'
-    docker compose -f docker-compose.e2e.yml up --build --wait dbreset-e2e
-  fi
+  printf 'Resetting database by starting the dedicated reset container...\n'
+  docker compose -f docker-compose.e2e.yml up --build --wait dbreset-e2e
 }
 
 function run_app() {
