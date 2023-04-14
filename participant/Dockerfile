@@ -67,3 +67,8 @@ COPY --from=build /home/node/remix/public/build ./public/build
 COPY --chown=node:node . .
 VOLUME ["/tmp"]
 CMD ["/home/node/remix/bin/prod-start.sh"]
+
+# -------- Image: lower-envs -------- #
+# Build a production-like image with non-prod seed data
+FROM prod as lower-envs
+RUN cp public/data/submissions.not-prod.json public/data/submissions.json

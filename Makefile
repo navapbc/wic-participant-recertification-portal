@@ -97,7 +97,7 @@ DATE := $(shell date -u '+%Y%m%d.%H%M%S')
 INFO_TAG := $(DATE).$(USER)
 
 release-build:
-	cd $(APP_NAME) && $(MAKE) release-build \
+	cd $(APP_NAME) && $(MAKE) release-build $(ENV_NAME) \
 		OPTS="--tag $(IMAGE_NAME):latest --tag $(IMAGE_NAME):$(IMAGE_TAG)"
 
 release-publish:
