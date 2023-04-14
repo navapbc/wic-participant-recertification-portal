@@ -232,21 +232,21 @@ blocks:
               __if:
                 test:
                   __eq:
-                    - __args: 0.data.form_data.contact.updates
+                    - __args: 0.data.form_data.contact.additionalInfo
                     - ""
                 then:
                   - "No updates provided"
                 else:
-                  - __args: 0.data.form_data.contact.updates
+                  - __args: 0.data.form_data.contact.additionalInfo
           cellRenderer:
             _function:
               __nunjucks:
                 template: |
                   <div class="notes">
-                    {% if contact.updates == "" %}
+                    {% if contact.additionalInfo == "" %}
                       No updates provided
                     {% else %}
-                      {{ contact.updates }}
+                      {{ contact.additionalInfo }}
                     {% endif %}
                   </div>
                 on:
