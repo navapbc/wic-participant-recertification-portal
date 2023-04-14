@@ -9,16 +9,16 @@ function die() {
 
 function show_help() {
   echo "Usage:
-    run-e2e [-h|--help][-e|--extra-arg <argument>] command
-    command can be: test update cleanup
-    must be run from within the participant or staff directories"
+    run-e2e [-h|--help] command [<optional-argument-to-pass-to-playwright>]
+    command must be: test update cleanup
+    must be run from within the participant or staff directory"
 }
 
 function main() {
   # Initialize option variables to avoid bringing in values from env vars.
   command=
   app=
-  extra_arg=
+  extra_arg=""
 
   # Parse arguments.
   while :; do
@@ -27,21 +27,6 @@ function main() {
       -h|--help)
         show_help
         exit
-        ;;
-      # Handle extra argument that we want to pass to the test function.
-      -e|--extra-arg)
-        if [ "$2" ]; then
-          extra_arg=$2
-          shift
-        else
-          die 'ERROR: "--extra-arg" requires a non-empty option argument.'
-        fi
-        ;;
-      --extra-arg=?*)
-        extra_arg=${1#*=}
-        ;;
-      --extra-arg=)
-        die 'ERROR: "--extra-arg" requires a non-empty option argument.'
         ;;
       --)
         shift
@@ -68,9 +53,11 @@ function main() {
     command=$1
   fi
 
-  if [[ "$#" > 1 ]]; then
-    echo 'WARNING: This command accepts only 1 positional arguments and ignores the rest' >&2
+  if [[ "$#" > 2 ]]; then
+    echo 'WARNING: This command accepts only 2 positional arguments and ignores the rest' >&2
   fi
+
+  extra_arg=$2
 
   # Get the app.
   available_apps=(participant staff)
@@ -100,19 +87,19 @@ function main() {
 function run_db() {
   # Start the database and wait until it's ready
   echo "Starting database..."
-  # docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
+  docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
 }
 
 # Only necessary for staff portal
 function reset_db() {
   printf 'Resetting database by starting the dedicated reset container...\n'
-  # docker compose -f docker-compose.e2e.yml up --build --wait dbreset-e2e
+  docker compose -f docker-compose.e2e.yml up --build --wait dbreset-e2e
 }
 
 function run_app() {
   # Start the application and wait until it's ready
   echo "Starting app to test against..."
-  # docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
+  docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
 }
 
 function test() {
@@ -123,18 +110,18 @@ function test() {
     printf ' with extra argument: %s' "$extra_arg"
   fi
   printf '\n'
-  # docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --retries=3 --reporter=list ${extra_arg}
+  docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --retries=3 --reporter=list ${extra_arg}
 }
 
 function update_snapshots() {
   echo "Updating playwright snapshots..."
-  # docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --update-snapshots --reporter=list
+  docker compose -f docker-compose.e2e.yml run --build --rm playwright npx playwright test --update-snapshots --reporter=list
 }
 
 function cleanup() {
   # Remove all the docker containers and volumes
   echo "Removing e2e containers..."
-  # docker compose -f docker-compose.e2e.yml down --volumes
+  docker compose -f docker-compose.e2e.yml down --volumes
 }
 
 main "$@"
