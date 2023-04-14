@@ -1,0 +1,18 @@
+[
+  {
+    "urlId": "gallatin",
+    "name": "Gallatin"
+  },
+  {
+    "urlId": "missoula",
+    "name": "Missoula"
+  },
+  {
+    "urlId": "riverstone",
+    "name": "Riverstone"
+  },
+  {
+    "urlId": "miles-city",
+    "name": "Miles City"
+  }
+]
