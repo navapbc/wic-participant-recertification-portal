@@ -62,7 +62,7 @@ jobs:
           aws-region: us-west-2
 
       - name: 📩 Publish release
-        run: make release-publish PROJECT_NAME=$PROJECT_NAME APP_NAME=$APP_NAME IMAGE_TAG=$IMAGE_TAG
+        run: make release-publish PROJECT_NAME=$PROJECT_NAME ENV_NAME=$ENV_NAME APP_NAME=$APP_NAME IMAGE_TAG=$IMAGE_TAG
 
       - name: 💾 Prepare for release by gathering outputs to pass to aws-actions steps
         id: prepare-release
