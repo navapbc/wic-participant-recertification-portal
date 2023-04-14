@@ -34,6 +34,17 @@ blocks:
             blockId: table
             method: autoSize
 
+  # If we want to export the data.
+  # - id: Download
+  #   type: Button
+  #   events:
+  #     onClick:
+  #       - id: download
+  #         type: CallMethod
+  #         params:
+  #           blockId: table
+  #           method: exportDataAsCsv
+
   # The main table that shows the recertifications data
   - id: table
     # A supporting component type that uses https://www.ag-grid.com
@@ -76,16 +87,14 @@ blocks:
           wrapText: true
           valueGetter:
             _function:
-              __string.concat:
-                - __args: 0.data.form_data.name.lastName
-                - ", "
-                - __args: 0.data.form_data.name.firstName
-                - ", "
-                - __args: 0.data.form_data.name.preferredName
-                - ", "
-                - __args: 0.data.form_data.contact.phoneNumber
-                - ", "
-                - __args: 0.data.agency_name
+              __nunjucks:
+                template: |
+                  {{ form_data.name.firstName }} {{ form_data.name.lastName }} {{ "(" + form_data.name.preferredName + ")" if form_data.name.preferredName }}
+                  {{ form_data.contact.phoneNumber }}
+                  Agency: {{ agency_name }}
+                on:
+                  __args: 0.data
+
           cellRenderer:
             _function:
               __nunjucks:
@@ -105,22 +114,25 @@ blocks:
 
         - headerName: WIC participant(s)
           wrapText: true
-          # This column has the most vertical content so tell the table to automatically size the row to this cell's height
-          autoHeight: true
-          # @TODO fix value formatting if copying or exporting
+          autoHeight: true # This column has the most vertical content so tell the table to automatically size the row to this cell's height
           valueGetter:
             _function:
-              __array.map:
+              __nunjucks:
+                template: |
+                  {% for participant in details %}
+                  {{ participant.firstName }} {{ participant.lastName }} {{ "(" + participant.preferredName + ")" if participant.preferredName }}
+                  Relationship to contact person:
+                  {%- if participant.relationship == "self" %} Self
+                  {%- elif participant.relationship == "child" %} Child
+                  {%- elif participant.relationship == "grandchild" %} Grandchild
+                  {%- elif participant.relationship == "foster" %} Foster child
+                  {%- else %} Other
+                  {%- endif %}
+                  Date of birth: {{ participant.dateOfBirth }}
+                  Adjunctive eligibility: {{ "Yes" if participant.adjunctive != "" else "No" }}
+                  {% endfor -%}
                 on:
-                  __args: 0.data.form_data.details
-                callback:
-                  __function:
-                    - ___args: 0.firstName
-                    - ___args: 0.lastName
-                    - ___args: 0.preferredName
-                    - ___args: 0.relationship
-                    - ___args: 0.dateOfBirth
-                    - ___args: 0.adjunctive
+                  __args: 0.data.form_data
           cellRenderer:
             _function:
               __nunjucks:
@@ -163,15 +175,15 @@ blocks:
 
         - headerName: Household changes
           wrapText: true
-          # This column is not sortable
-          sortable: false
+          sortable: false # This column is not sortable
           valueGetter:
             _function:
-              __string.concat:
-                - "Name change or expired ID doc: "
-                - __args: 0.data.form_data.changes.idChange
-                - ", Moved: "
-                - __args: 0.data.form_data.changes.addressChange
+              __nunjucks:
+                template: |
+                  Name change or expired ID doc: {{ changes.idChange | title }}
+                  Moved: {{ changes.addressChange | title }}
+                on:
+                  __args: 0.data.form_data
           cellRenderer:
             _function:
               __nunjucks:
@@ -192,8 +204,7 @@ blocks:
         # @TODO: use S3 links. Using placeholder data for now
         - headerName: Documents
           wrapText: true
-          # This column is not sortable
-          sortable: false
+          sortable: false # This column is not sortable
           valueGetter:
             _function:
               __if:
