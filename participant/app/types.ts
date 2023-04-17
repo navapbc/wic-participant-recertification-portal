@@ -9,7 +9,8 @@ export type ChangesData = {
   addressChange: string;
 };
 
-export type RepresentaticeNameData = {
+export type RepresentativeNameData = {
   "representative-firstName": string;
   "representative-lastName": string;
+  "representative-preferredName": string;
 };

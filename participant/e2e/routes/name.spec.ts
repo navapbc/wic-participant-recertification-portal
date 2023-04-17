@@ -40,6 +40,7 @@ test(`the name form submits a POST request, and on return to the page,
   await page
     .getByLabel("Last name *Legally as it appears on an ID document.")
     .fill("Zor");
+  await page.getByLabel("Preferred name (optional)").fill("Ali");
   await expect(page).toHaveScreenshot({ fullPage: true });
 
   // Catch the POST request to the API with the form data while we click "Continue"
@@ -63,6 +64,7 @@ test(`the name form submits a POST request, and on return to the page,
     __rvfInternalFormId: "representativeNameForm",
     "representative-firstName": "Alice",
     "representative-lastName": "Zor",
+    "representative-preferredName": "Ali",
   });
 
   // Check that we've moved to the Count page based on our name
@@ -84,9 +86,10 @@ test(`the name form submits a POST request, and on return to the page,
   const getData = await getRequest.json();
   expect(getRequest.request().method()).toBe("GET");
   expect(getData).toMatchObject({
-    __rvfInternalFormDefaults_nameForm: {
+    __rvfInternalFormDefaults_representativeNameForm: {
       "representative-firstName": "Alice",
       "representative-lastName": "Zor",
+      "representative-preferredName": "Ali",
     },
     submissionID: submissionID,
   });
@@ -104,4 +107,5 @@ test(`the name form submits a POST request, and on return to the page,
       .getByLabel("Last name *Legally as it appears on an ID document.")
       .fill("Zor")
   );
+  expect(await page.getByLabel("Preferred name (optional)").fill("Ali"));
 });
