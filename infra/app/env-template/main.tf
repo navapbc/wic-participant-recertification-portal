@@ -198,7 +198,7 @@ module "analytics" {
       access_point_arn = module.analytics_file_system.access_point.arn,
     }
   }
- depends_on = [
+  depends_on = [
     module.analytics_database,
     module.analytics_file_system,
   ]

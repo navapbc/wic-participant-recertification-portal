@@ -234,7 +234,7 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
   server_side_encryption {
     enabled  = true
     key_type = "CUSTOMER_MANAGED_CMK"
-    key_arn = module.s3_encrypted_bucket.bucket_kms_arn
+    key_arn  = module.s3_encrypted_bucket.bucket_kms_arn
     # key_arn  = aws_kms_key.waf_logging.arn
   }
   extended_s3_configuration {
@@ -279,8 +279,8 @@ data "aws_iam_policy_document" "firehose_perms" {
 }
 # s3 logging bucket; this is a refactor to DRY up the code
 module "s3_encrypted_bucket" {
-  source = "../s3-encrypted"
-  s3_bucket_name = "${var.waf_name}-logs"
+  source           = "../s3-encrypted"
+  s3_bucket_name   = "WAF"
   environment_name = "WAF"
 }
 # # KMS key config
@@ -353,7 +353,7 @@ module "s3_encrypted_bucket" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
   bucket = module.s3_encrypted_bucket.encrypted_bucket_id
-  # bucket                = aws_s3_bucket.waf_logging.id # how to reference logging bucket
+  # bucket                = aws_s3_bucket.waf_logging.id 
   expected_bucket_owner = data.aws_caller_identity.current.account_id
 
   rule {
@@ -376,10 +376,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
   }
 }
 
-resource "aws_s3_bucket_logging" "waf_logging" {
-  bucket = module.s3_encrypted_bucket.encrypted_bucket_id
-  target_bucket = module.s3_encrypted_bucket.encrypted_bucket_id
-  # bucket        = aws_s3_bucket.waf_logging.id # how to reference logging bucket
-  # target_bucket = aws_s3_bucket.waf_logging.id
-  target_prefix = "logs/waf-logging/"
-}
+# resource "aws_s3_bucket_logging" "waf_logging" {
+#   bucket = module.s3_encrypted_bucket.encrypted_bucket_id
+#   target_bucket = module.s3_encrypted_bucket.encrypted_bucket_id
+#   # bucket        = aws_s3_bucket.waf_logging.id 
+#   # target_bucket = aws_s3_bucket.waf_logging.id
+#   target_prefix = "logs/waf-logging/"
+# }
