@@ -7,10 +7,10 @@ const nameSchemaFactory = (idPrefix: string) => {
   const preferredNameKey = `${idPrefix}-preferredName`;
   return zfd.formData({
     [firstNameKey]: zfd.text(
-      z.string().min(1, { message: "First name is required" })
+      z.string({ required_error: "Enter your first name" }).min(1)
     ),
     [lastNameKey]: zfd.text(
-      z.string().min(1, { message: "Last name is required" })
+      z.string({ required_error: "Enter your last name" }).min(1)
     ),
     [preferredNameKey]: zfd.text(z.string().optional()),
   });

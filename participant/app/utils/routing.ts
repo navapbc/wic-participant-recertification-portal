@@ -19,3 +19,7 @@ export function routeFromChanges(
   }
   return "";
 }
+
+export function routeFromName(request: Request): string {
+  return routeRelative(request, "count");
+}
