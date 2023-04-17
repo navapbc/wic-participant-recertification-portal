@@ -49,7 +49,7 @@
     "phoneNumber": "Your phone number",
     "additionalInfo": {
       "label": "Is there anything else you'd like to share with WIC staff?",
-      "hint": "<br>For example: Nutrition updates, household changes, or questions."
+      "hint": "For example: Nutrition updates, household changes, or questions."
     }
   },
   "Count": {

@@ -79,6 +79,7 @@ p {
 .usa-hint
 {
   @include u-text('normal');
+  display: block;
 }
 
 

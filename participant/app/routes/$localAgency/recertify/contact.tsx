@@ -20,7 +20,7 @@ import {
   upsertSubmissionForm,
 } from "~/utils/db.server";
 import { routeFromContact } from "~/utils/routing";
-import { useLoaderData, useActionData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 const contactValidator = withZod(contactSchema);
 export const loader: LoaderFunction = async ({
@@ -64,7 +64,6 @@ export const action = async ({ request }: { request: Request }) => {
 
 export default function Contact() {
   useLoaderData<loaderData>();
-  useActionData<typeof action>();
   return (
     <div>
       <h1>
