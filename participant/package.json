@@ -98,6 +98,8 @@
     "@types/tmp": "^0.2.3",
     "@types/uuid": "^9.0.0",
     "autoprefixer": "^10.4.13",
+    "aws-sdk-client-mock": "^2.1.1",
+    "aws-sdk-client-mock-jest": "^2.1.1",
     "babel-loader": "^8.3.0",
     "chromatic": "^6.17.1",
     "eslint": "^8.27.0",

@@ -51,6 +51,24 @@ test("add TWO image files", async ({ page }) => {
   await expect(imgPreviewTwo).toBeVisible();
 });
 
+test("add TWO image files, submit, then return to see that they are previewed", async ({ page }) => {
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
+  const fileOne = getFileFormImage("test-img.jpg");
+  const fileTwo = getFileFormImage("test-img-2.jpg");
+  const uploadBox = page.locator("input[type='file']");
+  await uploadBox.setInputFiles([fileOne]);
+  await uploadBox.setInputFiles([fileTwo]);
+  const imgPreviewOne = page.getByAltText("Preview for test-img.jpg");
+  await expect(imgPreviewOne).toBeVisible();
+  const imgPreviewTwo = page.getByAltText("Preview for test-img-2.jpg");
+  await expect(imgPreviewTwo).toBeVisible();
+  await page.getByTestId("button").click()
+  // At the moment there is no /contact page, so this will land at home
+  await expect(page).toHaveURL("/gallatin/recertify")
+  await page.goto("/gallatin/recertify/upload");
+
+});
+
 test("add TWO image files, then remove them", async ({ page }) => {
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const fileOne = getFileFormImage("test-img.jpg");

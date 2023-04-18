@@ -5,16 +5,16 @@ import {
   CreateBucketCommand,
   S3ServiceException,
 } from "@aws-sdk/client-s3";
-const REGION = process.env.AWS_REGION || "us-west-2";
-export const ENDPOINT_URL = process.env.S3_ENDPOINT_URL || "";
-export const BUCKET = process.env.S3_BUCKET || "participant-uploads";
+import { REGION, ENDPOINT_URL, BUCKET } from "app/utils/config.server";
+let s3Connection: S3Client;
 
 // This helps us not call S3 for every request to make sure the bucket exists
 declare global {
   var __bucket_ensured: boolean | undefined;
+  var __s3Connection: S3Client;
 }
 
-const createS3Client = (): S3Client => {
+export const createS3Client = (): S3Client => {
   if (process.env.NODE_ENV === "production") {
     console.log(`🖥️ 🚢 Created S3Client in production mode`);
     return new S3Client({ region: REGION });
@@ -58,4 +58,9 @@ export const ensureBucketExists = async (s3Client: S3Client) => {
   }
 };
 
-export const s3Connection = createS3Client();
+if (!global.__s3Connection) {
+  global.__s3Connection = createS3Client();
+}
+s3Connection = global.__s3Connection;
+
+export default s3Connection;

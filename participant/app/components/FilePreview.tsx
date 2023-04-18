@@ -89,7 +89,7 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
             <div>{t(selectedKey)}</div>
             <button
               type={buttonType}
-              name="remove_file"
+              name="remove"
               value={name}
               className="text-secondary-vivid usa-button--unstyled"
               onClick={() => clickHandler(name)}

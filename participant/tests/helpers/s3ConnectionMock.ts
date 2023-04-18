@@ -1,15 +1,17 @@
-import type { S3Client } from "@aws-sdk/client-s3";
-import type { DeepMockProxy } from "jest-mock-extended";
-import { mockDeep, mockReset } from "jest-mock-extended";
-import { s3Connection } from "app/utils/s3.connection";
+import { mockClient } from "aws-sdk-client-mock";
+import { S3Client } from "@aws-sdk/client-s3";
+import s3Connection from "app/utils/s3.connection";
 
 jest.mock("app/utils/s3.connection", () => ({
   __esModule: true,
-  createS3Client: () => mockDeep<S3Client>(),
+  default: s3Mock,
+  ensureBucketExists: () => {
+    return true;
+  },
 }));
 
 beforeEach(() => {
-  mockReset(s3Mock);
+  s3Mock.reset();
 });
 
-export const s3Mock = s3Connection as unknown as DeepMockProxy<S3Client>;
+export const s3Mock = mockClient(S3Client);

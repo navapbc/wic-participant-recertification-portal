@@ -7,18 +7,15 @@ import {
   NotFound,
 } from "@aws-sdk/client-s3";
 import type { PutObjectCommandInput } from "@aws-sdk/client-s3";
-import {
-  s3Connection,
-  BUCKET,
-  ensureBucketExists,
-  ENDPOINT_URL,
-} from "app/utils/s3.connection";
+import s3Connection, { ensureBucketExists } from "app/utils/s3.connection";
+import { BUCKET, ENDPOINT_URL } from "app/utils/config.server";
 import { PassThrough } from "stream";
 import { writeAsyncIterableToWritable } from "@remix-run/node";
 import { fileTypeFromBuffer } from "file-type";
 import type { FileCheckResult } from "app/types";
 import { MAX_UPLOAD_SIZE_BYTES } from "./config.server";
 import { trimStart } from "lodash";
+import { File } from "@remix-run/node/dist/fetch";
 
 const PATHSTYLE = ENDPOINT_URL ? true : false;
 
@@ -135,6 +132,8 @@ export const deleteFileFromS3 = async (key: string) => {
   } catch (error) {
     // If it doesn't exist, it seems like an OK outcome for a delete request
     if (error! instanceof NotFound) {
+      return;
+    } else {
       throw new Error(`Unable to delete ${key}: ${error}`);
     }
   }
