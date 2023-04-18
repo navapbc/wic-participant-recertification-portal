@@ -13,7 +13,7 @@ import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatemen
 
 export function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
-  const count = url.searchParams.get("count") || 1;
+  const count = url.searchParams.get("count");
 
   return json({
     participantCount: count,

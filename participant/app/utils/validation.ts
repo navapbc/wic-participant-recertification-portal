@@ -41,7 +41,7 @@ export const contactSchema = zfd.formData({
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message:
-              "Enter your 10-digit phone number, with the area code first.",
+              "Enter your 10-digit phone number, with the area code first",
           });
           return z.NEVER;
         }
@@ -53,6 +53,14 @@ export const contactSchema = zfd.formData({
 
 export const countSchema = zfd.formData({
   householdSize: zfd.numeric(
-    z.number().min(1, { message: "You must recertify for at least one person" })
+    z
+      .number({
+        required_error:
+          "Enter the number of people in your household will recertify at the next appointment",
+      })
+      .min(1, {
+        message:
+          "At least 1 member in your household must recertify to use this form",
+      })
   ),
 });

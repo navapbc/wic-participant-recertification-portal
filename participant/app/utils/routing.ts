@@ -24,6 +24,10 @@ export function routeFromContact(request: Request): string {
   return routeRelative(request, "review");
 }
 
+export function routeFromCount(request: Request): string {
+  return routeRelative(request, "details");
+}
+
 export function routeFromName(request: Request): string {
   return routeRelative(request, "count");
 }
