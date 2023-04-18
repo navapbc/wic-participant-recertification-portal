@@ -4,7 +4,6 @@ export type legendStyleType = "default" | "large" | "srOnly" | undefined;
 
 export type RouteType = "changes" | "contact" | "name";
 
-
 export type ChangesData = {
   idChange: string;
   addressChange: string;
