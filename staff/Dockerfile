@@ -3,8 +3,8 @@
 FROM node:18-slim as base
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-    # Install curl for healthcheck
-    curl
+    # Install for healthcheck
+    wget
 # Set working directory and node user
 WORKDIR /home/node/lowdefy
 

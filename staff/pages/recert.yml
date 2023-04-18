@@ -1,0 +1,286 @@
+# Beware:
+# - This is the id for the content block that is nested inside the page_template.yml
+# - This is NOT the id for the page
+# - This must be a globally unique ID
+id: recert_context
+type: Context
+
+requests: # Requests defines all the data requests made available in this page context
+  - id: get_data # Request ID
+    type: KnexRaw # The type of request. Lowdefy uses Knex to talk to Postgresql
+    connectionId: postgres # This is the ID of the connection. The connection itself is defined in `lowdefy.yml`
+    properties:
+      query: select jsonb_object_agg(sf.form_route, sf.form_data) as form_data,
+        s.updated_at,
+        la.name as agency_name
+        from submissions s
+        left join submission_forms sf on (s.submission_id = sf.submission_id)
+        left join local_agencies la on (s.local_agency_id = la.local_agency_id)
+        group by sf.submission_id, s.updated_at, la.name
+        order by s.updated_at desc;
+events:
+  # A list of actions that gets completed each time this lowdefy context is loaded
+  onInitAsync:
+    - id: fetch_data
+      type: Request
+      # Execute the `get_data` request
+      params: get_data
+
+blocks:
+  # We prefer sizeColumnsToFit over autoSize, but leaving this in case we change our mind.
+  # - id: Autosize
+  #   type: Button
+  #   events:
+  #     onClick:
+  #       - id: autosize_table
+  #         type: CallMethod
+  #         params:
+  #           blockId: table
+  #           method: autoSize
+
+  - id: fit_to_size_button
+    type: Button
+    properties:
+      title: Resize table
+    events:
+      onClick:
+        - id: fit_to_size_click
+          type: CallMethod
+          params:
+            blockId: table
+            method: sizeColumnsToFit
+
+  - id: download_button
+    type: Button
+    properties:
+      title: Download .csv
+    events:
+      onClick:
+        - id: download_click
+          type: CallMethod
+          params:
+            blockId: table
+            method: exportDataAsCsv
+            args:
+              - fileName: wic-mt-recertification-export.csv
+
+  # The main table that shows the recertifications data
+  - id: table
+    # A supporting component type that uses https://www.ag-grid.com
+    type: AgGridAlpine
+
+    properties:
+      rowData:
+        # Send all the data returned by the query `get_data`. KnexRaw requests need to call `rows`; KnexBuilder requests don't
+        _request: get_data.rows
+      # `enableCellTextSelection` and `ensureDomOrder` allow the user to select text in the grid.
+      # See https://ag-grid.com/react-data-grid/clipboard/#using-the-browsers-text-selection
+      enableCellTextSelection: true
+      ensureDomOrder: true
+      # Tell the table to automatically fill the full height of its parent element
+      domLayout: autoHeight
+      # Enable table pagination. Defaults to 10 records per page
+      pagination: true
+      # Set all columns to be sortable, resizable, and filterable by default
+      defaultColDef:
+        sortable: true
+        resizable: true
+        filter: true
+
+      # Define each table column
+      columnDefs:
+        - headerName: Submission date
+          wrapText: true
+          valueGetter:
+            _function:
+              # Use date time formatting https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+              __format.intlDateTimeFormat:
+                on:
+                  __args: 0.data.updated_at
+                params:
+                  options:
+                    dateStyle: "short"
+                    timeStyle: "long"
+
+        - headerName: Contact person
+          wrapText: true
+          valueGetter:
+            _function:
+              __nunjucks:
+                template: |
+                  {{ form_data.name.lastName }}, {{ form_data.name.firstName }} {{ "(" + form_data.name.preferredName + ")" if form_data.name.preferredName }}
+                  {{ form_data.contact.phoneNumber }}
+                  Agency: {{ agency_name }}
+                on:
+                  __args: 0.data
+
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="contact">
+                    <div class="name">
+                      {{ form_data.name.firstName }} {{ form_data.name.lastName }}
+                      {% if form_data.name.preferredName -%}
+                        ({{ form_data.name.preferredName }})
+                      {%- endif %}
+                    </div>
+                    <div class="phone">{{ form_data.contact.phoneNumber }}</div>
+                    <div class="local-agency">Agency: {{ agency_name }}</div>
+                  </div>
+                on:
+                  __args: 0.data
+
+        - headerName: WIC participant(s)
+          wrapText: true
+          autoHeight: true # This column has the most vertical content so tell the table to automatically size the row to this cell's height
+          valueGetter:
+            _function:
+              __nunjucks:
+                template: |
+                  {% for participant in details %}
+                  {{ participant.lastName }}, {{ participant.firstName }} {{ "(" + participant.preferredName + ")" if participant.preferredName }}
+                  Relationship to contact person:
+                  {%- if participant.relationship == "self" %} Self
+                  {%- elif participant.relationship == "child" %} Child
+                  {%- elif participant.relationship == "grandchild" %} Grandchild
+                  {%- elif participant.relationship == "foster" %} Foster child
+                  {%- else %} Other
+                  {%- endif %}
+                  Date of birth: {{ participant.dateOfBirth }}
+                  Adjunctive eligibility: {{ "Yes" if participant.adjunctive != "" else "No" }}
+                  {% endfor -%}
+                on:
+                  __args: 0.data.form_data
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  {% for participant in details %}
+                    <div class="participant">
+                      <div class="name">
+                        {{ participant.firstName }} {{ participant.lastName }}
+                        {% if participant.preferredName -%}
+                          ({{ participant.preferredName }})
+                        {%- endif %}
+                      </div>
+                      <ul>
+                        <li class="relationship">Relationship to contact person:
+                          {% if participant.relationship == "self" %}
+                            Self
+                          {% elif participant.relationship == "child" %}
+                            Child
+                          {% elif participant.relationship == "grandchild" %}
+                            Grandchild
+                          {% elif participant.relationship == "foster" %}
+                            Foster child
+                          {% else %}
+                            Other
+                          {% endif %}
+                        </li>
+                        <li class="date-of-birth">Date of birth: {{ participant.dateOfBirth }}</li>
+                        <li class="adjunctive">Adjunctive eligibility:
+                          {% if participant.adjunctive != "" %}
+                            Yes
+                          {% else %}
+                            No
+                          {% endif %}
+                        </li>
+                      </ul>
+                    </div>
+                  {% endfor %}
+                on:
+                  __args: 0.data.form_data
+
+        - headerName: Household changes
+          wrapText: true
+          sortable: false # This column is not sortable
+          valueGetter:
+            _function:
+              __nunjucks:
+                template: |
+                  Name change or expired ID doc: {{ changes.idChange | title }}
+                  Moved: {{ changes.addressChange | title }}
+                on:
+                  __args: 0.data.form_data
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="changes">
+                    <div class="id-change">
+                      <span class="label">Name change or expired ID doc:</span>
+                      {{ changes.idChange | title }}
+                    </div>
+                    <div class="address-change">
+                      <span class="label">Moved:</span>
+                      {{ changes.addressChange | title }}
+                    </div>
+                  </div>
+                on:
+                  __args: 0.data.form_data
+
+        # @TODO: use S3 links. Using placeholder data for now
+        - headerName: Documents
+          wrapText: true
+          sortable: false # This column is not sortable
+          valueGetter:
+            _function:
+              __if:
+                test:
+                  __eq:
+                    - __args: 0.data.form_data.documents
+                    - null
+                then:
+                  - "No documents required"
+                else:
+                  __array.map:
+                    on:
+                      __args: 0.data.form_data.documents
+                    callback:
+                      __function:
+                        - ___args: 0.name
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="documents">
+                    {% if documents %}
+                      {% for doc in documents %}
+                        <a href="{{doc.href}}" target="_blank" rel="noopener noreferrer">{{ doc.name }}</a>{% if not loop.last -%},{%- endif %}
+                      {% endfor %}
+                    {% else %}
+                      No documents required
+                    {% endif %}
+                  </div>
+                on:
+                  __args: 0.data.form_data
+
+        - headerName: Updates from participant
+          wrapText: true
+          sortable: false # This column is not sortable
+          maxWidth: 500 # Set the max width for this column to be no more than 500px
+          valueGetter:
+            _function:
+              __if:
+                test:
+                  __eq:
+                    - __args: 0.data.form_data.contact.additionalInfo
+                    - ""
+                then:
+                  - "No updates provided"
+                else:
+                  - __args: 0.data.form_data.contact.additionalInfo
+          cellRenderer:
+            _function:
+              __nunjucks:
+                template: |
+                  <div class="notes">
+                    {% if contact.additionalInfo == "" %}
+                      No updates provided
+                    {% else %}
+                      {{ contact.additionalInfo }}
+                    {% endif %}
+                  </div>
+                on:
+                  __args: 0.data.form_data

@@ -34,5 +34,5 @@ test("clicking the continue button should take you to /name", async ({
   await page.waitForLoadState("networkidle");
 
   // Expects the URL to contain /name.
-  await expect(page).toHaveURL(/name/);
+  await expect(page).toHaveURL("/gallatin/recertify/name");
 });

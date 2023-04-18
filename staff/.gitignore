@@ -4,8 +4,3 @@
 /test-results
 
 .env
-
-# Ignore files that should be in sync with participant dir
-/prisma/migrations
-/prisma/schema.prisma
-/prisma/seed.ts

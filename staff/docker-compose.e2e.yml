@@ -22,8 +22,25 @@ services:
     # Check that the database is up and running
     healthcheck:
       test: "pg_isready --username=postgres"
-      timeout: 5s
+      timeout: 10s
       retries: 20
+    networks:
+      - staff-e2e
+
+  # Include a remix container to set the db schema and seed the db.
+  # Run the following to re-seed:
+  # `docker compose run --rm remix`
+  dbreset-e2e:
+    build:
+      target: dev
+      context: ../participant
+    command: ["npm", "run", "dev:dbreset"]
+    depends_on:
+      database-e2e:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
+    init: true
     networks:
       - staff-e2e
 
@@ -40,9 +57,10 @@ services:
       LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
     # Check that the lowdefy server is up and running
     healthcheck:
-      test: "curl -f http://localhost:3000 || exit 1"
+      test: "wget --no-verbose --tries=1 --spider http://localhost:3000/recertifications || exit 1"
+      interval: 30s
+      retries: 3
       timeout: 5s
-      retries: 20
     init: true
     networks:
       - staff-e2e
@@ -69,6 +87,7 @@ services:
       - ./e2e:/srv/e2e
       - ./playwright-report:/srv/playwright-report
       - ./test-results:/srv/test-results
+      - ./playwright.config.ts:/srv/playwright.config.ts
 
 networks:
   staff-e2e:

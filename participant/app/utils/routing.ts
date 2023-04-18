@@ -17,7 +17,11 @@ export function routeFromChanges(
   ) {
     return routeRelative(request, "upload");
   }
-  return "";
+  return routeRelative(request, "contact");
+}
+
+export function routeFromContact(request: Request): string {
+  return routeRelative(request, "review");
 }
 
 export function routeFromName(request: Request): string {
