@@ -139,7 +139,7 @@ blocks:
               __nunjucks:
                 template: |
                   {% for participant in details %}
-                  {{ participant.firstName }} {{ participant.lastName }} {{ "(" + participant.preferredName + ")" if participant.preferredName }}
+                  {{ participant.lastName }}, {{ participant.firstName }} {{ "(" + participant.preferredName + ")" if participant.preferredName }}
                   Relationship to contact person:
                   {%- if participant.relationship == "self" %} Self
                   {%- elif participant.relationship == "child" %} Child
