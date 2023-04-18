@@ -64,7 +64,7 @@ export const action = async ({ request }: { request: Request }) => {
   return redirect(routeTarget);
 };
 
-export default function Namex() {
+export default function Name() {
   useLoaderData<loaderData>();
   const nameInputProps: NameInputProps = {
     id: "representative",
