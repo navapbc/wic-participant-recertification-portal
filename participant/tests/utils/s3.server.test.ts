@@ -8,7 +8,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 jest.mock("@aws-sdk/s3-request-presigner");
 const mockedgetSignedURL = jest.mocked(getSignedUrl);
 
-import { BUCKET } from "app/utils/config.server";
+import { BUCKET, MAX_UPLOAD_SIZE_BYTES } from "app/utils/config.server";
 import { createReadStream } from "fs";
 import { sdkStreamMixin } from "@aws-sdk/util-stream-node";
 import {
@@ -19,6 +19,7 @@ import {
   InvalidObjectState,
 } from "@aws-sdk/client-s3";
 import {
+  checkFile,
   deleteFileFromS3,
   getFileFromS3,
   getURLFromS3,
@@ -70,7 +71,6 @@ it("should read the first 2048 bytes of a file from s3", async () => {
       start: 0,
       end: 2047,
     })
-    // stream
   );
   s3Mock.on(GetObjectCommand).resolves({ Body: mockStream });
   const byteArray = await readFileHeadFromS3("testfile.jpg");
@@ -189,9 +189,71 @@ it("should throw an error deleting a file from s3 with another error", async () 
   s3Mock
     .on(DeleteObjectCommand)
     .rejects(new InvalidObjectState({ $metadata: {}, message: "Bogus Error" }));
-  await deleteFileFromS3("testfile.jpg");
   await expect(deleteFileFromS3("testfile.jpg")).rejects.toHaveProperty(
     "message",
     "Unable to delete testfile.jpg: InvalidObjectState: Bogus Error"
   );
+});
+
+it("should be invalid if the filesize is too large", async () => {
+  s3Mock
+    .on(HeadObjectCommand)
+    .resolves({ ContentLength: MAX_UPLOAD_SIZE_BYTES + 1 });
+  const validFile = await checkFile("testfile.jpg");
+  expect(validFile).toEqual({ error: "invalidSize", size: 26214401 });
+});
+
+it("should be invalid if the filesize is undefined", async () => {
+  s3Mock
+    .on(HeadObjectCommand)
+    .rejects(new NotFound({ $metadata: {}, message: "NotFound" }));
+  const validFile = await checkFile("testfile.jpg");
+  expect(validFile).toEqual({ error: "notFound" });
+});
+
+it("should be invalid if the file is unreadable", async () => {
+  s3Mock.on(HeadObjectCommand).resolves({ ContentLength: 42740 });
+  s3Mock
+    .on(GetObjectCommand)
+    .rejects(new NotFound({ $metadata: {}, message: "NotFound" }));
+  const validFile = await checkFile("testfile.jpg");
+  expect(validFile).toEqual({ error: "cannotRead", size: 42740 });
+});
+
+it("should be invalid if the file cannot be typed", async () => {
+  const mockStream = sdkStreamMixin(createReadStream(""));
+  s3Mock.on(HeadObjectCommand).resolves({ ContentLength: 42740 });
+  s3Mock.on(GetObjectCommand).resolves({ Body: mockStream });
+  const validFile = await checkFile("testfile.jpg");
+  expect(validFile).toEqual({ error: "cannotType", size: 42740 });
+});
+
+it("should be invalid if the file type is incorrect", async () => {
+  const mockStream = sdkStreamMixin(
+    createReadStream("tests/utils/s3.server.test.ts", {
+      start: 0,
+      end: 2047,
+    })
+  );
+  s3Mock.on(GetObjectCommand).resolves({ Body: mockStream });
+  s3Mock.on(HeadObjectCommand).resolves({ ContentLength: 42740 });
+  const validFile = await checkFile("testfile.jpg");
+  expect(validFile).toEqual({
+    error: "invalidType",
+    size: 42740,
+    mimeType: "application/javascript",
+  });
+});
+
+it("should be valid if the filesize, and type are correct", async () => {
+  const mockStream = sdkStreamMixin(
+    createReadStream("tests/fixtures/fns-stock-produce-shopper.jpg", {
+      start: 0,
+      end: 2047,
+    })
+  );
+  s3Mock.on(GetObjectCommand).resolves({ Body: mockStream });
+  s3Mock.on(HeadObjectCommand).resolves({ ContentLength: 42740 });
+  const validFile = await checkFile("testfile.jpg");
+  expect(validFile).toEqual({ mimeType: "image/jpeg", size: 42740 });
 });

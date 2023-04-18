@@ -134,6 +134,7 @@ export const deleteFileFromS3 = async (key: string) => {
     if (error! instanceof NotFound) {
       return;
     } else {
+      console.log(`ERROOOOORRR ${JSON.stringify(error)}`);
       throw new Error(`Unable to delete ${key}: ${error}`);
     }
   }
@@ -152,6 +153,7 @@ export const checkFile = async (key: string): Promise<FileCheckResult> => {
     console.error(`❌ Unable to get head of file for ${key}`);
     return { error: "cannotRead", size: fileSize };
   }
+  console.log(startOfFile);
   const fileType = await fileTypeFromBuffer(startOfFile);
   if (!fileType) {
     console.error(`❌ Unable to determine filetype for ${key}`);
