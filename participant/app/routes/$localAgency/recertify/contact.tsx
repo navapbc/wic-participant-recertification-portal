@@ -89,7 +89,11 @@ export default function Contact() {
           inputType="text"
           labelKey="Contact.additionalInfo.label"
           labelClassName="usa-label--large"
-          hint={<Trans i18nKey="Contact.additionalInfo.hint" />}
+          hint={
+            <div>
+              <Trans i18nKey="Contact.additionalInfo.hint" />
+            </div>
+          }
           type="textarea"
         />
 

@@ -74,14 +74,11 @@ p {
   @include u-text('bold');
   @include u-font-size('sans', 9); // 22px
   @include u-line-height('sans', 2); // ~25px
-}
 
-.usa-hint
-{
+  .usa-hint {
   @include u-text('normal');
-  display: block;
+  }
 }
-
 
 // USWDS List:
 // Override arbitrary max width
