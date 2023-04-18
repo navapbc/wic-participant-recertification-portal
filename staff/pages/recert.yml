@@ -258,8 +258,8 @@ blocks:
 
         - headerName: Updates from participant
           wrapText: true
-          # Set the max width for this column to be no more than 500px
-          maxWidth: 500
+          sortable: false # This column is not sortable
+          maxWidth: 500 # Set the max width for this column to be no more than 500px
           valueGetter:
             _function:
               __if:
