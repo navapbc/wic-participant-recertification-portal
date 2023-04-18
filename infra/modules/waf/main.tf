@@ -235,7 +235,6 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
     enabled  = true
     key_type = "CUSTOMER_MANAGED_CMK"
     key_arn  = module.s3_encrypted_bucket.bucket_kms_arn
-    # key_arn  = aws_kms_key.waf_logging.arn
   }
   extended_s3_configuration {
     role_arn   = aws_iam_role.firehose_perms.arn
@@ -245,7 +244,7 @@ resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
 
 # IAM Role for Kinesis
 resource "aws_iam_role" "firehose_perms" {
-  name               = "waf-firehose-role"
+  name               = var.waf_iam_name
   description        = "IAM role for the KDF"
   assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
 }
@@ -274,86 +273,18 @@ data "aws_iam_policy_document" "firehose_perms" {
       "s3:PutObject"
     ]
     resources = [module.s3_encrypted_bucket.encrypted_bucket_arn, "${module.s3_encrypted_bucket.encrypted_bucket_arn}/*"]
-    # resources = [aws_s3_bucket.waf_logging.arn, "${aws_s3_bucket.waf_logging.arn}/*"]
   }
 }
+
 # s3 logging bucket; this is a refactor to DRY up the code
 module "s3_encrypted_bucket" {
   source           = "../s3-encrypted"
-  s3_bucket_name   = "WAF"
-  environment_name = "WAF"
+  s3_bucket_name   = "wic-prp-waf"
+  environment_name = "waf"
 }
-# # KMS key config
-# resource "aws_kms_key" "waf_logging" {
-#   enable_key_rotation = true
-#   description         = "KMS key for encrypting WAF logs"
-# }
-# # S3 to store logging resources
-# resource "aws_s3_bucket" "waf_logging" {
-#   # checkov:skip=CKV2_AWS_62:Disable SNS requirement
-#   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
-#   bucket = "${var.waf_name}-logs"
-
-#   lifecycle {
-#     prevent_destroy = true
-#   }
-# }
-
-# resource "aws_s3_bucket_versioning" "waf_logging" {
-#   bucket = aws_s3_bucket.waf_logging.id
-#   versioning_configuration {
-#     status = "Enabled"
-#   }
-# }
-
-# resource "aws_s3_bucket_public_access_block" "waf_logging" {
-#   bucket = aws_s3_bucket.waf_logging.id
-
-#   block_public_acls       = true
-#   block_public_policy     = true
-#   ignore_public_acls      = true
-#   restrict_public_buckets = true
-# }
-
-# resource "aws_s3_bucket_server_side_encryption_configuration" "waf_logging" {
-#   bucket = aws_s3_bucket.waf_logging.id
-#   rule {
-#     apply_server_side_encryption_by_default {
-#       kms_master_key_id = aws_kms_key.waf_logging.arn
-#       sse_algorithm     = "aws:kms"
-#     }
-#     bucket_key_enabled = true
-#   }
-# }
-
-# # give permission to upload into logging bucket
-# resource "aws_s3_bucket_policy" "waf_logging" {
-#   bucket = aws_s3_bucket.waf_logging.id
-#   policy = data.aws_iam_policy_document.waf_logging_bucket.json
-# }
-
-# data "aws_iam_policy_document" "waf_logging_bucket" {
-#   statement {
-#     effect = "Allow"
-#     actions = [
-#       "s3:AbortMultipartUpload",
-#       "s3:GetBucketLocation",
-#       "s3:GetObject",
-#       "s3:ListBucket",
-#       "s3:ListBucketMultipartUploads",
-#       "s3:PutObject"
-#     ]
-#     resources = [aws_s3_bucket.waf_logging.arn, "${aws_s3_bucket.waf_logging.arn}/*"]
-#     principals {
-#       type        = "AWS"
-#       identifiers = [data.aws_caller_identity.current.account_id]
-#     }
-#   }
-# }
 
 resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
-  bucket = module.s3_encrypted_bucket.encrypted_bucket_id
-  # bucket                = aws_s3_bucket.waf_logging.id 
+  bucket                = module.s3_encrypted_bucket.encrypted_bucket_id
   expected_bucket_owner = data.aws_caller_identity.current.account_id
 
   rule {
@@ -375,11 +306,3 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
     }
   }
 }
-
-# resource "aws_s3_bucket_logging" "waf_logging" {
-#   bucket = module.s3_encrypted_bucket.encrypted_bucket_id
-#   target_bucket = module.s3_encrypted_bucket.encrypted_bucket_id
-#   # bucket        = aws_s3_bucket.waf_logging.id 
-#   # target_bucket = aws_s3_bucket.waf_logging.id
-#   target_prefix = "logs/waf-logging/"
-# }

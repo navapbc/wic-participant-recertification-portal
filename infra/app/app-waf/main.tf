@@ -3,6 +3,7 @@ locals {
   app_name     = "wic-prp"
   region       = "us-west-2"
   waf_name     = "${local.project_name}-${local.app_name}-waf"
+  waf_iam_name = "${local.app_name}-waf-firehose-role"
 
   # Set project tags that will be used to tag all resources.
   tags = merge(module.project_config.default_tags, {
@@ -46,6 +47,7 @@ module "project_config" {
 
 
 module "waf" {
-  source   = "../../modules/waf"
-  waf_name = local.waf_name
+  source       = "../../modules/waf"
+  waf_name     = local.waf_name
+  waf_iam_name = local.waf_iam_name
 }
