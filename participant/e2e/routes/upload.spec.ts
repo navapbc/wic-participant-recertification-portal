@@ -193,7 +193,7 @@ test("submitting with one valid image routes to /contact", async ({ page }) => {
   const file = getFileFormImage("test-img.jpg");
   const uploadBox = page.locator("input[type='file']");
   await uploadBox.setInputFiles([file]);
-  const [postRequest] = await Promise.all([
+  await Promise.all([
     page.waitForResponse(
       (response) =>
         response
@@ -205,12 +205,8 @@ test("submitting with one valid image routes to /contact", async ({ page }) => {
     ),
     await page.getByRole("button", { name: "Upload", exact: true }).click(),
   ]);
-  // TODO: Check for page URL after in a codebase next to the /contact page
-  // As this branch doesn't have the contact page, we can just skive the target
-  expect(await postRequest.headerValue("x-remix-redirect")).toBe(
-    "/gallatin/recertify/contact"
-  );
-  expect(await postRequest.headerValue("x-remix-status")).toBe("302");
+
+  await expect(page).toHaveURL("/gallatin/recertify/contact");
 });
 
 test("submitting with no files stays on the same page, shows error", async ({
