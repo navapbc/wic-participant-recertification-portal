@@ -81,7 +81,7 @@ test(`the count form submits a POST request, and on return to the page,
   expect(getRequest.request().method()).toBe("GET");
   expect(getData).toMatchObject({
     __rvfInternalFormDefaults_householdSizeForm: {
-      householdSize: "2",
+      householdSize: 2,
     },
     submissionID: submissionID,
   });
