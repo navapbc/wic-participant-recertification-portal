@@ -39,7 +39,6 @@ variable "memory" {
   description = "Amount (in MiB) of memory used by the task. e.g. 2048"
 }
 
-
 variable "container_port" {
   type        = number
   description = "The port number on the container that's bound to the user-specified"
@@ -56,6 +55,34 @@ variable "container_secrets" {
   type        = list(map(string))
   description = "AWS secrets to pass to the container definition"
   default     = []
+}
+
+variable "container_efs_volumes" {
+  description = "EFS volumes to be created and mounted into the container"
+  type = map(object({
+    volume_name      = string,
+    container_path   = string,
+    file_system_id   = string,
+    file_system_arn  = string,
+    access_point_id  = string,
+    access_point_arn = string,
+  }))
+  default = {}
+}
+
+variable "container_bind_mounts" {
+  description = "Bind mounts to be mounted into the container"
+  type = map(object({
+    volume_name    = string,
+    container_path = string,
+  }))
+  default = {}
+}
+
+variable "container_read_only" {
+  type        = bool
+  description = "Whether the container root filesystem should be read-only"
+  default     = true
 }
 
 variable "vpc_id" {
@@ -77,4 +104,38 @@ variable "service_ssm_resource_paths" {
   type        = list(string)
   description = "A list of ssm resource paths that the ECS task executor should have permission to access"
   default     = []
+}
+
+variable "enable_healthcheck" {
+  type        = bool
+  description = "Enable container healthcheck"
+  default     = true
+}
+
+variable "healthcheck_path" {
+  type        = string
+  description = "The path to the application healthcheck"
+  default     = "/health"
+}
+
+variable "healthcheck_type" {
+  type        = string
+  description = "Whether to configure a curl or wget healthcheck. curl is more common. use wget for alpine-based images"
+  default     = "curl"
+  validation {
+    condition     = contains(["curl", "wget"], var.healthcheck_type)
+    error_message = "choose either: curl or wget"
+  }
+}
+
+variable "healthcheck_start_period" {
+  type        = number
+  description = "The optional grace period to provide containers time to bootstrap in before failed health checks count towards the maximum number of retries."
+  default     = 0
+}
+
+variable "enable_exec" {
+  type        = bool
+  description = "Enable exec access to ECS task"
+  default     = false
 }

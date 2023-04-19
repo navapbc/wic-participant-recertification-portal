@@ -50,6 +50,7 @@ jobs:
         with:
           directory: infra
           framework: terraform
+          quiet: true # display only failed checks
   check-compliance-with-tfsec:
     name: Check compliance with tfsec
     runs-on: ubuntu-latest

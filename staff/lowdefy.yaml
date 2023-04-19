@@ -1,49 +1,42 @@
+# Main lowdefy entrypoint
+# See schema at: https://docs.lowdefy.com/lowdefy-schema
 lowdefy: 3.23.3
-name: Lowdefy starter
+name: Montana WIC Staff Portal
+
+cli:
+  disableTelemetry: true
+
+app:
+  html:
+    appendHead:
+      # Include a custom header to add custom CSS
+      _ref: public/header.html
+
+config:
+  homePageId: recertifications
+
+# Include the list of non-out-of-the-box block types this application uses
+types:
+  AgGridAlpine:
+    url: https://blocks-cdn.lowdefy.com/v3.23.4/blocks-aggrid/meta/AgGridAlpine.json
+
+# Configure connection to postgresql via environment variable (handled by lowdefy as a secret)
+connections:
+  - id: postgres
+    type: Knex
+    properties:
+      client: postgres
+      connection:
+        _secret: PG_CONNECTION_STRING
 
 pages:
-  - id: welcome
-    type: PageHeaderMenu
-    properties:
-      title: Welcome
-    areas:
-      content:
-        justify: center
-        blocks:
-          - id: content_card
-            type: Card
-            style:
-              maxWidth: 800
-            blocks:
-              - id: content
-                type: Result
-                properties:
-                  title: Welcome to your Lowdefy app
-                  subTitle: We are excited to see what you are going to build
-                  icon:
-                    name: HeartTwoTone
-                    color: "#f00"
-                areas:
-                  extra:
-                    blocks:
-                      - id: docs_button
-                        type: Button
-                        properties:
-                          size: large
-                          title: Let's build something
-                          color: "#1890ff"
-                        events:
-                          onClick:
-                            - id: link_to_docs
-                              type: Link
-                              params:
-                                url: https://docs.lowdefy.com
-                                newTab: true
-      footer:
-        blocks:
-          - id: footer
-            type: Paragraph
-            properties:
-              type: secondary
-              content: |
-                Made by a Lowdefy 🤖
+  - _ref:
+      # Use a page template for the page header, footer, etc
+      path: templates/page_template.yml
+      # Pass in variables that the template ingests
+      vars:
+        id: recertifications
+        title: Montana WIC Staff Portal
+        content:
+          # The content for this page that gets injected into the template
+          - _ref: pages/recert.yml

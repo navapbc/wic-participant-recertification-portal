@@ -1,8 +1,11 @@
 # -------- Image: base -------- #
 # Base node image with package updates and dependencies
-FROM node:18-slim as base
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
+# Use alpine to force using openssl@3 for prisma segfault issue
+# See https://github.com/prisma/prisma/issues/10649#issuecomment-1430379940
+FROM node:18-alpine as base
+RUN apk update \
+  && apk upgrade \
+  && apk add --no-cache \
     # Install curl for healthcheck
     curl \
     # Install openssl for Prisma
@@ -20,9 +23,10 @@ RUN npm install --production=false
 # Provide a development image
 FROM base as dev
 COPY --from=deps /home/node/remix/node_modules ./node_modules
-COPY --chown=node:node prisma .
+COPY --chown=node:node prisma prisma
 RUN npx prisma generate
 COPY --chown=node:node . .
+RUN cp public/data/submissions.not-prod.json public/data/submissions.json
 CMD ["npm", "run", "dev:docker"]
 
 # -------- Image: e2e -------- #
@@ -63,3 +67,8 @@ COPY --from=build /home/node/remix/public/build ./public/build
 COPY --chown=node:node . .
 VOLUME ["/tmp"]
 CMD ["/home/node/remix/bin/prod-start.sh"]
+
+# -------- Image: lower-envs -------- #
+# Build a production-like image with non-prod seed data
+FROM prod as lower-envs
+RUN cp public/data/submissions.not-prod.json public/data/submissions.json

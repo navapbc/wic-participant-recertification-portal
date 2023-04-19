@@ -162,6 +162,23 @@ export const findLocalAgency = async (urlId: string) => {
   });
 };
 
+export const upsertLocalAgency = async (urlId: string, name: string) => {
+  const existingLocalAgency = await db.localAgency.upsert({
+    where: {
+      urlId: urlId,
+    },
+    create: {
+      urlId: urlId,
+      name: name,
+    },
+    update: {
+      name: name,
+      updatedAt: new Date(),
+    },
+  });
+  return existingLocalAgency;
+};
+
 export const firstLocalAgency = async () => {
   return await db.localAgency.findFirst();
 };

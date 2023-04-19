@@ -43,6 +43,15 @@
     "noAnswer": "No",
     "button": "Continue"
   },
+  "Contact": {
+    "button": "Continue",
+    "title": "Additional information",
+    "phoneNumber": "Your phone number",
+    "additionalInfo": {
+      "label": "Is there anything else you'd like to share with WIC staff?",
+      "hint": "For example: Nutrition updates, household changes, or questions."
+    }
+  },
   "Count": {
     "title": "Who in your household is recertifying?",
     "intro": "We only need to collect information about WIC participants who have a recertification appointment.",
@@ -110,7 +119,7 @@
   "NameInput": {
     "firstname": "First name",
     "lastname": "Last name",
-    "legal": "Legally as it appears on their ID.",
+    "legal": "Legally as it appears on an ID document.",
     "legend": "What's your name?",
     "preferred": "Preferred name (optional)"
   },

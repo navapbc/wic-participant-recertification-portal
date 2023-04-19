@@ -9,7 +9,8 @@ export type FileCheckError =
   | "invalidSize"
   | "invalidType"
   | "fileCount";
-export type RouteType = "changes";
+
+export type RouteType = "changes" | "contact" | "name";
 
 export type ChangesData = {
   idChange: string;
@@ -35,4 +36,15 @@ export type SubmittedFile = {
 export type PreviousUpload = {
   url: string;
   name: string;
+};
+
+export type ContactData = {
+  phoneNumber: string;
+  additionalInfo: string;
+};
+
+export type RepresentativeNameData = {
+  "representative-firstName": string;
+  "representative-lastName": string;
+  "representative-preferredName": string;
 };

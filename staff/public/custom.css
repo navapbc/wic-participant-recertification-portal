@@ -1,0 +1,36 @@
+/* Add some overrides for table theming */
+.ag-theme-alpine .ag-cell {
+  line-height: 1.3rem !important;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.ag-cell-wrap-text {
+  word-break: normal !important;
+}
+
+.ag-cell-wrapper {
+  align-items: normal !important;
+}
+
+/* Theme the link colors to match USWDS */
+main a {
+  color: #005ea2 !important;
+}
+
+main a:hover {
+  color: #162e51 !important;
+}
+
+/* Disable the menu because we don't have a lot of pages */
+.ant-menu,
+#layout_mobile_menu {
+  display: none !important;
+}
+
+/* Add some custom theming:
+ * - Style names in the table as bold
+ */
+.name {
+  font-weight: bold;
+}

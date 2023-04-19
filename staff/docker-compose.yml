@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   postgres:
-    image: postgres
+    image: postgres:14
     environment:
       POSTGRES_PASSWORD: incredible_local_secret_phrase
       POSTGRES_USER: postgres
@@ -11,8 +11,6 @@ services:
       timeout: 10s
       retries: 20
     init: true
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -34,6 +32,23 @@ services:
       # Use a named volume for the node_modules so that the container uses the guest machine's node_modules dir instead of the host machine's node_modules directory, which might be divergent.
       - lowdefy_dev_nodemodules:/home/node/lowdefy/node_modules
 
+  # Include a remix container to set the db schema and seed the db.
+  # Run the following to re-seed:
+  # `docker compose run --rm remix`
+  remix:
+    build:
+      target: dev
+      context: ../participant
+    command: ["npm", "run", "dev:dbreset"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+    init: true
+    ports:
+      - "3053:3000"
+
   lowdefy_prod:
     build:
       target: prod
@@ -43,9 +58,15 @@ services:
         condition: service_healthy
     environment:
       LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:3000/recertifications || exit 1"
+      interval: 30s
+      retries: 3
+      timeout: 5s
     init: true
     ports:
       - "3333:3000"
+    read_only: true
 
 volumes:
   lowdefy_dev_nodemodules:

@@ -22,7 +22,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~>4.20.1"
+      version = ">=4.20.1"
     }
   }
 
@@ -50,7 +50,13 @@ module "project_config" {
 
 # Add application modules below
 module "app" {
-  source           = "../../env-template"
-  environment_name = local.environment_name
-  image_tag        = local.environment_name
+  source                = "../../env-template"
+  environment_name      = local.environment_name
+  participant_image_tag = var.participant_image_tag
+  staff_image_tag       = var.staff_image_tag
+  analytics_image_tag   = var.analytics_image_tag
+  analytics_enable_exec = true
+  participant_url       = "${local.environment_name}.wic-services.org"
+  staff_url             = "${local.environment_name}-staff.wic-services.org"
+  analytics_url         = "${local.environment_name}-analytics.wic-services.org"
 }
