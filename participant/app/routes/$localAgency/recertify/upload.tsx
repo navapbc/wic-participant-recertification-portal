@@ -316,7 +316,6 @@ export default function Upload() {
   const location = useLocation();
   const { proofRequired, maxFileSize, maxFileCount, previousUploads } =
     useLoaderData<typeof loader>();
-  console.log(`PREVIOUS UPLOADS ${JSON.stringify(previousUploads)}`);
   const actionData = useActionData<typeof action>();
   const formSubmit = useSubmit();
   const [previousUploadedFiles, setPreviouslyUploadedFiles] =
@@ -489,7 +488,7 @@ export default function Upload() {
           </div>
         </FileUploader>
         <Button type="submit" value="submit" name="action">
-          Upload and continue
+          {t("Upload.button")}
         </Button>
       </Form>
     </div>

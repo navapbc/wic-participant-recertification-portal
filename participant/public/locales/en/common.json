@@ -149,6 +149,7 @@
   "Upload": {
     "title": "You need to upload documents.",
     "intro": "We’ve listed out what kind of information you need to provide and which documents you can use.",
+    "button": "Upload and continue",
     "address": {
       "label": "Show proof of address",
       "heading": "Documents that show your address include:",
