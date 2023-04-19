@@ -203,6 +203,11 @@
           "Save it as a PDF or image, and try uploading again"
         ]
       }
+    },
+    "errors": {
+      "empty": "Upload at least 1 file to continue.",
+      "fileCount": "You can only upload up to  {{ maxFileLimit }} files. If you need to upload more than {{ maxFileLimit }} files, you must go through this form again.",
+      "otherFileError": "We could not upload: {{disallowedFileNames}}. Choose a PDF or an image file smaller than {{ sizeLimit }} MB."
     }
   },
   "asterisk": "All required questions are marked with an asterisk",

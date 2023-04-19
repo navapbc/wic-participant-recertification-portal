@@ -19,7 +19,7 @@ exports[`renders a file preview correctly 1`] = `
           </div>
           <button
             class="text-secondary-vivid usa-button--unstyled"
-            name="remove_file"
+            name="remove"
             type="button"
             value="test-file.jpg"
           >
@@ -66,7 +66,7 @@ exports[`renders a file preview from a file URL correctly 1`] = `
           </div>
           <button
             class="text-secondary-vivid usa-button--unstyled"
-            name="remove_file"
+            name="remove"
             type="button"
             value="test-file.jpg"
           >

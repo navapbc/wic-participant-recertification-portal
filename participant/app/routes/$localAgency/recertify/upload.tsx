@@ -50,6 +50,7 @@ import {
   MAX_UPLOAD_SIZE_BYTES,
 } from "app/utils/config.server";
 import { FilePreview } from "~/components/FilePreview";
+import type { TFunction } from "i18next";
 
 const createPreviewData = async (
   submissionID: string
@@ -67,6 +68,58 @@ const createPreviewData = async (
   return previousUploads;
 };
 
+export const createErrorElements = (
+  rejectedFiles: SubmittedFile[],
+  maxFileCount: number,
+  maxFileSize: number,
+  translation: TFunction<"translation", undefined, "translation">
+) => {
+  const erroredFilesStr =
+    rejectedFiles
+      .filter((e) => e.error != "fileCount")
+      .map((file) => file.filename)
+      .join(", ") || "";
+  const fileCountError =
+    rejectedFiles.some((e) => e.error === "fileCount") || false;
+  const errorElements = [];
+  if (rejectedFiles?.length == 0) {
+    errorElements.push(
+      <div key="filetype.empty">{translation("Upload.errors.empty")}</div>
+    );
+  }
+  if (fileCountError) {
+    errorElements.push(
+      <span key="filecount.error">
+        {translation("Upload.errors.fileCount", { maxFileLimit: maxFileCount })}
+      </span>
+    );
+  }
+  if (erroredFilesStr) {
+    errorElements.push(
+      <div key="filetype.error">
+        {translation("Upload.errors.otherFileError", {
+          disallowedFileNames: erroredFilesStr,
+          sizeLimit: Math.floor(maxFileSize / 1024 / 1024).toString(),
+        })}
+      </div>
+    );
+  }
+  if (errorElements) {
+    return (
+      <Alert
+        slim={true}
+        noIcon={false}
+        validation={true}
+        type="error"
+        headingLevel="h3"
+      >
+        {errorElements}
+      </Alert>
+    );
+  }
+  return;
+};
+
 export const loader: LoaderFunction = async ({
   request,
   params,
@@ -77,7 +130,7 @@ export const loader: LoaderFunction = async ({
   const { submissionID, headers } = await cookieParser(request, params);
   const url = new URL(request.url);
   const removeFileAction = url.searchParams.get("action") == "remove_file";
-  const removeFile = url.searchParams.get("remove_file");
+  const removeFile = url.searchParams.get("remove");
   if (removeFileAction && removeFile) {
     console.log(`⏳ Received request to remove ${removeFile}`);
     const existingRecord = await findDocument(submissionID, removeFile);
@@ -132,11 +185,12 @@ export const action = async ({
   const uploadHandler: UploadHandler = async ({ name, filename, data }) => {
     /* UploadHandlers can only return File | string | undefined..
      * So using JSON to serialize the data into a string is a hacktastic
-     * workaround. The other clear option is to
+     * workaround.
      */
-    if (name !== "documents") {
+    if (name !== "documents" || !filename) {
       return;
     }
+
     const uploadKey = [submissionID, filename!].join("/");
     const fileLocation = await uploadStreamToS3(data, uploadKey);
     const { mimeType, error, size } = await checkFile(uploadKey);
@@ -165,11 +219,6 @@ export const action = async ({
   };
 
   const formData = await parseMultipartFormData(request, uploadHandler);
-  // const submittedDocuments = formData.getAll("documents").map((value) => {
-  //   if (typeof value == "string") {
-  //     return JSON.parse(value) as SubmittedFile;
-  //   }
-  // });
   const submittedDocuments = formData
     .getAll("documents")
     .reduce<SubmittedFile[]>((parsedFileList, rawFile) => {
@@ -187,12 +236,11 @@ export const action = async ({
   const previousUploads = await listDocuments(submissionID);
   const totalUploads = previousUploads.length + acceptedDocuments.length;
   if (totalUploads > MAX_UPLOAD_FILECOUNT) {
-    const availableUploads = MAX_UPLOAD_FILECOUNT - previousUploads.length;
     console.log(
       `❌ Received ${totalUploads} files; max is ${MAX_UPLOAD_FILECOUNT}`
     );
     const newRejectedDocuments = await Promise.all(
-      acceptedDocuments.slice(availableUploads).map(async (fileToDelete) => {
+      acceptedDocuments.map(async (fileToDelete) => {
         if (fileToDelete?.key) {
           await deleteFileFromS3(fileToDelete.key);
         }
@@ -205,8 +253,11 @@ export const action = async ({
       })
     );
     rejectedDocuments.push.apply(rejectedDocuments, newRejectedDocuments);
+
     formData.delete("documents");
-    acceptedDocuments = acceptedDocuments.slice(0, availableUploads);
+    acceptedDocuments = acceptedDocuments.filter(({ filename }) => {
+      return !rejectedDocuments.some((e) => e.filename === filename);
+    });
   }
   console.log(
     `Accepted ${JSON.stringify(acceptedDocuments)}, Rejected ${JSON.stringify(
@@ -267,9 +318,8 @@ export default function Upload() {
     useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const formSubmit = useSubmit();
-
+  const [serverError, setServerError] = useState(<></>);
   const [previousUploadPreviews, setPreviousUploadPreviews] = useState(<></>);
-  const removePreviousFile = (fileName: string) => {};
   const renderPreviews = () => {
     const previousDocumentHeader = previousUploads.length ? (
       <div className="margin-top-2 font-sans-lg">
@@ -293,7 +343,7 @@ export default function Upload() {
                   imageId={`previous-preview-${index}`}
                   file={previousUpload.url}
                   name={previousUpload.name}
-                  clickHandler={removePreviousFile}
+                  clickHandler={(fileName: string) => {}}
                   buttonType="submit"
                   removeFileKey={
                     "Upload.previouslyuploaded.filepreview.removeFile"
@@ -310,6 +360,31 @@ export default function Upload() {
   };
   useEffect(() => {
     renderPreviews();
+    if (fileInputRef?.current) {
+      const removeDocuments: PreviousUpload[] = previousUploads;
+      actionData?.rejectedUploads
+        .filter((upload) => upload.error != "fileCount")
+        ?.forEach((rejected) => {
+          removeDocuments.push({
+            url: "",
+            name: rejected.filename,
+          } as PreviousUpload);
+        });
+      if (removeDocuments) {
+        fileInputRef.current.removeFileList(removeDocuments);
+      }
+    }
+    if (actionData?.rejectedUploads) {
+      const serverErrorElements = createErrorElements(
+        actionData.rejectedUploads,
+        maxFileCount,
+        maxFileSize,
+        t
+      );
+      if (serverErrorElements) {
+        setServerError(serverErrorElements);
+      }
+    }
     // eslint-disable-next-line   react-hooks/exhaustive-deps -- (deps list is correct, adding renderPreviews is circular)
   }, [previousUploads]);
 
@@ -332,15 +407,16 @@ export default function Upload() {
     fileInputRef.current?.files.forEach((value) => {
       data.append("documents", value);
     });
+    // Chrome throws an error if the form is empty
+    if (!data.has("documents")) {
+      data.append("documents", "");
+    }
     formSubmit(data, {
       method: "post",
       encType: "multipart/form-data",
       action: location.pathname,
     });
   };
-  if (actionData?.acceptedUploads && fileInputRef?.current) {
-    fileInputRef.current.removeFileList(actionData.acceptedUploads);
-  }
   return (
     <div>
       <h1>{t("Upload.title")}</h1>
@@ -401,11 +477,7 @@ export default function Upload() {
                 },
               ]}
             />
-            {/* <Alert slim={true} noIcon={false} type="error" headingLevel="h3">
-              You can only upload up to {maxFileCount} files. If you need to
-              upload more than {maxFileCount} files, you must go through this
-              form again.
-            </Alert> */}
+            {serverError}
           </div>
         </FileUploader>
         <Button type="submit" value="submit" name="action">

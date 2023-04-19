@@ -51,7 +51,9 @@ test("add TWO image files", async ({ page }) => {
   await expect(imgPreviewTwo).toBeVisible();
 });
 
-test("add TWO image files, submit, then return to see that they are previewed", async ({ page }) => {
+test("add TWO image files, submit, then return to see that they are previewed", async ({
+  page,
+}) => {
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const fileOne = getFileFormImage("test-img.jpg");
   const fileTwo = getFileFormImage("test-img-2.jpg");
@@ -62,11 +64,28 @@ test("add TWO image files, submit, then return to see that they are previewed", 
   await expect(imgPreviewOne).toBeVisible();
   const imgPreviewTwo = page.getByAltText("Preview for test-img-2.jpg");
   await expect(imgPreviewTwo).toBeVisible();
-  await page.getByTestId("button").click()
+  await page.getByTestId("button").click();
   // At the moment there is no /contact page, so this will land at home
-  await expect(page).toHaveURL("/gallatin/recertify")
+  await expect(page).toHaveURL("/gallatin/recertify");
   await page.goto("/gallatin/recertify/upload");
+});
 
+test("try to add six image files, expect an error", async ({ page }) => {
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
+  const sixFiles = [1, 2, 3, 4, 5, 6].map((value) => {
+    return getFileFormImage(`test-img-${value}.jpg`);
+  });
+  const uploadBox = page.locator("input[type='file']");
+  await Promise.all([
+    sixFiles.map(async (fileObject) => {
+      await uploadBox.setInputFiles([fileObject]);
+    }),
+  ]);
+  const tooManyFiles = page.getByTestId("file-input-error");
+  await expect(tooManyFiles).toBeVisible();
+  expect(await tooManyFiles.textContent()).toBe(
+    "You have reached the maximum number of files; please remove files before adding additional files"
+  );
 });
 
 test("add TWO image files, then remove them", async ({ page }) => {
@@ -145,5 +164,129 @@ test("an unacceptable file is un-accepted", async ({ page }) => {
   const errorElement = page.getByTestId("file-input-error");
   expect(await errorElement.textContent()).toMatch(
     /This is not a valid file type./
+  );
+});
+
+test("an unacceptable file pretending to be an image is un-accepted", async ({
+  page,
+}) => {
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
+  const uploadBox = page.locator("input[type='file']");
+  const badFile = {
+    name: "badFile.jpg",
+    mimeType: "image/jpg",
+    buffer: readFileSync("/srv/e2e/routes/upload.spec.ts"),
+  };
+  await uploadBox.setInputFiles([badFile]);
+  await page.getByRole("button", { name: "Upload", exact: true }).click();
+  const errorElement = page.getByTestId("alert");
+  expect(await errorElement.textContent()).toMatch(
+    /We could not upload: badFile.jpg. Choose a PDF or an image file smaller than 5 MB./
+  );
+});
+
+test("submitting with one valid image routes to /contact", async ({ page }) => {
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
+  const file = getFileFormImage("test-img.jpg");
+  const uploadBox = page.locator("input[type='file']");
+  await uploadBox.setInputFiles([file]);
+  const [postRequest] = await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(
+            "upload?_data=routes%2F%24localAgency%2Frecertify%2Fupload"
+          ) && response.status() === 204,
+      { timeout: 2000 }
+    ),
+    await page.getByRole("button", { name: "Upload", exact: true }).click(),
+  ]);
+  // TODO: Check for page URL after in a codebase next to the /contact page
+  // As this branch doesn't have the contact page, we can just skive the target
+  expect(await postRequest.headerValue("x-remix-redirect")).toBe(
+    "/gallatin/recertify/contact"
+  );
+  expect(await postRequest.headerValue("x-remix-status")).toBe("302");
+});
+
+test("submitting with no files stays on the same page, shows error", async ({
+  page,
+}) => {
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
+  const [postRequest] = await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(
+            "upload?_data=routes%2F%24localAgency%2Frecertify%2Fupload"
+          ) && response.status() === 200,
+      { timeout: 2000 }
+    ),
+    await page.getByRole("button", { name: "Upload", exact: true }).click(),
+  ]);
+  expect(postRequest.request().method()).toBe("POST");
+  const responseData = await postRequest.json();
+  expect(responseData).toMatchObject({
+    acceptedUploads: [],
+    rejectedUploads: [],
+  });
+  const alert = page.getByTestId("alert");
+  expect(await alert.textContent()).toBe("Upload at least 1 file to continue.");
+});
+
+test("navigating to /upload without changes data routes back to changes", async ({
+  page,
+}) => {
+  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
+});
+
+test("submitting a file, then clicking 'Remove File' removes it", async ({
+  page,
+}) => {
+  await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
+  const fileOne = getFileFormImage("test-img.jpg");
+  const uploadBox = page.locator("input[type='file']");
+  await uploadBox.setInputFiles([fileOne]);
+  const [postRequest] = await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(
+            "upload?_data=routes%2F%24localAgency%2Frecertify%2Fupload"
+          ) && response.status() === 204,
+      { timeout: 2000 }
+    ),
+    await page.getByRole("button", { name: "Upload", exact: true }).click(),
+  ]);
+  expect(postRequest.request().method()).toBe("POST");
+
+  await page.goBack({ waitUntil: "networkidle" });
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
+  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  await expect(page).toHaveURL("/gallatin/recertify/upload");
+
+  await expect(page.getByText("Previously Uploaded Documents")).toBeVisible();
+  const previousPreview = page.getByAltText("Image preview for test-img.jpg");
+  await expect(previousPreview).toHaveCount(1);
+  const [getRequest] = await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes(
+            "upload?action=remove_file&remove=test-img.jpg&_data=routes%2F%24localAgency%2Frecertify%2Fupload"
+          ) && response.status() === 204,
+      { timeout: 2000 }
+    ),
+    await page.getByRole("button", { name: "Remove File" }).click(),
+  ]);
+  expect(getRequest.request().method()).toBe("GET");
+  await expect(page.getByText("Previously Uploaded Documents")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Remove File" })).toHaveCount(
+    0
   );
 });

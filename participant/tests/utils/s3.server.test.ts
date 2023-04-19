@@ -5,11 +5,10 @@
 import "aws-sdk-client-mock-jest";
 import { s3Mock } from "tests/helpers/s3ConnectionMock";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-jest.mock("@aws-sdk/s3-request-presigner");
-const mockedgetSignedURL = jest.mocked(getSignedUrl);
 
 import { BUCKET, MAX_UPLOAD_SIZE_BYTES } from "app/utils/config.server";
 import { createReadStream } from "fs";
+import { PassThrough } from "stream";
 import { sdkStreamMixin } from "@aws-sdk/util-stream-node";
 import {
   DeleteObjectCommand,
@@ -26,6 +25,8 @@ import {
   headFilesizeFromS3,
   readFileHeadFromS3,
 } from "~/utils/s3.server";
+jest.mock("@aws-sdk/s3-request-presigner");
+const mockedgetSignedURL = jest.mocked(getSignedUrl);
 
 it("should get a file from s3", async () => {
   const mockStream = sdkStreamMixin(
@@ -221,7 +222,13 @@ it("should be invalid if the file is unreadable", async () => {
 });
 
 it("should be invalid if the file cannot be typed", async () => {
-  const mockStream = sdkStreamMixin(createReadStream(""));
+  // This was just the fastest way to make an empty stream that did
+  // not make Typescript cry
+  const xs = new PassThrough({
+    objectMode: true,
+  });
+  xs.end();
+  const mockStream = sdkStreamMixin(xs);
   s3Mock.on(HeadObjectCommand).resolves({ ContentLength: 42740 });
   s3Mock.on(GetObjectCommand).resolves({ Body: mockStream });
   const validFile = await checkFile("testfile.jpg");
