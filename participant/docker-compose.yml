@@ -23,13 +23,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      s3_local:
-        condition: service_healthy
+      s3-local:
+        condition: service_started
     environment:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
-      S3_ENDPOINT_URL: http://s3.s3_local:4566
-      AWS_ACCESS_KEY_ID: "test"
-      AWS_SECRET_ACCESS_KEY: "test"
+      S3_ENDPOINT_URL: http://s3-local:9000
+      AWS_ACCESS_KEY_ID: "e2e_minio"
+      AWS_SECRET_ACCESS_KEY: "incredible_local_secret_phrase"
       MAX_UPLOAD_FILECOUNT: 5
       MAX_UPLOAD_SIZE_BYTES: 5242880
     init: true
@@ -51,6 +51,9 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+      S3_ENDPOINT_URL: http://s3-local:9000
+      AWS_ACCESS_KEY_ID: "e2e_minio"
+      AWS_SECRET_ACCESS_KEY: "incredible_local_secret_phrase"
     init: true
     ports:
       - "3010:3000"
@@ -58,27 +61,20 @@ services:
     volumes:
       - remix_prod_tmp:/tmp
 
-  s3_local:
-    image: localstack/localstack:latest
-    environment:
-      SERVICES: s3
-      AWS_DEFAULT_REGION: us-west-2
-      DATA_DIR: /tmp/localstack/data
-      S3_DIR: /tmp/localstack/s3
-      HOSTNAME_EXTERNAL: s3_local
+  s3-local:
+    image: minio/minio
     ports:
-      - "4566:4566"
+      - "9000:9000"
+      - "9001:9001"
     volumes:
-      - "./mock_s3:/tmp/localstack/s3"
-    networks:
-      default:
-        aliases:
-          - s3.localhost.localstack.cloud
-          - participant-uploads.localhost.localstack.cloud
-          - s3.s3_local
-          - participant-uploads.s3.s3_local
+      - minio_storage:/data
+    environment:
+      MINIO_ROOT_USER: e2e_minio
+      MINIO_ROOT_PASSWORD: incredible_local_secret_phrase
+    command: server --console-address ":9001" /data
 
 volumes:
   remix_dev_nodemodules:
   remix_prod_tmp:
   postgres_data:
+  minio_storage:

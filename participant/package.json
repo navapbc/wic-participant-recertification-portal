@@ -8,7 +8,7 @@
     "dev:docker": "npm install && run-s css dev:remix",
     "dev:dbreset": "npx prisma migrate reset --force",
     "dev:remix": "remix dev",
-    "dev:starts3": "docker compose up s3_local --wait",
+    "dev:starts3": "docker compose up s3-local --wait",
     "dev:startdb": "docker compose up postgres --wait && npx prisma db push && npx prisma db seed",
     "css": "run-s css:build css:post",
     "css:build": "sass -I ./styles -I ./node_modules/@uswds -I ./node_modules/@uswds/uswds/packages styles:app/styles/unprefixed --style compressed",

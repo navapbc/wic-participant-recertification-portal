@@ -331,9 +331,7 @@ export default function Upload() {
   };
   const renderPreviews = () => {
     const previousDocumentHeader = previousUploadedFiles.length ? (
-      <div className="margin-top-2 font-sans-lg">
-        Previously Uploaded Documents
-      </div>
+      <h2 className="margin-top-2 font-sans">Previously uploaded documents</h2>
     ) : (
       <></>
     );
@@ -445,13 +443,14 @@ export default function Upload() {
       >
         <FileUploader {...defaultProps} ref={fileInputRef}>
           <div>
-            <div className="font-sans-lg">
+            <h2 className="font-sans">
               <Trans i18nKey="FileUploader.label" />
-            </div>
+            </h2>
             <div className="usa-hint">
               <Trans i18nKey="FileUploader.filetypehint" />
             </div>
             <Accordion
+              className="margin-top-1"
               items={[
                 {
                   title: <Trans i18nKey={"Upload.filetips.title"} />,
@@ -490,7 +489,7 @@ export default function Upload() {
           </div>
         </FileUploader>
         <Button type="submit" value="submit" name="action">
-          Upload
+          Upload and continue
         </Button>
       </Form>
     </div>

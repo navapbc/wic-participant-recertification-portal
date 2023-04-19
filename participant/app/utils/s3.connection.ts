@@ -26,6 +26,7 @@ export const createS3Client = (): S3Client => {
     return new S3Client({
       region: REGION,
       endpoint: ENDPOINT_URL,
+      forcePathStyle: true,
     });
   }
 };

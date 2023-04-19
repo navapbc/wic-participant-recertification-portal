@@ -90,7 +90,10 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
         {Object.keys(files).map((fileName, index) => {
           let file = files[fileName];
           return (
-            <div key={`document-${index + 1}`}>
+            <div
+              key={`document-${index + 1}`}
+              className={index == 0 ? "margin-top-2" : undefined}
+            >
               <span>{`${documentString} ${index + 1}`}</span>
               <FilePreview
                 imageId={`preview-${index}`}

@@ -181,7 +181,9 @@ test("an unacceptable file pretending to be an image is un-accepted", async ({
     buffer: readFileSync("/srv/e2e/routes/upload.spec.ts"),
   };
   await uploadBox.setInputFiles([badFile]);
-  await page.getByRole("button", { name: "Upload", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Upload and continue", exact: true })
+    .click();
   const errorElement = page.getByTestId("alert");
   expect(await errorElement.textContent()).toMatch(
     /We could not upload: badFile.jpg. Choose a PDF or an image file smaller than 5 MB./
@@ -203,7 +205,9 @@ test("submitting with one valid image routes to /contact", async ({ page }) => {
           ) && response.status() === 204,
       { timeout: 2000 }
     ),
-    await page.getByRole("button", { name: "Upload", exact: true }).click(),
+    await page
+      .getByRole("button", { name: "Upload and continue", exact: true })
+      .click(),
   ]);
 
   await expect(page).toHaveURL("/gallatin/recertify/contact");
@@ -223,7 +227,9 @@ test("submitting with no files stays on the same page, shows error", async ({
           ) && response.status() === 200,
       { timeout: 2000 }
     ),
-    await page.getByRole("button", { name: "Upload", exact: true }).click(),
+    await page
+      .getByRole("button", { name: "Upload and continue", exact: true })
+      .click(),
   ]);
   expect(postRequest.request().method()).toBe("POST");
   const responseData = await postRequest.json();
@@ -259,7 +265,9 @@ test("submitting a file, then clicking 'Remove File' removes it", async ({
           ) && response.status() === 204,
       { timeout: 2000 }
     ),
-    await page.getByRole("button", { name: "Upload", exact: true }).click(),
+    await page
+      .getByRole("button", { name: "Upload and continue", exact: true })
+      .click(),
   ]);
   expect(postRequest.request().method()).toBe("POST");
 
@@ -267,7 +275,7 @@ test("submitting a file, then clicking 'Remove File' removes it", async ({
   await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
   await expect(page).toHaveURL("/gallatin/recertify/upload");
 
-  await expect(page.getByText("Previously Uploaded Documents")).toBeVisible();
+  await expect(page.getByText("Previously uploaded documents")).toBeVisible();
   const previousPreview = page.getByAltText("Image preview for test-img.jpg");
   await expect(previousPreview).toHaveCount(1);
   const [getRequest] = await Promise.all([
@@ -283,7 +291,7 @@ test("submitting a file, then clicking 'Remove File' removes it", async ({
     await page.getByRole("button", { name: "Remove File" }).click(),
   ]);
   expect(getRequest.request().method()).toBe("GET");
-  await expect(page.getByText("Previously Uploaded Documents")).toHaveCount(0);
+  await expect(page.getByText("Previously uploaded documents")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Remove File" })).toHaveCount(
     0
   );
