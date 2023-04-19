@@ -26,8 +26,12 @@ module.exports = {
       "./app/utils/db.connection": require.resolve(
         "./mockModules/utils/db.connection.ts"
       ),
+      "./app/utils/s3.connection": require.resolve(
+        "./mockModules/utils/s3.connection.ts"
+      ),
       "@prisma/client": require.resolve("./mockModules/utils/prisma-client.ts"),
       "@remix-run/react": require.resolve("./mockModules/remix-react.tsx"),
+      "file-type": require.resolve("./mockModules/fileType.ts"),
     };
 
     config.resolve.fallback = {

@@ -316,12 +316,21 @@ export default function Upload() {
   const location = useLocation();
   const { proofRequired, maxFileSize, maxFileCount, previousUploads } =
     useLoaderData<typeof loader>();
+  console.log(`PREVIOUS UPLOADS ${JSON.stringify(previousUploads)}`);
   const actionData = useActionData<typeof action>();
   const formSubmit = useSubmit();
+  const [previousUploadedFiles, setPreviouslyUploadedFiles] =
+    useState<PreviousUpload[]>(previousUploads);
   const [serverError, setServerError] = useState(<></>);
   const [previousUploadPreviews, setPreviousUploadPreviews] = useState(<></>);
+  const removeClick = (filename: string) => {
+    const currentUploads = previousUploadedFiles;
+    setPreviouslyUploadedFiles(
+      currentUploads.filter((file) => file.name != filename)
+    );
+  };
   const renderPreviews = () => {
-    const previousDocumentHeader = previousUploads.length ? (
+    const previousDocumentHeader = previousUploadedFiles.length ? (
       <div className="margin-top-2 font-sans-lg">
         Previously Uploaded Documents
       </div>
@@ -332,7 +341,7 @@ export default function Upload() {
       <>
         {previousDocumentHeader}
         <input type="hidden" name="action" value="remove_file" />
-        {previousUploads.map(
+        {previousUploadedFiles.map(
           (previousUpload: PreviousUpload, index: number) => {
             return (
               <div
@@ -343,7 +352,7 @@ export default function Upload() {
                   imageId={`previous-preview-${index}`}
                   file={previousUpload.url}
                   name={previousUpload.name}
-                  clickHandler={(fileName: string) => {}}
+                  clickHandler={() => removeClick(previousUpload.name)}
                   buttonType="submit"
                   removeFileKey={
                     "Upload.previouslyuploaded.filepreview.removeFile"
@@ -361,9 +370,9 @@ export default function Upload() {
   useEffect(() => {
     renderPreviews();
     if (fileInputRef?.current) {
-      const removeDocuments: PreviousUpload[] = previousUploads;
+      const removeDocuments: PreviousUpload[] = previousUploadedFiles;
       actionData?.rejectedUploads
-        .filter((upload) => upload.error != "fileCount")
+        .filter((upload: SubmittedFile) => upload.error != "fileCount")
         ?.forEach((rejected) => {
           removeDocuments.push({
             url: "",
@@ -386,7 +395,7 @@ export default function Upload() {
       }
     }
     // eslint-disable-next-line   react-hooks/exhaustive-deps -- (deps list is correct, adding renderPreviews is circular)
-  }, [previousUploads]);
+  }, [previousUploadedFiles, actionData]);
 
   const defaultProps: FileUploaderProps = {
     id: "file-input-documents",

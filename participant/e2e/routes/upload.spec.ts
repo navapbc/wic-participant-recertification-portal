@@ -65,9 +65,12 @@ test("add TWO image files, submit, then return to see that they are previewed", 
   const imgPreviewTwo = page.getByAltText("Preview for test-img-2.jpg");
   await expect(imgPreviewTwo).toBeVisible();
   await page.getByTestId("button").click();
-  // At the moment there is no /contact page, so this will land at home
-  await expect(page).toHaveURL("/gallatin/recertify");
-  await page.goto("/gallatin/recertify/upload");
+  await expect(page).toHaveURL("/gallatin/recertify/contact");
+  await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
+  const imgPreviewOneReturn = page.getByAltText("Preview for test-img.jpg");
+  await expect(imgPreviewOneReturn).toBeVisible();
+  const imgPreviewTwoReturn = page.getByAltText("Preview for test-img-2.jpg");
+  await expect(imgPreviewTwoReturn).toBeVisible();
 });
 
 test("try to add six image files, expect an error", async ({ page }) => {
@@ -264,8 +267,7 @@ test("submitting a file, then clicking 'Remove File' removes it", async ({
   ]);
   expect(postRequest.request().method()).toBe("POST");
 
-  await page.goBack({ waitUntil: "networkidle" });
-  await expect(page).toHaveURL("/gallatin/recertify/changes");
+  await expect(page).toHaveURL("/gallatin/recertify/contact");
   await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
   await expect(page).toHaveURL("/gallatin/recertify/upload");
 
