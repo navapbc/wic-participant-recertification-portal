@@ -6,7 +6,7 @@ import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
 import { List } from "app/components/List";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
-import { countSchema } from "~/utils/validation";
+import { countSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
 import {
   ValidatedForm,
@@ -61,7 +61,7 @@ export const action = async ({ request }: { request: Request }) => {
   const { submissionID } = await cookieParser(request);
   console.log(`Got submission ${JSON.stringify(parsedForm)}`);
   await upsertSubmissionForm(submissionID, "count", parsedForm);
-  const routeTarget = routeFromCount(request);
+  const routeTarget = routeFromCount(request, parsedForm);
   console.log(`Completed count form; routing to ${routeTarget}`);
   return redirect(routeTarget);
 };

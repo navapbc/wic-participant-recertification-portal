@@ -64,3 +64,8 @@ export const countSchema = zfd.formData({
       })
   ),
 });
+
+//TODO Update this with the proper validation
+export const householdDetailsSchema = zfd.formData({
+  householdSize: zfd.numeric(),
+});
