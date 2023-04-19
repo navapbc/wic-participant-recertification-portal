@@ -14,6 +14,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # Create an S3 Localstack server for e2e tests
+  s3-local:
+    image: minio/minio
+    ports:
+      - "9100:9000"
+      - "9101:9001"
+    volumes:
+      - minio_storage_staff:/data
+    environment:
+      MINIO_ROOT_USER: e2e_minio
+      MINIO_ROOT_PASSWORD: incredible_local_secret_phrase
+    command: server --console-address ":9001" /data
+
   lowdefy_dev:
     build:
       target: dev
@@ -39,7 +52,7 @@ services:
     build:
       target: dev
       context: ../participant
-    command: ["npm", "run", "dev:dbreset"]
+    command: [ "npm", "run", "dev:dbreset" ]
     depends_on:
       postgres:
         condition: service_healthy
@@ -71,3 +84,4 @@ services:
 volumes:
   lowdefy_dev_nodemodules:
   postgres_data:
+  minio_storage_staff:

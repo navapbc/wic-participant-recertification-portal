@@ -39,7 +39,7 @@ services:
       database:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
+      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database:5432/postgres?schema=public
     init: true
     networks:
       - staff-e2e
