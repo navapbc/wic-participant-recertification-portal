@@ -57,7 +57,7 @@ test(`the count form submits a POST request, and on return to the page,
   expect(postRequest.request().method()).toBe("POST");
   expect(parsedPostData).toMatchObject({
     __rvfInternalFormId: "householdSizeForm",
-    householdSize: 2,
+    householdSize: "2",
   });
 
   // Check that we've moved to the Details page based on our count, with 2 participant cards being added
@@ -81,7 +81,7 @@ test(`the count form submits a POST request, and on return to the page,
   expect(getRequest.request().method()).toBe("GET");
   expect(getData).toMatchObject({
     __rvfInternalFormDefaults_householdSizeForm: {
-      householdSize: 2,
+      householdSize: "2",
     },
     submissionID: submissionID,
   });
