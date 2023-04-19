@@ -48,4 +48,5 @@ module "email" {
   source             = "../../modules/email"
   hosted_zone_domain = "wic-services.org"
   domain             = "wic-services.org"
+  verified_emails    = ["no-reply@wic-services.org"]
 }
