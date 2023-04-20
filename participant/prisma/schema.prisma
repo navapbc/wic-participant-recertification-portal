@@ -39,6 +39,7 @@ model LocalAgency {
   createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
   submissions   Submission[]
+  staffUsers    StaffUser[]
 
   @@map("local_agencies")
 }
@@ -55,4 +56,12 @@ model Document {
   submission            Submission @relation(fields: [submissionId], references: [submissionId])
 
   @@map("documents")
+}
+
+model StaffUser {
+  userId        String      @id @map("user_id") @db.Uuid
+  localAgencyId String      @map("local_agency_id") @db.Uuid
+  localAgency   LocalAgency @relation(fields: [localAgencyId], references: [localAgencyId])
+
+  @@map("staff_users")
 }

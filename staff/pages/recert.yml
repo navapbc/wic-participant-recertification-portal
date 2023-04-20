@@ -16,8 +16,13 @@ requests: # Requests defines all the data requests made available in this page c
         from submissions s
         left join submission_forms sf on (s.submission_id = sf.submission_id)
         left join local_agencies la on (s.local_agency_id = la.local_agency_id)
+        left join staff_users su on (s.local_agency_id = su.local_agency_id)
+        where su.user_id = :user_id
         group by sf.submission_id, s.updated_at, la.name
         order by s.updated_at desc;
+      parameters:
+        user_id:
+          _user: sub
 events:
   # A list of actions that gets completed each time this lowdefy context is loaded
   onInitAsync:
