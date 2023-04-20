@@ -66,3 +66,53 @@ variable "verification_email_subject" {
   description = "The email subject for a password reset email"
   default     = ""
 }
+
+variable "client_allowed_oauth_flows" {
+  type        = list(string)
+  description = "The list of allowed user pool client OAuth flows"
+  default     = ["code"]
+}
+
+variable "client_allowed_oauth_scopes" {
+  type        = list(string)
+  description = "The list of allowed user pool client OAuth scopes"
+  default     = ["openid", "email"]
+}
+
+variable "client_generate_secret" {
+  type        = bool
+  description = "Whether the user pool client should generate a client secret"
+  default     = true
+}
+
+variable "client_callback_urls" {
+  type        = list(string)
+  description = "The list of allowed callback urls for the client user pool"
+  default     = []
+}
+
+variable "client_logout_urls" {
+  type        = list(string)
+  description = "The list of allowed logout urls for the client user pool"
+  default     = []
+}
+
+variable "client_domain" {
+  type        = string
+  description = "The domain that the user pool client hosted UI should be hosted at"
+}
+
+variable "hosted_zone_domain" {
+  type        = string
+  description = "The aws_route53_zone domain"
+}
+
+variable "client_route53_alias_name" {
+  type        = string
+  description = "DNS domain name for a CloudFront distribution, S3 bucket, ELB, or another resource record set in this hosted zone"
+}
+
+variable "client_route53_alias_zone_id" {
+  type        = string
+  description = "Hosted zone ID for a CloudFront distribution, S3 bucket, ELB, or Route 53 hosted zone"
+}

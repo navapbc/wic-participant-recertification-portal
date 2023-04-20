@@ -1,6 +1,9 @@
 # A module for configuring an AWS Cognito User Pool
 # Configures for email, but not SMS
 
+##############################################
+## User pool
+##############################################
 resource "aws_cognito_user_pool" "pool" {
   name = var.pool_name
 
@@ -19,6 +22,7 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   auto_verified_attributes = ["email"]
+  # Block not available in this version of aws provider
   # user_attribute_update_settings {
   #   attributes_require_verification_before_update = "email"
   # }
@@ -27,7 +31,8 @@ resource "aws_cognito_user_pool" "pool" {
     name                = "email"
     attribute_data_type = "String"
     mutable             = "true"
-    required            = "true"
+    # Attribute not available in this version of aws provider
+    # required            = "true"
 
     string_attribute_constraints {
       max_length = 2048
@@ -65,3 +70,59 @@ resource "aws_cognito_user_pool" "pool" {
     email_subject        = length(var.verification_email_subject) > 0 ? var.verification_email_subject : null
   }
 }
+
+##############################################
+## User pool client
+##############################################
+data "aws_acm_certificate" "cert" {
+  domain = var.hosted_zone_domain
+}
+
+resource "aws_cognito_user_pool_domain" "client" {
+  domain          = var.client_domain
+  certificate_arn = data.aws_acm_certificate.cert.arn
+  user_pool_id    = aws_cognito_user_pool.pool.id
+}
+
+data "aws_route53_zone" "client" {
+  name = var.hosted_zone_domain
+}
+
+resource "aws_route53_record" "client" {
+  name    = aws_cognito_user_pool_domain.client.domain
+  type    = "A"
+  zone_id = data.aws_route53_zone.client.id
+  alias {
+    name                   = var.client_route53_alias_name
+    zone_id                = var.client_route53_alias_zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_cognito_user_pool_client" "client" {
+  name         = var.pool_name
+  user_pool_id = aws_cognito_user_pool.pool.id
+
+  allowed_oauth_flows  = var.client_allowed_oauth_flows
+  allowed_oauth_scopes = var.client_allowed_oauth_scopes
+  explicit_auth_flows  = ["ALLOW_REFRESH_TOKEN_AUTH"]
+
+  generate_secret = var.client_generate_secret
+  callback_urls   = var.client_callback_urls
+  logout_urls     = var.client_logout_urls
+
+  enable_token_revocation                       = true
+  enable_propagate_additional_user_context_data = false
+  prevent_user_existence_errors                 = "ENABLED"
+  supported_identity_providers                  = ["COGNITO"]
+  read_attributes = [
+    "email",
+    "email_verified",
+    "updated_at"
+  ]
+  write_attributes = [
+    "email",
+    "updated_at"
+  ]
+}
+
