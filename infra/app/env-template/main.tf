@@ -26,6 +26,7 @@ locals {
   analytics_database_name      = "${local.project_name}-analytics-${var.environment_name}"
   document_upload_s3_name      = "${local.project_name}-doc-upload-${var.environment_name}"
   contact_email                = "wic-projects-team@navapbc.com"
+  staff_idp_client_domain      = "${var.environment_name}-idp.wic-services.org"
 }
 
 module "project_config" {
@@ -141,12 +142,23 @@ EOT
   verification_email_subject = "Reset your WIC Staff Portal password"
   client_callback_urls       = ["https://${var.staff_url}/auth/openid-callback"]
   client_logout_urls         = ["https://${var.staff_url}/login"]
-  client_domain              = "${var.environment_name}-idp.wic-services.org"
+  client_domain              = local.staff_idp_client_domain
   hosted_zone_domain         = "wic-services.org"
 
   # @TODO This should probably not be the participant ALB but not sure what else to use.
   client_route53_alias_name    = data.aws_lb.participant_alb.dns_name
   client_route53_alias_zone_id = data.aws_lb.participant_alb.zone_id
+}
+
+module "staff_secret" {
+  source = "../../random-password"
+  length = 300
+}
+
+resource "aws_ssm_parameter" "staff_jwt_secret" {
+  name  = "/metadata/staff/${var.environment_name}-jwt-secret"
+  type  = "SecureString"
+  value = module.staff_secret.random_password
 }
 
 module "staff" {
@@ -163,7 +175,25 @@ module "staff" {
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}"
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}",
+    },
+    {
+      name      = "LOWDEFY_SECRET_OPENID_CLIENT_ID",
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_id_secret_name}",
+    },
+    {
+      name      = "LOWDEFY_SECRET_OPENID_CLIENT_SECRET",
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_secret_secret_name}",
+    },
+    {
+      name      = "LOWDEFY_SECRET_JWT_SECRET",
+      valueFrom = aws_ssm_parameter.staff_jwt_secret.arn,
+    },
+  ]
+  container_env_vars = [
+    {
+      name  = "LOWDEFY_SECRET_OPENID_DOMAIN",
+      value = "https://${local.staff_idp_client_domain}/.well-known/openid-configuration"
     },
   ]
   service_ssm_resource_paths = [

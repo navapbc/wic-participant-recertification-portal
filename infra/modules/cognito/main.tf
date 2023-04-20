@@ -1,6 +1,11 @@
 # A module for configuring an AWS Cognito User Pool
 # Configures for email, but not SMS
 
+locals {
+  client_id_secret_name     = "/metadata/idp/${var.pool_name}-client-id"
+  client_secret_secret_name = "/metadata/idp/${var.pool_name}-client-secret"
+}
+
 ##############################################
 ## User pool
 ##############################################
@@ -126,3 +131,14 @@ resource "aws_cognito_user_pool_client" "client" {
   ]
 }
 
+resource "aws_ssm_parameter" "client_id" {
+  name  = local.client_id_secret_name
+  type  = "SecureString"
+  value = aws_cognito_user_pool_client.client.id
+}
+
+resource "aws_ssm_parameter" "client_secret" {
+  name  = local.client_secret_secret_name
+  type  = "SecureString"
+  value = aws_cognito_user_pool_client.client.client_secret
+}
