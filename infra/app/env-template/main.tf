@@ -228,9 +228,10 @@ module "doc_upload" {
   source            = "../../modules/s3-encrypted"
   environment_name  = var.environment_name
   s3_bucket_name    = local.document_upload_s3_name
-  read_role_names   = [module.participant.task_executor_role_name, module.staff.task_executor_role_name]
-  write_role_names  = [module.participant.task_executor_role_name]
-  delete_role_names = [module.participant.task_executor_role_name]
+  read_role_names   = [module.participant.task_role_name, module.staff.task_role_name]
+  write_role_names  = [module.participant.task_role_name]
+  delete_role_names = [module.participant.task_role_name]
+  admin_role_names  = [module.participant.task_role_name]
 }
 
 # todo: cleanup service names
