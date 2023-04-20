@@ -3,6 +3,7 @@
 .dockerignore
 *.env
 .lowdefy/**
+.serverless/**
 .DS_Store
 docker-compose.*
 Dockerfile*
