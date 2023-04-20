@@ -12,8 +12,7 @@ locals {
 resource "aws_cognito_user_pool" "pool" {
   name = var.pool_name
 
-  # Deletion protection is available with aws provider version >= 4.38.0
-  # deletion_protection = "ACTIVE"
+  deletion_protection = "ACTIVE"
 
   username_attributes = ["email"]
 
@@ -27,17 +26,15 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   auto_verified_attributes = ["email"]
-  # Block not available in this version of aws provider
-  # user_attribute_update_settings {
-  #   attributes_require_verification_before_update = "email"
-  # }
+  user_attribute_update_settings {
+    attributes_require_verification_before_update = ["email"]
+  }
 
   schema {
     name                = "email"
     attribute_data_type = "String"
     mutable             = "true"
-    # Attribute not available in this version of aws provider
-    # required            = "true"
+    required            = "true"
 
     string_attribute_constraints {
       max_length = 2048
