@@ -15,15 +15,17 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  project_name              = module.project_config.project_name
-  app_name                  = module.app_config.app_name
-  cluster_name              = "${local.project_name}-${local.app_name}-${var.environment_name}"
-  participant_database_name = "${local.project_name}-participant-${var.environment_name}"
-  participant_service_name  = "${local.project_name}-participant-${var.environment_name}"
-  staff_service_name        = "${local.project_name}-staff-${var.environment_name}"
-  analytics_service_name    = "${local.project_name}-analytics-${var.environment_name}"
-  analytics_database_name   = "${local.project_name}-analytics-${var.environment_name}"
-  document_upload_s3_name   = "${local.project_name}-doc-upload-${var.environment_name}"
+  project_name                 = module.project_config.project_name
+  app_name                     = module.app_config.app_name
+  cluster_name                 = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  participant_database_name    = "${local.project_name}-participant-${var.environment_name}"
+  participant_service_name     = "${local.project_name}-participant-${var.environment_name}"
+  staff_cognito_user_pool_name = "${local.project_name}-user-pool-${var.environment_name}"
+  staff_service_name           = "${local.project_name}-staff-${var.environment_name}"
+  analytics_service_name       = "${local.project_name}-analytics-${var.environment_name}"
+  analytics_database_name      = "${local.project_name}-analytics-${var.environment_name}"
+  document_upload_s3_name      = "${local.project_name}-doc-upload-${var.environment_name}"
+  contact_email                = "wic-projects-team@navapbc.com"
 }
 
 module "project_config" {
@@ -103,6 +105,36 @@ module "participant" {
   depends_on = [
     module.participant_database,
   ]
+}
+
+data "aws_ses_domain_identity" "verified_domain" {
+  domain = "wic-services.org"
+}
+
+module "staff_idp" {
+  source                     = "../../modules/cognito"
+  pool_name                  = local.staff_cognito_user_pool_name
+  password_minimum_length    = 15
+  email_sending_account      = "DEVELOPER"
+  from_email_address         = "WIC Montana Staff Portal <no-reply@wic-services.org>"
+  reply_to_email_address     = local.contact_email
+  email_source_arn           = data.aws_ses_domain_identity.verified_domain.arn
+  invite_email_message       = <<EOT
+Thank you for participating in Montana's WIC recertification pilot.
+To activate your account, you need to enter a temporary password and reset your password.
+Your username is {username} and your temporary password is {####}.
+Please log into the WIC Staff Portal at ${var.staff_url} to reset your password.
+Please reach out to our technical team at ${local.contact_email} at any time to resolve any issues you encounter.
+EOT
+  invite_email_subject       = "Please verify your WIC Staff Portal account"
+  verification_email_message = <<EOT
+Thank you for participating in Montana's WIC recertification pilot.
+We received a request to reset your WIC Staff Portal password. To do so, you need to enter a password reset code.
+The password reset code for your account is {####}. Please complete the password reset process at ${var.staff_url}.
+If you didn’t request a password reset, please ignore this email. Your password won’t be changed.
+Please reach out to our technical team at ${local.contact_email} at any time to resolve any issues you encounter.
+EOT
+  verification_email_subject = "Reset your WIC Staff Portal password"
 }
 
 module "staff" {
