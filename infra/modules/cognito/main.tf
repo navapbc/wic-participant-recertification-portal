@@ -76,8 +76,14 @@ resource "aws_cognito_user_pool" "pool" {
 ##############################################
 ## User pool client
 ##############################################
+provider "aws" {
+  region  = "us-east-1"
+  alias   = "us-east-1"
+}
+
 data "aws_acm_certificate" "cert" {
   domain = var.hosted_zone_domain
+  provider = aws.us-east-1
 }
 
 resource "aws_cognito_user_pool_domain" "client" {
@@ -95,9 +101,11 @@ resource "aws_route53_record" "client" {
   type    = "A"
   zone_id = data.aws_route53_zone.client.id
   alias {
-    name                   = var.client_route53_alias_name
-    zone_id                = var.client_route53_alias_zone_id
-    evaluate_target_health = true
+    name = "${aws_cognito_user_pool_domain.client.cloudfront_distribution_arn}"
+    // The following zone id is CloudFront.
+    // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
+    zone_id = "Z2FDTNDATAQYW2"
+    evaluate_target_health = false
   }
 }
 

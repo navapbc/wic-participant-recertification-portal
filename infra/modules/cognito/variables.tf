@@ -106,13 +106,3 @@ variable "hosted_zone_domain" {
   type        = string
   description = "The aws_route53_zone domain"
 }
-
-variable "client_route53_alias_name" {
-  type        = string
-  description = "DNS domain name for a CloudFront distribution, S3 bucket, ELB, or another resource record set in this hosted zone"
-}
-
-variable "client_route53_alias_zone_id" {
-  type        = string
-  description = "Hosted zone ID for a CloudFront distribution, S3 bucket, ELB, or Route 53 hosted zone"
-}

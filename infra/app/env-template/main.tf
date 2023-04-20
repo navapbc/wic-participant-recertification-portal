@@ -112,10 +112,6 @@ data "aws_ses_domain_identity" "verified_domain" {
   domain = "wic-services.org"
 }
 
-data "aws_lb" "participant_alb" {
-  name = local.participant_service_name
-}
-
 module "staff_idp" {
   source                     = "../../modules/cognito"
   pool_name                  = local.staff_cognito_user_pool_name
@@ -144,10 +140,6 @@ EOT
   client_logout_urls         = ["https://${var.staff_url}/login"]
   client_domain              = local.staff_idp_client_domain
   hosted_zone_domain         = "wic-services.org"
-
-  # @TODO This should probably not be the participant ALB but not sure what else to use.
-  client_route53_alias_name    = data.aws_lb.participant_alb.dns_name
-  client_route53_alias_zone_id = data.aws_lb.participant_alb.zone_id
 }
 
 module "staff_secret" {
