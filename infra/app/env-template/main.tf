@@ -144,13 +144,13 @@ EOT
 
 module "staff_secret" {
   source = "../../modules/random-password"
-  length = 300
+  length = 256
 }
 
 resource "aws_ssm_parameter" "staff_jwt_secret" {
   name  = "/metadata/staff/${var.environment_name}-jwt-secret"
   type  = "SecureString"
-  value = module.staff_secret.random_password
+  value = base64encode(module.staff_secret.random_password)
 }
 
 module "staff" {
