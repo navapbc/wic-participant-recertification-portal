@@ -13,7 +13,10 @@ import { PassThrough } from "stream";
 import { writeAsyncIterableToWritable } from "@remix-run/node";
 import { fileTypeFromBuffer } from "file-type";
 import type { FileCheckResult } from "app/types";
-import { MAX_UPLOAD_SIZE_BYTES } from "./config.server";
+import {
+  MAX_UPLOAD_SIZE_BYTES,
+  S3_PRESIGNED_URL_EXPIRATION,
+} from "./config.server";
 import { trimStart } from "lodash";
 import { File } from "@remix-run/node/dist/fetch";
 
@@ -102,7 +105,7 @@ export const getURLFromS3 = async (
   duration?: number
 ): Promise<string | undefined> => {
   await ensureBucketExists(s3Connection);
-  const expiresIn = duration || 3600;
+  const expiresIn = duration || S3_PRESIGNED_URL_EXPIRATION;
   const command = new GetObjectCommand({
     Key: key,
     Bucket: BUCKET,

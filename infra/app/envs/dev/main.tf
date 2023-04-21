@@ -66,6 +66,8 @@ module "app" {
   analytics_url   = "${local.environment_name}-analytics.wic-services.org"
 
   # Misc settings
-  participant_doc_upload_expiration = "60"
-  analytics_enable_exec             = true
+  participant_s3_presigned_url_expiration = "300"
+  participant_max_upload_size_bytes       = "5242880"
+  participant_max_upload_filecount        = "5"
+  analytics_enable_exec                   = true
 }

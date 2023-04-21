@@ -166,6 +166,8 @@ it("should throw an error for an URL if s3 throws an unexpected error", async ()
   );
 });
 
+// @TODO Add a unit test for checking that the presigned urls expire as expected
+
 it("should delete a file from s3", async () => {
   s3Mock.on(DeleteObjectCommand).resolves({});
   await deleteFileFromS3("testfile.jpg");
