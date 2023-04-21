@@ -46,6 +46,7 @@ import {
   deleteFileFromS3,
 } from "app/utils/s3.server";
 import {
+  DOC_URL_EXPIRATION,
   MAX_UPLOAD_FILECOUNT,
   MAX_UPLOAD_SIZE_BYTES,
 } from "app/utils/config.server";
@@ -264,8 +265,9 @@ export const action = async ({
     )} from form`
   );
   acceptedDocuments.map(async (acceptedFile) => {
-    const url = await getURLFromS3(acceptedFile.key)
-    await upsertDocument(submissionID, {...acceptedFile!, s3Url: url});
+    // Create a presigned URL with expiration time and save to the database.
+    const url = await getURLFromS3(acceptedFile.key, DOC_URL_EXPIRATION);
+    await upsertDocument(submissionID, { ...acceptedFile!, s3Url: url });
   });
   if (!rejectedDocuments.length) {
     if (acceptedDocuments.length) {
