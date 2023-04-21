@@ -38,20 +38,20 @@ RUN npm prune --production
 
 # -------- Image: prod -------- #
 # # Finally, build the production image with minimal footprint
-# FROM lowdefy/lowdefy:3.23.3 as prod
-# ENV npm_config_cache /tmp
-# USER node
-# COPY --from=production-deps /home/node/lowdefy/node_modules ./node_modules
-# COPY --from=build --chown=node:node /home/node/lowdefy/.lowdefy/build ./build
-# COPY --chown=node:node ./public ./public
-# CMD ["node", "./dist/server.js"]
-
-# -------- Image: prod -------- #
-# Finally, build the production image with minimal footprint
-FROM lowdefy/lowdefy-aws-lambda:3.23.3 as prod
+FROM lowdefy/lowdefy:3.23.3 as prod
 ENV npm_config_cache /tmp
 USER node
 COPY --from=production-deps /home/node/lowdefy/node_modules ./node_modules
 COPY --from=build --chown=node:node /home/node/lowdefy/.lowdefy/build ./build
 COPY --chown=node:node ./public ./public
-CMD [ "dist/server.handler"]
+CMD ["node", "./dist/server.js"]
+
+# -------- Image: prod -------- #
+# Finally, build the production image with minimal footprint
+# FROM lowdefy/lowdefy-aws-lambda:3.23.3 as prod
+# ENV npm_config_cache /tmp
+# USER node
+# COPY --from=production-deps /home/node/lowdefy/node_modules ./node_modules
+# COPY --from=build --chown=node:node /home/node/lowdefy/.lowdefy/build ./build
+# COPY --chown=node:node ./public ./public
+# CMD [ "dist/server.handler"]
