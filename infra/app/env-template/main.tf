@@ -185,7 +185,7 @@ module "staff" {
   container_env_vars = [
     {
       name  = "LOWDEFY_SECRET_OPENID_DOMAIN",
-      value = "https://cognito-idp.${data.aws_region.current.name}.${module.staff_idp.user_pool_id}/.well-known/openid-configuration",
+      value = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${module.staff_idp.user_pool_id}/.well-known/openid-configuration",
     },
   ]
   service_ssm_resource_paths = [
