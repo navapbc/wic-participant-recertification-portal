@@ -265,9 +265,13 @@ export const action = async ({
     )} from form`
   );
   acceptedDocuments.map(async (acceptedFile) => {
-    // Create a presigned URL with expiration time and save to the database.
-    const url = await getURLFromS3(acceptedFile.key, DOC_URL_EXPIRATION);
-    await upsertDocument(submissionID, { ...acceptedFile!, s3Url: url });
+    if (acceptedFile.key) {
+      // Create a presigned URL with expiration time and save to the database.
+      const url = await getURLFromS3(acceptedFile.key, DOC_URL_EXPIRATION);
+      await upsertDocument(submissionID, { ...acceptedFile!, s3Url: url });
+    } else {
+      console.log(`❌ Unable to save file ${acceptedFile.filename}`);
+    }
   });
   if (!rejectedDocuments.length) {
     if (acceptedDocuments.length) {
