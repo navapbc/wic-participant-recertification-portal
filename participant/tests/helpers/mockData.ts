@@ -39,6 +39,7 @@ export function getDocument(
     documentId: uuidv4(),
     submissionId: submissionId,
     s3Key: `${submissionId}/${filename}`,
+    s3Url: `http://127.0.0.1/${submissionId}/${filename}?signed`,
     detectedFiletype: filetype,
     detectedFilesizeBytes: size,
     originalFilename: filename,

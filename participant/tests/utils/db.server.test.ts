@@ -239,6 +239,7 @@ it("creates a document if one does not exist", async () => {
     filename: "filename.jpg",
     accepted: true,
     key: mockument.s3Key,
+    s3Url: mockument.s3Url,
     size: mockument.detectedFilesizeBytes!,
     mimeType: mockument.detectedFiletype!,
   });
@@ -255,6 +256,7 @@ it("creates a document if one does not exist", async () => {
       data: {
         submissionId: submissionID,
         s3Key: mockument.s3Key,
+        s3Url: mockument.s3Url,
         detectedFiletype: mockument.detectedFiletype,
         detectedFilesizeBytes: mockument.detectedFilesizeBytes,
         originalFilename: mockument.originalFilename,
@@ -280,6 +282,7 @@ it("lists documents", async () => {
     where: { submissionId: submissionID },
     select: {
       s3Key: true,
+      s3Url: true,
       originalFilename: true,
     },
   });
