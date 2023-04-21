@@ -80,10 +80,7 @@ async function seed() {
           }
           if (seedSubmission.documents) {
             for (let seedDocument of seedSubmission.documents) {
-              await upsertDocument(
-                seedSubmission.submissionId,
-                seedDocument
-              );
+              await upsertDocument(seedSubmission.submissionId, seedDocument);
             }
           }
 
