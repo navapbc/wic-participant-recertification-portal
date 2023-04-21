@@ -10,11 +10,10 @@ locals {
 ## User pool
 ##############################################
 resource "aws_cognito_user_pool" "pool" {
-  name = var.pool_name
-
-  deletion_protection = "ACTIVE"
-
-  username_attributes = ["email"]
+  name                     = var.pool_name
+  deletion_protection      = "ACTIVE"
+  username_attributes      = ["email"]
+  auto_verified_attributes = ["email"]
 
   username_configuration {
     case_sensitive = false
@@ -25,7 +24,6 @@ resource "aws_cognito_user_pool" "pool" {
     temporary_password_validity_days = var.temporary_password_validity_days
   }
 
-  auto_verified_attributes = ["email"]
   user_attribute_update_settings {
     attributes_require_verification_before_update = ["email"]
   }
@@ -113,9 +111,10 @@ resource "aws_cognito_user_pool_client" "client" {
   name         = var.pool_name
   user_pool_id = aws_cognito_user_pool.pool.id
 
-  allowed_oauth_flows  = var.client_allowed_oauth_flows
-  allowed_oauth_scopes = var.client_allowed_oauth_scopes
-  explicit_auth_flows  = ["ALLOW_REFRESH_TOKEN_AUTH"]
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_flows                  = var.client_allowed_oauth_flows
+  allowed_oauth_scopes                 = var.client_allowed_oauth_scopes
+  explicit_auth_flows                  = ["ALLOW_REFRESH_TOKEN_AUTH"]
 
   generate_secret = var.client_generate_secret
   callback_urls   = var.client_callback_urls

@@ -26,25 +26,11 @@ config:
   #         For local development, add `http://localhost:<port>/login`
   auth:
     openId:
-      # The url the user should be redirected to after logout.
       logoutRedirectUri: /login
-      # Field in the user idToken that contains the roles array.
-      # rolesField: [string]
-      # The OpenID Connect scope to request. The default is 'openid profile email'.
-      # scope: [string]
       scope: openid email
-    # jwt:
-    #   # The length of time a user token should be valid.
-    #   expiresIn: [string | number]
     pages:
-      # Either set all pages as protected, or list specific protected pages.
-      # protected: [boolean | string[]]
-      # Either set all pages as public, or list specific public pages.
-      # public: [boolean | string[]]
+      # Only the following pages should be accessible without authenticating
       public: ["404", "login"]
-    # roles:
-    #   # Restrict pages to only users with a certain role.
-    #   {roleName}: string[]
 
 # Include the list of non-out-of-the-box block types this application uses
 types:
