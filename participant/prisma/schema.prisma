@@ -59,8 +59,10 @@ model Document {
 }
 
 model StaffUser {
-  userId        String      @id @map("user_id") @db.Uuid
+  staffUserId   String      @id @map("staff_user_id") @db.Uuid
   localAgencyId String      @map("local_agency_id") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
   localAgency   LocalAgency @relation(fields: [localAgencyId], references: [localAgencyId])
 
   @@map("staff_users")

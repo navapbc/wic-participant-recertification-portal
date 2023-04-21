@@ -1,9 +1,11 @@
 -- CreateTable
 CREATE TABLE "staff_users" (
-    "user_id" UUID NOT NULL,
+    "staff_user_id" UUID NOT NULL,
     "local_agency_id" UUID NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "staff_users_pkey" PRIMARY KEY ("user_id")
+    CONSTRAINT "staff_users_pkey" PRIMARY KEY ("staff_user_id")
 );
 
 -- AddForeignKey
