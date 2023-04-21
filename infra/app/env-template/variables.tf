@@ -24,7 +24,7 @@ variable "participant_url" {
 variable "participant_max_upload_size_bytes" {
   type        = string
   description = "The maximum allowed size of a single file upload"
-  default     = "26_214_400"
+  default     = "26214400"
 }
 
 variable "participant_max_upload_filecount" {

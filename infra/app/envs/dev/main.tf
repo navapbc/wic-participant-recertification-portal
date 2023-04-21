@@ -55,15 +55,18 @@ module "app" {
   source           = "../../env-template"
   environment_name = local.environment_name
 
-  participant_image_tag             = var.participant_image_tag
-  participant_url                   = "${local.environment_name}.wic-services.org"
+  # Image tags
+  participant_image_tag = var.participant_image_tag
+  staff_image_tag       = var.staff_image_tag
+  analytics_image_tag   = var.analytics_image_tag
+
+  # Urls
+  participant_url = "${local.environment_name}.wic-services.org"
+  staff_url       = "${local.environment_name}-staff.wic-services.org"
+  analytics_url   = "${local.environment_name}-analytics.wic-services.org"
+
+  # Misc settings
   participant_max_upload_size_bytes = "5242880"
   participant_max_upload_filecount  = "5"
-
-  staff_image_tag = var.staff_image_tag
-  staff_url       = "${local.environment_name}-staff.wic-services.org"
-
-  analytics_image_tag   = var.analytics_image_tag
-  analytics_url         = "${local.environment_name}-analytics.wic-services.org"
-  analytics_enable_exec = true
+  analytics_enable_exec             = true
 }
