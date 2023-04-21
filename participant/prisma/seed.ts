@@ -5,9 +5,11 @@ import {
   upsertLocalAgency,
   upsertSubmission,
   upsertSubmissionForm,
+  upsertDocument,
 } from "app/utils/db.server";
 import seedAgencies from "public/data/local-agencies.json";
 import seedSubmissions from "public/data/submissions.json";
+import { SubmittedFile } from "app/types";
 
 // Define a bunch of types to make typescript happy for the case where
 // seedSubmissions is empty. Otherwise, typescript is usually able to
@@ -30,6 +32,7 @@ export type SeedSubmissionFormsType = {
 export type SeedAgencySubmissionsType = {
   submissionId: string;
   forms: SeedSubmissionFormsType;
+  documents: SubmittedFile[];
 };
 
 export type SeedSubmissionsType = {
@@ -75,6 +78,15 @@ async function seed() {
               seedFormData
             );
           }
+          if (seedSubmission.documents) {
+            for (let seedDocument of seedSubmission.documents) {
+              await upsertDocument(
+                seedSubmission.submissionId,
+                seedDocument
+              );
+            }
+          }
+
           console.log(
             `Seeding submission: ${seedSubmission.forms.name.firstName} ${seedSubmission.forms.name.lastName} 🌱`
           );

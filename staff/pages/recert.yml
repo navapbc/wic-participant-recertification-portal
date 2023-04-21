@@ -10,14 +10,19 @@ requests: # Requests defines all the data requests made available in this page c
     type: KnexRaw # The type of request. Lowdefy uses Knex to talk to Postgresql
     connectionId: postgres # This is the ID of the connection. The connection itself is defined in `lowdefy.yml`
     properties:
-      query: select jsonb_object_agg(sf.form_route, sf.form_data) as form_data,
-        s.updated_at,
-        la.name as agency_name
+      query: |
+        select jsonb_object_agg(coalesce(sf.form_route, 'Null'), sf.form_data) as form_data, s.updated_at, la.name as agency_name, d.s3_documents
         from submissions s
         left join submission_forms sf on (s.submission_id = sf.submission_id)
         left join local_agencies la on (s.local_agency_id = la.local_agency_id)
-        group by sf.submission_id, s.updated_at, la.name
+        left join (
+          select submission_id, jsonb_object_agg(original_filename, s3_url) as s3_documents
+          from documents
+          group by submission_id
+        ) d on (s.submission_id = d.submission_id)
+        group by sf.submission_id, s.updated_at, la.name, d.s3_documents
         order by s.updated_at desc;
+
 events:
   # A list of actions that gets completed each time this lowdefy context is loaded
   onInitAsync:
@@ -220,41 +225,39 @@ blocks:
                 on:
                   __args: 0.data.form_data
 
-        # @TODO: use S3 links. Using placeholder data for now
         - headerName: Documents
           wrapText: true
           sortable: false # This column is not sortable
+          field:
           valueGetter:
             _function:
-              __if:
-                test:
-                  __eq:
-                    - __args: 0.data.form_data.documents
-                    - null
-                then:
-                  - "No documents required"
-                else:
-                  __array.map:
-                    on:
-                      __args: 0.data.form_data.documents
-                    callback:
-                      __function:
-                        - ___args: 0.name
+              __log:
+                __nunjucks:
+                  template: |
+                    {%- if s3_documents %}
+                    {%- for filename, url in s3_documents %}
+                    {{ filename }}{% if not loop.last -%},{%- endif -%}
+                    {% endfor -%}
+                    {% else %}
+                    No documents required
+                    {% endif -%}
+                  on:
+                    __args: 0.data
           cellRenderer:
             _function:
               __nunjucks:
                 template: |
                   <div class="documents">
-                    {% if documents %}
-                      {% for doc in documents %}
-                        <a href="{{doc.href}}" target="_blank" rel="noopener noreferrer">{{ doc.name }}</a>{% if not loop.last -%},{%- endif %}
+                    {% if s3_documents %}
+                      {% for filename, url in s3_documents %}
+                        <a href="{{url}}" target="_blank" rel="noopener noreferrer">{{ filename }}</a>{% if not loop.last -%},{%- endif %}
                       {% endfor %}
                     {% else %}
                       No documents required
                     {% endif %}
                   </div>
                 on:
-                  __args: 0.data.form_data
+                  __args: 0.data
 
         - headerName: Updates from participant
           wrapText: true
