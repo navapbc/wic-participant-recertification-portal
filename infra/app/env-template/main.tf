@@ -164,6 +164,7 @@ module "staff" {
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
   enable_exec          = var.staff_enable_exec
+  enable_healthcheck = false
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
