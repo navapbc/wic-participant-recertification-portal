@@ -47,6 +47,7 @@ model Document {
   documentId            String     @id @default(uuid()) @map("document_id") @db.Uuid
   submissionId          String     @map("submission_id") @db.Uuid
   s3Key                 String     @map("s3_key")
+  s3Url                 String     @map("s3_url")
   detectedFiletype      String?    @map("detected_filetype")
   detectedFilesizeBytes Int?       @map("detected_filesize_bytes")
   originalFilename      String     @map("original_filename")

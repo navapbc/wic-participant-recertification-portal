@@ -58,9 +58,8 @@ const createPreviewData = async (
   const previousDocuments = await listDocuments(submissionID);
   const previousUploads = await Promise.all(
     previousDocuments.map(async (document) => {
-      const downloadUrl = await getURLFromS3(document.s3Key);
       return {
-        url: downloadUrl,
+        url: document.s3Url,
         name: document.originalFilename,
       } as PreviousUpload;
     })
@@ -265,7 +264,8 @@ export const action = async ({
     )} from form`
   );
   acceptedDocuments.map(async (acceptedFile) => {
-    await upsertDocument(submissionID, acceptedFile!);
+    const url = await getURLFromS3(acceptedFile.key)
+    await upsertDocument(submissionID, {...acceptedFile!, s3Url: url});
   });
   if (!rejectedDocuments.length) {
     if (acceptedDocuments.length) {

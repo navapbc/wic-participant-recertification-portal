@@ -45,6 +45,7 @@ export const upsertDocument = async (
       data: {
         updatedAt: new Date(),
         s3Key: submittedFile.key,
+        s3Url: submittedFile.s3Url,
         detectedFiletype: submittedFile.mimeType,
         detectedFilesizeBytes: submittedFile.size,
       },
@@ -54,6 +55,7 @@ export const upsertDocument = async (
     data: {
       submissionId: submissionID,
       s3Key: submittedFile.key || "",
+      s3Url: submittedFile.s3Url || "",
       detectedFiletype: submittedFile.mimeType,
       detectedFilesizeBytes: submittedFile.size,
       originalFilename: submittedFile.filename,
@@ -66,6 +68,7 @@ export const listDocuments = async (submissionID: string) => {
     where: { submissionId: submissionID },
     select: {
       s3Key: true,
+      s3Url: true,
       originalFilename: true,
     },
   });
