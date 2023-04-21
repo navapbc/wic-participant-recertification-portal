@@ -39,7 +39,7 @@ variable "participant_max_session_seconds" {
   default     = "1800"
 }
 
-variable "participant_doc_upload_expiration" {
+variable "participant_s3_presigned_url_expiration" {
   type        = string
   description = "The maximum allowed number of seconds a presigned s3 url is active before it expires"
   default     = "604800"
