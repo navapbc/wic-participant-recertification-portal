@@ -10,7 +10,7 @@ import {
   deleteDocument,
   upsertDocument,
   listDocuments,
-  upsertStaffUser
+  upsertStaffUser,
 } from "app/utils/db.server";
 import { v4 as uuidv4 } from "uuid";
 
@@ -293,7 +293,10 @@ it("upserting a staff user looks up localagency and creates a staff user if ther
   const mockAgency = getLocalAgency();
   prismaMock.localAgency.findUnique.mockResolvedValue(mockAgency);
   const mockStaffUser = getStaffUser(mockAgency.localAgencyId);
-  const upsertedStaffUser = await upsertStaffUser(mockAgency.urlId, mockStaffUser.staffUserId);
+  const upsertedStaffUser = await upsertStaffUser(
+    mockAgency.urlId,
+    mockStaffUser.staffUserId
+  );
   expect(prismaMock.localAgency.findUnique).toHaveBeenCalledWith(
     expect.objectContaining({
       where: { urlId: "agency" },
@@ -327,7 +330,10 @@ it("upserting a staff user updates existing staff users", async () => {
   const mockStaffUser = getStaffUser(mockAgencyOne.localAgencyId);
   prismaMock.staffUser.findUnique.mockResolvedValue(mockStaffUser);
   // Update the local agency from ONE to TWO
-  const upsertedStaffUser = await upsertStaffUser(mockAgencyTwo.urlId, mockStaffUser.staffUserId);
+  const upsertedStaffUser = await upsertStaffUser(
+    mockAgencyTwo.urlId,
+    mockStaffUser.staffUserId
+  );
   expect(prismaMock.localAgency.findUnique).toHaveBeenCalledWith(
     expect.objectContaining({
       where: { urlId: "two" },
