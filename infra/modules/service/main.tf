@@ -11,13 +11,13 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  alb_name                = var.service_name
-  log_group_name          = "service/${var.service_name}"
-  task_role_name          = "${var.service_name}-task"
-  task_executor_role_name = "${var.service_name}-task-executor"
-  image_url               = "${var.image_repository_url}:${var.image_tag}"
-  healthcheck_path        = trimprefix(var.healthcheck_path, "/")
-  define_ecs_task_role    = length(var.container_efs_volumes) > 0 || var.enable_exec
+  alb_name                    = var.service_name
+  log_group_name              = "service/${var.service_name}"
+  task_role_name              = "${var.service_name}-task"
+  task_executor_role_name     = "${var.service_name}-task-executor"
+  image_url                   = "${var.image_repository_url}:${var.image_tag}"
+  healthcheck_path            = trimprefix(var.healthcheck_path, "/")
+  create_ecs_task_role_policy = length(var.container_efs_volumes) > 0 || var.enable_exec
 }
 
 ###################
@@ -171,7 +171,7 @@ resource "aws_ecs_service" "app" {
 resource "aws_ecs_task_definition" "app" {
   family             = var.service_name
   execution_role_arn = aws_iam_role.task_executor.arn
-  task_role_arn      = local.define_ecs_task_role ? aws_iam_role.task[0].arn : null
+  task_role_arn      = aws_iam_role.task.arn
   container_definitions = jsonencode(
     [
       {
@@ -367,7 +367,6 @@ data "aws_iam_policy_document" "task_executor" {
 # ECS task role and policy
 # Only defined if needed
 resource "aws_iam_role" "task" {
-  count              = local.define_ecs_task_role ? 1 : 0
   name               = local.task_role_name
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_role.json
 }
@@ -386,7 +385,7 @@ data "aws_iam_policy_document" "ecs_assume_task_role" {
 }
 
 resource "aws_iam_policy" "task" {
-  count       = local.define_ecs_task_role ? 1 : 0
+  count       = local.create_ecs_task_role_policy ? 1 : 0
   name        = "${var.service_name}-task-role-policy"
   description = "A policy for ECS task"
   policy      = data.aws_iam_policy_document.task.json
@@ -394,8 +393,8 @@ resource "aws_iam_policy" "task" {
 
 # Link access policies to the ECS task role.
 resource "aws_iam_role_policy_attachment" "task" {
-  count      = local.define_ecs_task_role ? 1 : 0
-  role       = aws_iam_role.task[0].name
+  count      = local.create_ecs_task_role_policy ? 1 : 0
+  role       = aws_iam_role.task.name
   policy_arn = aws_iam_policy.task[0].arn
 }
 

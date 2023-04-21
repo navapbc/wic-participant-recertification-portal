@@ -88,9 +88,29 @@ module "participant" {
       value = var.participant_doc_upload_expiration,
     },
     {
+      name  = "MAX_UPLOAD_SIZE_BYTES",
+      value = var.participant_max_upload_size_bytes,
+    },
+    {
+      name  = "MAX_UPLOAD_FILECOUNT",
+      value = var.participant_max_upload_filecount,
+    },
+    {
+      name  = "MAX_SESSION_SECONDS",
+      value = var.participant_max_session_seconds,
+    },
+    {
+      name  = "AWS_REGION",
+      value = data.aws_region.current.name,
+    },
+    {
+      name  = "S3_BUCKET",
+      value = local.document_upload_s3_name,
+    },
+    {
       name  = "PUBLIC_DEMO_MODE",
-      value = false
-    }
+      value = false,
+    },
   ]
   service_ssm_resource_paths = [
     module.participant_database.admin_db_url_secret_name,
@@ -184,8 +204,8 @@ module "analytics" {
   container_env_vars = [
     {
       name  = "MATOMO_DATABASE_DBNAME",
-      value = local.analytics_database_name
-    }
+      value = local.analytics_database_name,
+    },
   ]
   service_ssm_resource_paths = [
     module.analytics_database.admin_db_host_secret_name,
@@ -212,9 +232,10 @@ module "doc_upload" {
   source            = "../../modules/s3-encrypted"
   environment_name  = var.environment_name
   s3_bucket_name    = local.document_upload_s3_name
-  read_role_names   = [module.participant.task_executor_role_name, module.staff.task_executor_role_name]
-  write_role_names  = [module.participant.task_executor_role_name]
-  delete_role_names = []
+  read_role_names   = [module.participant.task_role_name, module.staff.task_role_name]
+  write_role_names  = [module.participant.task_role_name]
+  delete_role_names = [module.participant.task_role_name]
+  admin_role_names  = [module.participant.task_role_name]
 }
 
 # todo: cleanup service names

@@ -21,6 +21,12 @@ variable "read_role_names" {
   default     = []
 }
 
+variable "admin_role_names" {
+  type        = list(string)
+  description = "role names that have access to admin s3 permissions, such as creating buckets"
+  default     = []
+}
+
 variable "s3_bucket_name" {
   type        = string
   description = "The s3 bucket used for document uploads"
