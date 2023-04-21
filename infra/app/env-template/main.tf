@@ -143,7 +143,7 @@ EOT
 }
 
 module "staff_secret" {
-  source = "../../random-password"
+  source = "../../modules/random-password"
   length = 300
 }
 
@@ -185,15 +185,18 @@ module "staff" {
   container_env_vars = [
     {
       name  = "LOWDEFY_SECRET_OPENID_DOMAIN",
-      value = "https://${local.staff_idp_client_domain}/.well-known/openid-configuration"
+      value = "https://cognito-idp.${data.aws_region.current.name}.${module.staff_idp.user_pool_id}/.well-known/openid-configuration",
     },
   ]
   service_ssm_resource_paths = [
     module.participant_database.admin_db_url_secret_name,
+    module.staff_idp.client_id_secret_name,
+    module.staff_idp.client_secret_secret_name,
+    aws_ssm_parameter.staff_jwt_secret.name,
   ]
-
   depends_on = [
     module.participant_database,
+    module.staff_idp,
   ]
 }
 
