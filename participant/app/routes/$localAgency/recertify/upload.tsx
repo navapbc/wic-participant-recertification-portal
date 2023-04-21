@@ -46,7 +46,6 @@ import {
   deleteFileFromS3,
 } from "app/utils/s3.server";
 import {
-  DOC_URL_EXPIRATION,
   MAX_UPLOAD_FILECOUNT,
   MAX_UPLOAD_SIZE_BYTES,
 } from "app/utils/config.server";
