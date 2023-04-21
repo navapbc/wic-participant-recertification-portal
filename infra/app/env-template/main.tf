@@ -84,6 +84,10 @@ module "participant" {
   ]
   container_env_vars = [
     {
+      name  = "DOC_URL_EXPIRATION",
+      value = var.participant_doc_upload_expiration,
+    },
+    {
       name  = "PUBLIC_DEMO_MODE",
       value = false
     }
