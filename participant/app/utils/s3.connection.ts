@@ -31,6 +31,8 @@ export const createS3Client = (): S3Client => {
   }
 };
 
+// @TODO: We should rewrite this function so that the participant portal
+// doesn't need to have permissions to create the bucket.
 export const ensureBucketExists = async (s3Client: S3Client) => {
   if (!global.__bucket_ensured) {
     console.log(`🪣 🛠️ Trying to create S3 Bucket ${BUCKET}`);
