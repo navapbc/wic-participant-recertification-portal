@@ -30,14 +30,12 @@
       },
       "documents": [
         {
-          "filename": "febpaystubs.pdf",
-          "accepted": true,
-          "s3Url": "https://files.consumerfinance.gov/f/documents/cfpb_building_block_activities_how-to-read-pay-stub_handout.pdf"
+          "displayFilename": "febpaystubs.pdf",
+          "filepath": "tests/fixtures/cfpb_building_block_activities_how-to-read-pay-stub_handout.pdf"
         },
         {
-          "filename": "marchpaystub.png",
-          "accepted": true,
-          "s3Url": "https://www.in.gov/courts/admin/operations/payroll/instructions/Paystub.png"
+          "displayFilename": "marchpaystub.png",
+          "filepath": "tests/fixtures/cfpb_2014_0318_Prepaid_design_inline_1.png"
         }
       ]
     },
@@ -94,9 +92,8 @@
       },
       "documents": [
         {
-          "filename": "electric.pdf",
-          "accepted": true,
-          "s3Url": "https://riversideca.gov/utilities/sites/riversideca.gov.utilities/files/images/bill-sample-UPDATED%2007012020.pdf"
+          "displayFilename": "electric.pdf",
+          "filepath": "tests/fixtures/cfpb_your-money-your-goals_prioritizing-bills_tool.pdf"
         }
       ]
     }

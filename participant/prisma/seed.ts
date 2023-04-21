@@ -7,9 +7,12 @@ import {
   upsertSubmissionForm,
   upsertDocument,
 } from "app/utils/db.server";
+import { processUpload } from "app/routes/$localAgency/recertify/upload"
 import seedAgencies from "public/data/local-agencies.json";
 import seedSubmissions from "public/data/submissions.json";
-import { SubmittedFile } from "app/types";
+import type { SubmittedFile } from "app/types";
+import { sdkStreamMixin } from "@aws-sdk/util-stream-node";
+import { createReadStream } from "fs";
 
 // Define a bunch of types to make typescript happy for the case where
 // seedSubmissions is empty. Otherwise, typescript is usually able to
@@ -29,10 +32,15 @@ export type SeedSubmissionFormsType = {
   [key: string]: SeedDataType | SeedDataType[];
 };
 
+export type SeedDocumentType = {
+  displayFilename: string;
+  filepath: string;
+};
+
 export type SeedAgencySubmissionsType = {
   submissionId: string;
   forms: SeedSubmissionFormsType;
-  documents: SubmittedFile[];
+  documents: SeedDocumentType[];
 };
 
 export type SeedSubmissionsType = {
@@ -65,7 +73,7 @@ async function seed() {
       for (const seedSubmission of seedAgencySubmissions) {
         const submission = await findSubmission(seedSubmission.submissionId);
         if (!submission) {
-          await upsertSubmission(
+          const upsertedSubmission = await upsertSubmission(
             seedSubmission.submissionId,
             localAgency.urlId
           );
@@ -80,7 +88,18 @@ async function seed() {
           }
           if (seedSubmission.documents) {
             for (let seedDocument of seedSubmission.documents) {
-              await upsertDocument(seedSubmission.submissionId, seedDocument);
+              const fileStream = sdkStreamMixin(
+                createReadStream(seedDocument.filepath)
+              );
+              const stringifiedJson = await processUpload(
+                upsertedSubmission.submissionId,
+                seedDocument.displayFilename,
+                fileStream
+              );
+              await upsertDocument(
+                seedSubmission.submissionId,
+                JSON.parse(stringifiedJson) as SubmittedFile
+              );
             }
           }
 
