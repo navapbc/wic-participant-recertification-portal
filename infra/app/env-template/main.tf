@@ -20,7 +20,7 @@ locals {
   cluster_name                 = "${local.project_name}-${local.app_name}-${var.environment_name}"
   participant_database_name    = "${local.project_name}-participant-${var.environment_name}"
   participant_service_name     = "${local.project_name}-participant-${var.environment_name}"
-  staff_cognito_user_pool_name = "${local.project_name}-user-pool-${var.environment_name}"
+  staff_cognito_user_pool_name = "${local.project_name}-staff-${var.environment_name}"
   staff_service_name           = "${local.project_name}-staff-${var.environment_name}"
   analytics_service_name       = "${local.project_name}-analytics-${var.environment_name}"
   analytics_database_name      = "${local.project_name}-analytics-${var.environment_name}"
