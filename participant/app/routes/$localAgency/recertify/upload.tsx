@@ -119,45 +119,6 @@ export const createErrorElements = (
   return;
 };
 
-/* UploadHandlers, which calls processUpload, can only return
- * File | string | undefined..
- * So using JSON to serialize the data into a string is a hacktastic
- * workaround.
- *
- * @TODO write unit tests for this
- */
-export const processUpload = async (
-  submissionID: string,
-  filename: string,
-  data: any
-) => {
-  const uploadKey = [submissionID, filename].join("/");
-  const fileLocation = await uploadStreamToS3(data, uploadKey);
-  const { mimeType, error, size } = await checkFile(uploadKey);
-  if (error) {
-    console.log(
-      `❌ Rejected file ${filename} - mimeType: ${mimeType} error: ${error}`
-    );
-    await deleteFileFromS3(uploadKey);
-    return JSON.stringify({
-      filename: filename!,
-      accepted: false,
-      error: error,
-      size: size,
-      mimeType: mimeType,
-    } as SubmittedFile);
-  }
-
-  return JSON.stringify({
-    filename: filename!,
-    accepted: true,
-    url: fileLocation,
-    key: uploadKey,
-    size: size,
-    mimeType: mimeType,
-  } as SubmittedFile);
-};
-
 export const loader: LoaderFunction = async ({
   request,
   params,
@@ -221,10 +182,39 @@ export const action = async ({
 }) => {
   const { submissionID } = await cookieParser(request, params);
   const uploadHandler: UploadHandler = async ({ name, filename, data }) => {
+    /* UploadHandlers can only return File | string | undefined..
+     * So using JSON to serialize the data into a string is a hacktastic
+     * workaround.
+     */
     if (name !== "documents" || !filename) {
       return;
     }
-    return await processUpload(submissionID, filename, data);
+
+    const uploadKey = [submissionID, filename!].join("/");
+    const fileLocation = await uploadStreamToS3(data, uploadKey);
+    const { mimeType, error, size } = await checkFile(uploadKey);
+    if (error) {
+      console.log(
+        `❌ Rejected file ${filename} - mimeType: ${mimeType} error: ${error}`
+      );
+      await deleteFileFromS3(uploadKey);
+      return JSON.stringify({
+        filename: filename!,
+        accepted: false,
+        error: error,
+        size: size,
+        mimeType: mimeType,
+      } as SubmittedFile);
+    }
+
+    return JSON.stringify({
+      filename: filename!,
+      accepted: true,
+      url: fileLocation,
+      key: uploadKey,
+      size: size,
+      mimeType: mimeType,
+    } as SubmittedFile);
   };
 
   const formData = await parseMultipartFormData(request, uploadHandler);
