@@ -124,7 +124,7 @@ const prisma = new PrismaClient();
 // Any interactions with Prisma will be async
 // eslint-disable-next-line @typescript-eslint/require-await
 async function seed() {
-  // Put the actions you need to take to seed the databse here.
+  // Put the actions you need to take to seed the database here.
   // You can access relations as normal here
   // const users = await prisma.user.findMany(); // (for example)
 

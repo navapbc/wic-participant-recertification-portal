@@ -30,7 +30,7 @@ const prisma = new PrismaClient();
 // Any interactions with Prisma will be async
 // eslint-disable-next-line @typescript-eslint/require-await
 async function seed() {
-  // Put the actions you need to take to seed the databse here.
+  // Put the actions you need to take to seed the database here.
   // You can access relations as normal here
   // const users = await prisma.user.findMany(); // (for example)
 
@@ -40,15 +40,6 @@ async function seed() {
   // - env vars
   // new s3 bucket and just grant the task role permissions on that one too
   // manually run `aws ecs run-task`. don't write a whole shell script. unless it's actually helpful
-
-  // Reach out to s3 using the env var for buckets etc
-  // Look for a hardcoded file that should exist
-  // if it exists:
-  //   always upsert, even if the right number of records previously existed
-  //   load all the records into the db
-  //   log how many were present
-  // if it doesnt:
-  //   log and exit gracefully
 
   const seedStaffUsersKey = "seed/staff-users.json";
   try {
