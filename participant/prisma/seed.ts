@@ -7,12 +7,18 @@ import {
   upsertSubmissionForm,
   upsertDocument,
 } from "app/utils/db.server";
-import { processUpload } from "app/routes/$localAgency/recertify/upload"
 import seedAgencies from "public/data/local-agencies.json";
-import seedSubmissions from "public/data/submissions.json";
+import seedSubmissions from "public/data/submissions.not-prod.json";
 import type { SubmittedFile } from "app/types";
-import { sdkStreamMixin } from "@aws-sdk/util-stream-node";
-import { createReadStream } from "fs";
+import {
+  GetObjectCommand,
+  NotFound,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import s3Connection, { ensureBucketExists } from "app/utils/s3.connection";
+import { BUCKET, S3_PRESIGNED_URL_EXPIRATION } from "app/utils/config.server";
+import { readFileSync } from "fs";
 
 // Define a bunch of types to make typescript happy for the case where
 // seedSubmissions is empty. Otherwise, typescript is usually able to
@@ -35,6 +41,8 @@ export type SeedSubmissionFormsType = {
 export type SeedDocumentType = {
   displayFilename: string;
   filepath: string;
+  filesize: number;
+  filetype: string;
 };
 
 export type SeedAgencySubmissionsType = {
@@ -45,6 +53,73 @@ export type SeedAgencySubmissionsType = {
 
 export type SeedSubmissionsType = {
   [key: string]: SeedAgencySubmissionsType[];
+};
+
+// Get the presigned s3 url for an object in s3.
+// We cannot use getUrlFromS3() because of issues importing s3.server.ts
+// outside of remix because we are using file-type to get the filetype.
+// Instead, reproduce the function here.
+export const getURLFromS3 = async (
+  key: string,
+  duration?: number
+): Promise<string | undefined> => {
+  await ensureBucketExists(s3Connection);
+  const expiresIn = duration || S3_PRESIGNED_URL_EXPIRATION;
+  const command = new GetObjectCommand({
+    Key: key,
+    Bucket: BUCKET,
+  });
+  try {
+    const signedUrl = await getSignedUrl(s3Connection, command, {
+      expiresIn: expiresIn,
+    });
+    return signedUrl;
+  } catch (error) {
+    if (error instanceof NotFound) {
+      return undefined;
+    }
+    throw new Error(`Unable to get URL for ${key}: ${error}`);
+  }
+};
+
+// Upload a seed document to s3 and save it to the database.
+export const uploadDocument = async (
+  submissionId: string,
+  filename: string,
+  filepath: string,
+  filesize: number,
+  filetype: string
+) => {
+  try {
+    const uploadKey = [submissionId, filename].join("/");
+    // Read in the contents of the seed document.
+    const fileBlob = readFileSync(filepath);
+    // Create the bucket if necessary.
+    await ensureBucketExists(s3Connection);
+    // Put the object into s3.
+    const command = new PutObjectCommand({
+      Body: fileBlob,
+      Bucket: BUCKET,
+      Key: uploadKey,
+    });
+    await s3Connection.send(command);
+    // Get s3 presigned url for the object.
+    const s3Url = await getURLFromS3(uploadKey);
+    // Construct the record to save to the database.
+    const submittedFile = {
+      filename: filename,
+      accepted: true,
+      s3Url: s3Url,
+      key: uploadKey,
+      size: filesize,
+      mimeType: filetype,
+    };
+    await upsertDocument(submissionId, submittedFile);
+  } catch (error) {
+    console.log(
+      `❌ Error attempting to seed document ${filename}; skipping. Error: ${error}`
+    );
+  }
 };
 
 const prisma = new PrismaClient();
@@ -72,41 +147,30 @@ async function seed() {
     if (localAgency) {
       for (const seedSubmission of seedAgencySubmissions) {
         const submission = await findSubmission(seedSubmission.submissionId);
-        if (!submission) {
-          const upsertedSubmission = await upsertSubmission(
+        await upsertSubmission(seedSubmission.submissionId, localAgency.urlId);
+        for (let [seedFormRoute, seedFormData] of Object.entries(
+          seedSubmission.forms
+        )) {
+          await upsertSubmissionForm(
             seedSubmission.submissionId,
-            localAgency.urlId
-          );
-          for (let [seedFormRoute, seedFormData] of Object.entries(
-            seedSubmission.forms
-          )) {
-            await upsertSubmissionForm(
-              seedSubmission.submissionId,
-              seedFormRoute,
-              seedFormData
-            );
-          }
-          if (seedSubmission.documents) {
-            for (let seedDocument of seedSubmission.documents) {
-              const fileStream = sdkStreamMixin(
-                createReadStream(seedDocument.filepath)
-              );
-              const stringifiedJson = await processUpload(
-                upsertedSubmission.submissionId,
-                seedDocument.displayFilename,
-                fileStream
-              );
-              await upsertDocument(
-                seedSubmission.submissionId,
-                JSON.parse(stringifiedJson) as SubmittedFile
-              );
-            }
-          }
-
-          console.log(
-            `Seeding submission: ${seedSubmission.forms.name.firstName} ${seedSubmission.forms.name.lastName} 🌱`
+            seedFormRoute,
+            seedFormData
           );
         }
+        if (seedSubmission.documents) {
+          for (let seedDocument of seedSubmission.documents) {
+            await uploadDocument(
+              seedSubmission.submissionId,
+              seedDocument.displayFilename,
+              seedDocument.filepath,
+              seedDocument.filesize,
+              seedDocument.filetype
+            );
+          }
+        }
+        console.log(
+          `Seeding submission: ${seedSubmission.forms.name.firstName} ${seedSubmission.forms.name.lastName} 🌱`
+        );
       }
     }
   }

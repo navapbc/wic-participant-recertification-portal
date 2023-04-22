@@ -31,11 +31,15 @@
       "documents": [
         {
           "displayFilename": "febpaystubs.pdf",
-          "filepath": "tests/fixtures/cfpb_building_block_activities_how-to-read-pay-stub_handout.pdf"
+          "filepath": "tests/fixtures/cfpb_building_block_activities_how-to-read-pay-stub_handout.pdf",
+          "filesize": 84119,
+          "filetype": "application/pdf"
         },
         {
           "displayFilename": "marchpaystub.png",
-          "filepath": "tests/fixtures/cfpb_2014_0318_Prepaid_design_inline_1.png"
+          "filepath": "tests/fixtures/cfpb_2014_0318_Prepaid_design_inline_1.png",
+          "filesize": 54057,
+          "filetype": "application/png"
         }
       ]
     },
@@ -93,7 +97,9 @@
       "documents": [
         {
           "displayFilename": "electric.pdf",
-          "filepath": "tests/fixtures/cfpb_your-money-your-goals_prioritizing-bills_tool.pdf"
+          "filepath": "tests/fixtures/cfpb_your-money-your-goals_prioritizing-bills_tool.pdf",
+          "filesize": 302808,
+          "filetype": "application/pdf"
         }
       ]
     }
