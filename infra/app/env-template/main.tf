@@ -15,15 +15,18 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  project_name              = module.project_config.project_name
-  app_name                  = module.app_config.app_name
-  cluster_name              = "${local.project_name}-${local.app_name}-${var.environment_name}"
-  participant_database_name = "${local.project_name}-participant-${var.environment_name}"
-  participant_service_name  = "${local.project_name}-participant-${var.environment_name}"
-  staff_service_name        = "${local.project_name}-staff-${var.environment_name}"
-  analytics_service_name    = "${local.project_name}-analytics-${var.environment_name}"
-  analytics_database_name   = "${local.project_name}-analytics-${var.environment_name}"
-  document_upload_s3_name   = "${local.project_name}-doc-upload-${var.environment_name}"
+  project_name                 = module.project_config.project_name
+  app_name                     = module.app_config.app_name
+  cluster_name                 = "${local.project_name}-${local.app_name}-${var.environment_name}"
+  participant_database_name    = "${local.project_name}-participant-${var.environment_name}"
+  participant_service_name     = "${local.project_name}-participant-${var.environment_name}"
+  staff_cognito_user_pool_name = "${local.project_name}-staff-${var.environment_name}"
+  staff_service_name           = "${local.project_name}-staff-${var.environment_name}"
+  analytics_service_name       = "${local.project_name}-analytics-${var.environment_name}"
+  analytics_database_name      = "${local.project_name}-analytics-${var.environment_name}"
+  document_upload_s3_name      = "${local.project_name}-doc-upload-${var.environment_name}"
+  contact_email                = "wic-projects-team@navapbc.com"
+  staff_idp_client_domain      = "${var.environment_name}-idp.wic-services.org"
 }
 
 module "project_config" {
@@ -68,6 +71,7 @@ module "participant" {
   container_port       = 3000
   healthcheck_path     = "/healthcheck"
   enable_exec          = var.participant_enable_exec
+  # @TODO: We shouldn't need to be doing quite so much string interpolation. Perhaps we can pass back the arns instead of the secret_names.
   container_secrets = [
     {
       name      = "DATABASE_URL",
@@ -129,6 +133,39 @@ module "participant" {
   ]
 }
 
+data "aws_ses_domain_identity" "verified_domain" {
+  domain = "wic-services.org"
+}
+
+module "staff_idp" {
+  source                     = "../../modules/cognito"
+  pool_name                  = local.staff_cognito_user_pool_name
+  password_minimum_length    = 15
+  email_sending_account      = "DEVELOPER"
+  from_email_address         = "WIC Montana Staff Portal <no-reply@wic-services.org>"
+  reply_to_email_address     = local.contact_email
+  email_source_arn           = data.aws_ses_domain_identity.verified_domain.arn
+  invite_email_message       = "Thank you for participating in Montana's WIC recertification pilot. Your username is {username} and {####} is your temporary password. To activate your account, log into the WIC Staff Portal at https://${var.staff_url}, enter your temporary password, and follow the prompts to reset your password. Please reach out to our technical team at ${local.contact_email} at any time to resolve any issues you encounter."
+  invite_email_subject       = "Please activate your WIC Staff Portal account"
+  verification_email_message = "Thank you for participating in Montana's WIC recertification pilot. We received a request to reset your WIC Staff Portal password. To complete this request, go to https://${var.staff_url} and enter this password reset code {####}. If you didn't request a password reset, please ignore this email – your password won't be changed. Please reach out to our technical team at ${local.contact_email} at any time to resolve any issues you encounter."
+  verification_email_subject = "Reset your WIC Staff Portal password"
+  client_callback_urls       = ["https://${var.staff_url}/auth/openid-callback"]
+  client_logout_urls         = ["https://${var.staff_url}/login"]
+  client_domain              = local.staff_idp_client_domain
+  hosted_zone_domain         = "wic-services.org"
+}
+
+module "staff_secret" {
+  source = "../../modules/random-password"
+  length = 256
+}
+
+resource "aws_ssm_parameter" "staff_jwt_secret" {
+  name  = "/metadata/staff/${var.environment_name}-jwt-secret"
+  type  = "SecureString"
+  value = base64encode(module.staff_secret.random_password)
+}
+
 module "staff" {
   source               = "../../modules/service"
   service_name         = local.staff_service_name
@@ -140,18 +177,40 @@ module "staff" {
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
   enable_exec          = var.staff_enable_exec
+  enable_healthcheck   = false
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}"
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}",
+    },
+    {
+      name      = "LOWDEFY_SECRET_OPENID_CLIENT_ID",
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_id_secret_name}",
+    },
+    {
+      name      = "LOWDEFY_SECRET_OPENID_CLIENT_SECRET",
+      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_secret_secret_name}",
+    },
+    {
+      name      = "LOWDEFY_SECRET_JWT_SECRET",
+      valueFrom = aws_ssm_parameter.staff_jwt_secret.arn,
+    },
+  ]
+  container_env_vars = [
+    {
+      name  = "LOWDEFY_SECRET_OPENID_DOMAIN",
+      value = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${module.staff_idp.user_pool_id}/.well-known/openid-configuration",
     },
   ]
   service_ssm_resource_paths = [
     module.participant_database.admin_db_url_secret_name,
+    module.staff_idp.client_id_secret_name,
+    module.staff_idp.client_secret_secret_name,
+    aws_ssm_parameter.staff_jwt_secret.name,
   ]
-
   depends_on = [
     module.participant_database,
+    module.staff_idp,
   ]
 }
 

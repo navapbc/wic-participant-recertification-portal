@@ -5,6 +5,27 @@ export type SubmissionWithAgency = Prisma.PromiseReturnType<
   typeof findSubmission
 >;
 
+export const upsertStaffUser = async (urlId: string, staffUserId: string) => {
+  const localAgency = await findLocalAgency(urlId);
+  if (!localAgency) {
+    throw Error(`Unable to find agency for ${urlId}`);
+  }
+  const existingStaffUser = await db.staffUser.upsert({
+    where: {
+      staffUserId: staffUserId,
+    },
+    create: {
+      staffUserId: staffUserId,
+      localAgencyId: localAgency.localAgencyId,
+    },
+    update: {
+      localAgencyId: localAgency.localAgencyId,
+      updatedAt: new Date(),
+    },
+  });
+  return existingStaffUser;
+};
+
 export const findDocument = async (submissionID: string, filename: string) => {
   const document = await db.document.findFirst({
     where: {

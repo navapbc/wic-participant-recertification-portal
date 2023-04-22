@@ -11,9 +11,9 @@ import AxeBuilder from "@axe-core/playwright";
 // });
 
 test("has title", async ({ page }) => {
-  await page.goto("/recertifications", { waitUntil: "networkidle" });
-  await page.getByText("Submission date").waitFor();
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.getByText("WIC Montana Staff Portal").waitFor();
   // Expect a title "to contain" a correct app title.
-  await expect(page).toHaveTitle(/Montana WIC Staff Portal/);
+  await expect(page).toHaveTitle(/Login/);
   await expect(page).toHaveScreenshot();
 });
