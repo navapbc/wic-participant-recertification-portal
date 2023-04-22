@@ -32,14 +32,14 @@ export const NameInput = (props: NameInputProps): ReactElement => {
   return (
     <Fieldset legend={t(`${nameKey}.legend`)} legendStyle={legendStyle}>
       <TextField
-        id={`${id}-firstName`}
+        id={`${id}.firstName`}
         labelKey={`${nameKey}.firstname`}
         inputType="text"
         hint={hint}
         required={true}
       />
       <TextField
-        id={`${id}-lastName`}
+        id={`${id}.lastName`}
         labelKey={`${nameKey}.lastname`}
         inputType="text"
         hint={hint}
@@ -47,7 +47,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
       />
       {preferred && t(`${nameKey}.preferred`) ? (
         <TextField
-          id={`${id}-preferredName`}
+          id={`${id}.preferredName`}
           labelKey={t(`${nameKey}.preferred`)}
           inputType="text"
         />

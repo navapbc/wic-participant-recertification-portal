@@ -2,9 +2,9 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 
 const nameSchemaFactory = (idPrefix: string) => {
-  const firstNameKey = `${idPrefix}-firstName`;
-  const lastNameKey = `${idPrefix}-lastName`;
-  const preferredNameKey = `${idPrefix}-preferredName`;
+  const firstNameKey = `${idPrefix}[firstName]`;
+  const lastNameKey = `${idPrefix}[lastName]`;
+  const preferredNameKey = `${idPrefix}[preferredName]`;
   return zfd.formData({
     [firstNameKey]: zfd.text(
       z.string({ required_error: "Enter your first name" }).min(1)
@@ -68,4 +68,64 @@ export const countSchema = zfd.formData({
 //TODO Update this with the proper validation
 export const householdDetailsSchema = zfd.formData({
   householdSize: zfd.numeric(),
+});
+
+export const participantSchema = zfd.formData({
+  participant: z.array(
+    z.object({
+      relationship: zfd.text(
+        z.enum(["self", "child", "grandchild", "foster", "other"], {
+          required_error: "Select the participant’s relationship to you.",
+        })
+      ),
+      firstName: zfd.text(
+        z.string({ required_error: "Enter a first name" }).min(1)
+      ),
+      lastName: zfd.text(
+        z.string({ required_error: "Enter a last name" }).min(1)
+      ),
+      preferredName: zfd.text(z.string().optional()),
+
+      dob: z.object({
+        day: zfd.numeric(
+          z
+            .number()
+            .min(1, {
+              message:
+                "Date of birth must include a valid month, day, and year.",
+            })
+            .max(31, {
+              message:
+                "Date of birth must include a valid month, day, and year.",
+            })
+        ),
+        month: zfd.numeric(
+          z
+            .number()
+            .min(1, {
+              message:
+                "Date of birth must include a valid month, day, and year.",
+            })
+            .max(12, {
+              message:
+                "Date of birth must include a valid month, day, and year.",
+            })
+        ),
+        year: zfd.numeric(
+          z
+            .number()
+            .min(1912, { message: "Enter a valid date of birth." })
+            .max(2023, {
+              message: "Date of birth must be today or in the past.",
+            })
+        ),
+      }),
+      adjunctive: zfd.text(
+        z.enum(["yes", "no"], {
+          required_error:
+            "Select Yes if they are enrolled in any of these programs.",
+        })
+      ),
+    })
+  ),
 });

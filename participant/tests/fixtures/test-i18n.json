@@ -58,7 +58,7 @@
   },
   "participantcard": {
     "cardHeader": "Participant",
-    "cardFooter": "Add another participant?"
+    "cardFooter": "Remove Participant {{participantIndex}}"
   },
   "relationship": {
     "label": "Relationship to you",

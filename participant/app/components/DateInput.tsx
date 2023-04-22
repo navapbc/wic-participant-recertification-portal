@@ -1,10 +1,7 @@
 import type { ReactElement } from "react";
-import {
-  DateInput as USWDSDateInput,
-  Fieldset,
-  DateInputGroup,
-} from "@trussworks/react-uswds";
+import { Fieldset, DateInputGroup, FormGroup } from "@trussworks/react-uswds";
 import Required from "app/components/Required";
+import { TextField } from "app/components/TextField";
 import type { i18nKey, legendStyleType } from "~/types";
 import { Trans, useTranslation } from "react-i18next";
 
@@ -51,17 +48,18 @@ export const DateInput = (props: DateInputProps): ReactElement => {
     ? ["day", "month", "year"]
     : ["month", "day", "year"];
   const orderedDateFields = orderedFields.map((field: DateFieldTypes) => {
-    const len = field == "year" ? 4 : 2;
+    const maxLength = field == "year" ? 4 : 2;
     return (
-      <USWDSDateInput
-        id={`${id}-${field}`}
-        key={`${id}-${field}`}
-        label={t(`${dateKey}.${field}`)}
-        unit={field}
-        maxLength={len}
-        minLength={len}
-        name={`${name}-${field}`}
-      />
+      <FormGroup className={`usa-form-group--${field}`} key={`${id}-${field}`}>
+        <TextField
+          id={`${name}.${field}`}
+          key={`${id}-${field}`}
+          labelKey={`${dateKey}.${field}`}
+          size={maxLength}
+          inputType="text"
+          type="input"
+        />
+      </FormGroup>
     );
   });
   return (
