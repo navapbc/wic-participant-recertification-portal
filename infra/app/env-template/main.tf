@@ -25,6 +25,7 @@ locals {
   analytics_service_name       = "${local.project_name}-analytics-${var.environment_name}"
   analytics_database_name      = "${local.project_name}-analytics-${var.environment_name}"
   document_upload_s3_name      = "${local.project_name}-doc-upload-${var.environment_name}"
+  side_load_s3_name            = "${local.project_name}-side-load-${var.environment_name}"
   contact_email                = "wic-projects-team@navapbc.com"
   staff_idp_client_domain      = "${var.environment_name}-idp.wic-services.org"
 }
@@ -297,6 +298,14 @@ module "doc_upload" {
   write_role_names  = [module.participant.task_role_name]
   delete_role_names = [module.participant.task_role_name]
   admin_role_names  = [module.participant.task_role_name]
+}
+
+module "side_load" {
+  source           = "../../modules/s3-encrypted"
+  environment_name = var.environment_name
+  s3_bucket_name   = local.side_load_s3_name
+  read_role_names  = [module.participant.task_role_name]
+  admin_role_names = [module.participant.task_role_name]
 }
 
 # todo: cleanup service names
