@@ -328,7 +328,7 @@ it("upserting a staff user updates existing staff users", async () => {
   const mockAgencyTwo = getLocalAgency("two");
   prismaMock.localAgency.findUnique.mockResolvedValue(mockAgencyTwo);
   const mockStaffUser = getStaffUser(mockAgencyOne.localAgencyId);
-  prismaMock.staffUser.findUnique.mockResolvedValue(mockStaffUser);
+  prismaMock.staffUser.upsert.mockResolvedValue(mockStaffUser);
   // Update the local agency from ONE to TWO
   const upsertedStaffUser = await upsertStaffUser(
     mockAgencyTwo.urlId,
@@ -350,10 +350,8 @@ it("upserting a staff user updates existing staff users", async () => {
       },
     })
   );
-  // @TODO upsertedStaffUser is always undefined and can't be tested against
-  // Not sure if that's expected.
-  // expect(upsertedStaffUser).toMatchObject({
-  //   staffUserId: mockStaffUser.staffUserId,
-  //   localAgencyId: mockAgencyOne.localAgencyId,
-  // });
+  expect(upsertedStaffUser).toMatchObject({
+    staffUserId: mockStaffUser.staffUserId,
+    localAgencyId: mockAgencyOne.localAgencyId,
+  });
 });

@@ -1,3 +1,5 @@
+# @TODO We have too many state buckets and our terraform is split into too many places.
+# Refactor into a simpler setup.
 locals {
   project_name = module.project_config.project_name
   app_name     = "wic-prp"
@@ -48,5 +50,4 @@ module "email" {
   source             = "../../modules/email"
   hosted_zone_domain = "wic-services.org"
   domain             = "wic-services.org"
-  verified_emails    = ["no-reply@wic-services.org"]
 }

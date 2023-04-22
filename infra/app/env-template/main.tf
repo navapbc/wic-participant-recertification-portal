@@ -71,6 +71,7 @@ module "participant" {
   container_port       = 3000
   healthcheck_path     = "/healthcheck"
   enable_exec          = var.participant_enable_exec
+  # @TODO: We shouldn't need to be doing quite so much string interpolation. Perhaps we can pass back the arns instead of the secret_names.
   container_secrets = [
     {
       name      = "DATABASE_URL",
