@@ -293,10 +293,7 @@ it("upserting a staff user looks up localagency and creates a staff user if ther
   const mockAgency = getLocalAgency();
   prismaMock.localAgency.findUnique.mockResolvedValue(mockAgency);
   const mockStaffUser = getStaffUser(mockAgency.localAgencyId);
-  await upsertStaffUser(
-    mockAgency.urlId,
-    mockStaffUser.staffUserId
-  );
+  await upsertStaffUser(mockAgency.urlId, mockStaffUser.staffUserId);
   expect(prismaMock.localAgency.findUnique).toHaveBeenCalledWith(
     expect.objectContaining({
       where: { urlId: "agency" },
