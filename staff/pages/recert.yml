@@ -268,9 +268,9 @@ blocks:
                     {%- for filename, url in s3_documents %}
                     {{ filename }}{% if not loop.last -%},{%- endif -%}
                     {% endfor -%}
-                    {% else %}
+                    {%- else -%}
                     No documents required
-                    {% endif -%}
+                    {%- endif -%}
                   on:
                     __args: 0.data
           cellRenderer:
