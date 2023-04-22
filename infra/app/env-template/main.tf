@@ -120,21 +120,9 @@ module "staff_idp" {
   from_email_address         = "WIC Montana Staff Portal <no-reply@wic-services.org>"
   reply_to_email_address     = local.contact_email
   email_source_arn           = data.aws_ses_domain_identity.verified_domain.arn
-  invite_email_message       = <<EOT
-Thank you for participating in Montana's WIC recertification pilot.
-To activate your account, you need to enter a temporary password and reset your password.
-Your username is {username} and your temporary password is {####}.
-Please log into the WIC Staff Portal at ${var.staff_url} to reset your password.
-Please reach out to our technical team at ${local.contact_email} at any time to resolve any issues you encounter.
-EOT
-  invite_email_subject       = "Please verify your WIC Staff Portal account"
-  verification_email_message = <<EOT
-Thank you for participating in Montana's WIC recertification pilot.
-We received a request to reset your WIC Staff Portal password. To do so, you need to enter a password reset code.
-The password reset code for your account is {####}. Please complete the password reset process at ${var.staff_url}.
-If you didn’t request a password reset, please ignore this email. Your password won’t be changed.
-Please reach out to our technical team at ${local.contact_email} at any time to resolve any issues you encounter.
-EOT
+  invite_email_message       = "Thank you for participating in Montana's WIC recertification pilot. Your username is {username} and {####} is your temporary password. To activate your account, log into the WIC Staff Portal at https://${var.staff_url}, enter your temporary password, and follow the prompts to reset your password. Please reach out to our technical team at ${local.contact_email} at any time to resolve any issues you encounter."
+  invite_email_subject       = "Please activate your WIC Staff Portal account"
+  verification_email_message = "Thank you for participating in Montana's WIC recertification pilot. We received a request to reset your WIC Staff Portal password. To complete this request, go to https://${var.staff_url} and enter this password reset code {####}. If you didn't request a password reset, please ignore this email – your password won't be changed. Please reach out to our technical team at ${local.contact_email} at any time to resolve any issues you encounter."
   verification_email_subject = "Reset your WIC Staff Portal password"
   client_callback_urls       = ["https://${var.staff_url}/auth/openid-callback"]
   client_logout_urls         = ["https://${var.staff_url}/login"]
