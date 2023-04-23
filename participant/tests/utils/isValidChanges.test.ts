@@ -29,6 +29,7 @@ it("should have an error if a field is missing", async () => {
   );
   expect(validationResult.data).toBeUndefined();
   expect(validationResult.error?.fieldErrors).toStrictEqual({
-    idChange: "Required",
+    idChange:
+      "Select Yes if you or any WIC participants in your household had a name change or the ID document previously shared has expired.",
   });
 });
