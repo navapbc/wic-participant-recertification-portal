@@ -34,15 +34,10 @@ async function seed() {
   // You can access relations as normal here
   // const users = await prisma.user.findMany(); // (for example)
 
-  // infra-task: Create a new bucket for side-loading things
-  // a way to run the ecs task definition with overrides:
-  // - command
-  // - env vars
-  // new s3 bucket and just grant the task role permissions on that one too
-  // manually run `aws ecs run-task`. don't write a whole shell script. unless it's actually helpful
-
   const seedStaffUsersKey = "seed/staff-uuids-to-agencies.json";
-  console.log(`Attempting to seed staff users from ${BUCKET}/${seedStaffUsersKey}`);
+  console.log(
+    `Attempting to seed staff users from ${BUCKET}/${seedStaffUsersKey}`
+  );
   try {
     const seedStaffUsers = await getJsonFromS3(seedStaffUsersKey);
     if (seedStaffUsers) {
