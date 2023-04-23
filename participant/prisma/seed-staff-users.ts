@@ -41,7 +41,8 @@ async function seed() {
   // new s3 bucket and just grant the task role permissions on that one too
   // manually run `aws ecs run-task`. don't write a whole shell script. unless it's actually helpful
 
-  const seedStaffUsersKey = "seed/staff-users.json";
+  const seedStaffUsersKey = "seed/staff-uuids-to-agencies.json";
+  console.log(`Attempting to seed staff users from ${BUCKET}/${seedStaffUsersKey}`);
   try {
     const seedStaffUsers = await getJsonFromS3(seedStaffUsersKey);
     if (seedStaffUsers) {
