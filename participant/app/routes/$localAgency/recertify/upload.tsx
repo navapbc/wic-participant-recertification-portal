@@ -450,6 +450,7 @@ export default function Upload() {
             </div>
             <Accordion
               className="margin-top-1"
+              bordered={true}
               items={[
                 {
                   title: <Trans i18nKey={"Upload.filetips.title"} />,

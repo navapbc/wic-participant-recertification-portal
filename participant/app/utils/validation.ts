@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { zfd } from "zod-form-data";
+import errorMap from "zod/lib/locales/en";
 
 const nameSchemaFactory = (idPrefix: string) => {
   const firstNameKey = `${idPrefix}-firstName`;
@@ -19,8 +20,17 @@ const nameSchemaFactory = (idPrefix: string) => {
 export const representativeNameSchema = nameSchemaFactory("representative");
 
 export const changesSchema = zfd.formData({
-  idChange: zfd.text(z.enum(["yes", "no"])),
-  addressChange: zfd.text(z.enum(["yes", "no"])),
+  idChange: zfd.text(
+    z.enum(["yes", "no"], {
+      required_error:
+        "Select Yes if you or any WIC participants in your household had a name change or the ID document previously shared has expired.",
+    })
+  ),
+  addressChange: zfd.text(
+    z.enum(["yes", "no"], {
+      required_error: "Select Yes if you moved in the past year.",
+    })
+  ),
 });
 
 export const contactSchema = zfd.formData({

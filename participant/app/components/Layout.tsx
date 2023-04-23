@@ -26,7 +26,10 @@ const Layout = ({
       )}
       <header className="header usa-header usa-header--basic" role="banner">
         <div className="usa-navbar">
-          <Title id="extended-logo" className="usa-logo margin-left-2">
+          <Title
+            id="extended-logo"
+            className="usa-logo margin-left-2 desktop:margin-left-3"
+          >
             <em className="usa-logo__text">
               <Trans i18nKey="Layout.header" />
             </em>
@@ -35,7 +38,7 @@ const Layout = ({
       </header>
       <main className="main">
         <div className="grid-row">
-          <div className="desktop:grid-col-8 padding-2 padding-bottom-8">
+          <div className="desktop:grid-col-8 padding-2 padding-bottom-8 desktop:padding-right-3 desktop:padding-left-3">
             <div className="measure-6">
               {missingData === "true" ? (
                 <Alert
@@ -57,13 +60,14 @@ const Layout = ({
       <footer className="footer usa-footer usa-footer--slim">
         <div className="usa-footer__primary-section">
           <Grid row>
-            <div className="desktop:grid-col-8 padding-2">
+            <div className="desktop:grid-col-8 padding-2 desktop:padding-left-3">
               <div className="logos">
                 <Image
                   src="/img/wic-logo.svg"
                   alt="WIC logo"
                   width={64.52}
                   height={32}
+                  className="margin-right-2"
                 />
 
                 <Image
