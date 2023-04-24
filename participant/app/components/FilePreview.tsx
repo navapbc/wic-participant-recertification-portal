@@ -13,7 +13,7 @@
 import React, { useEffect, useState } from "react";
 import type { ReactElement } from "react";
 import classNames from "classnames";
-import type { i18nKey } from "~/types";
+import type { i18nKey } from "app/types";
 import { useTranslation } from "react-i18next";
 /** Moving the SPACER_GIF definition here instead of the constants.ts file,
  * as webpack was exporting that entire file, including use of the File
@@ -24,21 +24,25 @@ const SPACER_GIF =
 
 export type FilePreviewProps = {
   imageId: string;
-  file: File;
+  file: File | Blob | string;
+  name: string;
   clickHandler: Function;
   removeFileKey: i18nKey;
   selectedKey: i18nKey;
   altTextKey: i18nKey;
+  buttonType?: "button" | "submit";
 };
 
 export const FilePreview = (props: FilePreviewProps): ReactElement => {
   const {
     imageId,
     file,
+    name,
     clickHandler,
     removeFileKey,
     selectedKey,
     altTextKey,
+    buttonType = "button",
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -47,12 +51,15 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const imgSrc = URL.createObjectURL(file);
+    let imgSrc;
+    if (typeof file === "string") {
+      imgSrc = file;
+    } else {
+      imgSrc = URL.createObjectURL(file);
+    }
     setIsLoading(false);
     setPreviewSrc(imgSrc);
   }, [file]);
-
-  const { name } = file;
 
   const onImageError = (): void => {
     setPreviewSrc(SPACER_GIF);
@@ -81,7 +88,9 @@ export const FilePreview = (props: FilePreviewProps): ReactElement => {
           <div className="usa-file-input__preview-heading">
             <div>{t(selectedKey)}</div>
             <button
-              type="button"
+              type={buttonType}
+              name="remove"
+              value={name}
               className="text-secondary-vivid usa-button--unstyled"
               onClick={() => clickHandler(name)}
             >

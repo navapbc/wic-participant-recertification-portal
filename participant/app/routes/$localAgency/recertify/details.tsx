@@ -1,7 +1,7 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
 import type { ReactElement } from "react";
-import { Form, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { Request } from "@remix-run/node";
 import { Trans } from "react-i18next";
@@ -10,10 +10,15 @@ import { CardGroup } from "@trussworks/react-uswds";
 import { ParticipantCard } from "app/components/ParticipantCard";
 import type { ParticipantCardProps } from "app/components/ParticipantCard";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
+import { ValidatedForm } from "remix-validated-form";
+import { householdDetailsSchema } from "~/utils/validation";
+import { withZod } from "@remix-validated-form/with-zod";
+
+const detailsValidator = withZod(householdDetailsSchema);
 
 export function loader({ request }: { request: Request }) {
   const url = new URL(request.url);
-  const count = url.searchParams.get("count") || 1;
+  const count = url.searchParams.get("count");
 
   return json({
     participantCount: count,
@@ -59,7 +64,11 @@ export default function Details() {
       <p className="intro">
         <Trans i18nKey="Details.intro" />
       </p>
-      <Form>
+      <ValidatedForm
+        validator={detailsValidator}
+        id="householdDetailsForm"
+        method="post"
+      >
         <CardGroup>{participantCards}</CardGroup>
         <Button
           className="display-block margin-top-6"
@@ -68,7 +77,7 @@ export default function Details() {
         >
           <Trans i18nKey="Details.button" />
         </Button>
-      </Form>
+      </ValidatedForm>
     </div>
   );
 }

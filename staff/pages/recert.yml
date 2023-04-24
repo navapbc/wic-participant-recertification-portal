@@ -16,15 +16,35 @@ requests: # Requests defines all the data requests made available in this page c
         from submissions s
         left join submission_forms sf on (s.submission_id = sf.submission_id)
         left join local_agencies la on (s.local_agency_id = la.local_agency_id)
+        left join staff_users su on (s.local_agency_id = su.local_agency_id)
+        where su.user_id = :user_id
         group by sf.submission_id, s.updated_at, la.name
         order by s.updated_at desc;
+      parameters:
+        user_id:
+          _user: sub
+  - id: get_local_agency
+    type: KnexRaw
+    connectionId: postgres
+    properties:
+      query: select la.name
+        from local_agencies la
+        left join staff_users su on (la.local_agency_id = su.local_agency_id)
+        where su.user_id = :user_id
+        limit 1;
+      parameters:
+        user_id:
+          _user: sub
+
 events:
   # A list of actions that gets completed each time this lowdefy context is loaded
   onInitAsync:
     - id: fetch_data
       type: Request
-      # Execute the `get_data` request
-      params: get_data
+      # Execute the requests
+      params:
+        - get_data
+        - get_local_agency
 
 blocks:
   # We prefer sizeColumnsToFit over autoSize, but leaving this in case we change our mind.
@@ -37,6 +57,17 @@ blocks:
   #         params:
   #           blockId: table
   #           method: autoSize
+
+  - id: agency_name
+    type: Title
+    properties:
+      content:
+        _nunjucks:
+          template: |
+            Agency: {{ name }}
+          on:
+            _request: get_local_agency.rows.0
+      level: 2
 
   - id: fit_to_size_button
     type: Button

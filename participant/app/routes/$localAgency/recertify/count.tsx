@@ -6,13 +6,68 @@ import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
 import { List } from "app/components/List";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
-import { countSchema } from "~/utils/validation";
+import { countSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
-import { ValidatedForm } from "remix-validated-form";
+import {
+  ValidatedForm,
+  setFormDefaults,
+  validationError,
+} from "remix-validated-form";
+import { json, redirect } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import type { Params } from "@remix-run/react";
+import type { LoaderFunction } from "@remix-run/node";
+import { cookieParser } from "app/cookies.server";
+import type { CountData } from "app/types";
+import { routeFromCount } from "~/utils/routing";
+import {
+  upsertSubmissionForm,
+  findSubmissionFormData,
+} from "app/utils/db.server";
 
 const countValidator = withZod(countSchema);
 
+export const loader: LoaderFunction = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: Params<string>;
+}) => {
+  const { submissionID, headers } = await cookieParser(request, params);
+  const existingCountData = (await findSubmissionFormData(
+    submissionID,
+    "count"
+  )) as CountData;
+  return json(
+    {
+      submissionID: submissionID,
+      ...setFormDefaults("householdSizeForm", existingCountData),
+    },
+    { headers: headers }
+  );
+};
+
+type loaderData = Awaited<ReturnType<typeof loader>>;
+
+export const action = async ({ request }: { request: Request }) => {
+  const formData = await request.formData();
+  const validationResult = await countValidator.validate(formData);
+  if (validationResult.error) {
+    console.log(`Validation error: ${validationResult.error}`);
+    return validationError(validationResult.error, validationResult.data);
+  }
+  const parsedForm = countSchema.parse(formData);
+  const { submissionID } = await cookieParser(request);
+  console.log(`Got submission ${JSON.stringify(parsedForm)}`);
+  await upsertSubmissionForm(submissionID, "count", parsedForm);
+  const routeTarget = routeFromCount(request, parsedForm);
+  console.log(`Completed count form; routing to ${routeTarget}`);
+  return redirect(routeTarget);
+};
+
 export default function Count() {
+  useLoaderData<loaderData>();
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
     type: "input",
@@ -27,7 +82,6 @@ export default function Count() {
       <h1>
         <Trans i18nKey="Count.title" />
       </h1>
-      <RequiredQuestionStatement />
       <p className="intro">
         <Trans i18nKey="Count.intro" />
       </p>
@@ -38,6 +92,7 @@ export default function Count() {
       <p>
         <Trans i18nKey="Count.example" />
       </p>
+      <RequiredQuestionStatement />
       <ValidatedForm
         validator={countValidator}
         id="householdSizeForm"

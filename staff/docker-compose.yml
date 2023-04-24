@@ -14,6 +14,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  # Create an S3 Localstack server for e2e tests
+  s3-local:
+    image: minio/minio
+    ports:
+      - "9100:9000"
+      - "9101:9001"
+    volumes:
+      - minio_storage_staff:/data
+    environment:
+      MINIO_ROOT_USER: e2e_minio
+      MINIO_ROOT_PASSWORD: incredible_local_secret_phrase
+    command: server --console-address ":9001" /data
+
   lowdefy_dev:
     build:
       target: dev
@@ -21,6 +34,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    # @TODO Create a local test OpenID Connect provider that you can spin up and test against
+    # Right now, local testing relies on setting up a `.env` file that has actual credentials
+    # to a test Cognito instance.
+    env_file:
+      - .env
     environment:
       LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
     init: true
@@ -71,3 +89,4 @@ services:
 volumes:
   lowdefy_dev_nodemodules:
   postgres_data:
+  minio_storage_staff:

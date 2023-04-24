@@ -113,11 +113,26 @@ jobs:
         with:
           useLockFile: false
           working-directory: ./participant
+      - name: Collect Docker Logs
+        uses: jwalton/gh-docker-logs@v2.2.1
+        with:
+          images: 'participant-app-e2e'
 
       - name: 🐳 Run Playwright in Docker Compose
         run: npm run e2e
         working-directory: participant
-
+      - name: Collect Docker Logs
+        if: failure()
+        uses: jwalton/gh-docker-logs@v2.2.1
+        with:
+          images: 'participant-app-e2e,postgres'
+          dest: './logs'
+      - name: Upload docker logs to github
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: participant-playwright-docker-logs
+          path: './logs'
       - name: 🗃 Archive test results
         if: failure()
         uses: actions/upload-artifact@v3

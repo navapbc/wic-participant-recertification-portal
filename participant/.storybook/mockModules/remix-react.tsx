@@ -30,6 +30,13 @@ export function useLoaderData<T>() {
   return {
     // Insert your useLoaderData variable names / values here
     participantCount: 2,
+    proofRequired: ["address", "identity", "income"],
+    previousUploads: [
+      {
+        url: "https://user-images.githubusercontent.com/723391/232950499-77b965c6-5a3a-4b01-94dd-162784ae3220.png",
+        name: "avatar.jpg",
+      },
+    ],
   };
 }
 

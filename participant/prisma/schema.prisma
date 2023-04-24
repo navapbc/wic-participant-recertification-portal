@@ -39,6 +39,7 @@ model LocalAgency {
   createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
   submissions   Submission[]
+  staffUsers    StaffUser[]
 
   @@map("local_agencies")
 }
@@ -46,15 +47,24 @@ model LocalAgency {
 model Document {
   documentId            String     @id @default(uuid()) @map("document_id") @db.Uuid
   submissionId          String     @map("submission_id") @db.Uuid
-  s3Path                String     @map("s3_path")
+  s3Key                 String     @map("s3_key")
+  s3Url                 String     @map("s3_url")
   detectedFiletype      String?    @map("detected_filetype")
-  virusScanStatus       String?    @map("virus_scan_status")
   detectedFilesizeBytes Int?       @map("detected_filesize_bytes")
   originalFilename      String     @map("original_filename")
-  sha256Hash            String?    @map("sha256_hash")
   createdAt             DateTime   @default(now()) @map("created_at") @db.Timestamptz
   updatedAt             DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
   submission            Submission @relation(fields: [submissionId], references: [submissionId])
 
   @@map("documents")
+}
+
+model StaffUser {
+  staffUserId   String      @id @map("staff_user_id") @db.Uuid
+  localAgencyId String      @map("local_agency_id") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  localAgency   LocalAgency @relation(fields: [localAgencyId], references: [localAgencyId])
+
+  @@map("staff_users")
 }

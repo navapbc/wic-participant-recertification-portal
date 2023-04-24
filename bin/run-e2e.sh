@@ -87,7 +87,7 @@ function main() {
 function run_db() {
   # Start the database and wait until it's ready
   echo "Starting database..."
-  docker compose -f docker-compose.e2e.yml up --build --wait database-e2e
+  docker compose -f docker-compose.e2e.yml up --build --wait database
 }
 
 # Only necessary for staff portal

@@ -11,10 +11,10 @@
 # Note: This usage *requires* running docker-compose down; otherwise containers are
 #       will hang around forever. Not suitable for CI.
 version: "3.7"
-
+name: participant-e2e
 services:
   # Create a database to run e2e tests against
-  database-e2e:
+  database:
     image: postgres:14
     environment:
       POSTGRES_PASSWORD: incredible_local_secret_phrase
@@ -25,9 +25,8 @@ services:
       timeout: 5s
       retries: 20
     networks:
-      - participant_portal-e2e
+      - participant_portal-e2e # Create a remix server to run e2e tests against
 
-  # Create a remix server to run e2e tests against
   app-e2e:
     build:
       # This target includes entrypoint-e2e.sh which will force reset the prisma migrations
@@ -35,13 +34,21 @@ services:
       context: .
     # The database must be up and running before the remix server will start
     depends_on:
-      database-e2e:
+      database:
         condition: service_healthy
+      s3-local:
+        condition: service_started
     environment:
-      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database-e2e:5432/postgres?schema=public
+      DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database:5432/postgres?schema=public
+      S3_ENDPOINT_URL: http://s3-local:9000
+      AWS_ACCESS_KEY_ID: "e2e_minio"
+      AWS_SECRET_ACCESS_KEY: "incredible_local_secret_phrase"
+      MAX_UPLOAD_FILECOUNT: 5
+      MAX_UPLOAD_SIZE_BYTES: 5242880
+      PORT: 3005
     # Check that the remix server is up and running
     healthcheck:
-      test: "curl -f http://localhost:3000/healthcheck || exit 1"
+      test: "curl -f http://localhost:3005/healthcheck || exit 1"
       timeout: 5s
       retries: 20
     init: true
@@ -49,9 +56,23 @@ services:
       - participant_portal-e2e
     # Expose a port in case it's useful for debugging
     ports:
-      - 3000:3000
+      - 3005:3005
 
-  # Create the playwright container
+  # Create an S3 Localstack server for e2e tests
+  s3-local:
+    image: minio/minio
+    ports:
+      - "9090:9000"
+      - "9091:9001"
+    volumes:
+      - minio_storage:/data
+    environment:
+      MINIO_ROOT_USER: e2e_minio
+      MINIO_ROOT_PASSWORD: incredible_local_secret_phrase
+    command: server --console-address ":9001" /data
+    networks:
+      - participant_portal-e2e
+    # Create the playwright container
   playwright:
     build:
       # Use a different Dockerfile specifically to build a slim container just for playwright
@@ -73,3 +94,6 @@ services:
 
 networks:
   participant_portal-e2e:
+
+volumes:
+  minio_storage:

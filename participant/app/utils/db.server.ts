@@ -1,9 +1,99 @@
 import db from "app/utils/db.connection";
 import type { Prisma } from "@prisma/client";
-import type { RouteType } from "app/types";
+import type { RouteType, SubmittedFile } from "app/types";
 export type SubmissionWithAgency = Prisma.PromiseReturnType<
   typeof findSubmission
 >;
+
+export const upsertStaffUser = async (urlId: string, staffUserId: string) => {
+  const localAgency = await findLocalAgency(urlId);
+  if (!localAgency) {
+    throw Error(`Unable to find agency for ${urlId}`);
+  }
+  const existingStaffUser = await db.staffUser.upsert({
+    where: {
+      staffUserId: staffUserId,
+    },
+    create: {
+      staffUserId: staffUserId,
+      localAgencyId: localAgency.localAgencyId,
+    },
+    update: {
+      localAgencyId: localAgency.localAgencyId,
+      updatedAt: new Date(),
+    },
+  });
+  return existingStaffUser;
+};
+
+export const findDocument = async (submissionID: string, filename: string) => {
+  const document = await db.document.findFirst({
+    where: {
+      submissionId: submissionID,
+      originalFilename: filename,
+    },
+  });
+  return document;
+};
+
+export const deleteDocument = async (
+  submissionID: string,
+  filename: string
+) => {
+  const document = await findDocument(submissionID, filename);
+  if (document) {
+    await db.document.delete({
+      where: {
+        documentId: document.documentId,
+      },
+    });
+  }
+};
+
+export const upsertDocument = async (
+  submissionID: string,
+  submittedFile: SubmittedFile
+) => {
+  const existingDocument = await findDocument(
+    submissionID,
+    submittedFile.filename
+  );
+  if (existingDocument) {
+    return await db.document.update({
+      where: {
+        documentId: existingDocument.documentId,
+      },
+      data: {
+        updatedAt: new Date(),
+        s3Key: submittedFile.key,
+        s3Url: submittedFile.s3Url,
+        detectedFiletype: submittedFile.mimeType,
+        detectedFilesizeBytes: submittedFile.size,
+      },
+    });
+  }
+  return await db.document.create({
+    data: {
+      submissionId: submissionID,
+      s3Key: submittedFile.key || "",
+      s3Url: submittedFile.s3Url || "",
+      detectedFiletype: submittedFile.mimeType,
+      detectedFilesizeBytes: submittedFile.size,
+      originalFilename: submittedFile.filename,
+    },
+  });
+};
+
+export const listDocuments = async (submissionID: string) => {
+  return await db.document.findMany({
+    where: { submissionId: submissionID },
+    select: {
+      s3Key: true,
+      s3Url: true,
+      originalFilename: true,
+    },
+  });
+};
 
 export const findSubmission = async (submissionID: string) => {
   const submission = await db.submission.findUnique({

@@ -13,7 +13,24 @@ app:
       _ref: public/header.html
 
 config:
-  homePageId: recertifications
+  homePageId: login
+
+  # Configure OpenID Connect provider.
+  # See https://docs.lowdefy.com/users-introduction
+  # In the OpenID Connect provider, you must set the following:
+  # - Allowed callback urls: `http(s)://<domain>:<port>/auth/openid-callback`
+  #   Note: This is the default lowdefy auth callback
+  #         For local development, add `http://localhost:<port>/auth/openid-callback`
+  # - Allowed logout urls: `http(s)://<domain>:<port>/login`
+  #   Note: This is configured in the following lines
+  #         For local development, add `http://localhost:<port>/login`
+  auth:
+    openId:
+      logoutRedirectUri: /login
+      scope: openid email
+    pages:
+      # Only the following pages should be accessible without authenticating
+      public: ["404", "login"]
 
 # Include the list of non-out-of-the-box block types this application uses
 types:
@@ -35,8 +52,16 @@ pages:
       path: templates/page_template.yml
       # Pass in variables that the template ingests
       vars:
+        id: login
+        title: Login
+        content:
+          # The content for this page that gets injected into the template
+          - _ref: pages/login.yml
+
+  - _ref:
+      path: templates/page_template.yml
+      vars:
         id: recertifications
         title: Montana WIC Staff Portal
         content:
-          # The content for this page that gets injected into the template
           - _ref: pages/recert.yml

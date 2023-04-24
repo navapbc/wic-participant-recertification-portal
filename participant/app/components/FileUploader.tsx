@@ -1,5 +1,5 @@
 import { FormGroup, Label } from "@trussworks/react-uswds";
-import { FilePreview } from "app/components/internal/FilePreview";
+import { FilePreview } from "app/components/FilePreview";
 import { FileInput } from "app/components/internal/FileInput";
 import { Trans, useTranslation } from "react-i18next";
 import React, {
@@ -9,9 +9,9 @@ import React, {
   useEffect,
   forwardRef,
 } from "react";
-import type { i18nKey } from "~/types";
+import type { ReactElement } from "react";
+import type { PreviousUpload, i18nKey } from "~/types";
 import type { FileInputRef } from "app/components/internal/FileInput";
-export type { FileInputRef } from "app/components/internal/FileInput";
 
 export type FileUploaderProps = {
   className?: string;
@@ -22,6 +22,12 @@ export type FileUploaderProps = {
   required?: boolean;
   maxFileSizeInBytes?: number;
   maxFileCount?: number;
+  children?: ReactElement;
+};
+
+export type FileUploaderRef = {
+  files: File[];
+  removeFileList: (removeList: PreviousUpload[]) => void;
 };
 
 export type FileState = {
@@ -33,7 +39,7 @@ export type FileError = {
 };
 
 export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
-  FileInputRef,
+  FileUploaderRef,
   FileUploaderProps & JSX.IntrinsicElements["input"]
 > = (
   {
@@ -45,6 +51,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
     required,
     maxFileSizeInBytes = 26_214_400,
     maxFileCount = 20,
+    children,
     ...inputProps
   },
   ref
@@ -52,7 +59,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
   const { t } = useTranslation();
   const [files, setFiles] = useState<FileState>({});
   const [previews, setPreviews] = useState(<></>);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<FileInputRef>(null);
   const documentString = t(`${labelKey}.document`);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -70,9 +77,10 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
   useImperativeHandle(
     ref,
     () => ({
-      input: fileInputRef.current,
       files: Object.keys(files).map((key) => files[key]),
+      removeFileList: removeFileList,
     }),
+    // eslint-disable-next-line   react-hooks/exhaustive-deps -- (deps list is correct)
     [files]
   );
 
@@ -82,11 +90,15 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
         {Object.keys(files).map((fileName, index) => {
           let file = files[fileName];
           return (
-            <div key={`document-${index + 1}`}>
+            <div
+              key={`document-${index + 1}`}
+              className={index == 0 ? "margin-top-2" : undefined}
+            >
               <span>{`${documentString} ${index + 1}`}</span>
               <FilePreview
                 imageId={`preview-${index}`}
                 file={file}
+                name={file.name}
                 clickHandler={removeFile}
                 removeFileKey={`${labelKey}.removeFile`}
                 selectedKey={`${labelKey}.selected`}
@@ -139,6 +151,14 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
     }
     return { ...files };
   };
+  const removeFileList = (removeList: PreviousUpload[]) => {
+    setErrorMessage("");
+    setFiles({});
+    for (let file of removeList) {
+      delete files[file.name];
+      setFiles({ ...files });
+    }
+  };
   const handleNewFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMessage("");
     const { files: newFiles } = e.target;
@@ -159,6 +179,7 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
       : `${documentString} ${currentDocumentNumber + 1}`;
   return (
     <FormGroup>
+      {children}
       {previews}
       <Label htmlFor={id}>{currentDocumentString}</Label>
       {errorMessage && (
