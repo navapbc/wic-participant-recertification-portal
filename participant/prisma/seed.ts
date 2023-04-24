@@ -8,7 +8,7 @@ import {
   upsertDocument,
 } from "app/utils/db.server";
 import seedAgencies from "public/data/local-agencies.json";
-import seedSubmissions from "public/data/submissions.not-prod.json";
+import seedSubmissions from "public/data/submissions.json";
 import type { SubmittedFile } from "app/types";
 import {
   GetObjectCommand,
