@@ -15,6 +15,8 @@ UUID_FILENAME="staff-uuids-to-agencies.json"
 USER_POOL_NAME="user_pool_name=wic-prp-staff-${ENV_NAME}"
 CLUSTER_NAME="wic-prp-app-${ENV_NAME}"
 TASK_DEFINITION_NAME="wic-prp-participant-${ENV_NAME}"
+CONTAINER_NAME="wic-prp-participant-${ENV_NAME}"
+SERVICE_NAME="wic-prp-participant-${ENV_NAME}"
 BUCKET_NAME="wic-prp-side-load-${ENV_NAME}"
 
 # Requires a file named `staff-emails-to-agencies.tfvars.json` in the infra/modules/cognito-staff-user dir.
@@ -33,12 +35,19 @@ aws s3api put-object \
   --key "seed/${UUID_FILENAME}" \
   --body $UUID_FILENAME
 
+NETWORK_CONFIG=$(aws ecs describe-services --cluster $CLUSTER_NAME --service $SERVICE_NAME | jq -r '.services[0].networkConfiguration')
+CONTAINER_OVERRIDES="{ \"containerOverrides\": [{ \"name\": \"${CONTAINER_NAME}\", \"command\": [\"npm\", \"run\", \"seed-staff-users\"], \"environment\" : [{ \"name\": \"S3_BUCKET\", \"value\": \"${BUCKET_NAME}\" }]}]}"
+
 # Import staff users into participant database.
 # Run as a one-off ECS task.
+# Debug command:
 aws ecs run-task \
   --cluster $CLUSTER_NAME \
   --task-definition $TASK_DEFINITION_NAME \
-  --overrides "{ \"containerOverrides\": [{ \"command\": \"npm run seed-staff-users\" }, { \"environment\" : [{ \"S3_BUCKET\": \"${BUCKET_NAME}\" }]}]}"
+  --overrides "${CONTAINER_OVERRIDES}" \
+  --network-configuration "${NETWORK_CONFIG}" \
+  --launch-type="FARGATE" \
+  --platform-version="1.4.0"
 
 # Cleanup
 rm $UUID_FILENAME
