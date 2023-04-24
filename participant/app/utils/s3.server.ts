@@ -142,6 +142,9 @@ export const deleteFileFromS3 = async (key: string) => {
   }
 };
 
+// @TODO move checkFile() into a separate file.
+// Importing s3.server.ts outside of remix (such as in prisma seed scripts)
+// is blocked because the `file-type` package doesn't want to import properly.
 export const checkFile = async (key: string): Promise<FileCheckResult> => {
   const fileSize = await headFilesizeFromS3(key);
   if (!fileSize) {
