@@ -45,12 +45,6 @@ variable "participant_s3_presigned_url_expiration" {
   default     = "604800"
 }
 
-variable "participant_doc_upload_expiration" {
-  type        = string
-  description = "The maximum allowed number of seconds a presigned s3 url is active before it expires"
-  default     = "604800"
-}
-
 variable "participant_enable_exec" {
   type        = bool
   description = "Enables ECS exec for the participant service"
