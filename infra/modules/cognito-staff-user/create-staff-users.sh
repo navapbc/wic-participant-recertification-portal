@@ -1,6 +1,5 @@
 #!/bin/bash
 # A script to create users in AWS Cognito and create database records for them in the participant database.
-# Run from the root of the project like so: ./bin/create-staff-users.sh <env name>
 set -euo pipefail
 
 # Positional arguments.
@@ -23,13 +22,13 @@ BUCKET_NAME="wic-prp-side-load-${ENV_NAME}"
 # See infra/modules/cognito-staff-user/staff-emails-to-agencies.tfvars.json.example for an example.
 
 # Create staff users in cognito.
-terraform -chdir=infra/modules/cognito-staff-user init
-terraform -chdir=infra/modules/cognito-staff-user apply \
+terraform init
+terraform apply \
   -var-file=$EMAIL_FILENAME \
   -var=$USER_POOL_NAME
 
 # Save output to s3.
-terraform -chdir=infra/modules/cognito-staff-user output -json | jq .staff_user_list.value > $UUID_FILENAME
+terraform output -json | jq .staff_user_list.value > $UUID_FILENAME
 aws s3api put-object \
   --bucket $BUCKET_NAME \
   --key "seed/${UUID_FILENAME}" \
