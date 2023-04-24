@@ -70,7 +70,9 @@ module "participant" {
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
   healthcheck_path     = "/healthcheck"
-  enable_exec          = var.participant_enable_exec
+  # The database seed needs longer lead time before healthchecks kick in to kill the container
+  healthcheck_start_period = 120
+  enable_exec              = var.participant_enable_exec
   # @TODO: We shouldn't need to be doing quite so much string interpolation. Perhaps we can pass back the arns instead of the secret_names.
   container_secrets = [
     {
