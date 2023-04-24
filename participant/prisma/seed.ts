@@ -9,7 +9,6 @@ import {
 } from "app/utils/db.server";
 import seedAgencies from "public/data/local-agencies.json";
 import seedSubmissions from "public/data/submissions.json";
-import type { SubmittedFile } from "app/types";
 import {
   GetObjectCommand,
   NotFound,
@@ -146,7 +145,6 @@ async function seed() {
     const localAgency = await findLocalAgency(seedAgencyUrlId);
     if (localAgency) {
       for (const seedSubmission of seedAgencySubmissions) {
-        const submission = await findSubmission(seedSubmission.submissionId);
         await upsertSubmission(seedSubmission.submissionId, localAgency.urlId);
         for (let [seedFormRoute, seedFormData] of Object.entries(
           seedSubmission.forms
