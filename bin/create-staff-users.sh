@@ -36,6 +36,7 @@ aws s3api put-object \
   --body $UUID_FILENAME
 
 NETWORK_CONFIG=$(aws ecs describe-services --cluster $CLUSTER_NAME --service $SERVICE_NAME | jq -r '.services[0].networkConfiguration')
+# @TODO This is very ugly, but also totally works. Cleanup in future.
 CONTAINER_OVERRIDES="{ \"containerOverrides\": [{ \"name\": \"${CONTAINER_NAME}\", \"command\": [\"npm\", \"run\", \"seed-staff-users\"], \"environment\" : [{ \"name\": \"S3_BUCKET\", \"value\": \"${BUCKET_NAME}\" }]}]}"
 
 # Import staff users into participant database.
