@@ -57,6 +57,8 @@ export type SeedSubmissionsType = {
 // We cannot use getUrlFromS3() because of issues importing s3.server.ts
 // outside of remix because we are using file-type to get the filetype.
 // Instead, reproduce the function here.
+// @TODO to move the blocking function (checkFile) that needs the `file-type`
+// package into a separate file, so we don't have to do this workaround.
 export const getURLFromS3 = async (
   key: string,
   duration?: number
@@ -81,6 +83,7 @@ export const getURLFromS3 = async (
 };
 
 // Upload a seed document to s3 and save it to the database.
+// @TODO probably better to move this into s3.server.ts
 export const uploadDocument = async (
   submissionId: string,
   filename: string,
