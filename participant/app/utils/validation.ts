@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { zfd } from "zod-form-data";
-import errorMap from "zod/lib/locales/en";
 
 const nameSchemaFactory = (idPrefix: string) => {
   const firstNameKey = `${idPrefix}-firstName`;
