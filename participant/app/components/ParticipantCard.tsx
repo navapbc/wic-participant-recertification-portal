@@ -16,6 +16,7 @@ import { DateInput } from "app/components/DateInput";
 import type { DateInputProps } from "app/components/DateInput";
 import { AdjunctiveInput } from "~/components/AdjunctiveInput";
 import type { AdjunctiveInputProps } from "~/components/AdjunctiveInput";
+import { pick } from "lodash";
 
 export type ParticipantCardProps = {
   index: number;
@@ -43,6 +44,7 @@ export type ParticipantCardProps = {
 
   relationshipKey: i18nKey;
   relationshipRequired?: boolean;
+  values?: Participant;
 };
 
 export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
@@ -66,13 +68,16 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     participantKey,
     relationshipKey,
     relationshipRequired,
+    values,
   } = props;
+
   const relationshipProps: RelationshipInputProps = {
     relationshipKey: relationshipKey,
     legendKey: `${relationshipKey}.label`,
     name: `participant[${index}].relationship`,
     required: relationshipRequired,
     keyBase: `${tag}-relationship`,
+    values: values?.relationship,
   };
   const nameProps: NameInputProps = {
     id: `participant[${index}]`,
@@ -81,6 +86,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     legal: nameLegal,
     preferred: namePreferred,
     keyBase: `${tag}-name`,
+    values: pick(values, ["firstName", "lastName", "preferredName"]),
   };
   const dateProps: DateInputProps = {
     id: `participant-${index}-dob`,
@@ -92,6 +98,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     DMYorder: dateDMYOrder,
     hint: dateHint,
     required: dateRequired,
+    values: values?.dob,
   };
   const adjunctiveProps: AdjunctiveInputProps = {
     name: `participant[${index}].adjunctive`,
@@ -99,6 +106,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     legendStyle: adjunctiveLegendStyle,
     required: adjunctiveRequired,
     keyBase: `${tag}-adjunctive`,
+    values: values?.adjunctive,
   };
   const { t } = useTranslation();
 

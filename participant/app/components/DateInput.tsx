@@ -17,6 +17,11 @@ export type DateInputProps = {
   hint?: boolean;
   required?: boolean;
   keyBase: string;
+  values?: {
+    day: number;
+    month: number;
+    year: number;
+  };
 };
 
 export const DateInput = (props: DateInputProps): ReactElement => {
@@ -30,6 +35,7 @@ export const DateInput = (props: DateInputProps): ReactElement => {
     DMYorder = false,
     required = false,
     keyBase,
+    values,
   } = props;
   const { t } = useTranslation();
   const legendElement = (
@@ -62,6 +68,7 @@ export const DateInput = (props: DateInputProps): ReactElement => {
           size={maxLength}
           inputType="text"
           type="input"
+          value={values && values[field]?.toString()}
         />
       </FormGroup>
     );

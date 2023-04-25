@@ -73,11 +73,9 @@ export const loader: LoaderFunction = async ({
     const filteredParticipants = uneditedParticipants?.filter(
       (value) => value?.tag != removeParticipant
     );
-    console.log(
-      `Filtered participants = ${JSON.stringify(filteredParticipants)}`
-    );
     if (uneditedParticipants?.length > filteredParticipants?.length) {
       await upsertSubmissionForm(submissionID, "details", filteredParticipants);
+      console.log(`🗑 Removed participant ${removeParticipant} from database`);
     }
     return null;
   }
@@ -89,7 +87,6 @@ export const loader: LoaderFunction = async ({
     existingParticipantData?.length ||
     toInteger(url.searchParams.get("count")) ||
     1;
-  console.log(`Count is ${count}`);
   const participantData = formatLoaderData(existingParticipantData, count);
   console.log(`Participant data ${JSON.stringify(participantData)}`);
   return json({
@@ -105,6 +102,7 @@ export const action = async ({ request }: { request: Request }) => {
     console.log(`Validation error: ${validationResult.error}`);
     return validationError(validationResult.error, validationResult.data);
   }
+
   const parsedForm = participantSchema.parse(formData);
   const { submissionID } = await cookieParser(request);
   console.log(`Got submission ${JSON.stringify(parsedForm)}`);
@@ -123,7 +121,6 @@ export default function Details() {
   const { data } = useLoaderData<typeof loader>();
   const [participantData, setParticipantData] =
     useState<ParticipantCardKeysState>(data as ParticipantCardKeysState);
-  console.log(`DATER ${JSON.stringify(participantData)}`);
 
   const removeCard = async (tag: string) => {
     fetcher.submit(
@@ -134,13 +131,14 @@ export default function Details() {
       { method: "get" }
     );
     delete participantData[tag];
-    setParticipantData({ ...participantData });
+    if (!!Object.keys(participantData).length) {
+      setParticipantData({ ...participantData });
+    } else {
+      addCard();
+    }
   };
   const addCard = () => {
     participantData[nanoid()] = null;
-    console.log(
-      `Ok, adding a card should mean ${JSON.stringify(participantData)}`
-    );
     setParticipantData({ ...participantData });
   };
   const participantProps: Omit<ParticipantCardProps, "index" | "tag"> = {
@@ -181,7 +179,6 @@ export default function Details() {
       </p>
       <ValidatedForm
         validator={detailsValidator}
-        defaultValues={{ participant: filterValues(participantData) }}
         id="householdDetailsForm"
         method="post"
       >
@@ -192,6 +189,7 @@ export default function Details() {
                 key={`card-${value}`}
                 tag={`${value}`}
                 index={index}
+                values={participantData[value] || undefined}
                 {...participantProps}
               />
             );

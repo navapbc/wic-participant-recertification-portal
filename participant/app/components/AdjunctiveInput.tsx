@@ -14,18 +14,21 @@ export type AdjunctiveInputProps = Omit<
 > & {
   adjunctiveKey: i18nKey;
   keyBase: string;
+  values?: "yes" | "no";
 };
 
 export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
-  const { name, adjunctiveKey, legendStyle, ...rest } = props;
+  const { name, adjunctiveKey, legendStyle, values, ...rest } = props;
   const adjunctiveChoices: Choice[] = [
     {
       value: "yes",
       labelElement: <Trans i18nKey={`${adjunctiveKey}.yes`} />,
+      selected: values && values == "yes",
     },
     {
       value: "no",
       labelElement: <Trans i18nKey={`${adjunctiveKey}.no`} />,
+      selected: values && values == "no",
     },
   ];
   // eslint-disable-next-line  @typescript-eslint/no-unnecessary-type-assertion

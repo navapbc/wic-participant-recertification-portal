@@ -12,6 +12,7 @@ export type NameInputProps = {
   legal?: boolean;
   preferred?: boolean;
   keyBase: string;
+  values?: { firstName?: string; lastName?: string; preferredName?: string };
 };
 
 export const NameInput = (props: NameInputProps): ReactElement => {
@@ -22,6 +23,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
     preferred,
     legal = true,
     keyBase,
+    values,
   } = props;
   const { t } = useTranslation();
   const hint = legal ? (
@@ -44,6 +46,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
         hint={hint}
         required={true}
         key={`${keyBase}-firstName`}
+        value={values?.firstName}
       />
       <TextField
         id={`${id}.lastName`}
@@ -52,6 +55,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
         hint={hint}
         required={true}
         key={`${keyBase}-lastName`}
+        value={values?.lastName}
       />
       {preferred && t(`${nameKey}.preferred`) ? (
         <TextField
@@ -59,6 +63,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
           labelKey={t(`${nameKey}.preferred`)}
           inputType="text"
           key={`${keyBase}-preferredName`}
+          value={values?.preferredName}
         />
       ) : (
         ""

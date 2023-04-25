@@ -14,6 +14,7 @@ import type { i18nKey, legendStyleType } from "app/types";
 export type Choice = {
   value: string;
   labelElement: ReactElement;
+  selected?: boolean;
 };
 
 export type ChoiceGroupInputProps = {
@@ -70,6 +71,7 @@ export const ChoiceGroupInput = (
               type: type,
               value: choice.value,
               onChange: handleChange,
+              checked: choice.selected,
             })}
           />
         ))}
