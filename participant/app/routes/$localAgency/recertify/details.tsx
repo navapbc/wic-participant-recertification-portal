@@ -158,10 +158,10 @@ export default function Details() {
       <h1>
         <Trans i18nKey="Details.title" />
       </h1>
-      <RequiredQuestionStatement />
       <p className="intro">
         <Trans i18nKey="Details.intro" />
       </p>
+      <RequiredQuestionStatement />
       <ValidatedForm
         validator={detailsValidator}
         id="householdDetailsForm"
