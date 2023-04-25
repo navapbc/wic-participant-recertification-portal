@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import type {
   Document,
   LocalAgency,
+  StaffUser,
   Submission,
   SubmissionForm,
 } from "@prisma/client";
@@ -39,6 +40,7 @@ export function getDocument(
     documentId: uuidv4(),
     submissionId: submissionId,
     s3Key: `${submissionId}/${filename}`,
+    s3Url: `http://127.0.0.1/${submissionId}/${filename}?signed`,
     detectedFiletype: filetype,
     detectedFilesizeBytes: size,
     originalFilename: filename,
@@ -81,4 +83,13 @@ export function getSubmissionForm(
     createdAt: new Date(),
     updatedAt: new Date(),
   } as SubmissionForm;
+}
+
+export function getStaffUser(localAgencyId: string = uuidv4()) {
+  return {
+    staffUserId: uuidv4(),
+    localAgencyId: localAgencyId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  } as StaffUser;
 }

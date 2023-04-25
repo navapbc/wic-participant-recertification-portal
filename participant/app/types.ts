@@ -51,6 +51,7 @@ export type SubmittedFile = {
   error?: FileCheckError;
   accepted: boolean;
   url?: string;
+  s3Url?: string;
   key?: string;
   size?: number;
   mimeType?: string;

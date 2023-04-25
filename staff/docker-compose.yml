@@ -34,6 +34,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    # @TODO Create a local test OpenID Connect provider that you can spin up and test against
+    # Right now, local testing relies on setting up a `.env` file that has actual credentials
+    # to a test Cognito instance.
+    env_file:
+      - .env
     environment:
       LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
     init: true
@@ -58,6 +63,9 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@postgres:5432/postgres?schema=public
+      S3_ENDPOINT_URL: http://s3-local:9000
+      AWS_ACCESS_KEY_ID: "e2e_minio"
+      AWS_SECRET_ACCESS_KEY: "incredible_local_secret_phrase"
     init: true
     ports:
       - "3053:3000"

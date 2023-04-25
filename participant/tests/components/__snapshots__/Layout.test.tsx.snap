@@ -13,7 +13,7 @@ exports[`should match snapshot 1`] = `
         class="usa-navbar"
       >
         <div
-          class="usa-logo usa-logo margin-left-2"
+          class="usa-logo usa-logo margin-left-2 desktop:margin-left-3"
           id="extended-logo"
         >
           <em
@@ -35,7 +35,7 @@ exports[`should match snapshot 1`] = `
         class="grid-row"
       >
         <div
-          class="desktop:grid-col-8 padding-2 padding-bottom-8"
+          class="desktop:grid-col-8 padding-2 padding-bottom-8 desktop:padding-right-3 desktop:padding-left-3"
         >
           <div
             class="measure-6"
@@ -58,14 +58,14 @@ exports[`should match snapshot 1`] = `
           data-testid="grid"
         >
           <div
-            class="desktop:grid-col-8 padding-2"
+            class="desktop:grid-col-8 padding-2 desktop:padding-left-3"
           >
             <div
               class="logos"
             >
               <img
                 alt="WIC logo"
-                class="remix-image"
+                class="remix-image margin-right-2"
                 decoding="async"
                 height="32"
                 loading="lazy"

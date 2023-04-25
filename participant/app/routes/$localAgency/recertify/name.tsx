@@ -1,8 +1,8 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
 import { Trans } from "react-i18next";
-import { NameInput } from "~/components/NameInput";
-import type { NameInputProps } from "~/components/NameInput";
+import { NameInput } from "app/components/NameInput";
+import type { NameInputProps } from "app/components/NameInput";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
 import {
   ValidatedForm,

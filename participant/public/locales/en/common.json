@@ -57,7 +57,7 @@
     "intro": "We only need to collect information about WIC participants who have a recertification appointment.",
     "body": "Usually these appointments happen: ",
     "listItems": [
-      "For a child near their birthday or a year after initial enrollment",
+      "For a child near their birthday or a year after initial enrollment.",
       "Shortly after giving birth for a parent that received WIC while pregnant."
     ],
     "example": "For example, we do not need to collect information about a child who will have their mid-certification appointment, or for a parent who has been breastfeeding or using formula for an infant for the past year.",

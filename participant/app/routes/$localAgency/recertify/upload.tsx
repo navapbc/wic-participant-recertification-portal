@@ -58,9 +58,8 @@ const createPreviewData = async (
   const previousDocuments = await listDocuments(submissionID);
   const previousUploads = await Promise.all(
     previousDocuments.map(async (document) => {
-      const downloadUrl = await getURLFromS3(document.s3Key);
       return {
-        url: downloadUrl,
+        url: document.s3Url,
         name: document.originalFilename,
       } as PreviousUpload;
     })
@@ -265,7 +264,9 @@ export const action = async ({
     )} from form`
   );
   acceptedDocuments.map(async (acceptedFile) => {
-    await upsertDocument(submissionID, acceptedFile!);
+    // Create a presigned URL with expiration time and save to the database.
+    const url = await getURLFromS3(acceptedFile.key!);
+    await upsertDocument(submissionID, { ...acceptedFile!, s3Url: url });
   });
   if (!rejectedDocuments.length) {
     if (acceptedDocuments.length) {
@@ -450,6 +451,7 @@ export default function Upload() {
             </div>
             <Accordion
               className="margin-top-1"
+              bordered={true}
               items={[
                 {
                   title: <Trans i18nKey={"Upload.filetips.title"} />,

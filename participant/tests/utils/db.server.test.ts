@@ -10,6 +10,7 @@ import {
   deleteDocument,
   upsertDocument,
   listDocuments,
+  upsertStaffUser,
 } from "app/utils/db.server";
 import { v4 as uuidv4 } from "uuid";
 
@@ -17,6 +18,7 @@ import {
   getLocalAgency,
   getCurrentSubmission,
   getDocument,
+  getStaffUser,
   getSubmissionForm,
 } from "tests/helpers/mockData";
 
@@ -71,7 +73,7 @@ it("upserts a submission and looks up localagency", async () => {
   expect(upsertedSubmission).toMatchObject(mockSubmission);
 });
 
-it("throws an exception if there is no agency", async () => {
+it("upserting a submission throws an exception if there is no agency", async () => {
   const submissionID = uuidv4();
   prismaMock.localAgency.findUnique.mockResolvedValue(null);
   await expect(async () => {
@@ -239,6 +241,7 @@ it("creates a document if one does not exist", async () => {
     filename: "filename.jpg",
     accepted: true,
     key: mockument.s3Key,
+    s3Url: mockument.s3Url,
     size: mockument.detectedFilesizeBytes!,
     mimeType: mockument.detectedFiletype!,
   });
@@ -255,6 +258,7 @@ it("creates a document if one does not exist", async () => {
       data: {
         submissionId: submissionID,
         s3Key: mockument.s3Key,
+        s3Url: mockument.s3Url,
         detectedFiletype: mockument.detectedFiletype,
         detectedFilesizeBytes: mockument.detectedFilesizeBytes,
         originalFilename: mockument.originalFilename,
@@ -280,9 +284,74 @@ it("lists documents", async () => {
     where: { submissionId: submissionID },
     select: {
       s3Key: true,
+      s3Url: true,
       originalFilename: true,
     },
   });
   expect(foundDocuments[0]).toEqual(mockument);
   expect(foundDocuments[1]).toEqual(mockumentTwo);
+});
+
+it("upserting a staff user looks up localagency and creates a staff user if there is none", async () => {
+  const mockAgency = getLocalAgency();
+  prismaMock.localAgency.findUnique.mockResolvedValue(mockAgency);
+  const mockStaffUser = getStaffUser(mockAgency.localAgencyId);
+  await upsertStaffUser(mockAgency.urlId, mockStaffUser.staffUserId);
+  expect(prismaMock.localAgency.findUnique).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: { urlId: "agency" },
+    })
+  );
+  // There is an updatedAt here.. but we'd have to do some fudging to
+  // not run into race conditions for timestamp values
+  expect(prismaMock.staffUser.upsert).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: { staffUserId: mockStaffUser.staffUserId },
+      create: {
+        staffUserId: mockStaffUser.staffUserId,
+        localAgencyId: mockAgency.localAgencyId,
+      },
+    })
+  );
+});
+
+it("upserting a staff user throws an exception if there is no agency", async () => {
+  const staffUserId = uuidv4();
+  prismaMock.localAgency.findUnique.mockResolvedValue(null);
+  await expect(async () => {
+    await upsertStaffUser("bogus", staffUserId);
+  }).rejects.toThrow(`Unable to find agency for bogus`);
+});
+
+it("upserting a staff user updates existing staff users", async () => {
+  const mockAgencyOne = getLocalAgency("one");
+  const mockAgencyTwo = getLocalAgency("two");
+  prismaMock.localAgency.findUnique.mockResolvedValue(mockAgencyTwo);
+  const mockStaffUser = getStaffUser(mockAgencyOne.localAgencyId);
+  prismaMock.staffUser.upsert.mockResolvedValue(mockStaffUser);
+  // Update the local agency from ONE to TWO
+  const upsertedStaffUser = await upsertStaffUser(
+    mockAgencyTwo.urlId,
+    mockStaffUser.staffUserId
+  );
+  expect(prismaMock.localAgency.findUnique).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: { urlId: "two" },
+    })
+  );
+  // There is an updatedAt here.. but we'd have to do some fudging to
+  // not run into race conditions for timestamp values
+  expect(prismaMock.staffUser.upsert).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: { staffUserId: mockStaffUser.staffUserId },
+      create: {
+        staffUserId: mockStaffUser.staffUserId,
+        localAgencyId: mockAgencyTwo.localAgencyId,
+      },
+    })
+  );
+  expect(upsertedStaffUser).toMatchObject({
+    staffUserId: mockStaffUser.staffUserId,
+    localAgencyId: mockAgencyOne.localAgencyId,
+  });
 });
