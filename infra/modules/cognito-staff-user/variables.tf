@@ -16,5 +16,5 @@ variable "temporary_password_length" {
 variable "user_emails" {
   type        = map(any)
   description = "A mapping of emails addresses for users to create to the local agency they belong to. For example {'email@email.com': 'local_agency_a'}."
-  default = {}
+  default     = {}
 }
