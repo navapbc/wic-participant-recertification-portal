@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { i18nKey, legendStyleType } from "~/types";
+import type { Participant, i18nKey, legendStyleType } from "~/types";
 
 import { Trans, useTranslation } from "react-i18next";
 import {
@@ -25,13 +25,14 @@ export type ParticipantCardProps = {
   adjunctiveRequired?: boolean;
 
   clickHandler: Function;
-
   dateKey: i18nKey;
   dateLegendKey: i18nKey;
   dateLegendStyle?: legendStyleType;
   dateHint?: boolean;
   dateDMYOrder?: boolean;
   dateRequired?: boolean;
+
+  tag: string;
 
   nameKey: i18nKey;
   nameLegal?: boolean;
@@ -57,6 +58,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     dateHint,
     dateDMYOrder,
     dateRequired,
+    tag,
     nameKey,
     nameLegal,
     namePreferred,
@@ -65,12 +67,12 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     relationshipKey,
     relationshipRequired,
   } = props;
-
   const relationshipProps: RelationshipInputProps = {
     relationshipKey: relationshipKey,
     legendKey: `${relationshipKey}.label`,
     name: `participant[${index}].relationship`,
     required: relationshipRequired,
+    keyBase: `${tag}-relationship`,
   };
   const nameProps: NameInputProps = {
     id: `participant[${index}]`,
@@ -78,10 +80,12 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     legendStyle: "srOnly",
     legal: nameLegal,
     preferred: namePreferred,
+    keyBase: `${tag}-name`,
   };
   const dateProps: DateInputProps = {
     id: `participant-${index}-dob`,
     name: `participant[${index}].dob`,
+    keyBase: `${tag}-dob`,
     dateKey: dateKey,
     legendKey: dateLegendKey,
     legendStyle: dateLegendStyle,
@@ -94,6 +98,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     adjunctiveKey: adjunctiveKey,
     legendStyle: adjunctiveLegendStyle,
     required: adjunctiveRequired,
+    keyBase: `${tag}-adjunctive`,
   };
   const { t } = useTranslation();
 
@@ -115,11 +120,13 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
         <AdjunctiveInput {...adjunctiveProps} />
       </CardBody>
       <CardFooter>
+        <input type="hidden" name={`participant[${index}].tag`} value={tag} />
         <button
           type="button"
-          name="remove"
+          name="remove_participant"
+          value={tag}
           className="text-secondary-vivid usa-button--unstyled"
-          onClick={() => clickHandler(index)}
+          onClick={() => clickHandler(tag)}
         >
           {t(`${participantKey}.cardFooter`, { participantIndex: index + 1 })}
         </button>

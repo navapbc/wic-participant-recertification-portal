@@ -13,6 +13,7 @@ export type AdjunctiveInputProps = Omit<
   "choices" | "type" | "legendKey"
 > & {
   adjunctiveKey: i18nKey;
+  keyBase: string;
 };
 
 export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {

@@ -74,6 +74,7 @@
       "cardHeader": "Participant",
       "cardFooter": "Remove Participant {{participantIndex}}"
     },
+    "addParticipant": "Add another WIC participant",
     "button": "Continue",
     "intro": "Reminder: We only need to collect information about WIC participants who have a recertification appointment.",
     "title": "Tell us about who you're recertifying for"

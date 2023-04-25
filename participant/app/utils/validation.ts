@@ -126,6 +126,7 @@ export const participantSchema = zfd.formData({
             "Select Yes if they are enrolled in any of these programs.",
         })
       ),
+      tag: zfd.text().optional(),
     })
   ),
 });

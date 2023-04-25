@@ -26,6 +26,7 @@ export type ChoiceGroupInputProps = {
   type: "checkbox" | "radio";
   error?: string;
   helpElement?: ReactElement;
+  keyBase: string;
 };
 
 export const ChoiceGroupInput = (
@@ -40,6 +41,7 @@ export const ChoiceGroupInput = (
     helpElement,
     name,
     handleChange,
+    keyBase,
   } = props;
   const { getInputProps, error } = useField(name);
   const InputTypeClass = type == "checkbox" ? Checkbox : Radio;
@@ -54,16 +56,16 @@ export const ChoiceGroupInput = (
   );
   return (
     <>
-      <Fieldset legend={legendElement} legendStyle={legendStyle}>
+      <Fieldset legend={legendElement} legendStyle={legendStyle} key={keyBase}>
         {error && (
           <ErrorMessage id={`${legendKey}-error-message`}>{error}</ErrorMessage>
         )}
         {helpElement}
         {choices?.map((choice: Choice) => (
           <InputTypeClass
-            key={`${name}-${choice.value}`}
+            key={`${keyBase}-${choice.value}`}
             {...getInputProps({
-              id: `${name}-${choice.value}`,
+              id: `${keyBase}-${choice.value}`,
               label: choice.labelElement,
               type: type,
               value: choice.value,

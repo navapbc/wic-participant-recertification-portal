@@ -9,6 +9,7 @@ const defaultProps: DateInputProps = {
   name: "date-example",
   dateKey: "test:dateinput",
   legendKey: "test:dateinput.legend",
+  keyBase: "date",
 };
 
 it("renders the default date component", () => {

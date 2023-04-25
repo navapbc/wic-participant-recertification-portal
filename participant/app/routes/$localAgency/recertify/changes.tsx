@@ -97,6 +97,7 @@ export default function Changes() {
           helpElement={idChangeHelp}
           choices={ChangeChoices}
           required={true}
+          keyBase="idChange"
         />
         <ChoiceGroupInput
           name="addressChange"
@@ -105,6 +106,7 @@ export default function Changes() {
           legendKey="Changes.moveQuestion.legend"
           choices={ChangeChoices}
           required={true}
+          keyBase="addressChange"
         />
         <Button type="submit" value="submit" className="margin-top-6">
           <Trans i18nKey="Changes.button" />

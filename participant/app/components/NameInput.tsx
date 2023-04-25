@@ -11,6 +11,7 @@ export type NameInputProps = {
   legendStyle?: legendStyleType;
   legal?: boolean;
   preferred?: boolean;
+  keyBase: string;
 };
 
 export const NameInput = (props: NameInputProps): ReactElement => {
@@ -20,6 +21,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
     legendStyle = "srOnly",
     preferred,
     legal = true,
+    keyBase,
   } = props;
   const { t } = useTranslation();
   const hint = legal ? (
@@ -30,13 +32,18 @@ export const NameInput = (props: NameInputProps): ReactElement => {
     <></>
   );
   return (
-    <Fieldset legend={t(`${nameKey}.legend`)} legendStyle={legendStyle}>
+    <Fieldset
+      legend={t(`${nameKey}.legend`)}
+      legendStyle={legendStyle}
+      key={keyBase}
+    >
       <TextField
         id={`${id}.firstName`}
         labelKey={`${nameKey}.firstname`}
         inputType="text"
         hint={hint}
         required={true}
+        key={`${keyBase}-firstName`}
       />
       <TextField
         id={`${id}.lastName`}
@@ -44,12 +51,14 @@ export const NameInput = (props: NameInputProps): ReactElement => {
         inputType="text"
         hint={hint}
         required={true}
+        key={`${keyBase}-lastName`}
       />
       {preferred && t(`${nameKey}.preferred`) ? (
         <TextField
           id={`${id}.preferredName`}
           labelKey={t(`${nameKey}.preferred`)}
           inputType="text"
+          key={`${keyBase}-preferredName`}
         />
       ) : (
         ""

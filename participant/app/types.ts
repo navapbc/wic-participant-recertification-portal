@@ -34,6 +34,7 @@ export type Participant = {
     year: number;
   };
   adjunctive: "yes" | "no";
+  tag?: string;
 };
 
 export type ParticipantForm = {

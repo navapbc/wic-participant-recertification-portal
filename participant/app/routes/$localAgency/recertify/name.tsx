@@ -72,6 +72,7 @@ export default function Name() {
     legendStyle: "srOnly",
     legal: true,
     preferred: true,
+    keyBase: "representative",
   };
 
   return (

@@ -16,6 +16,7 @@ export type DateInputProps = {
   legendStyle?: legendStyleType;
   hint?: boolean;
   required?: boolean;
+  keyBase: string;
 };
 
 export const DateInput = (props: DateInputProps): ReactElement => {
@@ -28,6 +29,7 @@ export const DateInput = (props: DateInputProps): ReactElement => {
     hint = false,
     DMYorder = false,
     required = false,
+    keyBase,
   } = props;
   const { t } = useTranslation();
   const legendElement = (
@@ -50,10 +52,12 @@ export const DateInput = (props: DateInputProps): ReactElement => {
   const orderedDateFields = orderedFields.map((field: DateFieldTypes) => {
     const maxLength = field == "year" ? 4 : 2;
     return (
-      <FormGroup className={`usa-form-group--${field}`} key={`${id}-${field}`}>
+      <FormGroup
+        className={`usa-form-group--${field}`}
+        key={`${keyBase}-${field}`}
+      >
         <TextField
           id={`${name}.${field}`}
-          key={`${id}-${field}`}
           labelKey={`${dateKey}.${field}`}
           size={maxLength}
           inputType="text"

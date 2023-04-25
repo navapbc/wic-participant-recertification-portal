@@ -13,6 +13,7 @@ const defaultProps: ParticipantCardProps = {
   dateKey: "test:dateinput",
   dateHint: true,
   dateLegendKey: "test:dateinput.legend",
+  tag: "participant",
   nameKey: "test:nameinput",
   nameLegal: true,
   namePreferred: false,

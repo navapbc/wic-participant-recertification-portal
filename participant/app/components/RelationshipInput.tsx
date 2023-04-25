@@ -12,6 +12,7 @@ export type RelationshipInputProps = Omit<
   "choices" | "type"
 > & {
   relationshipKey: i18nKey;
+  keyBase: string;
 };
 
 export const RelationshipInput = (

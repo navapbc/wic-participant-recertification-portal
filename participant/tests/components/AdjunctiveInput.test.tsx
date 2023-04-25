@@ -15,6 +15,7 @@ const testProps: AdjunctiveInputProps = {
   required: false,
   legendStyle: "default",
   name: "adjunctive",
+  keyBase: "adjunctive",
 };
 
 it("renders the default adjunctive eligibility field", () => {

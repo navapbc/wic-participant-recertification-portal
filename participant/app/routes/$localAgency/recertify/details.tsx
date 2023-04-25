@@ -1,7 +1,11 @@
 import { Button } from "@trussworks/react-uswds";
 import React, { useEffect, useState } from "react";
-import type { ReactElement } from "react";
-import { Params, useLoaderData } from "@remix-run/react";
+import {
+  Params,
+  useFetcher,
+  useLoaderData,
+  useLocation,
+} from "@remix-run/react";
 import { LoaderFunction, json, redirect } from "@remix-run/node";
 import { Trans } from "react-i18next";
 import { nanoid } from "nanoid";
@@ -21,13 +25,31 @@ import {
   findSubmissionFormData,
   upsertSubmissionForm,
 } from "app/utils/db.server";
-import { routeFromDetails } from "app/utils/routing";
+import { routeFromDetails, routeRelative } from "app/utils/routing";
 import { Participant } from "~/types";
-import { indexOf } from "lodash";
+import { toInteger } from "lodash";
 
 const detailsValidator = withZod(participantSchema);
 
-export type ParticipantCardKeysState = string[];
+export type ParticipantCardKeysState = {
+  [tag: string]: Participant | null;
+};
+
+const formatLoaderData = (
+  participants: Participant[],
+  count: number
+): ParticipantCardKeysState => {
+  const tags: ParticipantCardKeysState = {};
+
+  for (let i = 0; i < count; i++) {
+    if (participants?.at(i)) {
+      tags[participants[i].tag!] = participants[i];
+    } else {
+      tags[nanoid()] = null;
+    }
+  }
+  return tags;
+};
 
 export const loader: LoaderFunction = async ({
   request,
@@ -38,19 +60,41 @@ export const loader: LoaderFunction = async ({
 }) => {
   const { submissionID, headers } = await cookieParser(request, params);
   const url = new URL(request.url);
-  const existingParticipantData = {
-    participant: (await findSubmissionFormData(
+  let count: number;
+  if (url.searchParams.get("action") == "remove_participant") {
+    const removeParticipant = url.searchParams.get("participant");
+    console.log(
+      `⏳ Received request to remove participant ${removeParticipant}`
+    );
+    const uneditedParticipants = (await findSubmissionFormData(
       submissionID,
       "details"
-    )) as Participant[],
-  };
-  const count =
-    existingParticipantData.participant?.length ||
-    url.searchParams.get("count") ||
+    )) as Participant[];
+    const filteredParticipants = uneditedParticipants?.filter(
+      (value) => value?.tag != removeParticipant
+    );
+    console.log(
+      `Filtered participants = ${JSON.stringify(filteredParticipants)}`
+    );
+    if (uneditedParticipants?.length > filteredParticipants?.length) {
+      await upsertSubmissionForm(submissionID, "details", filteredParticipants);
+    }
+    return null;
+  }
+  const existingParticipantData = (await findSubmissionFormData(
+    submissionID,
+    "details"
+  )) as Participant[];
+  count =
+    existingParticipantData?.length ||
+    toInteger(url.searchParams.get("count")) ||
     1;
+  console.log(`Count is ${count}`);
+  const participantData = formatLoaderData(existingParticipantData, count);
+  console.log(`Participant data ${JSON.stringify(participantData)}`);
   return json({
     participantCount: count,
-    ...setFormDefaults("householdDetailsForm", existingParticipantData),
+    data: participantData,
   });
 };
 
@@ -64,6 +108,9 @@ export const action = async ({ request }: { request: Request }) => {
   const parsedForm = participantSchema.parse(formData);
   const { submissionID } = await cookieParser(request);
   console.log(`Got submission ${JSON.stringify(parsedForm)}`);
+  parsedForm.participant.forEach((participantCard) => {
+    participantCard.tag = nanoid();
+  });
   await upsertSubmissionForm(submissionID, "details", parsedForm.participant);
   const routeTarget = routeFromDetails(request, parsedForm);
   console.log(`Completed details form; routing to ${routeTarget}`);
@@ -71,13 +118,32 @@ export const action = async ({ request }: { request: Request }) => {
 };
 
 export default function Details() {
-  const removeCard = (cardTag: string) => {
-    const indexToDelete = indexOf(participantKeys, cardTag);
-    const prunedCardKeys = participantKeys.splice(indexToDelete, 1);
-    setParticipantKeys(prunedCardKeys);
+  const fetcher = useFetcher();
+
+  const { data } = useLoaderData<typeof loader>();
+  const [participantData, setParticipantData] =
+    useState<ParticipantCardKeysState>(data as ParticipantCardKeysState);
+  console.log(`DATER ${JSON.stringify(participantData)}`);
+
+  const removeCard = async (tag: string) => {
+    fetcher.submit(
+      {
+        action: "remove_participant",
+        participant: tag,
+      },
+      { method: "get" }
+    );
+    delete participantData[tag];
+    setParticipantData({ ...participantData });
   };
-  const { participantCount } = useLoaderData<typeof loader>();
-  const participantProps: Omit<ParticipantCardProps, "index"> = {
+  const addCard = () => {
+    participantData[nanoid()] = null;
+    console.log(
+      `Ok, adding a card should mean ${JSON.stringify(participantData)}`
+    );
+    setParticipantData({ ...participantData });
+  };
+  const participantProps: Omit<ParticipantCardProps, "index" | "tag"> = {
     adjunctiveKey: "AdjunctiveEligibility",
     adjunctiveRequired: true,
     clickHandler: removeCard,
@@ -92,27 +158,17 @@ export default function Details() {
     relationshipRequired: true,
   };
 
-  const generateCardKeys = (count: number): ParticipantCardKeysState => {
-    return Array.from({ length: count }).map((it, index) => {
-      return nanoid();
-    });
+  const filterValues = (
+    unfiltered: ParticipantCardKeysState
+  ): Participant[] => {
+    const filteredValues: Participant[] = [];
+    for (const value of Object.values(unfiltered)) {
+      if (value !== null) {
+        filteredValues.push(value);
+      }
+    }
+    return filteredValues;
   };
-
-  const [participantKeys, setParticipantKeys] =
-    useState<ParticipantCardKeysState>(generateCardKeys(participantCount));
-  const [participantCards, setParticipantCards] = useState(<></>);
-  useEffect(() => {
-    const newCards = participantKeys.map((value, index) => {
-      return (
-        <ParticipantCard
-          key={`card-${value}`}
-          index={index}
-          {...participantProps}
-        />
-      );
-    });
-    setParticipantCards(<>{newCards}</>);
-  }, [participantKeys]);
 
   return (
     <div>
@@ -125,10 +181,29 @@ export default function Details() {
       </p>
       <ValidatedForm
         validator={detailsValidator}
+        defaultValues={{ participant: filterValues(participantData) }}
         id="householdDetailsForm"
         method="post"
       >
-        <CardGroup>{participantCards}</CardGroup>
+        <CardGroup>
+          {Object.keys(participantData).map((value, index) => {
+            return (
+              <ParticipantCard
+                key={`card-${value}`}
+                tag={`${value}`}
+                index={index}
+                {...participantProps}
+              />
+            );
+          })}
+        </CardGroup>
+        <Button
+          className="display-block margin-top-2"
+          type="button"
+          onClick={addCard}
+        >
+          <Trans i18nKey="Details.addParticipant" />
+        </Button>
         <Button
           className="display-block margin-top-6"
           type="submit"
