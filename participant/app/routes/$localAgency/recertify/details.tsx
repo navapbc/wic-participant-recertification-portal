@@ -184,6 +184,7 @@ export default function Details() {
           className="display-block margin-top-2"
           type="button"
           onClick={addCard}
+          outline={true}
         >
           <Trans i18nKey="Details.addParticipant" />
         </Button>
