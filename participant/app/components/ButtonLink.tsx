@@ -3,11 +3,15 @@ import { Link as RemixLink } from "@remix-run/react";
 import type { LinkProps as RemixLinkProps } from "@remix-run/react";
 import { Link as USWDSLink } from "@trussworks/react-uswds";
 import type { CustomLinkProps as USWDSLinkProps } from "@trussworks/react-uswds/lib/components/Link/Link";
+import { useMatomo } from "@jonkoops/matomo-tracker-react";
 
 export type ButtonLinkProps = Omit<USWDSLinkProps<RemixLinkProps>, "asCustom">;
 
 export const ButtonLink = (props: ButtonLinkProps): ReactElement => {
   const { className = "", variant = "unstyled", to, children, ...rest } = props;
+  // const {trackEvent, enableLinkTracking} = useMatomo();
+  // enableLinkTracking();
+  // trackEvent({category: 'next-page', action: 'click-event'});
   return (
     <USWDSLink
       asCustom={RemixLink}

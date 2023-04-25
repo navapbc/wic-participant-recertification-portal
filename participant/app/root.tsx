@@ -17,7 +17,6 @@ import i18next from "~/i18next.server";
 import Layout from "app/components/Layout";
 import { camelCase, upperFirst } from "lodash";
 import { useEffect } from "react";
-import { useMatomo } from "@jonkoops/matomo-tracker-react";
 
 export function useChangeLanguage(locale: string) {
   const { i18n } = useTranslation();
@@ -85,11 +84,6 @@ export default function App() {
   // language, this locale will change and i18next will load the correct
   // translation files
   useChangeLanguage(locale);
- 
-  const {trackPageView, trackEvents } = useMatomo();
-  useEffect(() => {
-    trackPageView()
-  }, [])
 
   return (
     <html lang={locale} dir={i18n.dir()}>

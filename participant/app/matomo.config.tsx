@@ -3,11 +3,13 @@
 import { createInstance } from '@jonkoops/matomo-tracker-react'
 
 export const matomoInstance = createInstance({
-  urlBase: 'https://dev.wic-services.org/gallatin/recertify',
-  siteId: 3,
-  userId: 'UID76903202', // optional, default value: `undefined`.
-  trackerUrl: 'https://dev-analytics.wic-services.org/matomo.php', // optional, default value: `${urlBase}matomo.php` 
-  srcUrl: 'https://dev.wic-services.org/gallatin/recertify/matomo.js', // optional, default value: `${urlBase}matomo.js` // has to be an https website
+  urlBase: 'http://localhost:8080/',
+  // urlBase: 'https://dev-analytics.wic-services.org/',
+  siteId: 1,
+  trackerUrl: 'http://localhost:8080/matomo.php',
+  // trackerUrl: 'https://dev-analytics.wic-services.org/matomo.php', // optional, default value: `${urlBase}matomo.php` 
+  srcUrl: 'http://localhost:8080/matomo.js',
+  // srcUrl: 'https://dev-analytics.wic-services.org/matomo.js', // optional, default value: `${urlBase}matomo.js` // has to be an https website
   disabled: false, // optional, false by default. Makes all tracking calls no-ops if set to true.
   heartBeat: { // optional, enabled by default
     active: true, // optional, default value: true

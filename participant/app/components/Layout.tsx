@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { Alert, Title, Grid } from "@trussworks/react-uswds";
 import { Image } from "remix-image";
 import TransLinks from "./TransLinks";
+import { useMatomo } from "@jonkoops/matomo-tracker-react";
 
 export type LayoutProps = {
   children: ReactElement;
@@ -15,6 +16,8 @@ const Layout = ({
   demoMode,
   missingData,
 }: LayoutProps): ReactElement => {
+  // const {trackPageView} = useMatomo();
+  // trackPageView();
   return (
     <div className="container">
       {demoMode === "true" ? (
