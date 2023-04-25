@@ -65,13 +65,13 @@ export const ChoiceGroupInput = (
         {choices?.map((choice: Choice) => (
           <InputTypeClass
             key={`${keyBase}-${choice.value}`}
+            defaultChecked={choice.selected}
             {...getInputProps({
               id: `${keyBase}-${choice.value}`,
               label: choice.labelElement,
               type: type,
               value: choice.value,
               onChange: handleChange,
-              checked: choice.selected,
             })}
           />
         ))}

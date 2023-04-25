@@ -46,7 +46,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
         hint={hint}
         required={true}
         key={`${keyBase}-firstName`}
-        value={values?.firstName}
+        defaultValue={values?.firstName}
       />
       <TextField
         id={`${id}.lastName`}
@@ -55,7 +55,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
         hint={hint}
         required={true}
         key={`${keyBase}-lastName`}
-        value={values?.lastName}
+        defaultValue={values?.lastName}
       />
       {preferred && t(`${nameKey}.preferred`) ? (
         <TextField
@@ -63,7 +63,7 @@ export const NameInput = (props: NameInputProps): ReactElement => {
           labelKey={t(`${nameKey}.preferred`)}
           inputType="text"
           key={`${keyBase}-preferredName`}
-          value={values?.preferredName}
+          defaultValue={values?.preferredName}
         />
       ) : (
         ""

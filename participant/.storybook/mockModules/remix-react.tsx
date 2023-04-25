@@ -42,7 +42,14 @@ export function useLoaderData<T>() {
       },
     ],
     data: {
-      exampleRandomKey: null,
+      exampleRandomKey: {
+        dob: { day: 3, year: 2004, month: 2 },
+        tag: "TtmTDA5JcBAWr0tUWWmit",
+        firstName: "Cromulent",
+        lastName: "Breakfast",
+        adjunctive: "no",
+        relationship: "child",
+      },
       anotherRandomKey: null,
     },
   };
