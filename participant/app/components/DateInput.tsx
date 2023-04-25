@@ -26,7 +26,6 @@ export type DateInputProps = {
 
 export const DateInput = (props: DateInputProps): ReactElement => {
   const {
-    id,
     name,
     dateKey,
     legendKey,

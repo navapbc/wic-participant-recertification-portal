@@ -10,6 +10,7 @@ const defaultProps: NameInputProps = {
   id: "input-example",
   nameKey: "test:nameinput",
   legendStyle: "srOnly",
+  keyBase: "input",
 };
 
 const NameInputTemplate = {

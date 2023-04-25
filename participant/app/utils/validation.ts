@@ -2,18 +2,19 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 
 const nameSchemaFactory = (idPrefix: string) => {
-  const firstNameKey = `${idPrefix}[firstName]`;
-  const lastNameKey = `${idPrefix}[lastName]`;
-  const preferredNameKey = `${idPrefix}[preferredName]`;
-  return zfd.formData({
-    [firstNameKey]: zfd.text(
-      z.string({ required_error: "Enter your first name" }).min(1)
-    ),
-    [lastNameKey]: zfd.text(
-      z.string({ required_error: "Enter your last name" }).min(1)
-    ),
-    [preferredNameKey]: zfd.text(z.string().optional()),
-  });
+  return zfd.formData(
+    z.object({
+      [idPrefix]: z.object({
+        firstName: zfd.text(
+          z.string({ required_error: "Enter your first name" }).min(1)
+        ),
+        lastName: zfd.text(
+          z.string({ required_error: "Enter your last name" }).min(1)
+        ),
+        preferredName: zfd.text(z.string().optional()),
+      }),
+    })
+  );
 };
 
 export const representativeNameSchema = nameSchemaFactory("representative");

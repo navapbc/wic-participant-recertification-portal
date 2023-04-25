@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/playwright:v1.31.0-focal
 # npm install must be run in a non-root directory
 WORKDIR /srv
 # Install packages needed to run playwright tests
-RUN npm install @playwright/test @axe-core/playwright uuid js-image-generator tmp
+RUN npm install @playwright/test @axe-core/playwright uuid js-image-generator tmp lodash
 # Copy playwright config and tests
 COPY playwright.config.ts .
 COPY tests/fixtures /srv/fixtures

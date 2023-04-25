@@ -67,6 +67,7 @@ const defaultChoiceGroupInputProps = {
   legendKey: "test:inputchoice.labelRadio",
   legendStyle: "",
   type: "radio",
+  keyBase: "choicegroups",
 };
 
 export const RadioGroup = {

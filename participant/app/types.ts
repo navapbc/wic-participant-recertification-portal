@@ -11,7 +11,12 @@ export type FileCheckError =
   | "fileCount";
 
 export type RouteType = "changes" | "contact" | "count" | "name" | "details";
-
+export type RelationshipType =
+  | "self"
+  | "child"
+  | "grandchild"
+  | "foster"
+  | "other";
 export type ChangesData = {
   idChange: string;
   addressChange: string;
@@ -24,7 +29,7 @@ export type FileCheckResult = {
 };
 
 export type Participant = {
-  relationship: "self" | "child" | "grandchild" | "foster" | "other";
+  relationship: RelationshipType;
   firstName: string;
   lastName: string;
   preferredName?: string;

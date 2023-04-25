@@ -22,6 +22,7 @@ const defaultRelationshipInputProps: Omit<RelationshipInputProps, "name"> = {
   required: false,
   legendKey: "test:relationship.label",
   legendStyle: "default",
+  keyBase: "relationship",
 };
 
 export const Default = {

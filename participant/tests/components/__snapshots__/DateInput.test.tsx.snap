@@ -24,20 +24,18 @@ exports[`renders the default date component 1`] = `
         <label
           class="usa-label"
           data-testid="label"
-          for="date-example-month"
+          for="date-example.month"
         >
           Month
         </label>
         <input
           class="usa-input"
           data-testid="textInput"
-          id="date-example-month"
-          inputmode="numeric"
-          maxlength="2"
-          minlength="2"
-          name="date-example-month"
-          pattern="[0-9]*"
+          id="date-example.month"
+          name="date-example.month"
+          size="2"
           type="text"
+          value=""
         />
       </div>
       <div
@@ -47,20 +45,18 @@ exports[`renders the default date component 1`] = `
         <label
           class="usa-label"
           data-testid="label"
-          for="date-example-day"
+          for="date-example.day"
         >
           Day
         </label>
         <input
           class="usa-input"
           data-testid="textInput"
-          id="date-example-day"
-          inputmode="numeric"
-          maxlength="2"
-          minlength="2"
-          name="date-example-day"
-          pattern="[0-9]*"
+          id="date-example.day"
+          name="date-example.day"
+          size="2"
           type="text"
+          value=""
         />
       </div>
       <div
@@ -70,20 +66,18 @@ exports[`renders the default date component 1`] = `
         <label
           class="usa-label"
           data-testid="label"
-          for="date-example-year"
+          for="date-example.year"
         >
           Year
         </label>
         <input
           class="usa-input"
           data-testid="textInput"
-          id="date-example-year"
-          inputmode="numeric"
-          maxlength="4"
-          minlength="4"
-          name="date-example-year"
-          pattern="[0-9]*"
+          id="date-example.year"
+          name="date-example.year"
+          size="4"
           type="text"
+          value=""
         />
       </div>
     </div>

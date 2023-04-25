@@ -11,6 +11,7 @@ const defaultProps: DateInputProps = {
   name: "date-example",
   dateKey: "test:dateinput",
   legendKey: "test:dateinput.legend",
+  keyBase: "date-example",
 };
 
 const DateInputTemplate = {

@@ -1,4 +1,3 @@
-import type { FormObject } from "tests/helpers/setup";
 import { participantSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
 import { omit } from "lodash";

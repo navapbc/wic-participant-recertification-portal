@@ -32,8 +32,8 @@ export function routeFromChanges(
   return routeRelative(request, "contact");
 }
 
-export function routeFromDetails(request: Request, submissionForm: any) {
-  return "";
+export function routeFromDetails(request: Request) {
+  return routeRelative(request, "changes");
 }
 
 export function routeFromContact(request: Request): string {

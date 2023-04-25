@@ -62,9 +62,9 @@ test(`the name form submits a POST request, and on return to the page,
   expect(postRequest.request().method()).toBe("POST");
   expect(parsedPostData).toMatchObject({
     __rvfInternalFormId: "representativeNameForm",
-    "representative-firstName": "Alice",
-    "representative-lastName": "Zor",
-    "representative-preferredName": "Ali",
+    "representative.firstName": "Alice",
+    "representative.lastName": "Zor",
+    "representative.preferredName": "Ali",
   });
 
   // Check that we've moved to the Count page based on our name
@@ -87,9 +87,11 @@ test(`the name form submits a POST request, and on return to the page,
   expect(getRequest.request().method()).toBe("GET");
   expect(getData).toMatchObject({
     __rvfInternalFormDefaults_representativeNameForm: {
-      "representative-firstName": "Alice",
-      "representative-lastName": "Zor",
-      "representative-preferredName": "Ali",
+      representative: {
+        firstName: "Alice",
+        lastName: "Zor",
+        preferredName: "Ali",
+      },
     },
     submissionID: submissionID,
   });

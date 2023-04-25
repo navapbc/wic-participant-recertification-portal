@@ -16,6 +16,7 @@ const defaultAdjunctiveProps: Omit<AdjunctiveInputProps, "name"> = {
   adjunctiveKey: "test:adjunctive",
   required: false,
   legendStyle: "default",
+  keyBase: "adjunctive",
 };
 
 export const Default = {

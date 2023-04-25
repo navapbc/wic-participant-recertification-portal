@@ -1,23 +1,17 @@
 import { Button } from "@trussworks/react-uswds";
-import React, { useEffect, useState } from "react";
-import {
-  Params,
-  useFetcher,
-  useLoaderData,
-  useLocation,
-} from "@remix-run/react";
-import { LoaderFunction, json, redirect } from "@remix-run/node";
+import React, { useState } from "react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
+import type { Params } from "@remix-run/react";
+import { json, redirect } from "@remix-run/node";
+import type { LoaderFunction } from "@remix-run/node";
+
 import { Trans } from "react-i18next";
 import { nanoid } from "nanoid";
 import { CardGroup } from "@trussworks/react-uswds";
 import { ParticipantCard } from "app/components/ParticipantCard";
 import type { ParticipantCardProps } from "app/components/ParticipantCard";
 import { RequiredQuestionStatement } from "app/components/RequiredQuestionStatement";
-import {
-  ValidatedForm,
-  setFormDefaults,
-  validationError,
-} from "remix-validated-form";
+import { ValidatedForm, validationError } from "remix-validated-form";
 import { participantSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
 import { cookieParser } from "app/cookies.server";
@@ -25,8 +19,8 @@ import {
   findSubmissionFormData,
   upsertSubmissionForm,
 } from "app/utils/db.server";
-import { routeFromDetails, routeRelative } from "app/utils/routing";
-import { Participant } from "~/types";
+import { routeFromDetails } from "app/utils/routing";
+import type { Participant } from "~/types";
 import { toInteger } from "lodash";
 
 const detailsValidator = withZod(participantSchema);
@@ -89,10 +83,13 @@ export const loader: LoaderFunction = async ({
     1;
   const participantData = formatLoaderData(existingParticipantData, count);
   console.log(`Participant data ${JSON.stringify(participantData)}`);
-  return json({
-    participantCount: count,
-    data: participantData,
-  });
+  return json(
+    {
+      participantCount: count,
+      data: participantData,
+    },
+    { headers: headers }
+  );
 };
 
 export const action = async ({ request }: { request: Request }) => {
@@ -110,7 +107,7 @@ export const action = async ({ request }: { request: Request }) => {
     participantCard.tag = nanoid();
   });
   await upsertSubmissionForm(submissionID, "details", parsedForm.participant);
-  const routeTarget = routeFromDetails(request, parsedForm);
+  const routeTarget = routeFromDetails(request);
   console.log(`Completed details form; routing to ${routeTarget}`);
   return redirect(routeTarget);
 };
@@ -131,7 +128,7 @@ export default function Details() {
       { method: "get" }
     );
     delete participantData[tag];
-    if (!!Object.keys(participantData).length) {
+    if (Object.keys(participantData).length) {
       setParticipantData({ ...participantData });
     } else {
       addCard();
@@ -154,18 +151,6 @@ export default function Details() {
     namePreferred: true,
     relationshipKey: "Relationship",
     relationshipRequired: true,
-  };
-
-  const filterValues = (
-    unfiltered: ParticipantCardKeysState
-  ): Participant[] => {
-    const filteredValues: Participant[] = [];
-    for (const value of Object.values(unfiltered)) {
-      if (value !== null) {
-        filteredValues.push(value);
-      }
-    }
-    return filteredValues;
   };
 
   return (
