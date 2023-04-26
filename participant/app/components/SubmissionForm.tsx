@@ -65,7 +65,7 @@ export const SubmissionForm = ({
   const countIntro = t(`${submissionKey}.household.countIntro`, {
     count: submissionData.participant?.length,
     person:
-      submissionData.participant?.length || 0 > 1
+      (submissionData.participant?.length || 1) > 1
         ? t(`${submissionKey}.household.people`)
         : t(`${submissionKey}.household.person`),
   });
