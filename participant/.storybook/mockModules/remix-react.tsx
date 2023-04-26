@@ -60,6 +60,7 @@ export function useLoaderData<T>() {
       contact: "#edit",
       upload: "#edit",
     },
+    submittedDate: new Date().toLocaleString("en-US"),
     submissionData: {
       name: {
         firstName: "Beatrice",
