@@ -62,9 +62,7 @@ test(`the contact form submits a POST request, and on return to the page,
     additionalInfo: "Test",
   });
 
-  // Check that we've moved to the Review page based on our contact
-  //TODO change to /review once we have that pace
-  await expect(page).toHaveURL("/gallatin/recertify");
+  await expect(page).toHaveURL("/gallatin/recertify/review");
 
   // Capture the GET request when we load the /contact page again by clicking "Back"
   const [getRequest] = await Promise.all([

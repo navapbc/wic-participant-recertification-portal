@@ -52,6 +52,62 @@ export function useLoaderData<T>() {
       },
       anotherRandomKey: null,
     },
+    reviewEditable: true,
+    editHrefs: {
+      name: "#edit",
+      details: "#edit",
+      changes: "#edit",
+      contact: "#edit",
+      upload: "#edit",
+    },
+    submissionData: {
+      name: {
+        firstName: "Beatrice",
+        lastName: "Arthur",
+        preferredName: "Bea",
+      },
+      changes: {
+        idChange: "yes",
+        addressChange: "no",
+      },
+      participant: [
+        {
+          relationship: "grandchild",
+          firstName: "Timothy",
+          lastName: "Arthur",
+          preferredName: "Tim",
+          dob: {
+            day: 9,
+            month: 10,
+            year: 2020,
+          },
+          adjunctive: "yes",
+        },
+        {
+          relationship: "self",
+          firstName: "Beatrice",
+          lastName: "Arthur",
+          preferredName: "Bea",
+          dob: {
+            day: 13,
+            month: 5,
+            year: 1922,
+          },
+          adjunctive: "no",
+        },
+      ],
+      contact: {
+        phoneNumber: "5105551212",
+        additionalInfo: "Timmy my grandson is doing great!",
+      },
+      documents: [
+        {
+          s3Key: "fake/somewhere",
+          s3Url: "s3://participant-uploads/fake/somewhere",
+          originalFilename: "driver-license.jpg",
+        },
+      ],
+    },
   };
 }
 

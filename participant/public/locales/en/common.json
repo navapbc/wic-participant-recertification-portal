@@ -147,6 +147,45 @@
     "foster": "Foster child",
     "other": "Other"
   },
+  "Review": {
+    "intro": "<p>Review the information on this page before submitting.</p>If you want to make changes, select 'Edit' to go to the section you want to change.",
+    "title": "Review and submit your information.",
+    "button": "Submit my information",
+    "heading": "",
+    "details": {
+      "editButton": "Edit",
+      "name": {
+        "heading": "What's your name?",
+        "firstName": "Your first name",
+        "lastName": "Your last name",
+        "preferredName": "Your preferred name (optional)"
+      },
+      "household": {
+        "countHeading": "Who in your household is certifying?",
+        "countIntro": "{{ count }} people in your household",
+        "detailsHeading": "Tell us who you're recertifying for",
+        "participant": "Participant {{ participantNumber }}",
+        "relationship": "Relationship to user: {{ relationship }}",
+        "dob": "DOB: {{month}}/{{day}}/{{year}}",
+        "adjunctive": "Enrolled in Medicaid, SNAP, TANF, or FDPIR",
+        "noAdjunctive": "NOT "
+      },
+      "changes": {
+        "heading": "Household Changes",
+        "idChangeHeading": "Have you or any WIC participants in your household experienced any of these situations in the past year?",
+        "addressChangeHeading": "Have you moved in the past year?"
+      },
+      "documents": {
+        "heading": "Upload documents",
+        "documentCount": "{{ count }} document(s) uploaded:"
+      },
+      "contact": {
+        "heading": "Additional information",
+        "phone": "Your phone number",
+        "comments": "Is there anything else you'd like to share with WIC staff? (optional)"
+      }
+    }
+  },
   "Upload": {
     "title": "You need to upload documents.",
     "intro": "We’ve listed out what kind of information you need to provide and which documents you can use.",

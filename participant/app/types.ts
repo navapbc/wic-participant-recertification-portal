@@ -1,3 +1,5 @@
+import type { DocumentList } from "./utils/db.server";
+
 export type i18nKey = string;
 
 export type legendStyleType = "default" | "large" | "srOnly" | undefined;
@@ -71,8 +73,16 @@ export type CountData = {
   householdSize: number;
 };
 
-export type RepresentativeNameData = {
-  "representative-firstName": string;
-  "representative-lastName": string;
-  "representative-preferredName": string;
+export type NameData = {
+  firstName: string;
+  lastName: string;
+  preferredName: string;
+};
+
+export type SubmissionData = {
+  name?: NameData;
+  changes?: ChangesData;
+  participant?: Participant[];
+  contact?: ContactData;
+  documents?: DocumentList;
 };

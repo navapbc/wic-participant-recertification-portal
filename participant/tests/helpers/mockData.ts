@@ -73,7 +73,7 @@ export function getExpiredSubmission(submissionId: string = uuidv4()) {
 export function getSubmissionForm(
   submissionId: string = uuidv4(),
   route: string,
-  formData: object = {}
+  formData: object | [] = {}
 ) {
   return {
     submissionFormId: uuidv4(),

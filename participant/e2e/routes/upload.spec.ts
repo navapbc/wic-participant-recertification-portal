@@ -6,7 +6,7 @@ import imgGen from "js-image-generator";
 import { fileSync } from "tmp";
 import { fillChangesForm } from "../helpers/formFillers";
 
-const getFileFormImage = (name: string) => {
+export const getFileFormImage = (name: string) => {
   return {
     name: name,
     mimeType: "image/jpeg",

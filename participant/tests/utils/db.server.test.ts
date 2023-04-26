@@ -11,6 +11,7 @@ import {
   upsertDocument,
   listDocuments,
   upsertStaffUser,
+  fetchSubmissionData,
 } from "app/utils/db.server";
 import { v4 as uuidv4 } from "uuid";
 
@@ -71,6 +72,23 @@ it("upserts a submission and looks up localagency", async () => {
     })
   );
   expect(upsertedSubmission).toMatchObject(mockSubmission);
+});
+
+it("updates submission to submitted", async () => {
+  const mockAgency = getLocalAgency();
+  prismaMock.localAgency.findUnique.mockResolvedValue(mockAgency);
+  const submissionID = uuidv4();
+  const mockSubmission = getCurrentSubmission(submissionID);
+  prismaMock.submission.upsert.mockResolvedValue(mockSubmission);
+  await upsertSubmission(submissionID, mockAgency.urlId, true);
+  expect(prismaMock.submission.upsert).toHaveBeenCalledWith(
+    expect.objectContaining({
+      where: { submissionId: submissionID },
+      update: expect.objectContaining({
+        submitted: true,
+      }),
+    })
+  );
 });
 
 it("upserting a submission throws an exception if there is no agency", async () => {
@@ -354,4 +372,58 @@ it("upserting a staff user updates existing staff users", async () => {
     staffUserId: mockStaffUser.staffUserId,
     localAgencyId: mockAgencyOne.localAgencyId,
   });
+});
+
+it("marshals submission data", async () => {
+  const submissionID = uuidv4();
+
+  const formData = [
+    getSubmissionForm(submissionID, "name", {
+      lastName: "McGuffin",
+      firstName: "Amathar",
+    }),
+    getSubmissionForm(submissionID, "changes", {
+      idChange: "no",
+      addressChange: "yes",
+    }),
+    getSubmissionForm(submissionID, "details", [
+      {
+        dob: { day: 1, year: 2001, month: 1 },
+        tag: "iml60gLz26YFfVafywFsp",
+        lastName: "Parker",
+        firstName: "Florence",
+        adjunctive: "yes",
+        relationship: "child",
+      },
+    ]),
+    getSubmissionForm(submissionID, "contact", {
+      phoneNumber: "2234567890",
+      additionalInfo: "Example Comment Contents",
+    }),
+  ];
+  const mockument = getDocument(submissionID, "filename.jpg");
+  prismaMock.submissionForm.findMany.mockResolvedValue(formData);
+  prismaMock.document.findMany.mockResolvedValue([mockument]);
+  const submissionData = await fetchSubmissionData(submissionID);
+  expect(prismaMock.submissionForm.findMany).toHaveBeenCalledWith({
+    where: {
+      submissionId: submissionID,
+    },
+    select: {
+      formRoute: true,
+      formData: true,
+    },
+  });
+  expect(prismaMock.document.findMany).toHaveBeenCalledWith({
+    where: { submissionId: submissionID },
+    select: {
+      s3Key: true,
+      s3Url: true,
+      originalFilename: true,
+    },
+  });
+  expect(submissionData).toBeDefined();
+  expect(submissionData.participant).toBeDefined();
+  const participants = submissionData!.participant!;
+  expect(participants[0].tag).toBe("iml60gLz26YFfVafywFsp");
 });

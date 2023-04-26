@@ -53,7 +53,6 @@ export const TextField = (props: TextFieldProps): ReactElement => {
     ...otherProps
   } = props;
   const { getInputProps, error } = useField(id);
-  const validationStatus = error ? "error" : undefined;
   const TextTypeClass = type == "textarea" ? Textarea : TextInput;
   return (
     <>
@@ -64,7 +63,6 @@ export const TextField = (props: TextFieldProps): ReactElement => {
       {error && <ErrorMessage id={`${id}-error-message`}>{error}</ErrorMessage>}
       <TextTypeClass
         onChange={handleChange}
-        validationStatus={validationStatus}
         defaultValue={defaultValue}
         size={size}
         {...getInputProps({

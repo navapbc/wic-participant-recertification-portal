@@ -68,6 +68,11 @@
     "foster": "Foster child",
     "other": "Other"
   },
+  "reviewsection": {
+    "heading": "Section for Review",
+    "edit": "Edit",
+    "list": ["Item One", "Item Two", "Item Three"]
+  },
   "textfield": {
     "inputbox": "Text input label:",
     "textarea": "This is a text area:"

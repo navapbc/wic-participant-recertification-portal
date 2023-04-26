@@ -16,7 +16,7 @@ import { useLoaderData } from "@remix-run/react";
 import type { Params } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { cookieParser } from "app/cookies.server";
-import type { RepresentativeNameData } from "app/types";
+import type { NameData } from "app/types";
 import { routeFromName } from "~/utils/routing";
 import {
   upsertSubmissionForm,
@@ -36,7 +36,7 @@ export const loader: LoaderFunction = async ({
   const existingNameData = (await findSubmissionFormData(
     submissionID,
     "name"
-  )) as RepresentativeNameData;
+  )) as NameData;
   return json(
     {
       submissionID: submissionID,
