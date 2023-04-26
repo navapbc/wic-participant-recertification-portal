@@ -26,6 +26,14 @@ export const Default = {
   },
 };
 
+export const Error = {
+  ...NameInputTemplate,
+  args: {
+    ...defaultProps,
+    id: "error Name Input Error",
+  },
+};
+
 export const PreferredName = {
   ...NameInputTemplate,
   args: {

@@ -33,6 +33,14 @@ export const Default = {
   },
 };
 
+export const Error = {
+  ...RelationshipInputTemplate,
+  args: {
+    name: "relationship-error Error Message",
+    ...defaultRelationshipInputProps,
+  },
+};
+
 export const RelationshipInputLargeLegend = {
   ...RelationshipInputTemplate,
   args: {

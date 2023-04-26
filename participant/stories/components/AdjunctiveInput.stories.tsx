@@ -27,6 +27,14 @@ export const Default = {
   },
 };
 
+export const Error = {
+  ...AdjunctiveTemplate,
+  args: {
+    name: "adjunctive-error Example Error",
+    ...defaultAdjunctiveProps,
+  },
+};
+
 export const AdjunctiveLargeLegend = {
   ...AdjunctiveTemplate,
   args: {

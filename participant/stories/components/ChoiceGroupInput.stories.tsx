@@ -78,6 +78,14 @@ export const RadioGroup = {
   },
 };
 
+export const RadioGroupError = {
+  ...ChoiceGroupInputTemplate,
+  args: {
+    name: "input-radio-error Example Error",
+    ...defaultChoiceGroupInputProps,
+  },
+};
+
 export const RadioGroupLargeLegend = {
   ...ChoiceGroupInputTemplate,
   args: {
@@ -117,6 +125,16 @@ export const CheckboxGroup = {
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",
     name: "input-checkbox",
+  },
+};
+
+export const CheckboxGroupError = {
+  ...ChoiceGroupInputTemplate,
+  args: {
+    ...defaultChoiceGroupInputProps,
+    titleKey: "test:inputchoice.labelCheckbox",
+    type: "checkbox",
+    name: "input-checkbox-error Example Error",
   },
 };
 

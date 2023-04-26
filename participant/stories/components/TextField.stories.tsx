@@ -27,6 +27,14 @@ export const TextInput = {
   },
 };
 
+export const TextInputError = {
+  ...TextFieldTemplate,
+  args: {
+    ...defaultProps,
+    id: "text-field-error Example Error",
+  },
+};
+
 export const TextInputWithHint = {
   ...TextFieldTemplate,
   args: {
@@ -83,5 +91,15 @@ export const TextArea = {
     ...defaultProps,
     labelKey: "test:textfield.textarea",
     type: "textarea",
+  },
+};
+
+export const TextAreaError = {
+  ...TextFieldTemplate,
+  args: {
+    ...defaultProps,
+    labelKey: "test:textfield.textarea",
+    type: "textarea",
+    id: "text-area-error Example Error",
   },
 };
