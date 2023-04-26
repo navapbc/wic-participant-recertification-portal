@@ -148,7 +148,7 @@
     "other": "Other"
   },
   "Review": {
-    "intro": "<p>Review the information on this page before submitting.</p>If you want to make changes, select 'Edit' to go to the section you want to change.",
+    "intro": "Review the information on this page before submitting. If you want to make changes, select 'Edit' to go to the section you want to change.",
     "title": "Review and submit your information.",
     "button": "Submit my information",
     "heading": "",
@@ -161,23 +161,25 @@
         "preferredName": "Your preferred name (optional)"
       },
       "household": {
-        "countHeading": "Who in your household is certifying?",
-        "countIntro": "{{ count }} people in your household",
+        "countHeading": "Who in your household is recertifying?",
+        "countIntro": "{{ count }} {{ person }} in your household",
+        "person": "person",
+        "people": "people",
         "detailsHeading": "Tell us who you're recertifying for",
         "participant": "Participant {{ participantNumber }}",
-        "relationship": "Relationship to user: {{ relationship }}",
-        "dob": "DOB: {{month}}/{{day}}/{{year}}",
+        "relationship": "Relationship to you: {{ relationship }}",
+        "dob": "Date of birth: {{month}}/{{day}}/{{year}}",
         "adjunctive": "Enrolled in Medicaid, SNAP, TANF, or FDPIR",
-        "noAdjunctive": "NOT "
+        "noAdjunctive": "Not enrolled in Medicaid, SNAP, TANF, or FDPIR"
       },
       "changes": {
-        "heading": "Household Changes",
+        "heading": "Household changes",
         "idChangeHeading": "Have you or any WIC participants in your household experienced any of these situations in the past year?",
         "addressChangeHeading": "Have you moved in the past year?"
       },
       "documents": {
         "heading": "Upload documents",
-        "documentCount": "{{ count }} document(s) uploaded:"
+        "documentCount": "{{ count }} document(s) uploaded"
       },
       "contact": {
         "heading": "Additional information",

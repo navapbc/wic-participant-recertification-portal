@@ -13,92 +13,103 @@ export type SubmissionFormProps = {
     upload: string;
   };
   submissionData: SubmissionData;
-  detailsKey: i18nKey;
+  submissionKey: i18nKey;
 };
 
 export const SubmissionForm = ({
   editable,
   editHrefs,
   submissionData,
-  detailsKey,
+  submissionKey,
 }: SubmissionFormProps): ReactElement => {
   const { t } = useTranslation();
-  const editButtonKey = `${detailsKey}.editButton`;
+  const editButtonKey = `${submissionKey}.editButton`;
   const nameSection = (
     <ReviewSection
       editHref={editable && editHrefs ? editHrefs.name : undefined}
-      headingKey={`${detailsKey}.name.heading`}
+      headingKey={`${submissionKey}.name.heading`}
       editButtonKey={editButtonKey}
       key="nameSection"
     >
       <dl>
-        <dt>
-          <strong>
-            <Trans i18nKey={`${detailsKey}.name.firstName`} />
-          </strong>
-        </dt>
-        <dd>{submissionData.name?.firstName}</dd>
-
-        <dt>
-          <strong>
-            <Trans i18nKey={`${detailsKey}.name.lastName`} />
-          </strong>
-        </dt>
-        <dd>{submissionData.name?.lastName}</dd>
+        <div className="margin-bottom-3">
+          <dt>
+            <strong>
+              <Trans i18nKey={`${submissionKey}.name.firstName`} />
+            </strong>
+          </dt>
+          <dd>{submissionData.name?.firstName}</dd>
+        </div>
+        <div className="margin-bottom-3">
+          <dt>
+            <strong>
+              <Trans i18nKey={`${submissionKey}.name.lastName`} />
+            </strong>
+          </dt>
+          <dd>{submissionData.name?.lastName}</dd>
+        </div>
         {submissionData.name?.preferredName && (
-          <>
+          <div className="margin-bottom-3">
             <dt>
               <strong>
-                <Trans i18nKey={`${detailsKey}.name.preferredName`} />
+                <Trans i18nKey={`${submissionKey}.name.preferredName`} />
               </strong>
             </dt>
             <dd>{submissionData.name?.preferredName}</dd>
-          </>
+          </div>
         )}
       </dl>
     </ReviewSection>
   );
+
+  const countIntro = t(`${submissionKey}.household.countIntro`, {
+    count: submissionData.participant?.length,
+    person:
+      submissionData.participant?.length || 0 > 1
+        ? t(`${submissionKey}.household.people`)
+        : t(`${submissionKey}.household.person`),
+  });
   const detailsSection = (
     <ReviewSection
       editHref={editable && editHrefs ? editHrefs.details : undefined}
-      headingKey={`${detailsKey}.household.countHeading`}
+      headingKey={`${submissionKey}.household.countHeading`}
       editButtonKey={editButtonKey}
     >
       <div>
-        <Trans
-          i18nKey={`${detailsKey}.household.countIntro`}
-          count={submissionData.participant?.length}
-        />
+        {countIntro}
         <h3>
-          <Trans i18nKey={`${detailsKey}.household.detailsHeading`} />
+          <Trans i18nKey={`${submissionKey}.household.detailsHeading`} />
         </h3>
         {submissionData.participant?.map((participant, index) => {
           return (
             <div key={`participant-${index}`}>
               <strong>
-                {t(`${detailsKey}.household.participant`, {
+                {t(`${submissionKey}.household.participant`, {
                   participantNumber: index + 1,
                 })}
               </strong>
-              <ul>
+              <ul className="margin-top-1">
                 <li key={`participant-firstname-${index}`}>
                   {participant.firstName} {participant.lastName}{" "}
                   {participant?.preferredName &&
                     `(${participant.preferredName})`}
                 </li>
                 <li key={`participant-relationship-${index}`}>
-                  {t(`${detailsKey}.household.relationship`, {
+                  {t(`${submissionKey}.household.relationship`, {
                     relationship: t(`Relationship.${participant.relationship}`),
                   })}
                 </li>
                 <li key={`participant-dob-${index}`}>
-                  {t(`${detailsKey}.household.dob`, { ...participant.dob })}
+                  {t(`${submissionKey}.household.dob`, { ...participant.dob })}
                 </li>
                 <li key={`participant-adjunctive-${index}`}>
-                  {participant.adjunctive !== "yes" && (
-                    <Trans i18nKey={`${detailsKey}.household.noAdjunctive`} />
+                  {participant.adjunctive !== "yes" ? (
+                    <Trans
+                      i18nKey={`${submissionKey}.household.noAdjunctive`}
+                    />
+                  ) : (
+                    <Trans i18nKey={`${submissionKey}.household.adjunctive`} />
                   )}
-                  <Trans i18nKey={`${detailsKey}.household.adjunctive`} />
                 </li>
               </ul>
             </div>
@@ -110,30 +121,44 @@ export const SubmissionForm = ({
   const changesSection = (
     <ReviewSection
       editHref={editable && editHrefs ? editHrefs.changes : undefined}
-      headingKey={`${detailsKey}.changes.heading`}
+      headingKey={`${submissionKey}.changes.heading`}
       editButtonKey={editButtonKey}
     >
       <div>
-        <div>
-          <strong>
-            <Trans i18nKey={`${detailsKey}.changes.idChangeHeading`} />
-          </strong>
-          <List type="unordered" i18nKey="Changes.nameIdQuestion.situations" />
-          <div className="margin-top-2">
-            <Trans
-              i18nKey={`Changes.${submissionData.changes?.idChange}Answer`}
-            />
-          </div>
+        <div className="margin-bottom-3">
+          <dl>
+            <dt>
+              <strong>
+                <Trans i18nKey={`${submissionKey}.changes.idChangeHeading`} />
+              </strong>
+              <List
+                type="unordered"
+                i18nKey="Changes.nameIdQuestion.situations"
+                className="margin-top-1"
+              />
+            </dt>
+            <dd>
+              <Trans
+                i18nKey={`Changes.${submissionData.changes?.idChange}Answer`}
+              />
+            </dd>
+          </dl>
         </div>
-        <div className="margin-top-2">
-          <strong>
-            <Trans i18nKey={`${detailsKey}.changes.addressChangeHeading`} />
-          </strong>
-          <div className="margin-top-2 margin-bottom-2">
-            <Trans
-              i18nKey={`Changes.${submissionData.changes?.addressChange}Answer`}
-            />
-          </div>
+        <div className="margin-bottom-3">
+          <dl>
+            <dt>
+              <strong>
+                <Trans
+                  i18nKey={`${submissionKey}.changes.addressChangeHeading`}
+                />
+              </strong>
+            </dt>
+            <dd>
+              <Trans
+                i18nKey={`Changes.${submissionData.changes?.addressChange}Answer`}
+              />{" "}
+            </dd>
+          </dl>
         </div>
       </div>
     </ReviewSection>
@@ -141,23 +166,27 @@ export const SubmissionForm = ({
   const documentsSection = (
     <ReviewSection
       editHref={editable && editHrefs ? editHrefs.upload : undefined}
-      headingKey={`${detailsKey}.documents.heading`}
+      headingKey={`${submissionKey}.documents.heading`}
       editButtonKey={editButtonKey}
     >
-      <div>
-        <strong>
-          {t(`${detailsKey}.documents.documentCount`, {
-            count: submissionData.documents?.length,
-          })}
-        </strong>
-        <ul>
-          {submissionData.documents?.map((document, index) => {
-            return (
-              <li key={`document-${index}`}>{document.originalFilename}</li>
-            );
-          })}
-        </ul>
-      </div>
+      <dl>
+        <dt>
+          <strong>
+            {t(`${submissionKey}.documents.documentCount`, {
+              count: submissionData.documents?.length,
+            })}
+          </strong>
+        </dt>
+        <dd>
+          <ul className="margin-top-1">
+            {submissionData.documents?.map((document, index) => {
+              return (
+                <li key={`document-${index}`}>{document.originalFilename}</li>
+              );
+            })}
+          </ul>
+        </dd>
+      </dl>
     </ReviewSection>
   );
   const formattedPhone =
@@ -169,27 +198,29 @@ export const SubmissionForm = ({
   const contactSection = (
     <ReviewSection
       editHref={editable && editHrefs ? editHrefs.contact : undefined}
-      headingKey={`${detailsKey}.contact.heading`}
+      headingKey={`${submissionKey}.contact.heading`}
       editButtonKey={editButtonKey}
     >
-      <div>
-        <div className="margin-bottom-1">
-          <strong>
-            <Trans i18nKey={`${detailsKey}.contact.phone`} />
-          </strong>
+      <dl>
+        <div className="margin-bottom-3">
+          <dt>
+            <strong>
+              <Trans i18nKey={`${submissionKey}.contact.phone`} />
+            </strong>
+          </dt>
+          <dd>{formattedPhone}</dd>
         </div>
-        {formattedPhone}
         {submissionData.contact?.additionalInfo && (
-          <div className="margin-top-1 margin-bottom-1">
-            <div className="margin-bottom-1">
+          <div>
+            <dt>
               <strong>
-                <Trans i18nKey={`${detailsKey}.contact.comments`} />
+                <Trans i18nKey={`${submissionKey}.contact.comments`} />
               </strong>
-            </div>
-            <div>{submissionData.contact.additionalInfo}</div>
+            </dt>
+            <dd>{submissionData.contact.additionalInfo}</dd>
           </div>
         )}
-      </div>
+      </dl>
     </ReviewSection>
   );
   return (

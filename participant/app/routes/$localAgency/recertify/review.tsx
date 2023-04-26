@@ -40,7 +40,6 @@ export const loader: LoaderFunction = async ({
   return json(
     {
       submissionID: submissionID,
-      reviewEditable: true,
       editHrefs: {
         name: editNameURL,
         details: editDetailsURL,
@@ -64,12 +63,11 @@ export const action = async ({ request }: { request: Request }) => {
 };
 
 export default function Review() {
-  const { reviewEditable, submissionData, editHrefs } =
-    useLoaderData<typeof loader>();
+  const { submissionData, editHrefs } = useLoaderData<typeof loader>();
   const formProps: SubmissionFormProps = {
-    editable: reviewEditable,
+    editable: true,
     editHrefs: editHrefs,
-    detailsKey: "Review.details",
+    submissionKey: "Review.details",
     submissionData: submissionData,
   };
   return (
@@ -77,7 +75,9 @@ export default function Review() {
       <h1>
         <Trans i18nKey="Review.title" />
       </h1>
-      <Trans i18nKey="Review.intro" />
+      <p className="intro">
+        <Trans i18nKey="Review.intro" />
+      </p>
       <SubmissionForm {...formProps} />
       <Form method="post">
         <Button type="submit" className="margin-top-6">
