@@ -1,15 +1,13 @@
-import { Button } from "@trussworks/react-uswds";
 import React from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { useLoaderData } from "@remix-run/react";
 import type { Params } from "@remix-run/react";
 import { SubmissionForm } from "~/components/SubmissionForm";
 import type { SubmissionFormProps } from "~/components/SubmissionForm";
 import { cookieParser } from "~/cookies.server";
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 import { findSubmission, fetchSubmissionData } from "~/utils/db.server";
-import { routeRelative } from "~/utils/routing";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -37,19 +35,22 @@ export default function Review() {
   const { submissionData, submittedDate } = useLoaderData<typeof loader>();
   const formProps: SubmissionFormProps = {
     editable: false,
-    detailsKey: "Review.details",
+    submissionKey: "Review.details",
     submissionData: submissionData,
   };
-  const { t } = useTranslation();
 
   return (
     <div>
       <h1>
         <Trans i18nKey="Confirm.title" />
       </h1>
-      <Trans i18nKey="Confirm.intro" />
+      <p className="intro">
+        <Trans i18nKey="Confirm.intro" />
+      </p>
       <div className="margin-top-2">
-        <Trans i18nKey="Confirm.submitted" />
+        <strong>
+          <Trans i18nKey="Confirm.submitted" />
+        </strong>
         {submittedDate}
       </div>
       <SubmissionForm {...formProps} />
