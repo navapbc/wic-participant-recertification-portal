@@ -36,6 +36,7 @@ services:
     ports:
       - "3003:3000"
       - "6066:6006"
+      - "8002:8002"
     volumes:
       # Mount the app directory for faster local development.
       - ./:/home/node/remix

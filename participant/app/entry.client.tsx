@@ -7,8 +7,6 @@ import { I18nextProvider, initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
 import { getInitialNamespaces } from "remix-i18next";
-import { MatomoProvider } from "@jonkoops/matomo-tracker-react";
-import { matomoInstance } from "./matomo.config";
 
 async function hydrate() {
   await i18next
@@ -35,11 +33,9 @@ async function hydrate() {
     hydrateRoot(
       document,
       <I18nextProvider i18n={i18next}>
-        {/* <MatomoProvider value={matomoInstance}> */}
-            <StrictMode>
-              <RemixBrowser />
-            </StrictMode>
-        {/* </MatomoProvider> */}
+        <StrictMode>
+          <RemixBrowser />
+        </StrictMode>
       </I18nextProvider>
     );
   });
