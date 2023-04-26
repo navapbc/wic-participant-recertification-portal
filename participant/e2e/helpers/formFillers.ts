@@ -2,7 +2,6 @@ import { expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
 import type { Participant } from "~/types";
 import { capitalize } from "lodash";
-
 export async function fillChangesForm(
   page: Page,
   idChange: string,
