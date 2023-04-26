@@ -67,3 +67,23 @@ test("there are no edit buttons on the page", async ({ page }) => {
   await expect(page).toHaveURL("/gallatin/recertify/confirm");
   await expect(page.getByRole("link", { name: "Edit" })).toHaveCount(0);
 });
+
+test("hitting the back button after submission shows a warning", async ({
+  page,
+}) => {
+  await runTheForms(page);
+  await page.getByRole("button", { name: "Submit my information" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/confirm");
+  await page.goBack();
+  await expect(page).toHaveURL(
+    "/gallatin/recertify/confirm?previouslySubmitted=true"
+  );
+  const noEditing = page.getByTestId("alert");
+  await expect(noEditing).toHaveText(
+    /You cannot review information after it’s submitted/
+  );
+  const startOverLink = page.getByRole("link", { name: "Start over" });
+  await expect(startOverLink).toHaveCount(1);
+  await startOverLink.click();
+  await expect(page).toHaveURL("/gallatin/recertify/?newSession=true");
+});

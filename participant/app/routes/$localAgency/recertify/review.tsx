@@ -25,7 +25,9 @@ export const loader: LoaderFunction = async ({
   const { submissionID, headers } = await cookieParser(request, params);
   const submission = await findSubmission(submissionID);
   if (submission?.submitted) {
-    throw redirect(routeRelative(request, "confirm"));
+    throw redirect(
+      routeRelative(request, "confirm", { previouslySubmitted: true })
+    );
   }
   const submissionData = await fetchSubmissionData(submissionID);
   const [
