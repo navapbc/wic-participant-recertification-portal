@@ -12,7 +12,7 @@ export type ReviewSectionProps = {
 export const ReviewSection = (props: ReviewSectionProps): ReactElement => {
   const { editHref, headingKey, editButtonKey, children } = props;
   return (
-    <div className="border-bottom-1px">
+    <div className="border-bottom-1px review-section">
       <h2>
         <Trans i18nKey={headingKey} />
         {editHref && (

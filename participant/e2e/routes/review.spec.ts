@@ -89,7 +89,9 @@ test("clicking edit on the household section navigates back to /details", async 
   await runTheForms(page);
   // Expect a title "to contain" a correct page title.
   await page
-    .getByRole("heading", { name: "Who in your household is certifying? Edit" })
+    .getByRole("heading", {
+      name: "Who in your household is recertifying? Edit",
+    })
     .getByRole("link", { name: "Edit" })
     .click();
 
