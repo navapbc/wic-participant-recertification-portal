@@ -21,7 +21,7 @@
             "firstName": "Mandy",
             "lastName": "Cho",
             "dateOfBirth": "04/02/2022",
-            "adjunctive": ""
+            "adjunctive": "no"
           }
         ],
         "contact": {
@@ -67,28 +67,28 @@
             "lastName": "Brown",
             "preferredName": "Nick Brown",
             "dateOfBirth": "07/03/1993",
-            "adjunctive": "snap"
+            "adjunctive": "yes"
           },
           {
             "relationship": "child",
             "firstName": "Zoe",
             "lastName": "Brown",
             "dateOfBirth": "03/03/2020",
-            "adjunctive": "snap"
+            "adjunctive": "yes"
           },
           {
             "relationship": "child",
             "firstName": "Mia",
             "lastName": "Brown",
             "dateOfBirth": "03/03/2020",
-            "adjunctive": "snap"
+            "adjunctive": "yes"
           },
           {
             "relationship": "child",
             "firstName": "Mason",
             "lastName": "Brown",
             "dateOfBirth": "10/14/2022",
-            "adjunctive": "snap"
+            "adjunctive": "yes"
           }
         ],
         "contact": {
@@ -130,14 +130,14 @@
             "lastName": "Schneider",
             "preferredName": "Liz",
             "dateOfBirth": "11/21/1990",
-            "adjunctive": "fdpir"
+            "adjunctive": "yes"
           },
           {
             "relationship": "child",
             "firstName": "Seth",
             "lastName": "Schneider",
             "dateOfBirth": "02/23/2023",
-            "adjunctive": "fdpir"
+            "adjunctive": "yes"
           }
         ],
         "contact": {

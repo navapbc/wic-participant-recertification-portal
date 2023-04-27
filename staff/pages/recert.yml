@@ -181,7 +181,7 @@ blocks:
                   {% else -%} {{ participant.relationship | title }}
                   {%- endif %}
                   Date of birth: {{ participant.dateOfBirth }}
-                  Adjunctive eligibility: {{ "Yes" if participant.adjunctive != "" else "No" }}
+                  Adjunctive eligibility: {{ participant.adjunctive | title }}
                   {% endfor -%}
                 on:
                   __args: 0.data.form_data
@@ -205,11 +205,7 @@ blocks:
                         </li>
                         <li class="date-of-birth">Date of birth: {{ participant.dateOfBirth }}</li>
                         <li class="adjunctive">Adjunctive eligibility:
-                          {% if participant.adjunctive != "" %}
-                            Yes
-                          {% else %}
-                            No
-                          {% endif %}
+                          {{ participant.adjunctive | title }}
                         </li>
                       </ul>
                     </div>
