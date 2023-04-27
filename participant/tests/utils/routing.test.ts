@@ -1,4 +1,4 @@
-import { Participant } from "~/types";
+import type { Participant } from "~/types";
 import { routeRelative, routeFromChanges } from "~/utils/routing";
 const baseRequest = {
   url: "http://localhost:3000/gallatin/recertify/somewhere",

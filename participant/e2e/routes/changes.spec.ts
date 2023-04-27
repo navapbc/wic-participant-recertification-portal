@@ -3,6 +3,21 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { parseSubmissionID, validateCookie } from "../helpers/cookies";
 import { parse } from "querystring";
+import type { Participant } from "~/types";
+import {
+  fillParticipantForm,
+  fillCountForm,
+  fillNameForm,
+  fillChangesForm,
+} from "../helpers/formFillers";
+
+const participantData: Omit<Participant, "adjunctive"> = {
+  dob: { day: 3, year: 2004, month: 2 },
+  tag: "TtmTDA5JcBAWr0tUWWmit",
+  firstName: "Delightful",
+  lastName: "Cheesemuffin",
+  relationship: "child",
+};
 
 test("changes has no automatically detectable accessibility errors", async ({
   page,
@@ -115,4 +130,30 @@ test(`the changes form submits a POST request, and on return to the page,
       })
       .getByText("Yes")
   ).toBeChecked();
+});
+
+// Test that having a participant with no adjunctive eligibility, but
+// no changes still sends you to the /upload page
+test("no changes, but participants without adjunctive eligibility sends us to upload", async ({
+  page,
+}) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, { ...participantData, adjunctive: "no" }, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
+  await fillChangesForm(page, "no", "no", "/gallatin/recertify/upload");
+});
+
+// Test that having all participants with adjunctive eligibility, but
+// no changes sends you to the /contact page
+test("no changes, but participants WITH adjunctive eligibility sends us to contact", async ({
+  page,
+}) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, { ...participantData, adjunctive: "yes" }, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
+  await fillChangesForm(page, "no", "no", "/gallatin/recertify/contact");
 });

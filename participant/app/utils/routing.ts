@@ -1,4 +1,4 @@
-import type { ChangesData, CountData, SubmissionData } from "~/types";
+import type { CountData, SubmissionData } from "~/types";
 import { stringify } from "querystring";
 import type { ParsedUrlQueryInput } from "querystring";
 import { determineProof } from "./determineProof";

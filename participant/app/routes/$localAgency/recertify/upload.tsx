@@ -28,16 +28,10 @@ import {
   deleteDocument,
   fetchSubmissionData,
   findDocument,
-  findSubmissionFormData,
   listDocuments,
   upsertDocument,
 } from "app/utils/db.server";
-import type {
-  ChangesData,
-  PreviousUpload,
-  Proofs,
-  SubmittedFile,
-} from "app/types";
+import type { PreviousUpload, Proofs, SubmittedFile } from "app/types";
 import { determineProof } from "app/utils/determineProof";
 import { routeRelative } from "app/utils/routing";
 import {

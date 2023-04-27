@@ -1,5 +1,5 @@
 import { determineProof } from "app/utils/determineProof";
-import { Participant } from "~/types";
+import type { Participant } from "~/types";
 
 const participantData = {
   dob: { day: 3, year: 2004, month: 2 },
