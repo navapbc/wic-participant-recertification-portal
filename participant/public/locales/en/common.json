@@ -190,7 +190,7 @@
   },
   "Upload": {
     "title": "You need to upload documents.",
-    "intro": "We’ve listed out what kind of information you need to provide and which documents you can use.",
+    "intro": "We’ve listed out what kind of information you need to provide and which documents you can use. If you don't have any of these documents, call your local WIC office and they can help determine next steps.",
     "button": "Upload and continue",
     "address": {
       "label": "Show proof of address",
