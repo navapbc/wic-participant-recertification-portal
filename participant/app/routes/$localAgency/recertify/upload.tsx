@@ -427,7 +427,7 @@ export default function Upload() {
   return (
     <div>
       <h1>{t("Upload.title")}</h1>
-      <div>{t("Upload.intro")}</div>
+      <p>{t("Upload.intro")}</p>
       {documentProofElements}
       <Form method="get" id="previousFiles" name="previous-uploads-form">
         {previousUploadPreviews}
