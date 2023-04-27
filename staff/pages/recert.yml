@@ -177,11 +177,8 @@ blocks:
                   {% for participant in details %}
                   {{ participant.lastName }}, {{ participant.firstName }} {{ "(" + participant.preferredName + ")" if participant.preferredName }}
                   Relationship to contact person:
-                  {%- if participant.relationship == "self" %} Self
-                  {%- elif participant.relationship == "child" %} Child
-                  {%- elif participant.relationship == "grandchild" %} Grandchild
-                  {%- elif participant.relationship == "foster" %} Foster child
-                  {%- else %} Other
+                  {% if participant.relationship == "foster" -%} Foster child
+                  {% else -%} {{ participant.relationship | title }}
                   {%- endif %}
                   Date of birth: {{ participant.dateOfBirth }}
                   Adjunctive eligibility: {{ "Yes" if participant.adjunctive != "" else "No" }}
@@ -202,17 +199,9 @@ blocks:
                       </div>
                       <ul>
                         <li class="relationship">Relationship to contact person:
-                          {% if participant.relationship == "self" %}
-                            Self
-                          {% elif participant.relationship == "child" %}
-                            Child
-                          {% elif participant.relationship == "grandchild" %}
-                            Grandchild
-                          {% elif participant.relationship == "foster" %}
-                            Foster child
-                          {% else %}
-                            Other
-                          {% endif %}
+                          {% if participant.relationship == "foster" -%} Foster child
+                          {% else -%} {{ participant.relationship | title }}
+                          {%- endif %}
                         </li>
                         <li class="date-of-birth">Date of birth: {{ participant.dateOfBirth }}</li>
                         <li class="adjunctive">Adjunctive eligibility:
