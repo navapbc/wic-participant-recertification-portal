@@ -48,7 +48,15 @@
     "intro": "During your appointment, your local WIC clinic staff will confirm the information you sent.",
     "startOverText": "Start over",
     "submitted": "Form submitted at: ",
-    "previouslySubmittedAlert": "You cannot review information after it’s submitted. If you need to make changes or add additional information, you must go through this form again. "
+    "previouslySubmittedAlert": "You cannot review information after it’s submitted. If you need to make changes or add additional information, you must go through this form again. ",
+    "feedback": {
+      "heading": "Help us improve this experience",
+      "intro": "We’d like to hear more about your experience using this site. Please take a few minutes to share your feedback.",
+      "survey": {
+        "text": "<0>Take the 3 question survey</0>",
+        "link": ["https://forms.gle/FBKaK3vjbHJwmzyA8"]
+      }
+    }
   },
   "Contact": {
     "button": "Continue",

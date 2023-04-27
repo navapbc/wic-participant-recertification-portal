@@ -10,6 +10,12 @@ import type { LoaderFunction } from "@remix-run/node";
 import { findSubmission, fetchSubmissionData } from "~/utils/db.server";
 import { Alert } from "@trussworks/react-uswds";
 import { routeRelative } from "~/utils/routing";
+import {
+  SummaryBox,
+  SummaryBoxContent,
+  SummaryBoxHeading,
+} from "@trussworks/react-uswds";
+import TransLinks from "~/components/TransLinks";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -75,6 +81,21 @@ export default function Confirm() {
         </strong>
         {submittedDate}
       </div>
+      <SummaryBox className="margin-bottom-4">
+        <SummaryBoxHeading headingLevel="h2">
+          <Trans i18nKey="Confirm.feedback.heading" />
+        </SummaryBoxHeading>
+        <SummaryBoxContent>
+          <p>
+            <Trans i18nKey="Confirm.feedback.intro" />
+          </p>
+          <TransLinks
+            i18nTextKey="Confirm.feedback.survey.text"
+            i18nLinkKey="Confirm.feedback.survey.link"
+          />
+        </SummaryBoxContent>
+      </SummaryBox>
+      <div className="margin-bottom-4 border-bottom-1px" />
       <SubmissionForm {...formProps} />
     </div>
   );
