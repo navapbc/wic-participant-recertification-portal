@@ -9,9 +9,7 @@ export type ButtonLinkProps = Omit<USWDSLinkProps<RemixLinkProps>, "asCustom">;
 
 export const ButtonLink = (props: ButtonLinkProps): ReactElement => {
   const { className = "", variant = "unstyled", to, children, ...rest } = props;
-  // const {trackEvent, enableLinkTracking} = useMatomo();
-  // enableLinkTracking();
-  // trackEvent({category: 'next-page', action: 'click-event'});
+
   return (
     <USWDSLink
       asCustom={RemixLink}

@@ -19,6 +19,7 @@ import { camelCase, upperFirst } from "lodash";
 import { useEffect } from "react";
 import MatomoTracker from '@jonkoops/matomo-tracker'
 import { useHydrated } from "remix-utils";
+import { MATOMO_URL_BASE } from "./utils/config.server";
 
 
 
@@ -88,17 +89,13 @@ export default function App() {
   // language, this locale will change and i18next will load the correct
   // translation files
   useChangeLanguage(locale);
+  const matomoUrl = MATOMO_URL_BASE; // retrun the localhost if no endpoint is returned. 
 
   let isHydrated = useHydrated();
   if (isHydrated) {
     const tracker = new MatomoTracker({
-      urlBase: 'http://localhost:8080/',
-      // urlBase: 'https://dev-analytics.wic-services.org/',
+      urlBase: matomoUrl,
       siteId: 1,
-      trackerUrl: 'http://localhost:8080/matomo.php',
-      // trackerUrl: 'https://dev-analytics.wic-services.org/matomo.php', // optional, default value: `${urlBase}matomo.php`
-      srcUrl: 'http://localhost:8080/matomo.js',
-      // srcUrl: 'https://dev-analytics.wic-services.org/matomo.js', // optional, default value: `${urlBase}matomo.js` // has to be an https website
       disabled: false, // optional, false by default. Makes all tracking calls no-ops if set to true.
       heartBeat: { // optional, enabled by default
         active: true, // optional, default value: true

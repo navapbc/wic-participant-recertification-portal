@@ -16,8 +16,7 @@ const Layout = ({
   demoMode,
   missingData,
 }: LayoutProps): ReactElement => {
-  // const {trackPageView} = useMatomo();
-  // trackPageView();
+
   return (
     <div className="container">
       {demoMode === "true" ? (
