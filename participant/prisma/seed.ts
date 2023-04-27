@@ -45,6 +45,7 @@ export type SeedDocumentType = {
 
 export type SeedAgencySubmissionsType = {
   submissionId: string;
+  submitted: boolean;
   forms: SeedSubmissionFormsType;
   documents: SeedDocumentType[];
 };
@@ -137,6 +138,8 @@ async function seed() {
     if (!localAgency || localAgency.name != seedAgency.name) {
       await upsertLocalAgency(seedAgency.urlId, seedAgency.name);
       console.log(`Seeding localAgency: ${seedAgency.urlId} 🌱`);
+    } else {
+      console.log(`No need to seed localAgency: ${seedAgency.urlId} 🪴`);
     }
   }
 
@@ -147,7 +150,7 @@ async function seed() {
     const localAgency = await findLocalAgency(seedAgencyUrlId);
     if (localAgency) {
       for (const seedSubmission of seedAgencySubmissions) {
-        await upsertSubmission(seedSubmission.submissionId, localAgency.urlId);
+        await upsertSubmission(seedSubmission.submissionId, localAgency.urlId, seedSubmission.submitted);
         for (let [seedFormRoute, seedFormData] of Object.entries(
           seedSubmission.forms
         )) {

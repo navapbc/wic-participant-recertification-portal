@@ -22,6 +22,7 @@ requests: # Requests defines all the data requests made available in this page c
         ) d on (s.submission_id = d.submission_id)
         left join staff_users su on (s.local_agency_id = su.local_agency_id)
         where su.staff_user_id = :staff_user_id
+        and s.submitted = true
         group by sf.submission_id, s.updated_at, la.name, d.s3_documents
         order by s.updated_at desc;
       parameters:

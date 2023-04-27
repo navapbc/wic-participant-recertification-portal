@@ -2,6 +2,7 @@
   "gallatin": [
     {
       "submissionId": "8795e9f3-32c8-4ecc-963a-8ebc606e58e6",
+      "submitted": true,
       "forms": {
         "name": {
           "firstName": "Abigail",
@@ -45,6 +46,7 @@
     },
     {
       "submissionId": "f29c1ffd-a148-4a58-9592-064a0b990e7e",
+      "submitted": true,
       "forms": {
         "name": {
           "firstName": "Nicholas",
@@ -107,6 +109,7 @@
   "missoula": [
     {
       "submissionId": "67eecabe-ed37-4ff7-a9ac-6b3e19a5c72c",
+      "submitted": true,
       "forms": {
         "name": {
           "firstName": "Elizabeth",
