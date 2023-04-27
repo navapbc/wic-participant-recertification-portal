@@ -17,7 +17,7 @@ import List from "app/components/List";
 import RequiredQuestionStatement from "app/components/RequiredQuestionStatement";
 import { cookieParser } from "app/cookies.server";
 import { changesSchema } from "app/utils/validation";
-import type { ChangesData } from "app/types";
+import type { ChangesData, Participant } from "app/types";
 import { routeFromChanges } from "~/utils/routing";
 import {
   upsertSubmissionForm,
@@ -60,7 +60,11 @@ export const action = async ({ request }: { request: Request }) => {
   const { submissionID } = await cookieParser(request);
   console.log(`Got submission ${JSON.stringify(parsedForm)}`);
   await upsertSubmissionForm(submissionID, "changes", parsedForm);
-  const routeTarget = routeFromChanges(request, parsedForm);
+  const participants = await findSubmissionFormData(submissionID, "details");
+  const routeTarget = routeFromChanges(request, {
+    changes: parsedForm,
+    participant: participants as unknown as Participant[],
+  });
   console.log(`Completed changes form; routing to ${routeTarget}`);
   return redirect(routeTarget);
 };

@@ -26,6 +26,7 @@ import { List } from "app/components/List";
 import { cookieParser } from "app/cookies.server";
 import {
   deleteDocument,
+  fetchSubmissionData,
   findDocument,
   findSubmissionFormData,
   listDocuments,
@@ -145,16 +146,13 @@ export const loader: LoaderFunction = async ({
     // This prevents a remove command from being in the history
     return redirect(routeRelative(request, "/upload"));
   }
-  const existingChangesData = (await findSubmissionFormData(
-    submissionID,
-    "changes"
-  )) as ChangesData;
-  if (!existingChangesData) {
+  const existingSubmissionData = await fetchSubmissionData(submissionID);
+  if (!existingSubmissionData.changes) {
     const returnToChanges = routeRelative(request, "changes");
     console.log(`No changes data; returning to ${returnToChanges}`);
     return redirect(returnToChanges);
   }
-  const proofRequired = determineProof(existingChangesData);
+  const proofRequired = determineProof(existingSubmissionData);
   if (proofRequired.length == 0) {
     const skipToContact = routeRelative(request, "contact");
     console.log(`No proof required; routing to ${skipToContact}`);

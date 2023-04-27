@@ -1,12 +1,15 @@
-import type { ChangesData, Proofs } from "~/types";
+import type { Proofs, SubmissionData } from "~/types";
 
-export const determineProof = (changes: ChangesData): Proofs[] => {
+export const determineProof = (submission: SubmissionData): Proofs[] => {
   let requiredProofs: Proofs[] = [];
-  if (changes.addressChange == "yes") {
+  if (submission.changes?.addressChange == "yes") {
     requiredProofs.push("address");
   }
-  if (changes.idChange == "yes") {
+  if (submission.changes?.idChange == "yes") {
     requiredProofs.push("identity");
+  }
+  if (submission.participant?.some((person) => person.adjunctive === "no")) {
+    requiredProofs.push("income");
   }
   return requiredProofs;
 };
