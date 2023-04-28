@@ -180,7 +180,7 @@ blocks:
                   {% if participant.relationship == "foster" -%} Foster child
                   {% else -%} {{ participant.relationship | title }}
                   {%- endif %}
-                  Date of birth: {{ participant.dateOfBirth }}
+                  Date of birth: {{ participant.dob.month }}/{{ participant.dob.day }}/{{ participant.dob.year }}
                   Adjunctive eligibility: {{ participant.adjunctive | title }}
                   {% endfor -%}
                 on:
@@ -203,7 +203,7 @@ blocks:
                           {% else -%} {{ participant.relationship | title }}
                           {%- endif %}
                         </li>
-                        <li class="date-of-birth">Date of birth: {{ participant.dateOfBirth }}</li>
+                        <li class="date-of-birth">Date of birth: {{ participant.dob.month }}/{{ participant.dob.day }}/{{ participant.dob.year }}</li>
                         <li class="adjunctive">Adjunctive eligibility:
                           {{ participant.adjunctive | title }}
                         </li>

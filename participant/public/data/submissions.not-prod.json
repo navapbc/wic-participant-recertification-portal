@@ -20,7 +20,11 @@
             "relationship": "child",
             "firstName": "Mandy",
             "lastName": "Cho",
-            "dateOfBirth": "04/02/2022",
+            "dob": {
+              "day": 2,
+              "month": 4,
+              "year": 2022
+            },
             "adjunctive": "no"
           }
         ],
@@ -66,28 +70,44 @@
             "firstName": "Nicholas",
             "lastName": "Brown",
             "preferredName": "Nick Brown",
-            "dateOfBirth": "07/03/1993",
+            "dob": {
+              "day": 3,
+              "month": 7,
+              "year": 1993
+            },
             "adjunctive": "yes"
           },
           {
             "relationship": "child",
             "firstName": "Zoe",
             "lastName": "Brown",
-            "dateOfBirth": "03/03/2020",
+            "dob": {
+              "day": 3,
+              "month": 3,
+              "year": 2020
+            },
             "adjunctive": "yes"
           },
           {
             "relationship": "child",
             "firstName": "Mia",
             "lastName": "Brown",
-            "dateOfBirth": "03/03/2020",
+            "dob": {
+              "day": 3,
+              "month": 3,
+              "year": 2020
+            },
             "adjunctive": "yes"
           },
           {
             "relationship": "child",
             "firstName": "Mason",
             "lastName": "Brown",
-            "dateOfBirth": "10/14/2022",
+            "dob": {
+              "day": 14,
+              "month": 10,
+              "year": 2022
+            },
             "adjunctive": "yes"
           }
         ],
@@ -129,14 +149,22 @@
             "firstName": "Elizabeth",
             "lastName": "Schneider",
             "preferredName": "Liz",
-            "dateOfBirth": "11/21/1990",
+            "dob": {
+              "day": 21,
+              "month": 11,
+              "year": 1990
+            },
             "adjunctive": "yes"
           },
           {
             "relationship": "child",
             "firstName": "Seth",
             "lastName": "Schneider",
-            "dateOfBirth": "02/23/2023",
+            "dob": {
+              "day": 23,
+              "month": 2,
+              "year": 2023
+            },
             "adjunctive": "yes"
           }
         ],

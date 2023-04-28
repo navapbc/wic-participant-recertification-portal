@@ -28,7 +28,7 @@ export type NameFormType = {
 };
 
 export type SeedDataType = {
-  [key: string]: string;
+  [key: string]: string | number;
 };
 
 export type SeedSubmissionFormsType = {
