@@ -70,6 +70,7 @@ module "participant" {
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
+  memory               = 2048
   healthcheck_path     = "/healthcheck"
   # The database seed needs longer lead time before healthchecks kick in to kill the container
   healthcheck_start_period = 120
