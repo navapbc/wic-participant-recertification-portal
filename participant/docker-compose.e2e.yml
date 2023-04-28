@@ -38,6 +38,8 @@ services:
         condition: service_healthy
       s3-local:
         condition: service_started
+      createbuckets:
+        condition: service_completed_successfully
     environment:
       DATABASE_URL: postgresql://postgres:incredible_local_secret_phrase@database:5432/postgres?schema=public
       S3_ENDPOINT_URL: http://s3-local:9000
@@ -73,6 +75,16 @@ services:
     networks:
       - participant_portal-e2e
     # Create the playwright container
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - s3-local
+    entrypoint: >
+      /bin/sh -c "/usr/bin/mc config host add myminio http://s3-local:9000 e2e_minio incredible_local_secret_phrase; /usr/bin/mc mb myminio/participant-data; exit 0; "
+    networks:
+      - participant_portal-e2e
+
   playwright:
     build:
       # Use a different Dockerfile specifically to build a slim container just for playwright
@@ -94,6 +106,7 @@ services:
 
 networks:
   participant_portal-e2e:
+
 
 volumes:
   minio_storage:

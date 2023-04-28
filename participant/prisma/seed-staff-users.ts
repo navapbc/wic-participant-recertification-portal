@@ -1,12 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { upsertStaffUser } from "app/utils/db.server";
 import { BUCKET } from "app/utils/config.server";
-import s3Connection, { ensureBucketExists } from "app/utils/s3.connection";
+import s3Connection from "app/utils/s3.connection";
 import { GetObjectCommand, NotFound } from "@aws-sdk/client-s3";
 
 export const getJsonFromS3 = async (key: string): Promise<any | undefined> => {
-  await ensureBucketExists(s3Connection);
-
   const command = new GetObjectCommand({
     Key: key,
     Bucket: BUCKET,

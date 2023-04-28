@@ -14,7 +14,7 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import s3Connection, { ensureBucketExists } from "app/utils/s3.connection";
+import s3Connection from "app/utils/s3.connection";
 import { BUCKET, S3_PRESIGNED_URL_EXPIRATION } from "app/utils/config.server";
 import { readFileSync } from "fs";
 
@@ -63,7 +63,6 @@ export const getURLFromS3 = async (
   key: string,
   duration?: number
 ): Promise<string | undefined> => {
-  await ensureBucketExists(s3Connection);
   const expiresIn = duration || S3_PRESIGNED_URL_EXPIRATION;
   const command = new GetObjectCommand({
     Key: key,
@@ -95,8 +94,6 @@ export const uploadDocument = async (
     const uploadKey = [submissionId, filename].join("/");
     // Read in the contents of the seed document.
     const fileBlob = readFileSync(filepath);
-    // Create the bucket if necessary.
-    await ensureBucketExists(s3Connection);
     // Put the object into s3.
     const command = new PutObjectCommand({
       Body: fileBlob,

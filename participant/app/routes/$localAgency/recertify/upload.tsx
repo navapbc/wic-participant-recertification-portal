@@ -43,6 +43,7 @@ import {
 import {
   MAX_UPLOAD_FILECOUNT,
   MAX_UPLOAD_SIZE_BYTES,
+  S3_UPLOAD_RETRIES,
 } from "app/utils/config.server";
 import { FilePreview } from "~/components/FilePreview";
 import type { TFunction } from "i18next";
@@ -184,6 +185,7 @@ export const action = async ({
 
     const uploadKey = [submissionID, filename!].join("/");
     const fileLocation = await uploadStreamToS3(data, uploadKey);
+
     const { mimeType, error, size } = await checkFile(uploadKey);
     if (error) {
       console.log(

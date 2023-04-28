@@ -9,3 +9,4 @@ export const S3_PRESIGNED_URL_EXPIRATION =
 export const REGION = process.env.AWS_REGION || "us-west-2";
 export const ENDPOINT_URL = process.env.S3_ENDPOINT_URL || "";
 export const BUCKET = process.env.S3_BUCKET || "participant-uploads";
+export const S3_UPLOAD_RETRIES = Number(process.env.S3_UPLOAD_RETRIES) || 3;

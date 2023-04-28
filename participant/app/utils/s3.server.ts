@@ -7,8 +7,12 @@ import {
   NotFound,
 } from "@aws-sdk/client-s3";
 import type { PutObjectCommandInput } from "@aws-sdk/client-s3";
-import s3Connection, { ensureBucketExists } from "app/utils/s3.connection";
-import { BUCKET, ENDPOINT_URL } from "app/utils/config.server";
+import s3Connection from "app/utils/s3.connection";
+import {
+  BUCKET,
+  ENDPOINT_URL,
+  S3_UPLOAD_RETRIES,
+} from "app/utils/config.server";
 import { PassThrough } from "stream";
 import { writeAsyncIterableToWritable } from "@remix-run/node";
 import { fileTypeFromBuffer } from "file-type";
@@ -36,8 +40,6 @@ export const parseKeyFromS3URL = (s3URL: string) => {
 };
 
 export const getFileFromS3 = async (key: string): Promise<File | undefined> => {
-  await ensureBucketExists(s3Connection);
-
   const command = new GetObjectCommand({
     Key: key,
     Bucket: BUCKET,
@@ -60,8 +62,6 @@ export const getFileFromS3 = async (key: string): Promise<File | undefined> => {
 export const readFileHeadFromS3 = async (
   key: string
 ): Promise<Uint8Array | undefined> => {
-  await ensureBucketExists(s3Connection);
-
   const command = new GetObjectCommand({
     Key: key,
     Bucket: BUCKET,
@@ -84,7 +84,6 @@ export const readFileHeadFromS3 = async (
 export const headFilesizeFromS3 = async (
   key: string
 ): Promise<number | undefined> => {
-  await ensureBucketExists(s3Connection);
   const command = new HeadObjectCommand({
     Key: key,
     Bucket: BUCKET,
@@ -104,7 +103,6 @@ export const getURLFromS3 = async (
   key: string,
   duration?: number
 ): Promise<string | undefined> => {
-  await ensureBucketExists(s3Connection);
   const expiresIn = duration || S3_PRESIGNED_URL_EXPIRATION;
   const command = new GetObjectCommand({
     Key: key,
@@ -124,7 +122,6 @@ export const getURLFromS3 = async (
 };
 
 export const deleteFileFromS3 = async (key: string) => {
-  await ensureBucketExists(s3Connection);
   const command = new DeleteObjectCommand({
     Key: key,
     Bucket: BUCKET,
@@ -186,19 +183,28 @@ const uploadStream = ({ Key }: Pick<PutObjectCommandInput, "Key">) => {
 };
 
 export async function uploadStreamToS3(data: any, filename: string) {
-  await ensureBucketExists(s3Connection);
   const stream = uploadStream({
     Key: filename,
   });
   await writeAsyncIterableToWritable(data, stream.writeStream);
-  const file = await stream.promise;
-  if ("Location" in file) {
-    if (PATHSTYLE) {
-      // Workaround to ensure we're logging valid URLs in dev
-      // The port number is missing from file.Location
-      return `${ENDPOINT_URL}/${file.Bucket}/${file.Key}`;
+  for (let retries = 0; retries < S3_UPLOAD_RETRIES; retries++) {
+    try {
+      const file = await stream.promise;
+      if ("Location" in file) {
+        if (PATHSTYLE) {
+          // Workaround to ensure we're logging valid URLs in dev
+          // The port number is missing from file.Location
+          return `${ENDPOINT_URL}/${file.Bucket}/${file.Key}`;
+        }
+        return file.Location;
+      }
+    } catch (e) {
+      console.error(
+        `⚠️ File upload failed: ${e}; retrying ${
+          retries + 1
+        } of ${S3_UPLOAD_RETRIES}`
+      );
     }
-    return file.Location;
   }
   throw new Error(`Upload of ${filename} to S3 aborted!`);
 }

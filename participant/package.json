@@ -4,11 +4,12 @@
   "sideEffects": false,
   "scripts": {
     "build": "remix build",
-    "dev": "run-s dev:startdb css dev:starts3 dev:remix",
+    "dev": "run-s dev:startdb css dev:starts3 dev:createbucket dev:remix",
     "dev:docker": "npm install && run-s css dev:remix",
     "dev:dbreset": "npx prisma migrate reset --force",
     "dev:remix": "remix dev",
     "dev:starts3": "docker compose up s3-local --wait",
+    "dev:createbucket": "docker compose up createbuckets",
     "dev:startdb": "docker compose up postgres --wait && npx prisma db push && npx prisma db seed",
     "css": "run-s css:build css:post",
     "css:build": "sass -I ./styles -I ./node_modules/@uswds -I ./node_modules/@uswds/uswds/packages styles:app/styles/unprefixed --style compressed",
