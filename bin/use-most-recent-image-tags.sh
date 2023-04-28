@@ -33,10 +33,27 @@ if ! type jq &> /dev/null; then
   exit 1
 fi
 
-participant_image_tag=$(aws ecr describe-images  --repository-name wic-prp-participant --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq . --raw-output)
-staff_image_tag=$(aws ecr describe-images  --repository-name wic-prp-staff --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq . --raw-output)
-analytics_image_tag=$(aws ecr describe-images  --repository-name wic-prp-analytics --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' | jq . --raw-output)
 
-echo "participant_image_tag=\"$participant_image_tag\"" > image_tags.tfvars
-echo "staff_image_tag=\"$staff_image_tag\"" >> image_tags.tfvars
-echo "analytics_image_tag=\"$analytics_image_tag\"" >> image_tags.tfvars
+function main() {
+  ENV_NAME=$1
+
+  echo "Using environment: ${ENV_NAME}"
+  rm -f -- image_tags.tfvars
+  getImageTag "participant"
+  getImageTag "staff"
+  getImageTag "analytics"
+  echo "...Done!"
+}
+
+function getImageTag() {
+  APP_NAME=$1
+  echo "Getting task definition for ${APP_NAME}..."
+  task_definition_arn=$(aws ecs describe-task-definition --task-definition "wic-prp-${APP_NAME}-${ENV_NAME}" | jq '.taskDefinition.taskDefinitionArn')
+  echo "Getting image tag for task definition ${task_definition_arn}..."
+  image_tag=$(aws ecs describe-task-definition --task-definition "wic-prp-${APP_NAME}-${ENV_NAME}" | jq '.taskDefinition.containerDefinitions[0].image | split(":")[1]' --raw-output)
+  echo "Using image tag ${image_tag}..."
+  echo "${APP_NAME}_image_tag=\"$image_tag\"" >> image_tags.tfvars
+  echo ""
+}
+
+main "$@"
