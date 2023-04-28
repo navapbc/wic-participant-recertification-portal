@@ -150,7 +150,11 @@ async function seed() {
     const localAgency = await findLocalAgency(seedAgencyUrlId);
     if (localAgency) {
       for (const seedSubmission of seedAgencySubmissions) {
-        await upsertSubmission(seedSubmission.submissionId, localAgency.urlId, seedSubmission.submitted);
+        await upsertSubmission(
+          seedSubmission.submissionId,
+          localAgency.urlId,
+          seedSubmission.submitted
+        );
         for (let [seedFormRoute, seedFormData] of Object.entries(
           seedSubmission.forms
         )) {
