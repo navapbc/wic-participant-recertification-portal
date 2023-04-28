@@ -125,7 +125,6 @@ jobs:
         if: failure()
         uses: jwalton/gh-docker-logs@v2.2.1
         with:
-          images: 'participant-app-e2e,postgres'
           dest: './logs'
       - name: Upload docker logs to github
         if: failure()
