@@ -15,7 +15,6 @@ const Layout = ({
   demoMode,
   missingData,
 }: LayoutProps): ReactElement => {
-
   return (
     <div className="container">
       {demoMode === "true" ? (

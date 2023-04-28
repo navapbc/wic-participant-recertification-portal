@@ -17,11 +17,9 @@ import i18next from "~/i18next.server";
 import Layout from "app/components/Layout";
 import { camelCase, upperFirst } from "lodash";
 import { useEffect } from "react";
-import MatomoTracker from '@jonkoops/matomo-tracker'
+import MatomoTracker from "@jonkoops/matomo-tracker";
 import { useHydrated } from "remix-utils";
-import { MATOMO_URL_BASE } from "./utils/config.server";
-
-
+import { MATOMO_URL_BASE } from "app/utils/config.server";
 
 export function useChangeLanguage(locale: string) {
   const { i18n } = useTranslation();
@@ -89,7 +87,7 @@ export default function App() {
   // language, this locale will change and i18next will load the correct
   // translation files
   useChangeLanguage(locale);
-  const matomoUrl = MATOMO_URL_BASE; // retrun the localhost if no endpoint is returned. 
+  const matomoUrl = MATOMO_URL_BASE || "http://localhost:8080/";
 
   let isHydrated = useHydrated();
   if (isHydrated) {
@@ -97,21 +95,23 @@ export default function App() {
       urlBase: matomoUrl,
       siteId: 1,
       disabled: false, // optional, false by default. Makes all tracking calls no-ops if set to true.
-      heartBeat: { // optional, enabled by default
+      heartBeat: {
+        // optional, enabled by default
         active: true, // optional, default value: true
-        seconds: 10 // optional, default value: `15
+        seconds: 10, // optional, default value: `15
       },
       linkTracking: false, // optional, default value: true
-      configurations: { // optional, default value: {}
+      configurations: {
+        // optional, default value: {}
         // any valid matomo configuration, all below are optional
         disableCookies: true,
         setSecureCookie: true,
-        setRequestMethod: 'POST',
+        setRequestMethod: "POST",
         trackPageView: true,
-      }
-    })
+      },
+    });
 
-    tracker.trackPageView()
+    tracker.trackPageView();
   }
 
   return (
