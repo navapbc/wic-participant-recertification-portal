@@ -62,5 +62,5 @@ it("does not route to /upload if there are no changes and adjunctive eligibility
     participant: [{ ...participantData, adjunctive: "yes" } as Participant],
   };
   const targetUrl = routeFromChanges(baseRequest, noChangesAndAdjunctive);
-  expect(targetUrl).not.toBe("/gallatin/recertify/upload");
+  expect(targetUrl).toBe("/gallatin/recertify/contact");
 });
