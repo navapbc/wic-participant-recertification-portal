@@ -1,11 +1,7 @@
 /* eslint-disable no-var */
 // We cannot use a let or const in a global object
-import {
-  S3Client,
-  CreateBucketCommand,
-  S3ServiceException,
-} from "@aws-sdk/client-s3";
-import { REGION, ENDPOINT_URL, BUCKET } from "app/utils/config.server";
+import { S3Client } from "@aws-sdk/client-s3";
+import { REGION, ENDPOINT_URL } from "app/utils/config.server";
 let s3Connection: S3Client;
 
 // This helps us not call S3 for every request to make sure the bucket exists
