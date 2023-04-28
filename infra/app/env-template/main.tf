@@ -22,6 +22,7 @@ locals {
   participant_service_name                = "${local.project_name}-participant-${var.environment_name}"
   staff_cognito_user_pool_name            = "${local.project_name}-staff-${var.environment_name}"
   staff_service_name                      = "${local.project_name}-staff-${var.environment_name}"
+  staff_function_name                     = "${local.project_name}-staff-${var.environment_name}"
   analytics_service_name                  = "${local.project_name}-analytics-${var.environment_name}"
   analytics_database_name                 = "${local.project_name}-analytics-${var.environment_name}"
   document_upload_s3_name                 = "${local.project_name}-doc-upload-${var.environment_name}"
@@ -197,6 +198,13 @@ resource "aws_ssm_parameter" "staff_jwt_secret" {
   name  = "/metadata/staff/${var.environment_name}-jwt-secret"
   type  = "SecureString"
   value = base64encode(module.staff_secret.random_password)
+}
+
+module "staff_lambda" {
+  source                = "../../modules/lambda-container"
+  function_name         = local.staff_function_name
+  image_repository_name = data.aws_ecr_repository.staff_image_repository.name
+  image_tag             = var.staff_image_tag
 }
 
 module "staff" {
