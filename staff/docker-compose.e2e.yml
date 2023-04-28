@@ -34,7 +34,7 @@ services:
     build:
       target: dev
       context: ../participant
-    command: [ "npm", "run", "dev:dbreset" ]
+    command: ["npm", "run", "dev:dbreset"]
     depends_on:
       database:
         condition: service_healthy
@@ -119,7 +119,6 @@ services:
 
 networks:
   staff-e2e:
-
 
 volumes:
   minio_storage_staff:
