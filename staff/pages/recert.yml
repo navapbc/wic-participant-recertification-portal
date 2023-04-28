@@ -247,18 +247,17 @@ blocks:
           field:
           valueGetter:
             _function:
-              __log:
-                __nunjucks:
-                  template: |
-                    {%- if s3_documents %}
-                    {%- for filename, url in s3_documents %}
-                    {{ filename }}{% if not loop.last -%},{%- endif -%}
-                    {% endfor -%}
-                    {%- else -%}
-                    No documents required
-                    {%- endif -%}
-                  on:
-                    __args: 0.data
+              __nunjucks:
+                template: |
+                  {%- if s3_documents %}
+                  {%- for filename, url in s3_documents %}
+                  {{ filename }}{% if not loop.last -%},{%- endif -%}
+                  {% endfor -%}
+                  {%- else -%}
+                  No documents required
+                  {%- endif -%}
+                on:
+                  __args: 0.data
           cellRenderer:
             _function:
               __nunjucks:
