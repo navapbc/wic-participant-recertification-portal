@@ -80,7 +80,7 @@ services:
     depends_on:
       - s3-local
     entrypoint: >
-      /bin/sh -c " /usr/bin/mc config host add myminio http://s3-local:9000 e2e_minio incredible_local_secret_phrase; /usr/bin/mc mb myminio/participant-data; exit 0; "
+      /bin/sh -c "/usr/bin/mc config host add myminio http://s3-local:9000 e2e_minio incredible_local_secret_phrase; /usr/bin/mc mb myminio/participant-uploads; exit 0; "
 
 volumes:
   remix_dev_nodemodules:
