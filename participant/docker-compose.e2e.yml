@@ -107,6 +107,5 @@ services:
 networks:
   participant_portal-e2e:
 
-
 volumes:
   minio_storage:
