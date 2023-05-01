@@ -1,3 +1,5 @@
+import type { DocumentList } from "./utils/db.server";
+
 export type i18nKey = string;
 
 export type legendStyleType = "default" | "large" | "srOnly" | undefined;
@@ -10,8 +12,13 @@ export type FileCheckError =
   | "invalidType"
   | "fileCount";
 
-export type RouteType = "changes" | "contact" | "count" | "name";
-
+export type RouteType = "changes" | "contact" | "count" | "name" | "details";
+export type RelationshipType =
+  | "self"
+  | "child"
+  | "grandchild"
+  | "foster"
+  | "other";
 export type ChangesData = {
   idChange: string;
   addressChange: string;
@@ -21,6 +28,24 @@ export type FileCheckResult = {
   mimeType?: string;
   error?: FileCheckError;
   size?: number;
+};
+
+export type Participant = {
+  relationship: RelationshipType;
+  firstName: string;
+  lastName: string;
+  preferredName?: string;
+  dob: {
+    day: number;
+    month: number;
+    year: number;
+  };
+  adjunctive: "yes" | "no";
+  tag?: string;
+};
+
+export type ParticipantForm = {
+  participant: Participant[];
 };
 
 export type SubmittedFile = {
@@ -48,8 +73,16 @@ export type CountData = {
   householdSize: number;
 };
 
-export type RepresentativeNameData = {
-  "representative-firstName": string;
-  "representative-lastName": string;
-  "representative-preferredName": string;
+export type NameData = {
+  firstName: string;
+  lastName: string;
+  preferredName: string;
+};
+
+export type SubmissionData = {
+  name?: NameData;
+  changes?: ChangesData;
+  participant?: Participant[];
+  contact?: ContactData;
+  documents?: DocumentList;
 };

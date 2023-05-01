@@ -16,12 +16,21 @@ const defaultAdjunctiveProps: Omit<AdjunctiveInputProps, "name"> = {
   adjunctiveKey: "test:adjunctive",
   required: false,
   legendStyle: "default",
+  keyBase: "adjunctive",
 };
 
 export const Default = {
   ...AdjunctiveTemplate,
   args: {
     name: "adjunctive-default",
+    ...defaultAdjunctiveProps,
+  },
+};
+
+export const Error = {
+  ...AdjunctiveTemplate,
+  args: {
+    name: "adjunctive-error Example Error",
     ...defaultAdjunctiveProps,
   },
 };

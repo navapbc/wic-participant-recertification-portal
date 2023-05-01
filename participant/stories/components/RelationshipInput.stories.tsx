@@ -22,12 +22,21 @@ const defaultRelationshipInputProps: Omit<RelationshipInputProps, "name"> = {
   required: false,
   legendKey: "test:relationship.label",
   legendStyle: "default",
+  keyBase: "relationship",
 };
 
 export const Default = {
   ...RelationshipInputTemplate,
   args: {
     name: "relationship-default",
+    ...defaultRelationshipInputProps,
+  },
+};
+
+export const Error = {
+  ...RelationshipInputTemplate,
+  args: {
+    name: "relationship-error Error Message",
     ...defaultRelationshipInputProps,
   },
 };

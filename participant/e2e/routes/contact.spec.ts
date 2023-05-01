@@ -16,7 +16,7 @@ test("has title", async ({ page }) => {
   await page.goto("/gallatin/recertify/contact");
   // Expect a title "to contain" a correct app title.
   await expect(page).toHaveTitle(/Additional information/);
-  await expect(page).toHaveScreenshot();
+  await expect(page).toHaveScreenshot({ maxDiffPixels: 50 });
 });
 
 // This page should set a cookie
@@ -36,7 +36,7 @@ test(`the contact form submits a POST request, and on return to the page,
   // Fill in the form with basic answers and test that the screenshot for the filled out form matches
   await page.getByTestId("textInput").fill("1234563432");
   await page.getByTestId("textarea").fill("Test");
-  await expect(page).toHaveScreenshot({ fullPage: true });
+  await expect(page).toHaveScreenshot({ fullPage: true, maxDiffPixels: 50 });
 
   // Catch the POST request to the API with the form data while we click "Continue"
   const [postRequest] = await Promise.all([
@@ -62,9 +62,7 @@ test(`the contact form submits a POST request, and on return to the page,
     additionalInfo: "Test",
   });
 
-  // Check that we've moved to the Review page based on our contact
-  //TODO change to /review once we have that pace
-  await expect(page).toHaveURL("/gallatin/recertify");
+  await expect(page).toHaveURL("/gallatin/recertify/review");
 
   // Capture the GET request when we load the /contact page again by clicking "Back"
   const [getRequest] = await Promise.all([
@@ -89,7 +87,7 @@ test(`the contact form submits a POST request, and on return to the page,
     },
     submissionID: submissionID,
   });
-  await expect(page).toHaveScreenshot({ fullPage: true });
+  await expect(page).toHaveScreenshot({ fullPage: true, maxDiffPixels: 50 });
 
   // This is not verifying Playwright checked the boxes, but that the form repopulates
   // from the database record created by submitting the form

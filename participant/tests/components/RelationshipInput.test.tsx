@@ -17,6 +17,7 @@ const testProps: RelationshipInputProps = {
   legendKey: "test:relationship.label",
   legendStyle: "default",
   name: "relationship",
+  keyBase: "relationship",
 };
 
 it("renders the default adjunctive eligibility field", () => {

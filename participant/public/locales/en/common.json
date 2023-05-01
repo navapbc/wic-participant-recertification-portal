@@ -43,6 +43,21 @@
     "noAnswer": "No",
     "button": "Continue"
   },
+  "Confirm": {
+    "title": "Thanks for starting your recertification!",
+    "intro": "During your appointment, your local WIC clinic staff will confirm the information you sent.",
+    "startOverText": "Start over",
+    "submitted": "Form submitted at: ",
+    "previouslySubmittedAlert": "You cannot review information after it’s submitted. If you need to make changes or add additional information, you must go through this form again. ",
+    "feedback": {
+      "heading": "Help us improve this experience",
+      "intro": "We’d like to hear more about your experience using this site. Please take a few minutes to share your feedback.",
+      "survey": {
+        "text": "<0>Take the 3 question survey</0>",
+        "link": ["https://forms.gle/FBKaK3vjbHJwmzyA8"]
+      }
+    }
+  },
   "Contact": {
     "button": "Continue",
     "title": "Additional information",
@@ -57,7 +72,7 @@
     "intro": "We only need to collect information about WIC participants who have a recertification appointment.",
     "body": "Usually these appointments happen: ",
     "listItems": [
-      "For a child near their birthday or a year after initial enrollment",
+      "For a child near their birthday or a year after initial enrollment.",
       "Shortly after giving birth for a parent that received WIC while pregnant."
     ],
     "example": "For example, we do not need to collect information about a child who will have their mid-certification appointment, or for a parent who has been breastfeeding or using formula for an infant for the past year.",
@@ -72,8 +87,9 @@
   "Details": {
     "participantCard": {
       "cardHeader": "Participant",
-      "cardFooter": "Remove Participant #"
+      "cardFooter": "Remove Participant {{participantIndex}}"
     },
+    "addParticipant": "Add another WIC participant",
     "button": "Continue",
     "intro": "Reminder: We only need to collect information about WIC participants who have a recertification appointment.",
     "title": "Tell us about who you're recertifying for"
@@ -146,9 +162,50 @@
     "foster": "Foster child",
     "other": "Other"
   },
+  "Review": {
+    "intro": "Review the information on this page before submitting. If you want to make changes, select 'Edit' to go to the section you want to change.",
+    "title": "Review and submit your information.",
+    "button": "Submit my information",
+    "heading": "",
+    "details": {
+      "editButton": "Edit",
+      "name": {
+        "heading": "What's your name?",
+        "firstName": "Your first name",
+        "lastName": "Your last name",
+        "preferredName": "Your preferred name (optional)"
+      },
+      "household": {
+        "countHeading": "Who in your household is recertifying?",
+        "countIntro": "{{ count }} {{ person }} in your household",
+        "person": "person",
+        "people": "people",
+        "detailsHeading": "Tell us who you're recertifying for",
+        "participant": "Participant {{ participantNumber }}",
+        "relationship": "Relationship to you: {{ relationship }}",
+        "dob": "Date of birth: {{month}}/{{day}}/{{year}}",
+        "adjunctive": "Enrolled in Medicaid, SNAP, TANF, or FDPIR",
+        "noAdjunctive": "Not enrolled in Medicaid, SNAP, TANF, or FDPIR"
+      },
+      "changes": {
+        "heading": "Household changes",
+        "idChangeHeading": "Have you or any WIC participants in your household experienced any of these situations in the past year?",
+        "addressChangeHeading": "Have you moved in the past year?"
+      },
+      "documents": {
+        "heading": "Upload documents",
+        "documentCount": "{{ count }} document(s) uploaded"
+      },
+      "contact": {
+        "heading": "Additional information",
+        "phone": "Your phone number",
+        "comments": "Is there anything else you'd like to share with WIC staff? (optional)"
+      }
+    }
+  },
   "Upload": {
     "title": "You need to upload documents.",
-    "intro": "We’ve listed out what kind of information you need to provide and which documents you can use.",
+    "intro": "We’ve listed out what kind of information you need to provide and which documents you can use. If you don't have any of these documents, call your local WIC office and they can help determine next steps.",
     "button": "Upload and continue",
     "address": {
       "label": "Show proof of address",

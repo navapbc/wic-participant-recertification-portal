@@ -1,8 +1,8 @@
 import { Button } from "@trussworks/react-uswds";
 import React from "react";
 import { Trans } from "react-i18next";
-import { NameInput } from "~/components/NameInput";
-import type { NameInputProps } from "~/components/NameInput";
+import { NameInput } from "app/components/NameInput";
+import type { NameInputProps } from "app/components/NameInput";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
 import {
   ValidatedForm,
@@ -16,7 +16,7 @@ import { useLoaderData } from "@remix-run/react";
 import type { Params } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { cookieParser } from "app/cookies.server";
-import type { RepresentativeNameData } from "app/types";
+import type { NameData } from "app/types";
 import { routeFromName } from "~/utils/routing";
 import {
   upsertSubmissionForm,
@@ -36,11 +36,13 @@ export const loader: LoaderFunction = async ({
   const existingNameData = (await findSubmissionFormData(
     submissionID,
     "name"
-  )) as RepresentativeNameData;
+  )) as NameData;
   return json(
     {
       submissionID: submissionID,
-      ...setFormDefaults("representativeNameForm", existingNameData),
+      ...setFormDefaults("representativeNameForm", {
+        representative: existingNameData,
+      }),
     },
     { headers: headers }
   );
@@ -58,7 +60,7 @@ export const action = async ({ request }: { request: Request }) => {
   const parsedForm = representativeNameSchema.parse(formData);
   const { submissionID } = await cookieParser(request);
   console.log(`Got submission ${JSON.stringify(parsedForm)}`);
-  await upsertSubmissionForm(submissionID, "name", parsedForm);
+  await upsertSubmissionForm(submissionID, "name", parsedForm.representative);
   const routeTarget = routeFromName(request);
   console.log(`Completed name form; routing to ${routeTarget}`);
   return redirect(routeTarget);
@@ -72,6 +74,7 @@ export default function Name() {
     legendStyle: "srOnly",
     legal: true,
     preferred: true,
+    keyBase: "representative",
   };
 
   return (

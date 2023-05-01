@@ -30,8 +30,11 @@ type MinimalInputProps = {
 // rendered in a story with "error" in the name or route, so that
 // an example error can be shown in Storybook
 export const useField = (name: string) => {
+  const error = name.includes("error")
+    ? name.substring(name.indexOf("error") + 5)
+    : undefined;
   const getter = <T extends MinimalInputProps>(props: T) => {
     return { name: name, ...props } as T;
   };
-  return { error: undefined, getInputProps: getter };
+  return { error: error, getInputProps: getter };
 };

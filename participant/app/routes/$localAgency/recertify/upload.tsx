@@ -26,17 +26,12 @@ import { List } from "app/components/List";
 import { cookieParser } from "app/cookies.server";
 import {
   deleteDocument,
+  fetchSubmissionData,
   findDocument,
-  findSubmissionFormData,
   listDocuments,
   upsertDocument,
 } from "app/utils/db.server";
-import type {
-  ChangesData,
-  PreviousUpload,
-  Proofs,
-  SubmittedFile,
-} from "app/types";
+import type { PreviousUpload, Proofs, SubmittedFile } from "app/types";
 import { determineProof } from "app/utils/determineProof";
 import { routeRelative } from "app/utils/routing";
 import {
@@ -145,16 +140,13 @@ export const loader: LoaderFunction = async ({
     // This prevents a remove command from being in the history
     return redirect(routeRelative(request, "/upload"));
   }
-  const existingChangesData = (await findSubmissionFormData(
-    submissionID,
-    "changes"
-  )) as ChangesData;
-  if (!existingChangesData) {
+  const existingSubmissionData = await fetchSubmissionData(submissionID);
+  if (!existingSubmissionData.changes) {
     const returnToChanges = routeRelative(request, "changes");
     console.log(`No changes data; returning to ${returnToChanges}`);
     return redirect(returnToChanges);
   }
-  const proofRequired = determineProof(existingChangesData);
+  const proofRequired = determineProof(existingSubmissionData);
   if (proofRequired.length == 0) {
     const skipToContact = routeRelative(request, "contact");
     console.log(`No proof required; routing to ${skipToContact}`);
@@ -427,7 +419,7 @@ export default function Upload() {
   return (
     <div>
       <h1>{t("Upload.title")}</h1>
-      <div>{t("Upload.intro")}</div>
+      <p>{t("Upload.intro")}</p>
       {documentProofElements}
       <Form method="get" id="previousFiles" name="previous-uploads-form">
         {previousUploadPreviews}
@@ -451,6 +443,7 @@ export default function Upload() {
             </div>
             <Accordion
               className="margin-top-1"
+              bordered={true}
               items={[
                 {
                   title: <Trans i18nKey={"Upload.filetips.title"} />,

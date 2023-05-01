@@ -1,9 +1,19 @@
 import db from "app/utils/db.connection";
 import type { Prisma } from "@prisma/client";
-import type { RouteType, SubmittedFile } from "app/types";
+import type {
+  ChangesData,
+  ContactData,
+  NameData,
+  Participant,
+  RouteType,
+  SubmissionData,
+  SubmittedFile,
+} from "app/types";
 export type SubmissionWithAgency = Prisma.PromiseReturnType<
   typeof findSubmission
 >;
+
+export type DocumentList = Prisma.PromiseReturnType<typeof listDocuments>;
 
 export const upsertStaffUser = async (urlId: string, staffUserId: string) => {
   const localAgency = await findLocalAgency(urlId);
@@ -107,7 +117,11 @@ export const findSubmission = async (submissionID: string) => {
   return submission;
 };
 
-export const upsertSubmission = async (submissionID: string, urlId: string) => {
+export const upsertSubmission = async (
+  submissionID: string,
+  urlId: string,
+  submitted?: boolean
+) => {
   const localAgency = await findLocalAgency(urlId);
   if (!localAgency) {
     throw Error(`Unable to find agency for ${urlId}`);
@@ -122,6 +136,7 @@ export const upsertSubmission = async (submissionID: string, urlId: string) => {
     },
     update: {
       updatedAt: new Date(),
+      submitted: submitted,
     },
   });
   return existingSubmission;
@@ -205,4 +220,33 @@ export const upsertLocalAgency = async (urlId: string, name: string) => {
 
 export const firstLocalAgency = async () => {
   return await db.localAgency.findFirst();
+};
+
+export const fetchSubmissionData = async (
+  submissionID: string
+): Promise<SubmissionData> => {
+  const existingSubmissionPages = await db.submissionForm.findMany({
+    where: {
+      submissionId: submissionID,
+    },
+    select: {
+      formRoute: true,
+      formData: true,
+    },
+  });
+  const mapped = new Map(
+    existingSubmissionPages.map((obj) => [
+      obj.formRoute,
+      obj.formData as Prisma.JsonObject,
+    ])
+  );
+  const documents = await listDocuments(submissionID);
+  const submissionData: SubmissionData = {
+    name: mapped.get("name") as NameData,
+    changes: mapped.get("changes") as ChangesData,
+    participant: mapped.get("details") as unknown as Participant[],
+    contact: mapped.get("contact") as ContactData,
+    documents: documents,
+  };
+  return submissionData;
 };

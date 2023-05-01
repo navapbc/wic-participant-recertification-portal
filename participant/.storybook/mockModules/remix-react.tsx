@@ -17,6 +17,10 @@ import { ReactElement } from "react";
 // receive the contents of this response
 export const useActionData = () => {};
 
+export const useFetcher = () => {
+  return { submit: () => {} };
+};
+
 // Can't use a real submit hook in Storybook
 export const useSubmit = () => {};
 
@@ -37,6 +41,74 @@ export function useLoaderData<T>() {
         name: "avatar.jpg",
       },
     ],
+    data: {
+      exampleRandomKey: {
+        dob: { day: 3, year: 2004, month: 2 },
+        tag: "TtmTDA5JcBAWr0tUWWmit",
+        firstName: "Cromulent",
+        lastName: "Breakfast",
+        adjunctive: "no",
+        relationship: "child",
+      },
+      anotherRandomKey: null,
+    },
+    reviewEditable: true,
+    editHrefs: {
+      name: "#edit",
+      details: "#edit",
+      changes: "#edit",
+      contact: "#edit",
+      upload: "#edit",
+    },
+    submittedDate: new Date().toLocaleString("en-US"),
+    submissionData: {
+      name: {
+        firstName: "Beatrice",
+        lastName: "Arthur",
+        preferredName: "Bea",
+      },
+      changes: {
+        idChange: "yes",
+        addressChange: "no",
+      },
+      participant: [
+        {
+          relationship: "grandchild",
+          firstName: "Timothy",
+          lastName: "Arthur",
+          preferredName: "Tim",
+          dob: {
+            day: 9,
+            month: 10,
+            year: 2020,
+          },
+          adjunctive: "yes",
+        },
+        {
+          relationship: "self",
+          firstName: "Beatrice",
+          lastName: "Arthur",
+          preferredName: "Bea",
+          dob: {
+            day: 13,
+            month: 5,
+            year: 1922,
+          },
+          adjunctive: "no",
+        },
+      ],
+      contact: {
+        phoneNumber: "5105551212",
+        additionalInfo: "Timmy my grandson is doing great!",
+      },
+      documents: [
+        {
+          s3Key: "fake/somewhere",
+          s3Url: "s3://participant-uploads/fake/somewhere",
+          originalFilename: "driver-license.jpg",
+        },
+      ],
+    },
   };
 }
 

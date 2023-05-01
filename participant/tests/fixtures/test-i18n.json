@@ -58,7 +58,7 @@
   },
   "participantcard": {
     "cardHeader": "Participant",
-    "cardFooter": "Add another participant?"
+    "cardFooter": "Remove Participant {{participantIndex}}"
   },
   "relationship": {
     "label": "Relationship to you",
@@ -67,6 +67,11 @@
     "grandchild": "Grandchild",
     "foster": "Foster child",
     "other": "Other"
+  },
+  "reviewsection": {
+    "heading": "Section for Review",
+    "edit": "Edit",
+    "list": ["Item One", "Item Two", "Item Three"]
   },
   "textfield": {
     "inputbox": "Text input label:",

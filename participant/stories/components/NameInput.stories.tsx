@@ -10,6 +10,7 @@ const defaultProps: NameInputProps = {
   id: "input-example",
   nameKey: "test:nameinput",
   legendStyle: "srOnly",
+  keyBase: "input",
 };
 
 const NameInputTemplate = {
@@ -22,6 +23,14 @@ export const Default = {
   ...NameInputTemplate,
   args: {
     ...defaultProps,
+  },
+};
+
+export const Error = {
+  ...NameInputTemplate,
+  args: {
+    ...defaultProps,
+    id: "error Name Input Error",
   },
 };
 

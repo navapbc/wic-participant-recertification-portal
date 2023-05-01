@@ -7,6 +7,11 @@ module.exports = {
   ignoredRouteFiles: ["**/.*", "**/*.css", "**/*.test.{js,jsx,ts,tsx}"],
   serverDependenciesToBundle: [
     /strtok3/,
-    ...getDependenciesToBundle("file-type", "token-types", "peek-readable"),
+    ...getDependenciesToBundle(
+      "file-type",
+      "token-types",
+      "peek-readable",
+      "nanoid"
+    ),
   ],
 };

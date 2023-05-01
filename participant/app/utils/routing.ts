@@ -1,6 +1,7 @@
-import type { ChangesData, CountData } from "~/types";
+import type { CountData, SubmissionData } from "~/types";
 import { stringify } from "querystring";
 import type { ParsedUrlQueryInput } from "querystring";
+import { determineProof } from "./determineProof";
 
 export const routeRelative = (
   request: Request,
@@ -21,15 +22,17 @@ export const routeRelative = (
 
 export function routeFromChanges(
   request: Request,
-  submissionForm: ChangesData
+  submissionData: SubmissionData
 ): string {
-  if (
-    submissionForm.idChange == "yes" ||
-    submissionForm.addressChange == "yes"
-  ) {
+  const proofs = determineProof(submissionData);
+  if (proofs?.length) {
     return routeRelative(request, "upload");
   }
   return routeRelative(request, "contact");
+}
+
+export function routeFromDetails(request: Request) {
+  return routeRelative(request, "changes");
 }
 
 export function routeFromContact(request: Request): string {

@@ -144,3 +144,16 @@ p + .usa-list {
 .usa-fieldset > legend:first-of-type {
   margin-top: 0;
 }
+
+.review-section dt {
+  margin-bottom: units(0.5);
+}
+
+.review-section dd {
+  margin-left: 0;
+  margin-bottom: units(0.5);
+}
+
+.usa-summary-box {
+  border: 0px;
+}

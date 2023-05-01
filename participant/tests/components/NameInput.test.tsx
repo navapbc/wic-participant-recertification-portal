@@ -15,6 +15,7 @@ const defaultProps: NameInputProps = {
   id: "input-example",
   nameKey: "test:nameinput",
   legendStyle: "srOnly",
+  keyBase: "name",
 };
 
 it("renders name input component", () => {

@@ -33,6 +33,7 @@ export type TextFieldProps = {
   defaultValue?: string;
   value?: string;
   className?: string;
+  size?: number;
 };
 
 export const TextField = (props: TextFieldProps): ReactElement => {
@@ -48,10 +49,17 @@ export const TextField = (props: TextFieldProps): ReactElement => {
     defaultValue,
     value,
     className,
+    size,
     ...otherProps
   } = props;
   const { getInputProps, error } = useField(id);
   const TextTypeClass = type == "textarea" ? Textarea : TextInput;
+  let errorProp = {};
+  if (error && type == "textarea") {
+    errorProp = { error: true };
+  } else if (error) {
+    errorProp = { validationStatus: "error" };
+  }
   return (
     <>
       <Label htmlFor={id} className={labelClassName} hint={hint}>
@@ -62,6 +70,8 @@ export const TextField = (props: TextFieldProps): ReactElement => {
       <TextTypeClass
         onChange={handleChange}
         defaultValue={defaultValue}
+        size={size}
+        {...errorProp}
         {...getInputProps({
           id: id,
           type: inputType,

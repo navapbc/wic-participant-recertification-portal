@@ -14,7 +14,7 @@ exports[`renders name input component 1`] = `
     <label
       class="usa-label"
       data-testid="label"
-      for="input-example-firstName"
+      for="input-example.firstName"
     >
       First name
       <abbr
@@ -33,15 +33,15 @@ exports[`renders name input component 1`] = `
     <input
       class="usa-input"
       data-testid="textInput"
-      id="input-example-firstName"
-      name="input-example-firstName"
+      id="input-example.firstName"
+      name="input-example.firstName"
       type="text"
       value=""
     />
     <label
       class="usa-label"
       data-testid="label"
-      for="input-example-lastName"
+      for="input-example.lastName"
     >
       Last name
       <abbr
@@ -60,8 +60,8 @@ exports[`renders name input component 1`] = `
     <input
       class="usa-input"
       data-testid="textInput"
-      id="input-example-lastName"
-      name="input-example-lastName"
+      id="input-example.lastName"
+      name="input-example.lastName"
       type="text"
       value=""
     />

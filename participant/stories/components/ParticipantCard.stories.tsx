@@ -9,9 +9,11 @@ export default {
 const defaultProps: ParticipantCardProps = {
   index: 1,
   adjunctiveKey: "test:adjunctive",
+  clickHandler: () => {},
   dateKey: "test:dateinput",
   dateHint: true,
   dateLegendKey: "test:dateinput.legend",
+  tag: "participant",
   nameKey: "test:nameinput",
   nameLegal: true,
   namePreferred: false,

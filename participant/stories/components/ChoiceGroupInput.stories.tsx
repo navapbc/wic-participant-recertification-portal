@@ -67,12 +67,21 @@ const defaultChoiceGroupInputProps = {
   legendKey: "test:inputchoice.labelRadio",
   legendStyle: "",
   type: "radio",
+  keyBase: "choicegroups",
 };
 
 export const RadioGroup = {
   ...ChoiceGroupInputTemplate,
   args: {
     name: "input-radio",
+    ...defaultChoiceGroupInputProps,
+  },
+};
+
+export const RadioGroupError = {
+  ...ChoiceGroupInputTemplate,
+  args: {
+    name: "input-radio-error Example Error",
     ...defaultChoiceGroupInputProps,
   },
 };
@@ -116,6 +125,16 @@ export const CheckboxGroup = {
     titleKey: "test:inputchoice.labelCheckbox",
     type: "checkbox",
     name: "input-checkbox",
+  },
+};
+
+export const CheckboxGroupError = {
+  ...ChoiceGroupInputTemplate,
+  args: {
+    ...defaultChoiceGroupInputProps,
+    titleKey: "test:inputchoice.labelCheckbox",
+    type: "checkbox",
+    name: "input-checkbox-error Example Error",
   },
 };
 

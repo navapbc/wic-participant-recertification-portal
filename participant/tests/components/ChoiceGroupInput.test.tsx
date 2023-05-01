@@ -26,6 +26,7 @@ const testProps: Omit<ChoiceGroupInputProps, "type"> = {
   name: "test-choices",
   legendKey: "title",
   required: false,
+  keyBase: "test-choices",
 };
 
 it("should match snapshot when it is a set of checkboxes", () => {

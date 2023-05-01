@@ -25,6 +25,7 @@ locals {
   analytics_service_name       = "${local.project_name}-analytics-${var.environment_name}"
   analytics_database_name      = "${local.project_name}-analytics-${var.environment_name}"
   document_upload_s3_name      = "${local.project_name}-doc-upload-${var.environment_name}"
+  side_load_s3_name            = "${local.project_name}-side-load-${var.environment_name}"
   contact_email                = "wic-projects-team@navapbc.com"
   staff_idp_client_domain      = "${var.environment_name}-idp.wic-services.org"
 }
@@ -69,8 +70,11 @@ module "participant" {
   subnet_ids           = data.aws_subnets.default.ids
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
+  memory               = 2048
   healthcheck_path     = "/healthcheck"
-  enable_exec          = var.participant_enable_exec
+  # The database seed needs longer lead time before healthchecks kick in to kill the container
+  healthcheck_start_period = 120
+  enable_exec              = var.participant_enable_exec
   # @TODO: We shouldn't need to be doing quite so much string interpolation. Perhaps we can pass back the arns instead of the secret_names.
   container_secrets = [
     {
@@ -295,6 +299,14 @@ module "doc_upload" {
   write_role_names  = [module.participant.task_role_name]
   delete_role_names = [module.participant.task_role_name]
   admin_role_names  = [module.participant.task_role_name]
+}
+
+module "side_load" {
+  source           = "../../modules/s3-encrypted"
+  environment_name = var.environment_name
+  s3_bucket_name   = local.side_load_s3_name
+  read_role_names  = [module.participant.task_role_name]
+  admin_role_names = [module.participant.task_role_name]
 }
 
 # todo: cleanup service names

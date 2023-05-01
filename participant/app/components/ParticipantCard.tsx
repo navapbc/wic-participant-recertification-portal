@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import type { i18nKey, legendStyleType } from "~/types";
+import type { Participant, i18nKey, legendStyleType } from "~/types";
 
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   Card,
   CardHeader,
@@ -16,6 +16,7 @@ import { DateInput } from "app/components/DateInput";
 import type { DateInputProps } from "app/components/DateInput";
 import { AdjunctiveInput } from "~/components/AdjunctiveInput";
 import type { AdjunctiveInputProps } from "~/components/AdjunctiveInput";
+import { pick } from "lodash";
 
 export type ParticipantCardProps = {
   index: number;
@@ -24,12 +25,15 @@ export type ParticipantCardProps = {
   adjunctiveLegendStyle?: legendStyleType;
   adjunctiveRequired?: boolean;
 
+  clickHandler: Function;
   dateKey: i18nKey;
   dateLegendKey: i18nKey;
   dateLegendStyle?: legendStyleType;
   dateHint?: boolean;
   dateDMYOrder?: boolean;
   dateRequired?: boolean;
+
+  tag: string;
 
   nameKey: i18nKey;
   nameLegal?: boolean;
@@ -40,6 +44,7 @@ export type ParticipantCardProps = {
 
   relationshipKey: i18nKey;
   relationshipRequired?: boolean;
+  values?: Participant;
 };
 
 export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
@@ -48,12 +53,14 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     adjunctiveKey,
     adjunctiveLegendStyle = "default",
     adjunctiveRequired,
+    clickHandler,
     dateKey,
     dateLegendKey,
     dateLegendStyle,
     dateHint,
     dateDMYOrder,
     dateRequired,
+    tag,
     nameKey,
     nameLegal,
     namePreferred,
@@ -61,37 +68,47 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
     participantKey,
     relationshipKey,
     relationshipRequired,
+    values,
   } = props;
 
   const relationshipProps: RelationshipInputProps = {
     relationshipKey: relationshipKey,
     legendKey: `${relationshipKey}.label`,
-    name: `participant-${index}-relationship`,
+    name: `participant[${index}].relationship`,
     required: relationshipRequired,
+    keyBase: `${tag}-relationship`,
+    values: values?.relationship,
   };
   const nameProps: NameInputProps = {
-    id: `participant-${index}`,
+    id: `participant[${index}]`,
     nameKey: nameKey,
     legendStyle: "srOnly",
     legal: nameLegal,
     preferred: namePreferred,
+    keyBase: `${tag}-name`,
+    values: pick(values, ["firstName", "lastName", "preferredName"]),
   };
   const dateProps: DateInputProps = {
     id: `participant-${index}-dob`,
-    name: `participant-${index}-dob`,
+    name: `participant[${index}].dob`,
+    keyBase: `${tag}-dob`,
     dateKey: dateKey,
     legendKey: dateLegendKey,
     legendStyle: dateLegendStyle,
     DMYorder: dateDMYOrder,
     hint: dateHint,
     required: dateRequired,
+    values: values?.dob,
   };
   const adjunctiveProps: AdjunctiveInputProps = {
-    name: `participant-${index}-adjunctive`,
+    name: `participant[${index}].adjunctive`,
     adjunctiveKey: adjunctiveKey,
     legendStyle: adjunctiveLegendStyle,
     required: adjunctiveRequired,
+    keyBase: `${tag}-adjunctive`,
+    values: values?.adjunctive,
   };
+  const { t } = useTranslation();
 
   return (
     <Card>
@@ -101,7 +118,7 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
             participantHeaderClassName || ""
           }`.trim()}
         >
-          <Trans i18nKey={`${participantKey}.cardHeader`} /> {index}
+          <Trans i18nKey={`${participantKey}.cardHeader`} /> {index + 1}
         </h2>
       </CardHeader>
       <CardBody>
@@ -111,7 +128,16 @@ export const ParticipantCard = (props: ParticipantCardProps): ReactElement => {
         <AdjunctiveInput {...adjunctiveProps} />
       </CardBody>
       <CardFooter>
-        <Trans i18nKey={`${participantKey}.cardFooter`} />
+        <input type="hidden" name={`participant[${index}].tag`} value={tag} />
+        <button
+          type="button"
+          name="remove_participant"
+          value={tag}
+          className="text-secondary-vivid usa-button--unstyled"
+          onClick={() => clickHandler(tag)}
+        >
+          {t(`${participantKey}.cardFooter`, { participantIndex: index + 1 })}
+        </button>
       </CardFooter>
     </Card>
   );
