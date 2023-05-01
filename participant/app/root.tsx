@@ -19,7 +19,7 @@ import { camelCase, upperFirst } from "lodash";
 import { useEffect } from "react";
 import MatomoTracker from "@jonkoops/matomo-tracker";
 import { useHydrated } from "remix-utils";
-import { MATOMO_URL_BASE } from "app/utils/config.server";
+import { MATOMO_SECURE, MATOMO_URL_BASE } from "app/utils/config.server";
 
 export function useChangeLanguage(locale: string) {
   const { i18n } = useTranslation();
@@ -87,12 +87,11 @@ export default function App() {
   // language, this locale will change and i18next will load the correct
   // translation files
   useChangeLanguage(locale);
-  const matomoUrl = MATOMO_URL_BASE || "http://localhost:8080/";
 
-  let isHydrated = useHydrated();
-  if (isHydrated) {
+  const isHydrated = useHydrated();
+  if (isHydrated && MATOMO_URL_BASE) {
     const tracker = new MatomoTracker({
-      urlBase: matomoUrl,
+      urlBase: MATOMO_URL_BASE,
       siteId: 1,
       disabled: false, // optional, false by default. Makes all tracking calls no-ops if set to true.
       heartBeat: {
@@ -105,7 +104,7 @@ export default function App() {
         // optional, default value: {}
         // any valid matomo configuration, all below are optional
         disableCookies: true,
-        setSecureCookie: true,
+        setSecureCookie: MATOMO_SECURE,
         setRequestMethod: "POST",
         trackPageView: true,
       },
