@@ -9,6 +9,7 @@ const jestConfig: JestConfigWithTsJest = {
     "^public/(.*)$": "<rootDir>/public/$1",
     "^file-type$": require.resolve("./tests/helpers/mockFileType.ts"),
     "^uuid$": require.resolve("uuid"),
+    "^@remix-run/node$": require.resolve("./tests/helpers/remixRunNode.ts"),
   },
   preset: "ts-jest",
   testEnvironment: "jsdom",

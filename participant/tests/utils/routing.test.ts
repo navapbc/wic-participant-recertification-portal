@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import type { Participant } from "~/types";
 import { routeRelative, routeFromChanges } from "~/utils/routing";
 const baseRequest = {

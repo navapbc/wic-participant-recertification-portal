@@ -2,7 +2,7 @@ import type { CountData, SubmissionData } from "~/types";
 import { stringify } from "querystring";
 import type { ParsedUrlQueryInput } from "querystring";
 import { determineProof } from "./determineProof";
-import { redirect } from "@remix-run/server-runtime";
+import { redirect } from "@remix-run/node";
 
 export const routeRelative = (
   request: Request,
