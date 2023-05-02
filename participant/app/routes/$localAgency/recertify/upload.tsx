@@ -17,6 +17,7 @@ import type { Params } from "@remix-run/react";
 import {
   json,
   unstable_parseMultipartFormData as parseMultipartFormData,
+  unstable_composeUploadHandlers as composeUploadHandlers,
   redirect,
 } from "@remix-run/server-runtime";
 import type { UploadHandler, LoaderFunction } from "@remix-run/server-runtime";
@@ -174,7 +175,7 @@ export const action = async ({
   params: Params<string>;
 }) => {
   const { submissionID } = await cookieParser(request, params);
-  const uploadHandler: UploadHandler = async ({ name, filename, data }) => {
+  const s3UploadHandler: UploadHandler = async ({ name, filename, data }) => {
     /* UploadHandlers can only return File | string | undefined..
      * So using JSON to serialize the data into a string is a hacktastic
      * workaround.
@@ -210,7 +211,7 @@ export const action = async ({
       mimeType: mimeType,
     } as SubmittedFile);
   };
-
+  const uploadHandler: UploadHandler = composeUploadHandlers(s3UploadHandler);
   const formData = await parseMultipartFormData(request, uploadHandler);
   const submittedDocuments = formData
     .getAll("documents")
@@ -264,11 +265,11 @@ export const action = async ({
   });
   if (!rejectedDocuments.length) {
     if (acceptedDocuments.length) {
-      throw redirect(routeRelative(request, "/contact"));
+      throw redirect(routeRelative(request, "contact"));
     } else {
       const previousUploads = await listDocuments(submissionID);
       if (previousUploads.length) {
-        throw redirect(routeRelative(request, "/contact"));
+        throw redirect(routeRelative(request, "contact"));
       }
     }
   }
