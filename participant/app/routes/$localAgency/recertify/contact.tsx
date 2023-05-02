@@ -15,11 +15,8 @@ import type { LoaderFunction } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/node";
 import { cookieParser } from "~/cookies.server";
 import type { ContactData } from "~/types";
-import {
-  findSubmissionFormData,
-  upsertSubmissionForm,
-} from "~/utils/db.server";
-import { routeFromContact } from "~/utils/routing";
+import { fetchSubmissionData, upsertSubmissionForm } from "~/utils/db.server";
+import { checkRoute, routeFromContact } from "~/utils/routing";
 import { useLoaderData } from "@remix-run/react";
 
 const contactValidator = withZod(contactSchema);
@@ -31,14 +28,15 @@ export const loader: LoaderFunction = async ({
   params: Params<string>;
 }) => {
   const { submissionID, headers } = await cookieParser(request, params);
-  const existingContactData = (await findSubmissionFormData(
-    submissionID,
-    "contact"
-  )) as ContactData;
+  const existingSubmissionData = await fetchSubmissionData(submissionID);
+  checkRoute(request, existingSubmissionData);
   return json(
     {
       submissionID: submissionID,
-      ...setFormDefaults("contactForm", existingContactData),
+      ...setFormDefaults(
+        "contactForm",
+        existingSubmissionData.contact as ContactData
+      ),
     },
     { headers: headers }
   );

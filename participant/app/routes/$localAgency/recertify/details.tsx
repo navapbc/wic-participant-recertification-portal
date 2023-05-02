@@ -16,10 +16,11 @@ import { participantSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
 import { cookieParser } from "app/cookies.server";
 import {
+  fetchSubmissionData,
   findSubmissionFormData,
   upsertSubmissionForm,
 } from "app/utils/db.server";
-import { routeFromDetails } from "app/utils/routing";
+import { checkRoute, routeFromDetails } from "app/utils/routing";
 import type { Participant } from "~/types";
 import { toInteger } from "lodash";
 
@@ -73,15 +74,17 @@ export const loader: LoaderFunction = async ({
     }
     return null;
   }
-  const existingParticipantData = (await findSubmissionFormData(
-    submissionID,
-    "details"
-  )) as Participant[];
+  const submissionData = await fetchSubmissionData(submissionID);
+  checkRoute(request, submissionData);
+
   count =
-    existingParticipantData?.length ||
+    submissionData.participant?.length ||
     toInteger(url.searchParams.get("count")) ||
     1;
-  const participantData = formatLoaderData(existingParticipantData, count);
+  const participantData = formatLoaderData(
+    submissionData.participant as Participant[],
+    count
+  );
   console.log(`Participant data ${JSON.stringify(participantData)}`);
   return json(
     {

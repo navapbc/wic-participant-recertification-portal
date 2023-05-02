@@ -13,7 +13,7 @@ import {
   fetchSubmissionData,
   upsertSubmission,
 } from "~/utils/db.server";
-import { routeRelative } from "~/utils/routing";
+import { checkRoute, routeRelative } from "~/utils/routing";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -23,13 +23,8 @@ export const loader: LoaderFunction = async ({
   params: Params<string>;
 }) => {
   const { submissionID, headers } = await cookieParser(request, params);
-  const submission = await findSubmission(submissionID);
-  if (submission?.submitted) {
-    throw redirect(
-      routeRelative(request, "confirm", { previouslySubmitted: true })
-    );
-  }
   const submissionData = await fetchSubmissionData(submissionID);
+  checkRoute(request, submissionData);
   const [
     editNameURL,
     editDetailsURL,

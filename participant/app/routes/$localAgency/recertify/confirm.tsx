@@ -5,11 +5,11 @@ import type { Params } from "@remix-run/react";
 import { SubmissionForm } from "~/components/SubmissionForm";
 import type { SubmissionFormProps } from "~/components/SubmissionForm";
 import { cookieParser } from "~/cookies.server";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 import { findSubmission, fetchSubmissionData } from "~/utils/db.server";
 import { Alert } from "@trussworks/react-uswds";
-import { routeRelative } from "~/utils/routing";
+import { checkRoute, routeRelative } from "~/utils/routing";
 import {
   SummaryBox,
   SummaryBoxContent,
@@ -29,6 +29,10 @@ export const loader: LoaderFunction = async ({
   const previouslySubmitted = url.searchParams.get("previouslySubmitted");
   const submission = await findSubmission(submissionID);
   const submissionData = await fetchSubmissionData(submissionID);
+  checkRoute(request, submissionData);
+  if (submission?.submitted === false) {
+    throw redirect(routeRelative(request, "review"));
+  }
   const startOverURL = routeRelative(request, "", { newSession: true });
   return json(
     {

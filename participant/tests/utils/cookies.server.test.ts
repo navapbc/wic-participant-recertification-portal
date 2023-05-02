@@ -15,14 +15,24 @@ import {
   getExpiredSubmission,
   getLocalAgency,
 } from "tests/helpers/mockData";
+import { stringify } from "querystring";
+import type { ParsedUrlQueryInput } from "querystring";
 
-async function makeCookieRequest(submissionID: string) {
+async function makeCookieRequest(
+  submissionID: string,
+  params?: ParsedUrlQueryInput
+) {
   const cookieValue = await ParticipantCookie.serialize({
     submissionID: submissionID,
   });
+  let url: string = "http://localhost/foobar";
+  if (params) {
+    const queryString = stringify(params);
+    url = `http://localhost/foobar?${queryString}`;
+  }
   return {
     headers: new Map([["Cookie", cookieValue]]),
-    url: "http://localhost/foobar",
+    url: url,
   } as unknown as Request;
 }
 
@@ -39,7 +49,10 @@ it("tests a stale session as not fresh", () => {
 });
 
 it("creates a session if it creates a new cookie", async () => {
-  const request = { headers: new Map() } as unknown as Request;
+  const request = {
+    headers: new Map(),
+    url: "http://localhost/foobar",
+  } as unknown as Request;
   prismaMock.localAgency.findUnique.mockResolvedValue(
     getLocalAgency("gallatin")
   );
@@ -53,7 +66,10 @@ it("creates a session if it creates a new cookie", async () => {
 });
 
 it("creates a session if an empty cookie is sent", async () => {
-  const request = { headers: new Map([["Cookie", ""]]) } as unknown as Request;
+  const request = {
+    headers: new Map([["Cookie", ""]]),
+    url: "http://localhost/foobar",
+  } as unknown as Request;
   prismaMock.localAgency.findUnique.mockResolvedValue(
     getLocalAgency("gallatin")
   );
@@ -126,13 +142,15 @@ it("resets the session if asked to", async () => {
   const mockSubmissionID = uuidv4();
   const mockSubmission = getCurrentSubmission(mockSubmissionID);
   prismaMock.submission.findUnique.mockResolvedValue(mockSubmission);
-  const cookieRequest = await makeCookieRequest(mockSubmissionID);
+  const cookieRequest = await makeCookieRequest(mockSubmissionID, {
+    newSession: true,
+  });
   prismaMock.localAgency.findUnique.mockResolvedValue(
     getLocalAgency("gallatin")
   );
   let returnedSubmissionID: string = "default";
   try {
-    await cookieParser(cookieRequest, {}, true);
+    await cookieParser(cookieRequest, {});
   } catch (error) {
     if (!(error instanceof Response)) throw error;
     expect(error.status).toBe(302);

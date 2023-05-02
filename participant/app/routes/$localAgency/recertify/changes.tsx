@@ -18,10 +18,11 @@ import RequiredQuestionStatement from "app/components/RequiredQuestionStatement"
 import { cookieParser } from "app/cookies.server";
 import { changesSchema } from "app/utils/validation";
 import type { ChangesData, Participant } from "app/types";
-import { routeFromChanges } from "~/utils/routing";
+import { checkRoute, routeFromChanges } from "~/utils/routing";
 import {
   upsertSubmissionForm,
   findSubmissionFormData,
+  fetchSubmissionData,
 } from "app/utils/db.server";
 
 const changesValidator = withZod(changesSchema);
@@ -34,14 +35,12 @@ export const loader: LoaderFunction = async ({
   params: Params<string>;
 }) => {
   const { submissionID, headers } = await cookieParser(request, params);
-  const existingChangesData = (await findSubmissionFormData(
-    submissionID,
-    "changes"
-  )) as ChangesData;
+  const submissionData = await fetchSubmissionData(submissionID);
+  checkRoute(request, submissionData);
   return json(
     {
       submissionID: submissionID,
-      ...setFormDefaults("changesForm", existingChangesData),
+      ...setFormDefaults("changesForm", submissionData.changes as ChangesData),
     },
     { headers: headers }
   );

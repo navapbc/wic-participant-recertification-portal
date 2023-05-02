@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { findSubmission, upsertSubmission } from "app/utils/db.server";
 import { validRoute } from "app/utils/redirect";
 import { MAX_SESSION_SECONDS } from "app/utils/config.server";
+import { routeRelative } from "./utils/routing";
 
 type ParticipantCookieContents = {
   submissionID?: string;
@@ -26,13 +27,13 @@ export const sessionCheck = (time: Date): boolean => {
 
 export const cookieParser = async (
   request: Request,
-  params?: Params<string>,
-  resetSession = false
+  params?: Params<string>
 ) => {
   const cookie = ((await ParticipantCookie.parse(
     request.headers.get("Cookie")
   )) || {}) as ParticipantCookieContents;
-
+  const url = new URL(request.url);
+  const resetSession: boolean = url.searchParams.get("newSession") === "true";
   let forceRedirect: boolean = resetSession;
   const urlId = params?.localAgency || "";
   if (cookie) {
@@ -47,13 +48,26 @@ export const cookieParser = async (
       } else if (!resetSession) {
         const validSession = sessionCheck(existingSubmission.updatedAt);
         if (validSession) {
+          if (
+            existingSubmission.submitted === true &&
+            !request.url.includes("confirm")
+          ) {
+            const confirmAlreadySubmitted = routeRelative(request, "confirm", {
+              previouslySubmitted: true,
+            });
+            console.log(
+              `🗒️  Already submitted; redirect to ${confirmAlreadySubmitted}`
+            );
+            throw redirect(confirmAlreadySubmitted);
+          }
           console.log(`Session ${submissionID} valid; finished parser`);
           return { submissionID: submissionID };
         }
-        forceRedirect = true;
       }
+      forceRedirect = true;
     }
   }
+
   const submissionID = uuidv4();
   if (resetSession) {
     console.log(`Resetting to new submission ID`);

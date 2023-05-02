@@ -85,5 +85,29 @@ test("hitting the back button after submission shows a warning", async ({
   const startOverLink = page.getByRole("link", { name: "Start over" });
   await expect(startOverLink).toHaveCount(1);
   await startOverLink.click();
-  await expect(page).toHaveURL("/gallatin/recertify/?newSession=true");
+  await expect(page).toHaveURL("/gallatin/recertify");
+});
+
+test("going to an earlier page after submission shows a warning", async ({
+  page,
+}) => {
+  await runTheForms(page);
+  await page.getByRole("button", { name: "Submit my information" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/confirm");
+  await page.goto("/gallatin/recertify/count", { waitUntil: "networkidle" });
+  await expect(page).toHaveURL(
+    "/gallatin/recertify/confirm?previouslySubmitted=true"
+  );
+  await page.goto("/gallatin/recertify/changes", { waitUntil: "networkidle" });
+  await expect(page).toHaveURL(
+    "/gallatin/recertify/confirm?previouslySubmitted=true"
+  );
+  const noEditing = page.getByTestId("alert");
+  await expect(noEditing).toHaveText(
+    /You cannot review information after it’s submitted/
+  );
+  const startOverLink = page.getByRole("link", { name: "Start over" });
+  await expect(startOverLink).toHaveCount(1);
+  await startOverLink.click();
+  await expect(page).toHaveURL("/gallatin/recertify");
 });

@@ -33,7 +33,7 @@ import {
 } from "app/utils/db.server";
 import type { PreviousUpload, Proofs, SubmittedFile } from "app/types";
 import { determineProof } from "app/utils/determineProof";
-import { routeRelative } from "app/utils/routing";
+import { checkRoute, routeRelative } from "app/utils/routing";
 import {
   uploadStreamToS3,
   getURLFromS3,
@@ -141,6 +141,7 @@ export const loader: LoaderFunction = async ({
     return redirect(routeRelative(request, "/upload"));
   }
   const existingSubmissionData = await fetchSubmissionData(submissionID);
+  checkRoute(request, existingSubmissionData);
   if (!existingSubmissionData.changes) {
     const returnToChanges = routeRelative(request, "changes");
     console.log(`No changes data; returning to ${returnToChanges}`);
