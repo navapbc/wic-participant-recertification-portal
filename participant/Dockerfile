@@ -6,10 +6,10 @@ FROM node:18-alpine as base
 RUN apk update \
   && apk upgrade \
   && apk add --no-cache \
-    # Install curl for healthcheck
-    curl \
-    # Install openssl for Prisma
-    openssl
+  # Install curl for healthcheck
+  curl \
+  # Install openssl for Prisma
+  openssl
 # Set working directory and node user
 WORKDIR /home/node/remix
 
@@ -34,7 +34,8 @@ CMD ["npm", "run", "dev:docker"]
 FROM dev as e2e
 ENTRYPOINT ["./entrypoint-e2e.sh"]
 RUN npm run css
-CMD ["npm", "run", "dev:docker"]
+RUN npm run build
+CMD ["npm", "run", "e2e:remix"]
 
 # -------- Image: build -------- #
 # Build the app

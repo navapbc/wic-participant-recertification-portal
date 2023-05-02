@@ -22,13 +22,21 @@ const participantData: Omit<Participant, "adjunctive"> = {
 test("changes has no automatically detectable accessibility errors", async ({
   page,
 }) => {
-  await page.goto("/gallatin/recertify/changes");
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, { ...participantData, adjunctive: "yes" }, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
 test("has title", async ({ page }) => {
-  await page.goto("/gallatin/recertify/changes");
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, { ...participantData, adjunctive: "yes" }, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   // Expect a title "to contain" a correct app title.
   await expect(page).toHaveTitle(/Household changes/);
   await expect(page).toHaveScreenshot();
@@ -36,7 +44,10 @@ test("has title", async ({ page }) => {
 
 // This page should set a cookie
 test("the changes page sets a cookie", async ({ page }) => {
-  await page.goto("/gallatin/recertify/changes");
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, { ...participantData, adjunctive: "yes" }, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
   const cookies = await page.context().cookies();
   expect(cookies).toHaveLength(1);
   await validateCookie(cookies[0]);
@@ -44,7 +55,10 @@ test("the changes page sets a cookie", async ({ page }) => {
 
 test(`the changes form submits a POST request, and on return to the page,
       a GET request that repopulates the form`, async ({ page }) => {
-  await page.goto("/gallatin/recertify/changes");
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, { ...participantData, adjunctive: "yes" }, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
   const cookies = await page.context().cookies();
   const submissionID = await parseSubmissionID(cookies[0]);
   // Fill in the form with basic answers

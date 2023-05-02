@@ -76,7 +76,7 @@ export type CountData = {
 export type NameData = {
   firstName: string;
   lastName: string;
-  preferredName: string;
+  preferredName?: string;
 };
 
 export type SubmissionData = {

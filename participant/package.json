@@ -20,6 +20,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "e2e": "../bin/run-e2e.sh test",
+    "e2e:remix": "npm install && npx remix-serve build/",
     "e2e:update": "../bin/run-e2e.sh update",
     "e2e:cleanup": "../bin/run-e2e.sh cleanup",
     "storybook": "start-storybook -p 6006",

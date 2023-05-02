@@ -1,8 +1,9 @@
 /**
  * @jest-environment node
  */
-import type { Participant } from "~/types";
-import { routeRelative, routeFromChanges } from "~/utils/routing";
+import { pick } from "lodash";
+import type { ContactData, Participant } from "~/types";
+import { routeRelative, routeFromChanges, checkRoute } from "~/utils/routing";
 const baseRequest = {
   url: "http://localhost:3000/gallatin/recertify/somewhere",
 } as Request;
@@ -67,3 +68,203 @@ it("does not route to /upload if there are no changes and adjunctive eligibility
   const targetUrl = routeFromChanges(baseRequest, noChangesAndAdjunctive);
   expect(targetUrl).toBe("/gallatin/recertify/contact");
 });
+
+it("is OK to land on the index or about pages with no data", () => {
+  const rootCheck = checkRoute(
+    { url: "http://localhost:3000/gallatin/recertify" } as Request,
+    {}
+  );
+  expect(rootCheck).toBe(true);
+  const aboutCheck = checkRoute(
+    { url: "http://localhost:3000/gallatin/recertify/about" } as Request,
+    {}
+  );
+  expect(aboutCheck).toBe(true);
+});
+
+it("is OK to be on the name page without name data", () => {
+  const nameCheck = checkRoute(
+    {
+      url: "http://localhost:3000/gallatin/recertify/name",
+    } as Request,
+    {}
+  );
+  expect(nameCheck).toBe(true);
+});
+
+const nameTooFar = ["details", "changes", "upload", "review", "confirm"];
+
+it.each(nameTooFar)(
+  "bounces me back to name if i try to go further without name data",
+  (page) => {
+    const target = `http://localhost:3000/gallatin/recertify/${page}`;
+    expect(() => {
+      checkRoute({ url: target } as Request, {});
+    }).toThrow("/gallatin/recertify/name");
+  }
+);
+
+it("is OK to be on the details page or count page without participant data", () => {
+  const nameData = { name: pick(participantData, ["firstName", "lastName"]) };
+  const detailsCheck = checkRoute(
+    {
+      url: "http://localhost:3000/gallatin/recertify/details",
+    } as Request,
+    nameData
+  );
+  expect(detailsCheck).toBe(true);
+  const countCheck = checkRoute(
+    {
+      url: "http://localhost:3000/gallatin/recertify/count",
+    } as Request,
+    nameData
+  );
+  expect(countCheck).toBe(true);
+});
+
+const participantTooFar = ["changes", "upload", "review", "confirm"];
+
+it.each(participantTooFar)(
+  "bounces me back to details if i try to go further without participant data",
+  (page) => {
+    const target = `http://localhost:3000/gallatin/recertify/${page}`;
+    const nameData = { name: pick(participantData, ["firstName", "lastName"]) };
+    expect(() => {
+      checkRoute({ url: target } as Request, nameData);
+    }).toThrow("/gallatin/recertify/details");
+  }
+);
+
+it("is OK to be on the changes page without changes data", () => {
+  const submissionData = {
+    name: pick(participantData, ["firstName", "lastName"]),
+    participant: [participantData as Participant],
+  };
+  const changesCheck = checkRoute(
+    { url: "http://localhost:3000/gallatin/recertify/changes" } as Request,
+    submissionData
+  );
+  expect(changesCheck).toBe(true);
+});
+
+const changesTooFar = ["upload", "review", "confirm"];
+
+it.each(changesTooFar)(
+  "bounces me back to changes if i try to go further without changes data",
+  (page) => {
+    const target = `http://localhost:3000/gallatin/recertify/${page}`;
+    const submissionData = {
+      name: pick(participantData, ["firstName", "lastName"]),
+      participant: [participantData as Participant],
+    };
+    expect(() => {
+      checkRoute({ url: target } as Request, submissionData);
+    }).toThrow("/gallatin/recertify/changes");
+  }
+);
+
+it("is OK to be on the upload page without documents data", () => {
+  const submissionData = {
+    name: pick(participantData, ["firstName", "lastName"]),
+    participant: [participantData as Participant],
+    changes: { idChange: "yes", addressChange: "no" },
+  };
+  const uploadCheck = checkRoute(
+    { url: "http://localhost:3000/gallatin/recertify/upload" } as Request,
+    submissionData
+  );
+  expect(uploadCheck).toBe(true);
+});
+
+const uploadTooFar = ["contact", "review", "confirm"];
+
+it.each(uploadTooFar)(
+  "bounces me back to upload if i try to go further without documents data",
+  (page) => {
+    const target = `http://localhost:3000/gallatin/recertify/${page}`;
+    const submissionData = {
+      name: pick(participantData, ["firstName", "lastName"]),
+      participant: [participantData as Participant],
+      changes: { idChange: "yes", addressChange: "no" },
+    };
+    expect(() => {
+      checkRoute({ url: target } as Request, submissionData);
+    }).toThrow("/gallatin/recertify/upload");
+  }
+);
+
+it("is OK to be on the contact page without contact data", () => {
+  const submissionData = {
+    name: pick(participantData, ["firstName", "lastName"]),
+    participant: [participantData as Participant],
+    changes: { idChange: "yes", addressChange: "no" },
+    documents: [
+      {
+        s3Key: "somewhere",
+        s3Url: "somewhere",
+        originalFilename: "file.png",
+      },
+    ],
+  };
+  const contactCheck = checkRoute(
+    { url: "http://localhost:3000/gallatin/recertify/contact" } as Request,
+    submissionData
+  );
+  expect(contactCheck).toBe(true);
+});
+
+const contactTooFar = ["review", "confirm"];
+
+it.each(contactTooFar)(
+  "bounces me back to contact if i try to go further without contact data",
+  (page) => {
+    const target = `http://localhost:3000/gallatin/recertify/${page}`;
+    const submissionData = {
+      name: pick(participantData, ["firstName", "lastName"]),
+      participant: [participantData as Participant],
+      changes: { idChange: "yes", addressChange: "no" },
+      documents: [
+        {
+          s3Key: "somewhere",
+          s3Url: "somewhere",
+          originalFilename: "file.png",
+        },
+      ],
+    };
+    expect(() => {
+      checkRoute({ url: target } as Request, submissionData);
+    }).toThrow("/gallatin/recertify/contact");
+  }
+);
+
+const okToWanderBack = [
+  "about",
+  "name",
+  "details",
+  "changes",
+  "upload",
+  "contact",
+  "review",
+];
+
+it.each(okToWanderBack)(
+  "is okay to wander back without getting redirected",
+  (page) => {
+    const target = `http://localhost:3000/gallatin/recertify/${page}`;
+    const submissionData = {
+      name: pick(participantData, ["firstName", "lastName"]),
+      participant: [participantData as Participant],
+      changes: { idChange: "yes", addressChange: "no" },
+      documents: [
+        {
+          s3Key: "somewhere",
+          s3Url: "somewhere",
+          originalFilename: "file.png",
+        },
+      ],
+      contact: { phoneNumber: "1234567890" } as ContactData,
+    };
+    const check = checkRoute({ url: target } as Request, submissionData);
+    expect(check).toBe(true);
+  }
+);

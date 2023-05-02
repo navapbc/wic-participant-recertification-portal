@@ -1,19 +1,45 @@
 // contact.spec.ts - tests for the contact page
 import { test, expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { parseSubmissionID, validateCookie } from "../helpers/cookies";
 import { parse } from "querystring";
+import type { Participant } from "~/types";
+import {
+  fillParticipantForm,
+  fillCountForm,
+  fillChangesForm,
+  fillNameForm,
+  fillUploadForm,
+} from "../helpers/formFillers";
+const participantData: Participant = {
+  dob: { day: 3, year: 2004, month: 2 },
+  tag: "TtmTDA5JcBAWr0tUWWmit",
+  firstName: "Delightful",
+  lastName: "Cheesemuffin",
+  adjunctive: "yes",
+  relationship: "child",
+};
+
+const getMeToContact = async (page: Page) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
+  await fillChangesForm(page, "no", "no", "/gallatin/recertify/contact");
+};
 
 test("contact has no automatically detectable accessibility errors", async ({
   page,
 }) => {
-  await page.goto("/gallatin/recertify/contact");
+  await getMeToContact(page);
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
 test("has title", async ({ page }) => {
-  await page.goto("/gallatin/recertify/contact");
+  await getMeToContact(page);
   // Expect a title "to contain" a correct app title.
   await expect(page).toHaveTitle(/Additional information/);
   await expect(page).toHaveScreenshot({ maxDiffPixels: 50 });
@@ -21,7 +47,7 @@ test("has title", async ({ page }) => {
 
 // This page should set a cookie
 test("the contact page sets a cookie", async ({ page }) => {
-  await page.goto("/gallatin/recertify/contact");
+  await getMeToContact(page);
   const cookies = await page.context().cookies();
   expect(cookies).toHaveLength(1);
   await validateCookie(cookies[0]);
@@ -29,7 +55,7 @@ test("the contact page sets a cookie", async ({ page }) => {
 
 test(`the contact form submits a POST request, and on return to the page,
       a GET request that repopulates the form`, async ({ page }) => {
-  await page.goto("/gallatin/recertify/contact");
+  await getMeToContact(page);
   const cookies = await page.context().cookies();
   const submissionID = await parseSubmissionID(cookies[0]);
 

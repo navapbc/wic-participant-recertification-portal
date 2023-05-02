@@ -70,10 +70,17 @@ export function getExpiredSubmission(submissionId: string = uuidv4()) {
   return currentSubmission;
 }
 
+export function getSubmittedSubmission(submissionId: string = uuidv4()) {
+  const currentSubmission = getCurrentSubmission(submissionId);
+  invariant(currentSubmission, "Did not get a current submission");
+  currentSubmission.submitted = true;
+  return currentSubmission;
+}
+
 export function getSubmissionForm(
   submissionId: string = uuidv4(),
   route: string,
-  formData: object | [] = {}
+  formData: object = {}
 ) {
   return {
     submissionFormId: uuidv4(),

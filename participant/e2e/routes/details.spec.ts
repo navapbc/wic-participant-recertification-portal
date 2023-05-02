@@ -1,18 +1,24 @@
 // details.spec.ts - tests for the details page
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { fillParticipantForm, fillCountForm } from "../helpers/formFillers";
+import {
+  fillParticipantForm,
+  fillCountForm,
+  fillNameForm,
+} from "../helpers/formFillers";
 import type { Participant } from "~/types";
 
 test("details has no automatically detectable accessibility errors", async ({
   page,
 }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
 test("has title", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
   // Expect a title "to contain" a correct page title.
   await expect(page).toHaveTitle(/Tell us about who you're recertifying for/);
@@ -20,6 +26,7 @@ test("has title", async ({ page }) => {
 });
 
 test("clicking add participant adds a card", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
   await expect(page.getByRole("heading", { name: /Participant/ })).toHaveCount(
     1
@@ -33,6 +40,7 @@ test("clicking add participant adds a card", async ({ page }) => {
 });
 
 test("clicking remove participant removes a card", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   await fillCountForm(page, 2, "/gallatin/recertify/details?count=2");
   await expect(page.getByRole("heading", { name: /Participant/ })).toHaveCount(
     2
@@ -54,6 +62,7 @@ test("filling in a participant, navigating away, returning and removing it works
     adjunctive: "no",
     relationship: "child",
   };
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
   await fillParticipantForm(page, participantData as Participant, 0);
   await expect(page).toHaveScreenshot({ fullPage: true });

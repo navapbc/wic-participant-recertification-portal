@@ -1,6 +1,6 @@
 import { createCookie } from "@remix-run/node"; // or "@remix-run/cloudflare"
 import type { Params } from "@remix-run/react";
-import { redirect } from "react-router";
+import { redirect } from "@remix-run/node";
 import { v4 as uuidv4 } from "uuid";
 import { findSubmission, upsertSubmission } from "app/utils/db.server";
 import { validRoute } from "app/utils/redirect";
@@ -52,6 +52,7 @@ export const cookieParser = async (
             existingSubmission.submitted === true &&
             !request.url.includes("confirm")
           ) {
+            console.log(`GOT URL ${request.url}`);
             const confirmAlreadySubmitted = routeRelative(request, "confirm", {
               previouslySubmitted: true,
             });

@@ -4,7 +4,22 @@ import AxeBuilder from "@axe-core/playwright";
 import { readFileSync, writeFileSync } from "fs";
 import imgGen from "js-image-generator";
 import { fileSync } from "tmp";
-import { fillChangesForm } from "../helpers/formFillers";
+import {
+  fillChangesForm,
+  fillCountForm,
+  fillNameForm,
+  fillParticipantForm,
+} from "../helpers/formFillers";
+import type { Participant } from "~/types";
+
+const participantData: Participant = {
+  dob: { day: 3, year: 2004, month: 2 },
+  tag: "TtmTDA5JcBAWr0tUWWmit",
+  firstName: "Delightful",
+  lastName: "Cheesemuffin",
+  adjunctive: "no",
+  relationship: "child",
+};
 
 export const getFileFormImage = (name: string) => {
   return {
@@ -17,12 +32,22 @@ export const getFileFormImage = (name: string) => {
 test("upload has no automatically detectable accessibility errors", async ({
   page,
 }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
 });
 
 test("has title", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   // Expect a title "to contain" a correct page title.
   await expect(page).toHaveTitle(/You need to upload documents./);
@@ -30,6 +55,11 @@ test("has title", async ({ page }) => {
 });
 
 test("add one image file", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const file = getFileFormImage("test-img.jpg");
   const uploadBox = page.locator("input[type='file']");
@@ -39,6 +69,11 @@ test("add one image file", async ({ page }) => {
 });
 
 test("add TWO image files", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const fileOne = getFileFormImage("test-img.jpg");
   const fileTwo = getFileFormImage("test-img-2.jpg");
@@ -54,6 +89,11 @@ test("add TWO image files", async ({ page }) => {
 test("add TWO image files, submit, then return to see that they are previewed", async ({
   page,
 }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const fileOne = getFileFormImage("test-img.jpg");
   const fileTwo = getFileFormImage("test-img-2.jpg");
@@ -74,6 +114,11 @@ test("add TWO image files, submit, then return to see that they are previewed", 
 });
 
 test("try to add six image files, expect an error", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const sixFiles = [1, 2, 3, 4, 5, 6].map((value) => {
     return getFileFormImage(`test-img-${value}.jpg`);
@@ -92,6 +137,11 @@ test("try to add six image files, expect an error", async ({ page }) => {
 });
 
 test("add TWO image files, then remove them", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const fileOne = getFileFormImage("test-img.jpg");
   const fileTwo = getFileFormImage("test-img-2.jpg");
@@ -114,6 +164,11 @@ test("add TWO image files, then remove them", async ({ page }) => {
 });
 
 test("max out file count", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const uploadBox = page.locator("input[type='file']");
   for (let fileNum = 0; fileNum < 5; fileNum++) {
@@ -137,6 +192,11 @@ test("max out file count", async ({ page }) => {
 });
 
 test("a large image is rejected", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const uploadBox = page.locator("input[type='file']");
   const tmpFile = fileSync();
@@ -156,6 +216,11 @@ test("a large image is rejected", async ({ page }) => {
 });
 
 test("an unacceptable file is un-accepted", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const uploadBox = page.locator("input[type='file']");
   const badFile = {
@@ -173,6 +238,11 @@ test("an unacceptable file is un-accepted", async ({ page }) => {
 test("an unacceptable file pretending to be an image is un-accepted", async ({
   page,
 }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const uploadBox = page.locator("input[type='file']");
   const badFile = {
@@ -191,6 +261,11 @@ test("an unacceptable file pretending to be an image is un-accepted", async ({
 });
 
 test("submitting with one valid image routes to /contact", async ({ page }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const file = getFileFormImage("test-img.jpg");
   const uploadBox = page.locator("input[type='file']");
@@ -216,6 +291,11 @@ test("submitting with one valid image routes to /contact", async ({ page }) => {
 test("submitting with no files stays on the same page, shows error", async ({
   page,
 }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const [postRequest] = await Promise.all([
     page.waitForResponse(
@@ -244,6 +324,11 @@ test("submitting with no files stays on the same page, shows error", async ({
 test("navigating to /upload without changes data routes back to changes", async ({
   page,
 }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await page.goto("/gallatin/recertify/upload", { waitUntil: "networkidle" });
   await expect(page).toHaveURL("/gallatin/recertify/changes");
 });
@@ -251,6 +336,11 @@ test("navigating to /upload without changes data routes back to changes", async 
 test("submitting a file, then clicking 'Remove File' removes it", async ({
   page,
 }) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
+  await fillParticipantForm(page, participantData, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
   const fileOne = getFileFormImage("test-img.jpg");
   const uploadBox = page.locator("input[type='file']");

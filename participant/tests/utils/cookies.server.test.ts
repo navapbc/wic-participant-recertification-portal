@@ -13,10 +13,13 @@ import { prismaMock } from "tests/helpers/prismaMock";
 import {
   getCurrentSubmission,
   getExpiredSubmission,
+  getSubmittedSubmission,
   getLocalAgency,
 } from "tests/helpers/mockData";
 import { stringify } from "querystring";
 import type { ParsedUrlQueryInput } from "querystring";
+import { Redirect } from "tests/helpers/remixRunNode";
+import invariant from "tiny-invariant";
 
 async function makeCookieRequest(
   submissionID: string,
@@ -25,10 +28,10 @@ async function makeCookieRequest(
   const cookieValue = await ParticipantCookie.serialize({
     submissionID: submissionID,
   });
-  let url: string = "http://localhost/foobar";
+  let url: string = "http://localhost/gallatin/recertify";
   if (params) {
     const queryString = stringify(params);
-    url = `http://localhost/foobar?${queryString}`;
+    url = `http://localhost/gallatin/recertify?${queryString}`;
   }
   return {
     headers: new Map([["Cookie", cookieValue]]),
@@ -109,16 +112,16 @@ it("resets the session if a cookie is sent without DB Submission record", async 
   try {
     await cookieParser(cookieRequest);
   } catch (error) {
-    if (!(error instanceof Response)) throw error;
+    if (!(error instanceof Redirect)) throw error;
+    expect(error.message).toBe("/gallatin/recertify");
     expect(error.status).toBe(302);
-    expect(error.headers.get("location")).toBe("/gallatin/recertify");
-    expect(error.headers.get("set-cookie")).toContain(
+    expect(error.headers?.get("Set-cookie")).toContain(
       "prp-recertification-form"
     );
     // The headers on this redirect set the new cookie;
     // we need the value to verify the Database calls
     const returnedCookie = await ParticipantCookie.parse(
-      error.headers.get("set-cookie")
+      error.headers?.get("Set-cookie") || null
     );
     returnedSubmissionID = returnedCookie.submissionID;
   }
@@ -152,16 +155,17 @@ it("resets the session if asked to", async () => {
   try {
     await cookieParser(cookieRequest, {});
   } catch (error) {
-    if (!(error instanceof Response)) throw error;
+    if (!(error instanceof Redirect)) throw error;
     expect(error.status).toBe(302);
-    expect(error.headers.get("location")).toBe("/gallatin/recertify");
-    expect(error.headers.get("set-cookie")).toContain(
+    expect(error.message).toBe("/gallatin/recertify");
+    expect(error.headers?.get("Set-cookie")).toContain(
       "prp-recertification-form"
     );
+
     // The headers on this redirect set the new cookie;
     // we need the value to verify the Database calls
     const returnedCookie = await ParticipantCookie.parse(
-      error.headers.get("set-cookie")
+      error.headers?.get("Set-cookie") || null
     );
     returnedSubmissionID = returnedCookie.submissionID;
   }
@@ -216,16 +220,16 @@ it("resets the session if the submission is stale", async () => {
   try {
     await cookieParser(cookieRequest);
   } catch (error) {
-    if (!(error instanceof Response)) throw error;
+    if (!(error instanceof Redirect)) throw error;
     expect(error.status).toBe(302);
-    expect(error.headers.get("location")).toBe("/gallatin/recertify");
-    expect(error.headers.get("set-cookie")).toContain(
+    expect(error.message).toBe("/gallatin/recertify");
+    expect(error.headers?.get("Set-cookie")).toContain(
       "prp-recertification-form"
     );
     // The headers on this redirect set the new cookie;
     // we need the value to verify the Database calls
     const returnedCookie = await ParticipantCookie.parse(
-      error.headers.get("set-cookie")
+      error.headers?.get("Set-cookie") || null
     );
     returnedSubmissionID = returnedCookie.submissionID;
   }
@@ -247,4 +251,24 @@ it("resets the session if the submission is stale", async () => {
     })
   );
   expect(returnedSubmissionID).not.toBe(mockSubmissionID);
+});
+
+// expect(() => {
+//   checkRoute({ url: target } as Request, submissionData);
+// }).toThrow("/gallatin/recertify/upload");
+
+it("redirects to /confirm if already submitted", async () => {
+  const mockSubmissionID = uuidv4();
+  const mockSubmission = getSubmittedSubmission(mockSubmissionID);
+  prismaMock.submission.findUnique.mockResolvedValue(mockSubmission);
+  const cookieRequest = await makeCookieRequest(mockSubmissionID);
+  try {
+    await cookieParser(cookieRequest);
+  } catch (error) {
+    if (!(error instanceof Redirect)) throw error;
+    expect(error.status).toBe(302);
+    expect(error.message).toBe(
+      "/gallatin/recertify/confirm?previouslySubmitted=true"
+    );
+  }
 });
