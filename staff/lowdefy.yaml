@@ -5,6 +5,7 @@ name: Montana WIC Staff Portal
 
 cli:
   disableTelemetry: true
+  blocksServerUrl: https://cdn.wic-services.org/v3.23.3
 
 app:
   html:
@@ -35,7 +36,8 @@ config:
 # Include the list of non-out-of-the-box block types this application uses
 types:
   AgGridAlpine:
-    url: https://blocks-cdn.lowdefy.com/v3.23.4/blocks-aggrid/meta/AgGridAlpine.json
+    # url: https://blocks-cdn.lowdefy.com/v3.23.4/blocks-aggrid/meta/AgGridAlpine.json
+    url: https://cdn.wic-services.org/v3.23.4/blocks-aggrid/meta/AgGridAlpine.json
 
 # Configure connection to postgresql via environment variable (handled by lowdefy as a secret)
 connections:
