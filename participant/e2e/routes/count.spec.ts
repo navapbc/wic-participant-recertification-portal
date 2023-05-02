@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { parseSubmissionID, validateCookie } from "../helpers/cookies";
 import { parse } from "querystring";
+import { fillNameForm } from "../helpers/formFillers";
 
 test("count has no automatically detectable accessibility errors", async ({
   page,
@@ -13,7 +14,7 @@ test("count has no automatically detectable accessibility errors", async ({
 });
 
 test("has title", async ({ page }) => {
-  await page.goto("/gallatin/recertify/count");
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   // Expect a title "to contain" a correct app title.
   await expect(page).toHaveTitle(/Who in your household is recertifying?/);
   await expect(page).toHaveScreenshot();
@@ -21,7 +22,7 @@ test("has title", async ({ page }) => {
 
 // This page should set a cookie
 test("the count page sets a cookie", async ({ page }) => {
-  await page.goto("/gallatin/recertify/count");
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   const cookies = await page.context().cookies();
   expect(cookies).toHaveLength(1);
   await validateCookie(cookies[0]);
@@ -29,7 +30,7 @@ test("the count page sets a cookie", async ({ page }) => {
 
 test(`the count form submits a POST request, and on return to the page,
       a GET request that repopulates the form`, async ({ page }) => {
-  await page.goto("/gallatin/recertify/count");
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   const cookies = await page.context().cookies();
   const submissionID = await parseSubmissionID(cookies[0]);
 

@@ -19,7 +19,6 @@ import {
 import { stringify } from "querystring";
 import type { ParsedUrlQueryInput } from "querystring";
 import { Redirect } from "tests/helpers/remixRunNode";
-import invariant from "tiny-invariant";
 
 async function makeCookieRequest(
   submissionID: string,

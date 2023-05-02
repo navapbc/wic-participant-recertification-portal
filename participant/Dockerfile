@@ -35,7 +35,7 @@ FROM dev as e2e
 ENTRYPOINT ["./entrypoint-e2e.sh"]
 RUN npm run css
 RUN npm run build
-CMD ["npm", "run", "e2e:remix"]
+CMD ["npm", "run", "serve"]
 
 # -------- Image: build -------- #
 # Build the app

@@ -10,7 +10,6 @@ import {
   fillCountForm,
   fillChangesForm,
   fillNameForm,
-  fillUploadForm,
 } from "../helpers/formFillers";
 const participantData: Participant = {
   dob: { day: 3, year: 2004, month: 2 },

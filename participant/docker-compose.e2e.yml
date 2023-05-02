@@ -47,6 +47,7 @@ services:
       AWS_SECRET_ACCESS_KEY: "incredible_local_secret_phrase"
       MAX_UPLOAD_FILECOUNT: 5
       MAX_UPLOAD_SIZE_BYTES: 5242880
+      NODE_ENV: development
       PORT: 3005
     # Check that the remix server is up and running
     healthcheck:

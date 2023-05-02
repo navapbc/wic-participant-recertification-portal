@@ -11,20 +11,22 @@ declare global {
 }
 
 export const createS3Client = (): S3Client => {
-  if (process.env.NODE_ENV === "production") {
-    console.log(`🖥️ 🚢 Created S3Client in production mode`);
-    return new S3Client({ region: REGION });
-  } else {
-    if (!ENDPOINT_URL) {
+  console.log(`ENVIRONMENT ${JSON.stringify(process.env.NODE_ENV)}`);
+  if (!ENDPOINT_URL) {
+    if (process.env.NODE_ENV !== "production") {
       console.error("No ENDPOINT_URL environment var defined!");
     }
-    console.log(`🖥️ 🛠️ Created S3Client for endpoint url ${ENDPOINT_URL}`);
+    console.log("🖥️ 🚢 Created S3Client in production mode");
     return new S3Client({
       region: REGION,
-      endpoint: ENDPOINT_URL,
-      forcePathStyle: true,
     });
   }
+  console.log(`🖥️ 🛠️ Created S3Client for endpoint url ${ENDPOINT_URL}`);
+  return new S3Client({
+    region: REGION,
+    endpoint: ENDPOINT_URL,
+    forcePathStyle: true,
+  });
 };
 
 if (!global.__s3Connection) {

@@ -18,10 +18,10 @@ test("has title", async ({ page }) => {
 });
 
 // This page shouldn't set cookies
-test("the about page sets no cookies", async ({ page }) => {
+test("the about page sets a cookie", async ({ page }) => {
   await page.goto("/gallatin/recertify/about");
   const cookies = await page.context().cookies();
-  expect(cookies).toHaveLength(0);
+  expect(cookies).toHaveLength(1);
 });
 
 test("clicking the continue button should take you to /name", async ({

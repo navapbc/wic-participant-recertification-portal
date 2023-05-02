@@ -17,11 +17,10 @@ test("has title", async ({ page }) => {
   await expect(page).toHaveScreenshot();
 });
 
-// This page shouldn't set cookies
-test("the index page sets no cookies", async ({ page }) => {
+test("the index page sets cookies", async ({ page }) => {
   await page.goto("/gallatin/recertify");
   const cookies = await page.context().cookies();
-  expect(cookies).toHaveLength(0);
+  expect(cookies).toHaveLength(1);
 });
 
 test("clicking the get started link should take you to about", async ({

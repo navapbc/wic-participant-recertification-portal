@@ -83,7 +83,7 @@ export const checkRoute = (
   acceptableRoutes.push("changes");
   const proofs = determineProof(submissionData);
   if (
-    proofs &&
+    proofs?.length &&
     (!submissionData.documents || !submissionData.documents.length)
   ) {
     return throwRouteChangesRelative(

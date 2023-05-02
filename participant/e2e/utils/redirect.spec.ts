@@ -29,12 +29,12 @@ test("a valid clinic but invalid path redirect to the clinic's base URL", async 
   await expect(page).toHaveURL("/missoula/recertify");
 });
 
-test("a visit to the intro page with no bogus cookies lands successfully", async ({
+test("a visit to the index page with no bogus cookies lands successfully", async ({
   page,
 }) => {
-  await page.goto("/missoula/recertify/intro");
+  await page.goto("/missoula/recertify");
   const cookies = await page.context().cookies();
   expect(cookies).toHaveLength(1);
   await validateCookie(cookies[0]);
-  await expect(page).toHaveURL("/missoula/recertify/intro");
+  await expect(page).toHaveURL("/missoula/recertify");
 });
