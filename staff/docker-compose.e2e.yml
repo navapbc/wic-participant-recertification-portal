@@ -55,6 +55,8 @@ services:
         condition: service_healthy
       s3-local:
         condition: service_started
+      createbuckets:
+        condition: service_completed_successfully
     environment:
       LOWDEFY_SECRET_PG_CONNECTION_STRING: postgresql://postgres:incredible_local_secret_phrase@database:5432/postgres?schema=public
     # Check that the lowdefy server is up and running
@@ -84,6 +86,16 @@ services:
     command: server --console-address ":9001" /data
     networks:
       - staff-e2e
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - s3-local
+    entrypoint: >
+      /bin/sh -c "/usr/bin/mc config host add myminio http://s3-local:9000 e2e_minio incredible_local_secret_phrase; /usr/bin/mc mb myminio/participant-uploads; exit 0; "
+    networks:
+      - staff-e2e
+
   # Create the playwright container
   playwright:
     build:

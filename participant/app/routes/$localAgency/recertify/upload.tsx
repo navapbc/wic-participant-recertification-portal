@@ -184,6 +184,7 @@ export const action = async ({
 
     const uploadKey = [submissionID, filename!].join("/");
     const fileLocation = await uploadStreamToS3(data, uploadKey);
+
     const { mimeType, error, size } = await checkFile(uploadKey);
     if (error) {
       console.log(

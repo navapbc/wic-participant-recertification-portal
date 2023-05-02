@@ -24,6 +24,7 @@ import {
   getURLFromS3,
   headFilesizeFromS3,
   readFileHeadFromS3,
+  uploadStreamToS3,
 } from "~/utils/s3.server";
 jest.mock("@aws-sdk/s3-request-presigner");
 const mockedgetSignedURL = jest.mocked(getSignedUrl);
@@ -265,4 +266,16 @@ it("should be valid if the filesize, and type are correct", async () => {
   s3Mock.on(HeadObjectCommand).resolves({ ContentLength: 42740 });
   const validFile = await checkFile("testfile.jpg");
   expect(validFile).toEqual({ mimeType: "image/jpeg", size: 42740 });
+});
+
+it("should retry upload parts if one errors", async () => {
+  const mockStream = sdkStreamMixin(
+    createReadStream("tests/fixtures/fns-stock-produce-shopper.jpg")
+  );
+  await expect(
+    uploadStreamToS3(mockStream, "fns-stock-produce-shopper.jpg")
+  ).rejects.toHaveProperty(
+    "message",
+    "Upload of fns-stock-produce-shopper.jpg to S3 aborted!"
+  );
 });

@@ -461,8 +461,15 @@ resource "aws_security_group" "alb" {
   }
 
   vpc_id = var.vpc_id
+  # checkov:skip=CKV_AWS_260: HTTP redirect won't work unless the security group allows port 80 traffic
+  ingress {
+    description = "Allow HTTP traffic from public internet"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-  # TODO(https://github.com/navapbc/template-infra/issues/163) Disallow incoming traffic to port 80
   ingress {
     description = "Allow HTTPS traffic from public internet"
     from_port   = 443

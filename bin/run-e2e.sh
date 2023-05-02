@@ -71,6 +71,7 @@ function main() {
     cleanup
   else
     run_db
+    create_buckets
     if [[ "staff" == $app ]]; then
       reset_db
     fi
@@ -100,6 +101,12 @@ function run_app() {
   # Start the application and wait until it's ready
   echo "Starting app to test against..."
   docker compose -f docker-compose.e2e.yml up --build --wait app-e2e
+}
+
+function create_buckets() {
+  # Ensure bucket exists
+  echo "🪣 Ensuring participant-uploads bucket exists.."
+  docker compose -f docker-compose.e2e.yml up createbuckets
 }
 
 function test() {
