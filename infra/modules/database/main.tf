@@ -33,7 +33,7 @@ resource "aws_rds_cluster_parameter_group" "rds_query_logging_postgresql" {
 
   parameter {
     name  = "log_statement"
-    value = "all"
+    value = "ddl" # Only logs major database changes (e.g. ALTER TABLE)
   }
 
   parameter {
