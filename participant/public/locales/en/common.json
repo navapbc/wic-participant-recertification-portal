@@ -112,6 +112,7 @@
       "You or someone in your household is eligible for a recertification in the next 30 days."
     ],
     "note": "Not all WIC households can use this form. If you do not have a permanent address, if nobody in your household earns money, or if you do not have identity documents, then you cannot use this form ahead of your recertification appointment.",
+    "resetSession": "You’ve been timed out due to inactivity. Any information you entered before can't be retrieved.",
     "time": "This form should take about 15 minutes to complete.",
     "title": "Start your recertification for Montana WIC"
   },

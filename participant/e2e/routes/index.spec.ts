@@ -35,3 +35,9 @@ test("clicking the get started link should take you to about", async ({
   // Expects the URL to contain /about.
   await expect(page).toHaveURL(/about/);
 });
+
+test("having resetSession in the URL shows the alert", async ({ page }) => {
+  await page.goto("/gallatin/recertify?resetSession=true");
+  const alert = page.getByTestId("alert");
+  await expect(alert).toHaveText(/You’ve been timed out due to inactivity/);
+});

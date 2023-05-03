@@ -39,7 +39,6 @@ export const cookieParser = async (
   if (cookie) {
     if (cookie.submissionID) {
       const submissionID = cookie.submissionID;
-      console.log(`Found ID ${submissionID} in cookie`);
       const existingSubmission = await findSubmission(submissionID);
       if (!existingSubmission) {
         // This is an edge case; we want to ensure the submissionID isn't subverted
@@ -84,7 +83,10 @@ export const cookieParser = async (
     throw redirect("/error/databaseError");
   }
   if (forceRedirect) {
-    const redirectTarget = await validRoute(request, params, true);
+    let redirectTarget = await validRoute(request, params, true);
+    if (!resetSession && redirectTarget) {
+      redirectTarget = `${redirectTarget}?resetSession=true`;
+    }
     if (redirectTarget) {
       console.log(
         `Force redirect is ${forceRedirect.toString()}; sending the user back to ${redirectTarget}`

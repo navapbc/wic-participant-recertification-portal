@@ -112,7 +112,7 @@ it("resets the session if a cookie is sent without DB Submission record", async 
     await cookieParser(cookieRequest);
   } catch (error) {
     if (!(error instanceof Redirect)) throw error;
-    expect(error.message).toBe("/gallatin/recertify");
+    expect(error.message).toBe("/gallatin/recertify?resetSession=true");
     expect(error.status).toBe(302);
     expect(error.headers?.get("Set-cookie")).toContain(
       "prp-recertification-form"
@@ -221,7 +221,7 @@ it("resets the session if the submission is stale", async () => {
   } catch (error) {
     if (!(error instanceof Redirect)) throw error;
     expect(error.status).toBe(302);
-    expect(error.message).toBe("/gallatin/recertify");
+    expect(error.message).toBe("/gallatin/recertify?resetSession=true");
     expect(error.headers?.get("Set-cookie")).toContain(
       "prp-recertification-form"
     );
