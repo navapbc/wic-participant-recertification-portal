@@ -16,6 +16,8 @@ import {
   SummaryBoxHeading,
 } from "@trussworks/react-uswds";
 import TransLinks from "~/components/TransLinks";
+import { useHydrated } from "remix-utils";
+import { localizeDateString } from "~/utils/date";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -40,9 +42,7 @@ export const loader: LoaderFunction = async ({
       submissionData: submissionData,
       previouslySubmitted: previouslySubmitted,
       startOverURL: startOverURL,
-      submittedDate: (
-        (submission?.updatedAt as Date) || new Date()
-      ).toLocaleString("en-US"),
+      submittedDate: submission?.updatedAt,
     },
     { headers: headers }
   );
@@ -51,6 +51,14 @@ export const loader: LoaderFunction = async ({
 export default function Confirm() {
   const { submissionData, submittedDate, previouslySubmitted, startOverURL } =
     useLoaderData<typeof loader>();
+
+  // Convert to client local timezone, while avoiding hydration errors.
+  const isHydrated = useHydrated();
+  let convertedSubmittedDate = submittedDate
+  if (isHydrated) {
+    convertedSubmittedDate = localizeDateString(submittedDate)
+  }
+
   const formProps: SubmissionFormProps = {
     editable: false,
     submissionKey: "Review.details",
@@ -83,7 +91,7 @@ export default function Confirm() {
         <strong>
           <Trans i18nKey="Confirm.submitted" />
         </strong>
-        {submittedDate}
+        {convertedSubmittedDate}
       </div>
       <SummaryBox className="margin-bottom-4">
         <SummaryBoxHeading headingLevel="h2">
