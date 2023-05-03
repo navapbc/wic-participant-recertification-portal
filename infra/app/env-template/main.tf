@@ -269,6 +269,10 @@ module "analytics" {
       name  = "MATOMO_DATABASE_DBNAME",
       value = local.analytics_database_name,
     },
+    {
+      name = "MATOMO_URL_BASE",
+      value = var.analytics_url,
+    }
   ]
   service_ssm_resource_paths = [
     module.analytics_database.admin_db_host_secret_name,
