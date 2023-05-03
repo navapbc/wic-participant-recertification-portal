@@ -52,7 +52,6 @@ export const cookieParser = async (
             existingSubmission.submitted === true &&
             !request.url.includes("confirm")
           ) {
-            console.log(`GOT URL ${request.url}`);
             const confirmAlreadySubmitted = routeRelative(request, "confirm", {
               previouslySubmitted: true,
             });
