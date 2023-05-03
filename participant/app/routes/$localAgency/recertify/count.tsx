@@ -24,7 +24,7 @@ import {
   fetchSubmissionData,
   findSubmissionFormData,
 } from "app/utils/db.server";
-import { CountData } from "~/types";
+import type { CountData } from "~/types";
 
 const countValidator = withZod(countSchema);
 
