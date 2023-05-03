@@ -252,10 +252,6 @@ it("resets the session if the submission is stale", async () => {
   expect(returnedSubmissionID).not.toBe(mockSubmissionID);
 });
 
-// expect(() => {
-//   checkRoute({ url: target } as Request, submissionData);
-// }).toThrow("/gallatin/recertify/upload");
-
 it("redirects to /confirm if already submitted", async () => {
   const mockSubmissionID = uuidv4();
   const mockSubmission = getSubmittedSubmission(mockSubmissionID);
