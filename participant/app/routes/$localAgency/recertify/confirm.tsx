@@ -54,9 +54,9 @@ export default function Confirm() {
 
   // Convert to client local timezone, while avoiding hydration errors.
   const isHydrated = useHydrated();
-  let convertedSubmittedDate = submittedDate
+  let convertedSubmittedDate = submittedDate;
   if (isHydrated) {
-    convertedSubmittedDate = localizeDateString(submittedDate)
+    convertedSubmittedDate = localizeDateString(submittedDate);
   }
 
   const formProps: SubmissionFormProps = {
