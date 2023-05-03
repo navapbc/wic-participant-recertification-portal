@@ -8,6 +8,7 @@ export type ButtonLinkProps = Omit<USWDSLinkProps<RemixLinkProps>, "asCustom">;
 
 export const ButtonLink = (props: ButtonLinkProps): ReactElement => {
   const { className = "", variant = "unstyled", to, children, ...rest } = props;
+
   return (
     <USWDSLink
       asCustom={RemixLink}

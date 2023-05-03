@@ -17,6 +17,9 @@ import i18next from "~/i18next.server";
 import Layout from "app/components/Layout";
 import { camelCase, upperFirst } from "lodash";
 import { useEffect } from "react";
+import MatomoTracker from "@jonkoops/matomo-tracker";
+import { useHydrated } from "remix-utils";
+import { MATOMO_SECURE, MATOMO_URL_BASE } from "app/utils/config.server";
 
 export function useChangeLanguage(locale: string) {
   const { i18n } = useTranslation();
@@ -84,6 +87,31 @@ export default function App() {
   // language, this locale will change and i18next will load the correct
   // translation files
   useChangeLanguage(locale);
+
+  const isHydrated = useHydrated();
+  if (isHydrated && MATOMO_URL_BASE) {
+    const tracker = new MatomoTracker({
+      urlBase: MATOMO_URL_BASE,
+      siteId: 1,
+      disabled: false, // optional, false by default. Makes all tracking calls no-ops if set to true.
+      heartBeat: {
+        // optional, enabled by default
+        active: true, // optional, default value: true
+        seconds: 10, // optional, default value: `15
+      },
+      linkTracking: false, // optional, default value: true
+      configurations: {
+        // optional, default value: {}
+        // any valid matomo configuration, all below are optional
+        disableCookies: true,
+        setSecureCookie: MATOMO_SECURE,
+        setRequestMethod: "POST",
+        trackPageView: true,
+      },
+    });
+
+    tracker.trackPageView();
+  }
 
   return (
     <html lang={locale} dir={i18n.dir()}>
