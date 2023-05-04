@@ -41,16 +41,10 @@ export const loader: LoaderFunction = async ({
   checkRoute(request, existingSubmissionData);
 
   const actualHouseholdSize = existingSubmissionData.participant?.length;
-
-  console.log(`from details: ${existingSubmissionData.participant?.length}`);
-  console.log(`from count: ${existingSubmissionData.count?.householdSize}`);
-  console.log(`actual householdSize should be: ${actualHouseholdSize}`);
-
   const existingCountData =
     actualHouseholdSize !== undefined
       ? { householdSize: actualHouseholdSize }
       : existingSubmissionData.count;
-  console.log(existingCountData);
 
   return json(
     {
@@ -149,11 +143,6 @@ export default function Count() {
             </Alert>
           )}
         </div>
-        <input
-          type="hidden"
-          id="actualHouseholdSize"
-          value={actualHouseholdSize}
-        />
         <TextField {...householdSizeProps} />
         <Button
           className="display-block margin-top-6"
