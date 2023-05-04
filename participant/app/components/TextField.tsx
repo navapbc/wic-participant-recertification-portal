@@ -34,7 +34,7 @@ export type TextFieldProps = {
   value?: string;
   className?: string;
   size?: number;
-  disabled?: string;
+  disabled?: boolean;
 };
 
 export const TextField = (props: TextFieldProps): ReactElement => {

@@ -105,7 +105,7 @@ export default function Count() {
     labelClassName: "usa-label--large",
   };
   if (disableHouseholdSize) {
-    householdSizeProps.disabled = "disabled";
+    householdSizeProps.disabled = true;
   }
   return (
     <div>
