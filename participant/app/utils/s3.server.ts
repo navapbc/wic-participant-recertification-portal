@@ -4,6 +4,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
+  PutObjectCommand,
   NotFound,
 } from "@aws-sdk/client-s3";
 import type { PutObjectCommandInput } from "@aws-sdk/client-s3";
@@ -100,11 +101,12 @@ export const headFilesizeFromS3 = async (
 };
 
 export const getURLFromS3 = async (
-  key: string,
-  duration?: number
+  key: string, action: "GET" | "PUT" = "GET",
+  duration?: number,
 ): Promise<string | undefined> => {
   const expiresIn = duration || S3_PRESIGNED_URL_EXPIRATION;
-  const command = new GetObjectCommand({
+  const s3command = (action === "GET") ? GetObjectCommand : PutObjectCommand
+  const command = new s3command({
     Key: key,
     Bucket: BUCKET,
   });
@@ -120,6 +122,8 @@ export const getURLFromS3 = async (
     throw new Error(`Unable to get URL for ${key}: ${error}`);
   }
 };
+
+
 
 export const deleteFileFromS3 = async (key: string) => {
   const command = new DeleteObjectCommand({
@@ -200,8 +204,7 @@ export async function uploadStreamToS3(data: any, filename: string) {
       }
     } catch (e) {
       console.error(
-        `⚠️ File upload failed: ${e}; retrying ${
-          retries + 1
+        `⚠️ File upload failed: ${e}; retrying ${retries + 1
         } of ${S3_UPLOAD_RETRIES}`
       );
     }

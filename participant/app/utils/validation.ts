@@ -140,3 +140,7 @@ export const participantSchema = zfd.formData({
     })
   ),
 });
+
+export const uploadSchema = zfd.formData(z.object({
+  documents: zfd.repeatable(z.array(z.string()))
+}))

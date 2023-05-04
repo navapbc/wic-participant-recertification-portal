@@ -9,11 +9,15 @@ import { Accordion, Alert, Button } from "@trussworks/react-uswds";
 import {
   Form,
   useActionData,
+  useFetcher,
   useLoaderData,
   useLocation,
   useSubmit,
 } from "@remix-run/react";
 import type { Params } from "@remix-run/react";
+import { uploadSchema } from "~/utils/validation";
+import { withZod } from "@remix-validated-form/with-zod";
+
 import {
   json,
   unstable_parseMultipartFormData as parseMultipartFormData,
@@ -47,6 +51,8 @@ import {
 } from "app/utils/config.server";
 import { FilePreview } from "~/components/FilePreview";
 import type { TFunction } from "i18next";
+
+const uploadValidator = withZod(uploadSchema)
 
 const createPreviewData = async (
   submissionID: string
@@ -125,7 +131,9 @@ export const loader: LoaderFunction = async ({
   const { submissionID, headers } = await cookieParser(request, params);
   const url = new URL(request.url);
   const removeFileAction = url.searchParams.get("action") == "remove_file";
+  const putFileAction = url.searchParams.get("action") == "put_file"
   const removeFile = url.searchParams.get("remove");
+  const putFile = url.searchParams.get("put")
   if (removeFileAction && removeFile) {
     console.log(`⏳ Received request to remove ${removeFile}`);
     const existingRecord = await findDocument(submissionID, removeFile);
@@ -140,6 +148,13 @@ export const loader: LoaderFunction = async ({
     }
     // This prevents a remove command from being in the history
     return redirect(routeRelative(request, "/upload"));
+  }
+  if (putFileAction && putFile) {
+    const putURL = await getURLFromS3(`${submissionID}/${putFile}`, "PUT")
+    console.log(`🔼 Created PUT URL for ${putFile}: ${putURL}`)
+    return json({
+      putFileURL: putURL
+    })
   }
   const existingSubmissionData = await fetchSubmissionData(submissionID);
   checkRoute(request, existingSubmissionData);
@@ -175,58 +190,36 @@ export const action = async ({
   params: Params<string>;
 }) => {
   const { submissionID } = await cookieParser(request, params);
-  const s3UploadHandler: UploadHandler = async ({ name, filename, data }) => {
-    /* UploadHandlers can only return File | string | undefined..
-     * So using JSON to serialize the data into a string is a hacktastic
-     * workaround.
-     */
-    if (name !== "documents" || !filename) {
-      return;
-    }
 
+  const formData = uploadSchema.parse(await request.formData())
+  let acceptedDocuments: SubmittedFile[] = []
+  const rejectedDocuments: SubmittedFile[] = []
+  formData.documents.map(async (filename) => {
     const uploadKey = [submissionID, filename!].join("/");
-    const fileLocation = await uploadStreamToS3(data, uploadKey);
-
     const { mimeType, error, size } = await checkFile(uploadKey);
     if (error) {
       console.log(
         `❌ Rejected file ${filename} - mimeType: ${mimeType} error: ${error}`
       );
       await deleteFileFromS3(uploadKey);
-      return JSON.stringify({
+      rejectedDocuments.push({
         filename: filename!,
         accepted: false,
         error: error,
         size: size,
         mimeType: mimeType,
-      } as SubmittedFile);
+      });
+    } else {
+      acceptedDocuments.push({
+        filename: filename!,
+        accepted: true,
+        key: uploadKey,
+        size: size,
+        mimeType: mimeType,
+      })
     }
+  })
 
-    return JSON.stringify({
-      filename: filename!,
-      accepted: true,
-      url: fileLocation,
-      key: uploadKey,
-      size: size,
-      mimeType: mimeType,
-    } as SubmittedFile);
-  };
-  const uploadHandler: UploadHandler = composeUploadHandlers(s3UploadHandler);
-  const formData = await parseMultipartFormData(request, uploadHandler);
-  const submittedDocuments = formData
-    .getAll("documents")
-    .reduce<SubmittedFile[]>((parsedFileList, rawFile) => {
-      if (typeof rawFile == "string") {
-        parsedFileList.push(JSON.parse(rawFile) as SubmittedFile);
-      }
-      return parsedFileList;
-    }, [] as SubmittedFile[]);
-  let acceptedDocuments = submittedDocuments.filter((value) => {
-    return value?.accepted == true;
-  });
-  const rejectedDocuments = submittedDocuments.filter((value) => {
-    return value?.accepted == false;
-  });
   const previousUploads = await listDocuments(submissionID);
   const totalUploads = previousUploads.length + acceptedDocuments.length;
   if (totalUploads > MAX_UPLOAD_FILECOUNT) {
@@ -247,8 +240,6 @@ export const action = async ({
       })
     );
     rejectedDocuments.push.apply(rejectedDocuments, newRejectedDocuments);
-
-    formData.delete("documents");
     acceptedDocuments = acceptedDocuments.filter(({ filename }) => {
       return !rejectedDocuments.some((e) => e.filename === filename);
     });
@@ -308,6 +299,7 @@ const buildDocumentHelp = (proofRequired: Proofs[]) => {
 };
 
 export default function Upload() {
+  const fetcher = useFetcher();
   const { t } = useTranslation();
   const location = useLocation();
   const { proofRequired, maxFileSize, maxFileCount, previousUploads } =
@@ -324,6 +316,14 @@ export default function Upload() {
       currentUploads.filter((file) => file.name != filename)
     );
   };
+  const addFile = async (file: File) => {
+    console.log(`Trying to get URL for ${file.name}`)
+    // Needs a real URL, filename neeeds urlescaping
+    const getResponse = await fetch(`http://localhost:3001/gallatin/recertify/upload?action=put_file&put=${file.name}&_data=routes%2F%24localAgency%2Frecertify%2Fupload`)
+    const putURL = await getResponse.json()
+    console.log(`Starting upload of ${file.name} to ${putURL.putFileURL}`)
+    await fetch(putURL.putFileURL, { body: file, method: 'PUT', headers: { 'content-type': file.type } })
+  }
   const renderPreviews = () => {
     const previousDocumentHeader = previousUploadedFiles.length ? (
       <h2 className="margin-top-2 font-sans">Previously uploaded documents</h2>
@@ -397,6 +397,7 @@ export default function Upload() {
     accept: "image/*,.pdf",
     maxFileCount: maxFileCount,
     maxFileSizeInBytes: maxFileSize,
+    addFile: addFile
   };
   const documentProofElements = buildDocumentHelp(proofRequired);
 
@@ -430,7 +431,6 @@ export default function Upload() {
       <Form
         method="post"
         id="uploadForm"
-        encType="multipart/form-data"
         className="usa-form usa-form--large"
         name="documents-form"
         action={location.pathname}
