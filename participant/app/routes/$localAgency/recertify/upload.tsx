@@ -177,6 +177,7 @@ export const loader: LoaderFunction = async ({
       maxFileCount: MAX_UPLOAD_FILECOUNT,
       maxFileSize: MAX_UPLOAD_SIZE_BYTES,
       previousUploads: previousUploads,
+      origin: url.origin
     },
     { headers: headers }
   );
@@ -299,10 +300,9 @@ const buildDocumentHelp = (proofRequired: Proofs[]) => {
 };
 
 export default function Upload() {
-  const fetcher = useFetcher();
   const { t } = useTranslation();
   const location = useLocation();
-  const { proofRequired, maxFileSize, maxFileCount, previousUploads } =
+  const { proofRequired, maxFileSize, maxFileCount, previousUploads, origin } =
     useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const formSubmit = useSubmit();
@@ -319,7 +319,7 @@ export default function Upload() {
   const addFile = async (file: File) => {
     console.log(`Trying to get URL for ${file.name}`)
     // Needs a real URL, filename neeeds urlescaping
-    const getResponse = await fetch(`http://localhost:3001/gallatin/recertify/upload?action=put_file&put=${file.name}&_data=routes%2F%24localAgency%2Frecertify%2Fupload`)
+    const getResponse = await fetch(`${origin}${location.pathname}?action=put_file&put=${file.name}&_data=routes%2F%24localAgency%2Frecertify%2Fupload`)
     const putURL = await getResponse.json()
     console.log(`Starting upload of ${file.name} to ${putURL.putFileURL}`)
     await fetch(putURL.putFileURL, { body: file, method: 'PUT', headers: { 'content-type': file.type } })
