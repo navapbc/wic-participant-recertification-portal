@@ -86,9 +86,12 @@ export const action = async ({ request }: { request: Request }) => {
 };
 
 export default function Count() {
-  useLoaderData<loaderData>();
+  const { data } = useLoaderData<loaderData>();
+  const disableHouseholdSize = data.householdSize !== undefined
+
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
+    name: "householdSize",
     type: "input",
     inputType: "number",
     labelKey: "Count.householdSize.label",
@@ -96,6 +99,11 @@ export default function Count() {
     className: "width-8",
     labelClassName: "usa-label--large",
   };
+  if (disableHouseholdSize) {
+    householdSizeProps.disabled = "disable";
+    householdSizeProps.value = data.householdSize;
+  }
+
   return (
     <div>
       <h1>
