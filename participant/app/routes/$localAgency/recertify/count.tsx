@@ -1,19 +1,17 @@
 import { Alert, Button } from "@trussworks/react-uswds";
 import React from "react";
-import { useEffect } from "react";
 
 import { Trans } from "react-i18next";
 import { TextField } from "app/components/TextField";
 import type { TextFieldProps } from "app/components/TextField";
 import { List } from "app/components/List";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
-import { countSchema } from "app/utils/validation";
+import { countSchema, countDisabledSchema } from "app/utils/validation";
 import { withZod } from "@remix-validated-form/with-zod";
 import {
   ValidatedForm,
   setFormDefaults,
   validationError,
-  useControlField,
 } from "remix-validated-form";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -29,6 +27,7 @@ import {
 import type { CountData } from "~/types";
 
 const countValidator = withZod(countSchema);
+const countDisabledValidator = withZod(countDisabledSchema);
 
 export const loader: LoaderFunction = async ({
   request,
@@ -41,14 +40,17 @@ export const loader: LoaderFunction = async ({
   const existingSubmissionData = await fetchSubmissionData(submissionID);
   checkRoute(request, existingSubmissionData);
 
-  const actualHouseholdSize = existingSubmissionData.participant?.length
+  const actualHouseholdSize = existingSubmissionData.participant?.length;
 
-  console.log(`from details: ${existingSubmissionData.participant?.length}`)
-  console.log(`from count: ${existingSubmissionData.count?.householdSize}`)
-  console.log(`actual householdSize should be: ${actualHouseholdSize}`)
+  console.log(`from details: ${existingSubmissionData.participant?.length}`);
+  console.log(`from count: ${existingSubmissionData.count?.householdSize}`);
+  console.log(`actual householdSize should be: ${actualHouseholdSize}`);
 
-  const existingCountData = actualHouseholdSize !== undefined ? { householdSize: actualHouseholdSize } : existingSubmissionData.count
-  console.log(existingCountData)
+  const existingCountData =
+    actualHouseholdSize !== undefined
+      ? { householdSize: actualHouseholdSize }
+      : existingSubmissionData.count;
+  console.log(existingCountData);
 
   return json(
     {
@@ -62,55 +64,54 @@ export const loader: LoaderFunction = async ({
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
-export const action = async ({ request }: { request: Request }) => {
-  const formData = await request.formData();
+export const action = async ({
+  request,
+  params,
+}: {
+  request: Request;
+  params: Params<string>;
+}) => {
+  const { submissionID } = await cookieParser(request, params);
+  const existingSubmissionData = await fetchSubmissionData(submissionID);
+  const actualHouseholdSize = existingSubmissionData.participant?.length;
 
-  console.log(`In action, next up is formData:`)
-  console.log(formData)
-
-  const validationResult = await countValidator.validate(formData);
-  if (validationResult.error) {
-    console.log(`Validation error:`);
-    console.log(validationResult.error);
-    return validationError(validationResult.error, validationResult.data);
+  if (actualHouseholdSize === undefined) {
+    const formData = await request.formData();
+    const validationResult = await countValidator.validate(formData);
+    if (validationResult.error) {
+      console.log(`Validation error: ${validationResult.error}`);
+      return validationError(validationResult.error, validationResult.data);
+    }
+    const parsedForm = countSchema.parse(formData);
+    const { submissionID } = await cookieParser(request);
+    console.log(`Got submission ${JSON.stringify(parsedForm)}`);
+    await upsertSubmissionForm(submissionID, "count", parsedForm);
+    const routeTarget = routeFromCount(request, parsedForm);
+    console.log(`Completed count form; routing to ${routeTarget}`);
+    return redirect(routeTarget);
+  } else {
+    const routeTarget = routeFromCount(request, {
+      householdSize: actualHouseholdSize,
+    });
+    console.log(`Moving past disabled count form; routing to ${routeTarget}`);
+    return redirect(routeTarget);
   }
-  const parsedForm = countSchema.parse(formData);
-
-
-  console.log(`next up is parsedForm:`)
-  console.log(parsedForm)
-
-  const { submissionID } = await cookieParser(request);
-  console.log(`Got submission ${JSON.stringify(parsedForm)}`);
-  await upsertSubmissionForm(submissionID, "count", parsedForm);
-  const routeTarget = routeFromCount(request, parsedForm);
-  console.log(`Completed count form; routing to ${routeTarget}`);
-  return redirect(routeTarget);
 };
 
 export default function Count() {
   const { actualHouseholdSize } = useLoaderData<loaderData>();
-  const disableHouseholdSize = actualHouseholdSize !== undefined
-  const [value, setValue] = useControlField("householdSize", "householdSizeForm");
-  console.log(value)
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  }
-
+  const disableHouseholdSize = actualHouseholdSize !== undefined;
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
-    name: "householdSize",
     type: "input",
     inputType: "number",
     labelKey: "Count.householdSize.label",
     required: true,
     className: "width-8",
     labelClassName: "usa-label--large",
-    handleChange: handleChange,
   };
   if (disableHouseholdSize) {
-    // householdSizeProps.disabled = "disabled";
-    householdSizeProps.value = value;
+    householdSizeProps.disabled = "disabled";
   }
   return (
     <div>
@@ -129,7 +130,9 @@ export default function Count() {
       </p>
       <RequiredQuestionStatement />
       <ValidatedForm
-        validator={countValidator}
+        validator={
+          disableHouseholdSize ? countDisabledValidator : countValidator
+        }
         id="householdSizeForm"
         method="post"
       >
@@ -146,6 +149,11 @@ export default function Count() {
             </Alert>
           )}
         </div>
+        <input
+          type="hidden"
+          id="actualHouseholdSize"
+          value={actualHouseholdSize}
+        />
         <TextField {...householdSizeProps} />
         <Button
           className="display-block margin-top-6"

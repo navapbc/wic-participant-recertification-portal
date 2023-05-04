@@ -79,11 +79,6 @@ export const countDisabledSchema = zfd.formData({
   householdSize: zfd.numeric(z.number().optional()),
 });
 
-//TODO Update this with the proper validation
-export const householdDetailsSchema = zfd.formData({
-  householdSize: zfd.numeric(),
-});
-
 export const participantSchema = zfd.formData({
   participant: z.array(
     z.object({
