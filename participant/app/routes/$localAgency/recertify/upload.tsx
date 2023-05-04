@@ -133,7 +133,10 @@ export const loader: LoaderFunction = async ({
 
   const url = new URL(request.url);
   let origin = url.origin
+  console.log('maybe replace?')
+  console.log(request.headers['x-forwarded-proto'])
   if (request.headers['x-forwarded-proto'] === 'https') {
+  console.log('replace!')
     origin.replace('http', 'https')
   }
   console.log(`origin: ${origin}`)
