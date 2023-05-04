@@ -35,6 +35,7 @@ export type TextFieldProps = {
   className?: string;
   size?: number;
   disabled?: string;
+  // useControlField?: boolean;
 };
 
 export const TextField = (props: TextFieldProps): ReactElement => {
@@ -53,8 +54,14 @@ export const TextField = (props: TextFieldProps): ReactElement => {
     size,
     ...otherProps
   } = props;
+
+  console.log(`in the textfield`)
+  console.log(`defaultValue: ${defaultValue}`)
+  console.log(`value: ${value}`)
   const { getInputProps, error } = useField(id);
-  const { fieldValue, setFieldValue } = useControlField(id);
+  // const [ fieldValue, setFieldValue ] = useControlField(id);
+  // console.log(`fieldValue: ${fieldValue}`)
+
   const TextTypeClass = type == "textarea" ? Textarea : TextInput;
   let errorProp = {};
   if (error && type == "textarea") {
@@ -77,7 +84,8 @@ export const TextField = (props: TextFieldProps): ReactElement => {
         {...getInputProps({
           id: id,
           type: inputType,
-          value: fieldValue,
+          value: value,
+          // value: fieldValue,
           className: className,
           ...otherProps,
         })}

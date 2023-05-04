@@ -13,6 +13,7 @@ import {
   ValidatedForm,
   setFormDefaults,
   validationError,
+  useControlField,
 } from "remix-validated-form";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -40,19 +41,19 @@ export const loader: LoaderFunction = async ({
   const existingSubmissionData = await fetchSubmissionData(submissionID);
   checkRoute(request, existingSubmissionData);
 
-  const householdSize = existingSubmissionData.participant?.length || existingSubmissionData.count?.householdSize || undefined
+  const actualHouseholdSize = existingSubmissionData.participant?.length
 
   console.log(`from details: ${existingSubmissionData.participant?.length}`)
   console.log(`from count: ${existingSubmissionData.count?.householdSize}`)
-  console.log(`household should now be: ${householdSize}`)
+  console.log(`actual householdSize should be: ${actualHouseholdSize}`)
 
-  const existingCountData = { householdSize: householdSize }
+  const existingCountData = actualHouseholdSize !== undefined ? { householdSize: actualHouseholdSize } : existingSubmissionData.count
   console.log(existingCountData)
 
   return json(
     {
       submissionID: submissionID,
-      data: existingCountData,
+      actualHouseholdSize: actualHouseholdSize,
       ...setFormDefaults("householdSizeForm", existingCountData),
     },
     { headers: headers }
@@ -69,10 +70,12 @@ export const action = async ({ request }: { request: Request }) => {
 
   const validationResult = await countValidator.validate(formData);
   if (validationResult.error) {
-    console.log(`Validation error: ${validationResult.error}`);
+    console.log(`Validation error:`);
+    console.log(validationResult.error);
     return validationError(validationResult.error, validationResult.data);
   }
   const parsedForm = countSchema.parse(formData);
+
 
   console.log(`next up is parsedForm:`)
   console.log(parsedForm)
@@ -86,8 +89,13 @@ export const action = async ({ request }: { request: Request }) => {
 };
 
 export default function Count() {
-  const { data } = useLoaderData<loaderData>();
-  const disableHouseholdSize = data.householdSize !== undefined
+  const { actualHouseholdSize } = useLoaderData<loaderData>();
+  const disableHouseholdSize = actualHouseholdSize !== undefined
+  const [value, setValue] = useControlField("householdSize", "householdSizeForm");
+  console.log(value)
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  }
 
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
@@ -98,12 +106,12 @@ export default function Count() {
     required: true,
     className: "width-8",
     labelClassName: "usa-label--large",
+    handleChange: handleChange,
   };
   if (disableHouseholdSize) {
-    householdSizeProps.disabled = "disable";
-    householdSizeProps.value = data.householdSize;
+    // householdSizeProps.disabled = "disabled";
+    householdSizeProps.value = value;
   }
-
   return (
     <div>
       <h1>
