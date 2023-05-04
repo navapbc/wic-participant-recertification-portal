@@ -132,8 +132,10 @@ export const loader: LoaderFunction = async ({
   console.log('upload loader')
 
   const url = new URL(request.url);
-  const origin = request.headers['referrer'] ? request.headers['referrer'] : url.origin
-
+  let origin = url.origin
+  if (request.headers['x-forwarded-proto'] === 'https') {
+    origin.replace('http', 'https')
+  }
   console.log(`origin: ${origin}`)
 
   console.log("raw objects below:")
