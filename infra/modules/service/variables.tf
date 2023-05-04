@@ -139,3 +139,9 @@ variable "enable_exec" {
   description = "Enable exec access to ECS task"
   default     = false
 }
+
+variable "service_deployment_maximum_percent" {
+  type        = number
+  description = "The service deployment maximum percent"
+  default     = 200
+}
