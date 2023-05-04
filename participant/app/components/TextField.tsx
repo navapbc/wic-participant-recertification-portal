@@ -10,7 +10,7 @@ import {
   Textarea,
   TextInput,
 } from "@trussworks/react-uswds";
-import { useField } from "remix-validated-form";
+import { useField, useControlField } from "remix-validated-form";
 
 export type TextFieldProps = {
   handleChange?: (
@@ -54,6 +54,7 @@ export const TextField = (props: TextFieldProps): ReactElement => {
     ...otherProps
   } = props;
   const { getInputProps, error } = useField(id);
+  const { fieldValue, setFieldValue } = useControlField(id);
   const TextTypeClass = type == "textarea" ? Textarea : TextInput;
   let errorProp = {};
   if (error && type == "textarea") {
@@ -76,7 +77,7 @@ export const TextField = (props: TextFieldProps): ReactElement => {
         {...getInputProps({
           id: id,
           type: inputType,
-          value: value,
+          value: fieldValue,
           className: className,
           ...otherProps,
         })}

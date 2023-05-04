@@ -79,7 +79,8 @@
     "householdSize": {
       "label": "How many people in your household will recertify their WIC benefits at the next appointment?",
       "button": "Continue"
-    }
+    },
+    "previouslySubmittedAlert": "You can't edit this page. If you need to update the number of people who will recertify, click Continue and use the \"Add another WIC participant\" or \"Remove participant\" buttons."
   },
   "Demo": {
     "alertText": "This site is a demonstration project and for example purposes only"
