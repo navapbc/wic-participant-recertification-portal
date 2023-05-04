@@ -130,8 +130,17 @@ export const loader: LoaderFunction = async ({
 }) => {
   const { submissionID, headers } = await cookieParser(request, params);
   console.log('upload loader')
-  console.log(request)
+
   const url = new URL(request.url);
+  const origin = request.headers['referrer'] ? request.headers['referrer'] : url.origin
+
+  console.log(`origin: ${origin}`)
+
+  console.log("raw objects below:")
+  console.log(request)
+  console.log(request.headers)
+  console.log(request.referrer)
+  console.log(request.url)
   console.log(url)
   console.log(url.origin)
   const removeFileAction = url.searchParams.get("action") == "remove_file";
@@ -181,7 +190,7 @@ export const loader: LoaderFunction = async ({
       maxFileCount: MAX_UPLOAD_FILECOUNT,
       maxFileSize: MAX_UPLOAD_SIZE_BYTES,
       previousUploads: previousUploads,
-      origin: url.origin
+      origin: origin
     },
     { headers: headers }
   );
