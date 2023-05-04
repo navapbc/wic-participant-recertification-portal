@@ -92,7 +92,14 @@ it("is OK to be on the name page without name data", () => {
   expect(nameCheck).toBe(true);
 });
 
-const nameTooFar = ["details", "changes", "upload", "review", "confirm"];
+const nameTooFar = [
+  "count",
+  "details",
+  "changes",
+  "upload",
+  "review",
+  "confirm",
+];
 
 it.each(nameTooFar)(
   "bounces me back to name if i try to go further without name data",
@@ -104,15 +111,8 @@ it.each(nameTooFar)(
   }
 );
 
-it("is OK to be on the details page or count page without participant data", () => {
+it("is OK to be on the count page without count data", () => {
   const nameData = { name: pick(participantData, ["firstName", "lastName"]) };
-  const detailsCheck = checkRoute(
-    {
-      url: "http://localhost:3000/gallatin/recertify/details",
-    } as Request,
-    nameData
-  );
-  expect(detailsCheck).toBe(true);
   const countCheck = checkRoute(
     {
       url: "http://localhost:3000/gallatin/recertify/count",
@@ -122,15 +122,45 @@ it("is OK to be on the details page or count page without participant data", () 
   expect(countCheck).toBe(true);
 });
 
+const countTooFar = ["details", "changes", "upload", "review", "confirm"];
+
+it.each(countTooFar)(
+  "bounces me back to count if i try to go further without count data",
+  (page) => {
+    const target = `http://localhost:3000/gallatin/recertify/${page}`;
+    const nameData = { name: pick(participantData, ["firstName", "lastName"]) };
+    expect(() => {
+      checkRoute({ url: target } as Request, nameData);
+    }).toThrow("/gallatin/recertify/count");
+  }
+);
+
+it("is OK to be on the details page without participant data", () => {
+  const submissionData = {
+    name: pick(participantData, ["firstName", "lastName"]),
+    count: { householdSize: 1 },
+  };
+  const detailsCheck = checkRoute(
+    {
+      url: "http://localhost:3000/gallatin/recertify/details",
+    } as Request,
+    submissionData
+  );
+  expect(detailsCheck).toBe(true);
+});
+
 const participantTooFar = ["changes", "upload", "review", "confirm"];
 
 it.each(participantTooFar)(
   "bounces me back to details if i try to go further without participant data",
   (page) => {
     const target = `http://localhost:3000/gallatin/recertify/${page}`;
-    const nameData = { name: pick(participantData, ["firstName", "lastName"]) };
+    const submissionData = {
+      name: pick(participantData, ["firstName", "lastName"]),
+      count: { householdSize: 1 },
+    };
     expect(() => {
-      checkRoute({ url: target } as Request, nameData);
+      checkRoute({ url: target } as Request, submissionData);
     }).toThrow("/gallatin/recertify/details");
   }
 );
@@ -138,6 +168,7 @@ it.each(participantTooFar)(
 it("is OK to be on the changes page without changes data", () => {
   const submissionData = {
     name: pick(participantData, ["firstName", "lastName"]),
+    count: { householdSize: 1 },
     participant: [participantData as Participant],
   };
   const changesCheck = checkRoute(
@@ -155,6 +186,7 @@ it.each(changesTooFar)(
     const target = `http://localhost:3000/gallatin/recertify/${page}`;
     const submissionData = {
       name: pick(participantData, ["firstName", "lastName"]),
+      count: { householdSize: 1 },
       participant: [participantData as Participant],
     };
     expect(() => {
@@ -166,6 +198,7 @@ it.each(changesTooFar)(
 it("is OK to be on the upload page without documents data", () => {
   const submissionData = {
     name: pick(participantData, ["firstName", "lastName"]),
+    count: { householdSize: 1 },
     participant: [participantData as Participant],
     changes: { idChange: "yes", addressChange: "no" },
   };
@@ -184,6 +217,7 @@ it.each(uploadTooFar)(
     const target = `http://localhost:3000/gallatin/recertify/${page}`;
     const submissionData = {
       name: pick(participantData, ["firstName", "lastName"]),
+      count: { householdSize: 1 },
       participant: [participantData as Participant],
       changes: { idChange: "yes", addressChange: "no" },
     };
@@ -196,6 +230,7 @@ it.each(uploadTooFar)(
 it("is OK to be on the contact page without contact data", () => {
   const submissionData = {
     name: pick(participantData, ["firstName", "lastName"]),
+    count: { householdSize: 1 },
     participant: [participantData as Participant],
     changes: { idChange: "yes", addressChange: "no" },
     documents: [
@@ -221,6 +256,7 @@ it.each(contactTooFar)(
     const target = `http://localhost:3000/gallatin/recertify/${page}`;
     const submissionData = {
       name: pick(participantData, ["firstName", "lastName"]),
+      count: { householdSize: 1 },
       participant: [participantData as Participant],
       changes: { idChange: "yes", addressChange: "no" },
       documents: [
@@ -240,6 +276,7 @@ it.each(contactTooFar)(
 const okToWanderBack = [
   "about",
   "name",
+  "count",
   "details",
   "changes",
   "upload",
@@ -253,6 +290,7 @@ it.each(okToWanderBack)(
     const target = `http://localhost:3000/gallatin/recertify/${page}`;
     const submissionData = {
       name: pick(participantData, ["firstName", "lastName"]),
+      count: { householdSize: 1 },
       participant: [participantData as Participant],
       changes: { idChange: "yes", addressChange: "no" },
       documents: [

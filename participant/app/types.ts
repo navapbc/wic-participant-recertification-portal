@@ -81,9 +81,9 @@ export type NameData = {
 
 export type SubmissionData = {
   name?: NameData;
-  changes?: ChangesData;
-  participant?: Participant[];
-  contact?: ContactData;
   count?: CountData;
+  participant?: Participant[];
+  changes?: ChangesData;
   documents?: DocumentList;
+  contact?: ContactData;
 };
