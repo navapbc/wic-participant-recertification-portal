@@ -60,7 +60,14 @@ test(`with name, count, and details forms filled, can request expected routes`, 
   await fillParticipantForm(page, participantData, 0);
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page).toHaveURL("/gallatin/recertify/changes");
-  for (const routeOK of ["/", "/about", "/name", "/count", "/details", "/changes"]) {
+  for (const routeOK of [
+    "/",
+    "/about",
+    "/name",
+    "/count",
+    "/details",
+    "/changes",
+  ]) {
     await page.goto(`/missoula/recertify${routeOK}`, {
       waitUntil: "networkidle",
     });

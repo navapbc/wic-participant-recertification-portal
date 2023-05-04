@@ -75,10 +75,6 @@ export const countSchema = zfd.formData({
   ),
 });
 
-export const countDisabledSchema = zfd.formData({
-  householdSize: zfd.numeric(z.number().optional()),
-});
-
 export const participantSchema = zfd.formData({
   participant: z.array(
     z.object({

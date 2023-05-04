@@ -3,7 +3,11 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { parseSubmissionID, validateCookie } from "../helpers/cookies";
 import { parse } from "querystring";
-import { fillNameForm, fillCountForm, fillParticipantForm } from "../helpers/formFillers";
+import {
+  fillNameForm,
+  fillCountForm,
+  fillParticipantForm,
+} from "../helpers/formFillers";
 
 const participantData: Omit<Participant, "adjunctive"> = {
   dob: { day: 3, year: 2004, month: 2 },
@@ -101,22 +105,26 @@ test(`the count form submits a POST request, and on return to the page,
   expect(await page.getByTestId("textInput").fill("2"));
 });
 
-test("the count page is editable if no participant data has been submitted even if the back button is clicked", async ({ page }) => {
+test("the count page is editable if no participant data has been submitted even if the back button is clicked", async ({
+  page,
+}) => {
   await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   await page.getByTestId("textInput").fill("2");
   await page.getByTestId("button").click(),
-  await expect(page).toHaveURL("/gallatin/recertify/details?count=2");
+    await expect(page).toHaveURL("/gallatin/recertify/details?count=2");
 
-  await page.goBack({ waitUntil: "networkidle" })
+  await page.goBack({ waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot({ fullPage: true });
 
   await expect(page).toHaveURL("/gallatin/recertify/count");
   await page.getByTestId("textInput").fill("3");
-  await page.getByTestId("button").click()
+  await page.getByTestId("button").click();
   await expect(page).toHaveURL("/gallatin/recertify/details?count=3");
 });
 
-test("the count page is not editable if participant data has been submitted", async ({ page }) => {
+test("the count page is not editable if participant data has been submitted", async ({
+  page,
+}) => {
   await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
   await fillCountForm(page, 2, "/gallatin/recertify/details?count=2");
   await fillParticipantForm(page, { ...participantData, adjunctive: "yes" }, 0);
@@ -125,8 +133,8 @@ test("the count page is not editable if participant data has been submitted", as
 
   await page.goto("/gallatin/recertify/count", { waitUntil: "networkidle" });
   await expect(page).toHaveScreenshot({ fullPage: true });
-  const householdSize = page.getByTestId("textInput")
+  const householdSize = page.getByTestId("textInput");
   await expect(householdSize).toBeDisabled();
   await page.getByTestId("button").click(),
-  await expect(page).toHaveURL("/gallatin/recertify/details?count=1");
+    await expect(page).toHaveURL("/gallatin/recertify/details?count=1");
 });
