@@ -60,15 +60,7 @@ export const loader: LoaderFunction = async ({
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
-export const action = async ({
-  request,
-  params,
-}: {
-  request: Request;
-  params: Params<string>;
-}) => {
-  const { submissionID } = await cookieParser(request, params);
-  const existingSubmissionData = await fetchSubmissionData(submissionID);
+export const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
   const validationResult = await countValidator.validate(formData);
   if (validationResult.error) {
@@ -76,6 +68,7 @@ export const action = async ({
     return validationError(validationResult.error, validationResult.data);
   }
   const parsedForm = countSchema.parse(formData);
+  const { submissionID } = await cookieParser(request);
   console.log(`Got submission ${JSON.stringify(parsedForm)}`);
   await upsertSubmissionForm(submissionID, "count", parsedForm);
   const routeTarget = routeFromCount(request, parsedForm);
