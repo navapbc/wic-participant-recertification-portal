@@ -50,7 +50,7 @@ export const loader: LoaderFunction = async ({
     {
       submissionID: submissionID,
       actualHouseholdSize: actualHouseholdSize,
-      ...setFormDefaults("householdSizeForm", existingCountData),
+      ...setFormDefaults("householdSizeForm", existingCountData as CountData),
     },
     { headers: headers }
   );
