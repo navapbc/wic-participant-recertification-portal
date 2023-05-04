@@ -129,7 +129,11 @@ export const loader: LoaderFunction = async ({
   params: Params<string>;
 }) => {
   const { submissionID, headers } = await cookieParser(request, params);
+  console.log('upload loader')
+  console.log(request)
   const url = new URL(request.url);
+  console.log(url)
+  console.log(url.origin)
   const removeFileAction = url.searchParams.get("action") == "remove_file";
   const putFileAction = url.searchParams.get("action") == "put_file"
   const removeFile = url.searchParams.get("remove");
