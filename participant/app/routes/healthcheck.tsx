@@ -11,9 +11,7 @@ export async function loader({ request }: LoaderArgs) {
     // here, I encourage you to do so.
     // This is coded as a `SELECT 1` merely for speed
     // and to prevent schema edits from breaking the healthcheck
-    await Promise.all([
-      db.$queryRaw`SELECT 1 as CONNECTED`,
-    ]);
+    await Promise.all([db.$queryRaw`SELECT 1 as CONNECTED`]);
     return new Response("OK");
   } catch (error: unknown) {
     console.log("healthcheck ❌", { error });
