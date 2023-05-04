@@ -84,5 +84,6 @@ export type SubmissionData = {
   changes?: ChangesData;
   participant?: Participant[];
   contact?: ContactData;
+  count?: CountData;
   documents?: DocumentList;
 };
