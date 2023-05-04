@@ -301,6 +301,18 @@ module "doc_upload" {
   admin_role_names  = [module.participant.task_role_name]
 }
 
+resource "aws_s3_bucket_cors_configuration" "doc_upload_cors" {
+  bucket = local.document_upload_s3_name
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT"]
+    allowed_origins = ["https://${var.participant_url}"]
+    expose_headers  = []
+    max_age_seconds = 3000
+  }
+}
+
 module "side_load" {
   source           = "../../modules/s3-encrypted"
   environment_name = var.environment_name
