@@ -120,14 +120,19 @@ test("try to add six image files, expect an error", async ({ page }) => {
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page).toHaveURL("/gallatin/recertify/changes");
   await fillChangesForm(page, "Yes", "Yes", "/gallatin/recertify/upload");
-  const sixFiles = [1, 2, 3, 4, 5, 6].map((value) => {
-    return getFileFormImage(`test-img-${value}.jpg`);
-  });
   const uploadBox = page.locator("input[type='file']");
-  sixFiles.forEach(async (fileObject) => {
-    await uploadBox.setInputFiles([fileObject]);
-    await page.waitForLoadState();
-  });
+  const fileone = getFileFormImage("test-img-1.jpg");
+  const filetwo = getFileFormImage("test-img-2.jpg");
+  const filethree = getFileFormImage("test-img-3.jpg");
+  const filefour = getFileFormImage("test-img-4.jpg");
+  const filefive = getFileFormImage("test-img-5.jpg");
+  const filesix = getFileFormImage("test-img-6.jpg");
+  await uploadBox.setInputFiles([fileone])
+  await uploadBox.setInputFiles([filetwo])
+  await uploadBox.setInputFiles([filethree])
+  await uploadBox.setInputFiles([filefour])
+  await uploadBox.setInputFiles([filefive])
+  await uploadBox.setInputFiles([filesix])
   const tooManyFiles = page.getByTestId("file-input-error");
   await expect(tooManyFiles).toBeVisible();
   expect(await tooManyFiles.textContent()).toBe(
