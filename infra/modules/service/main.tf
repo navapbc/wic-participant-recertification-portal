@@ -107,6 +107,7 @@ resource "aws_lb_target_group" "alb_target_group" {
   vpc_id               = var.vpc_id
   target_type          = "ip"
   deregistration_delay = "30"
+  load_balancing_algorithm_type = "least_outstanding_requests"
 
   dynamic "health_check" {
     for_each = var.enable_healthcheck ? [0] : []
