@@ -120,7 +120,7 @@ module "participant" {
       value = false,
     },
     {
-      name = "MATOMO_URL_BASE",
+      name  = "MATOMO_URL_BASE",
       value = var.analytics_url,
     }
   ]
@@ -210,7 +210,7 @@ module "staff" {
       value = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${module.staff_idp.user_pool_id}/.well-known/openid-configuration",
     },
     {
-      name = "MATOMO_URL_BASE",
+      name  = "MATOMO_URL_BASE",
       value = var.analytics_url,
     }
   ]
@@ -278,7 +278,7 @@ module "analytics" {
       value = local.analytics_database_name,
     },
     {
-      name = "MATOMO_URL_BASE",
+      name  = "MATOMO_URL_BASE",
       value = var.analytics_url,
     }
   ]
