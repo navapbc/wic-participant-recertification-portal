@@ -1,8 +1,9 @@
-import { Button } from "@trussworks/react-uswds";
+import { Alert, Button } from "@trussworks/react-uswds";
 import React from "react";
 
 import { Trans } from "react-i18next";
 import { TextField } from "app/components/TextField";
+import { ButtonLink } from "app/components/ButtonLink";
 import type { TextFieldProps } from "app/components/TextField";
 import { List } from "app/components/List";
 import { RequiredQuestionStatement } from "~/components/RequiredQuestionStatement";
@@ -19,11 +20,7 @@ import type { Params } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { cookieParser } from "app/cookies.server";
 import { checkRoute, routeFromCount } from "~/utils/routing";
-import {
-  upsertSubmissionForm,
-  fetchSubmissionData,
-  findSubmissionFormData,
-} from "app/utils/db.server";
+import { upsertSubmissionForm, fetchSubmissionData } from "app/utils/db.server";
 import type { CountData } from "~/types";
 import logger from "app/utils/logging.server";
 
@@ -39,14 +36,25 @@ export const loader: LoaderFunction = async ({
   const { submissionID, headers } = await cookieParser(request, params);
   const existingSubmissionData = await fetchSubmissionData(submissionID);
   checkRoute(request, existingSubmissionData);
-  const existingCountData = (await findSubmissionFormData(
-    submissionID,
-    "count"
-  )) as CountData;
+
+  const actualHouseholdSize = existingSubmissionData.participant?.length;
+  const existingCountData =
+    actualHouseholdSize !== undefined
+      ? { householdSize: actualHouseholdSize }
+      : existingSubmissionData.count;
+
+  const safeCountData =
+    actualHouseholdSize !== undefined
+      ? existingCountData
+      : { householdSize: 1 };
+
+  const routeTarget = routeFromCount(request, safeCountData as CountData);
   return json(
     {
       submissionID: submissionID,
-      ...setFormDefaults("householdSizeForm", existingCountData),
+      actualHouseholdSize: actualHouseholdSize,
+      routeTarget: routeTarget,
+      ...setFormDefaults("householdSizeForm", existingCountData as CountData),
     },
     { headers: headers }
   );
@@ -95,7 +103,8 @@ export const action = async ({ request }: { request: Request }) => {
 };
 
 export default function Count() {
-  useLoaderData<loaderData>();
+  const { actualHouseholdSize, routeTarget } = useLoaderData<loaderData>();
+  const disableHouseholdSize = actualHouseholdSize !== undefined;
   const householdSizeProps: TextFieldProps = {
     id: "householdSize",
     type: "input",
@@ -105,6 +114,9 @@ export default function Count() {
     className: "width-8",
     labelClassName: "usa-label--large",
   };
+  if (disableHouseholdSize) {
+    householdSizeProps.disabled = true;
+  }
   return (
     <div>
       <h1>
@@ -126,14 +138,33 @@ export default function Count() {
         id="householdSizeForm"
         method="post"
       >
+        <div className="margin-top-2">
+          {disableHouseholdSize && (
+            <Alert
+              type="warning"
+              headingLevel="h6"
+              slim={true}
+              role="status"
+              className="margin-bottom-2"
+            >
+              <Trans i18nKey={"Count.previouslySubmittedAlert"} />
+            </Alert>
+          )}
+        </div>
         <TextField {...householdSizeProps} />
-        <Button
-          className="display-block margin-top-6"
-          type="submit"
-          formMethod="post"
-        >
-          <Trans i18nKey="Count.householdSize.button" />
-        </Button>
+        {disableHouseholdSize ? (
+          <ButtonLink to={routeTarget} relative="path" className="margin-top-6">
+            <Trans i18nKey="Count.householdSize.button" />
+          </ButtonLink>
+        ) : (
+          <Button
+            className="display-block margin-top-6"
+            type="submit"
+            formMethod="post"
+          >
+            <Trans i18nKey="Count.householdSize.button" />
+          </Button>
+        )}
       </ValidatedForm>
     </div>
   );

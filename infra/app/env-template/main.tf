@@ -61,17 +61,18 @@ module "service_cluster" {
 }
 
 module "participant" {
-  source               = "../../modules/service"
-  service_name         = local.participant_service_name
-  image_repository_url = data.aws_ecr_repository.participant_image_repository.repository_url
-  image_repository_arn = data.aws_ecr_repository.participant_image_repository.arn
-  image_tag            = var.participant_image_tag
-  vpc_id               = data.aws_vpc.default.id
-  subnet_ids           = data.aws_subnets.default.ids
-  service_cluster_arn  = module.service_cluster.service_cluster_arn
-  container_port       = 3000
-  memory               = 2048
-  healthcheck_path     = "/healthcheck"
+  source                             = "../../modules/service"
+  service_name                       = local.participant_service_name
+  image_repository_url               = data.aws_ecr_repository.participant_image_repository.repository_url
+  image_repository_arn               = data.aws_ecr_repository.participant_image_repository.arn
+  image_tag                          = var.participant_image_tag
+  vpc_id                             = data.aws_vpc.default.id
+  subnet_ids                         = data.aws_subnets.default.ids
+  service_cluster_arn                = module.service_cluster.service_cluster_arn
+  container_port                     = 3000
+  memory                             = 2048
+  healthcheck_path                   = "/healthcheck"
+  service_deployment_maximum_percent = 250
   # The database seed needs longer lead time before healthchecks kick in to kill the container
   healthcheck_start_period = 120
   enable_exec              = var.participant_enable_exec
@@ -119,6 +120,14 @@ module "participant" {
       name  = "PUBLIC_DEMO_MODE",
       value = false,
     },
+    {
+      name  = "MATOMO_URL_BASE",
+      value = var.analytics_url,
+    },
+    {
+      name  = "MATOMO_SECURE",
+      value = true,
+    }
   ]
   service_ssm_resource_paths = [
     module.participant_database.admin_db_url_secret_name,
@@ -135,6 +144,13 @@ module "participant" {
   depends_on = [
     module.participant_database,
   ]
+}
+
+module "participant_autoscale" {
+  source                      = "../../modules/service-autoscaling"
+  ecs_cluster_name            = local.cluster_name
+  ecs_service_name            = local.participant_service_name
+  ecs_task_executor_role_name = "${local.participant_service_name}-task-executor"
 }
 
 data "aws_ses_domain_identity" "verified_domain" {
@@ -205,6 +221,7 @@ module "staff" {
       name  = "LOWDEFY_SECRET_OPENID_DOMAIN",
       value = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${module.staff_idp.user_pool_id}/.well-known/openid-configuration",
     },
+
   ]
   service_ssm_resource_paths = [
     module.participant_database.admin_db_url_secret_name,
@@ -268,7 +285,7 @@ module "analytics" {
     {
       name  = "MATOMO_DATABASE_DBNAME",
       value = local.analytics_database_name,
-    },
+    }
   ]
   service_ssm_resource_paths = [
     module.analytics_database.admin_db_host_secret_name,

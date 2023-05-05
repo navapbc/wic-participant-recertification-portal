@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 import type {
   ChangesData,
   ContactData,
+  CountData,
   NameData,
   Participant,
   RouteType,
@@ -246,6 +247,7 @@ export const fetchSubmissionData = async (
     changes: mapped.get("changes") as ChangesData,
     participant: mapped.get("details") as unknown as Participant[],
     contact: mapped.get("contact") as ContactData,
+    count: mapped.get("count") as CountData,
     documents: documents,
   };
   return submissionData;

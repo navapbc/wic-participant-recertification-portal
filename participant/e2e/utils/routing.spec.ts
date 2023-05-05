@@ -31,6 +31,19 @@ for (const routeOK of ["/", "/about", "/name"]) {
 
 test(`with name form filled, can request expected routes`, async ({ page }) => {
   await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  for (const routeOK of ["/", "/about", "/name", "/count"]) {
+    await page.goto(`/missoula/recertify${routeOK}`, {
+      waitUntil: "networkidle",
+    });
+    await expect(page).toHaveURL(`/missoula/recertify${routeOK}`);
+  }
+});
+
+test(`with name and count forms filled, can request expected routes`, async ({
+  page,
+}) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 1, "/gallatin/recertify/details?count=1");
   for (const routeOK of ["/", "/about", "/name", "/count", "/details"]) {
     await page.goto(`/missoula/recertify${routeOK}`, {
       waitUntil: "networkidle",
@@ -39,7 +52,7 @@ test(`with name form filled, can request expected routes`, async ({ page }) => {
   }
 });
 
-test(`with name and details forms filled, can request expected routes`, async ({
+test(`with name, count, and details forms filled, can request expected routes`, async ({
   page,
 }) => {
   await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
@@ -47,7 +60,14 @@ test(`with name and details forms filled, can request expected routes`, async ({
   await fillParticipantForm(page, participantData, 0);
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page).toHaveURL("/gallatin/recertify/changes");
-  for (const routeOK of ["/", "/about", "/name", "/details", "/changes"]) {
+  for (const routeOK of [
+    "/",
+    "/about",
+    "/name",
+    "/count",
+    "/details",
+    "/changes",
+  ]) {
     await page.goto(`/missoula/recertify${routeOK}`, {
       waitUntil: "networkidle",
     });
@@ -55,7 +75,7 @@ test(`with name and details forms filled, can request expected routes`, async ({
   }
 });
 
-test(`with name, details, changes forms filled, can request expected routes`, async ({
+test(`with name, count, details, changes forms filled, can request expected routes`, async ({
   page,
 }) => {
   await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
@@ -68,6 +88,7 @@ test(`with name, details, changes forms filled, can request expected routes`, as
     "/",
     "/about",
     "/name",
+    "/count",
     "/details",
     "/changes",
     "/upload",
@@ -79,7 +100,7 @@ test(`with name, details, changes forms filled, can request expected routes`, as
   }
 });
 
-test(`with name, details, changes, upload forms filled, can request expected routes`, async ({
+test(`with name, count, details, changes, upload forms filled, can request expected routes`, async ({
   page,
 }) => {
   const formFile = {
@@ -99,6 +120,7 @@ test(`with name, details, changes, upload forms filled, can request expected rou
     "/",
     "/about",
     "/name",
+    "/count",
     "/details",
     "/changes",
     "/upload",
@@ -111,7 +133,7 @@ test(`with name, details, changes, upload forms filled, can request expected rou
   }
 });
 
-test(`with name, details, changes, upload, contact forms filled, can request expected routes`, async ({
+test(`with name, count, details, changes, upload, contact forms filled, can request expected routes`, async ({
   page,
 }) => {
   const formFile = {
@@ -136,6 +158,7 @@ test(`with name, details, changes, upload, contact forms filled, can request exp
     "/",
     "/about",
     "/name",
+    "/count",
     "/details",
     "/changes",
     "/upload",

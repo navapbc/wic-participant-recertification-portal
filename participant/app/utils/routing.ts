@@ -72,11 +72,22 @@ export const checkRoute = (
     );
   }
   acceptableRoutes.push("name");
-  if (!submissionData.participant || !submissionData.participant.length) {
-    return throwRouteChangesRelative(request, currentLocation, "details", [
-      ...acceptableRoutes,
+  if (!submissionData.count) {
+    return throwRouteChangesRelative(
+      request,
+      currentLocation,
       "count",
-    ]);
+      acceptableRoutes
+    );
+  }
+  acceptableRoutes.push("count");
+  if (!submissionData.participant || !submissionData.participant.length) {
+    return throwRouteChangesRelative(
+      request,
+      currentLocation,
+      "details",
+      acceptableRoutes
+    );
   }
   acceptableRoutes.push("details");
   if (!submissionData.changes) {

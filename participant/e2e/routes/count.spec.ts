@@ -3,7 +3,20 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { parseSubmissionID, validateCookie } from "../helpers/cookies";
 import { parse } from "querystring";
-import { fillNameForm } from "../helpers/formFillers";
+import type { Participant } from "~/types";
+import {
+  fillNameForm,
+  fillCountForm,
+  fillParticipantForm,
+} from "../helpers/formFillers";
+
+const participantData: Omit<Participant, "adjunctive"> = {
+  dob: { day: 3, year: 2004, month: 2 },
+  tag: "TtmTDA5JcBAWr0tUWWmit",
+  firstName: "Delightful",
+  lastName: "Cheesemuffin",
+  relationship: "child",
+};
 
 test("count has no automatically detectable accessibility errors", async ({
   page,
@@ -91,4 +104,38 @@ test(`the count form submits a POST request, and on return to the page,
   // This is not verifying Playwright checked the boxes, but that the form repopulates
   // from the database record created by submitting the form
   expect(await page.getByTestId("textInput").fill("2"));
+});
+
+test("the count page is editable if no participant data has been submitted even if the back button is clicked", async ({
+  page,
+}) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await page.getByTestId("textInput").fill("2");
+  await page.getByTestId("button").click();
+  await expect(page).toHaveURL("/gallatin/recertify/details?count=2");
+
+  await page.goBack({ waitUntil: "networkidle" });
+  await expect(page).toHaveScreenshot({ fullPage: true });
+
+  await expect(page).toHaveURL("/gallatin/recertify/count");
+  await page.getByTestId("textInput").fill("3");
+  await page.getByTestId("button").click();
+  await expect(page).toHaveURL("/gallatin/recertify/details?count=3");
+});
+
+test("the count page is not editable if participant data has been submitted", async ({
+  page,
+}) => {
+  await fillNameForm(page, "Matt", "Gardener", "/gallatin/recertify/count");
+  await fillCountForm(page, 2, "/gallatin/recertify/details?count=2");
+  await fillParticipantForm(page, { ...participantData, adjunctive: "yes" }, 0);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/changes");
+
+  await page.goto("/gallatin/recertify/count", { waitUntil: "networkidle" });
+  await expect(page).toHaveScreenshot({ fullPage: true });
+  const householdSize = page.getByTestId("textInput");
+  await expect(householdSize).toBeDisabled();
+  await page.getByRole("link", { name: "Continue" }).click();
+  await expect(page).toHaveURL("/gallatin/recertify/details?count=1");
 });
