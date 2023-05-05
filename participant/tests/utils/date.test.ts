@@ -18,19 +18,19 @@ it("should return a correctly localized date string", async () => {
   timezoneMock("America/Chicago");
   const dateString = "2023-05-03 18:08:38.653+00";
   const result = localizeDateString(dateString);
-  expect(result).toEqual("5/3/2023, 1:08:38 PM");
+  expect(result).toMatch(/5\/3\/2023, 1:08:38( | )PM/);
 });
 
 it("should return a correctly localized date string in a different timezone", async () => {
   timezoneMock("America/Los_Angeles");
   const dateString = "2023-05-03 18:08:38.653+00";
   const result = localizeDateString(dateString);
-  expect(result).toEqual("5/3/2023, 11:08:38 AM");
+  expect(result).toMatch(/5\/3\/2023, 11:08:38( | )AM/);
 });
 
 it("should return work if the string is undefined", async () => {
   const result = localizeDateString(undefined);
   expect(result).toMatch(
-    /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2}:\d{1,2} (AM|PM)/
+    /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2}:\d{1,2}( | )(AM|PM)/
   );
 });

@@ -124,11 +124,10 @@ test("try to add six image files, expect an error", async ({ page }) => {
     return getFileFormImage(`test-img-${value}.jpg`);
   });
   const uploadBox = page.locator("input[type='file']");
-  await Promise.all([
-    sixFiles.map(async (fileObject) => {
-      await uploadBox.setInputFiles([fileObject]);
-    }),
-  ]);
+  sixFiles.forEach(async (fileObject) => {
+    await uploadBox.setInputFiles([fileObject]);
+    await page.waitForLoadState();
+  });
   const tooManyFiles = page.getByTestId("file-input-error");
   await expect(tooManyFiles).toBeVisible();
   expect(await tooManyFiles.textContent()).toBe(

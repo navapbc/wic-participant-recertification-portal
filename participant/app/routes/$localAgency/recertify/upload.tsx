@@ -37,6 +37,8 @@ import {
 } from "app/utils/config.server";
 import { FilePreview } from "~/components/FilePreview";
 import type { TFunction } from "i18next";
+import { trackPromise, usePromiseTracker } from "react-promise-tracker";
+import BeatLoader from "react-spinners/BeatLoader";
 
 const createPreviewData = async (
   submissionID: string
@@ -307,11 +309,9 @@ export default function Upload() {
     removeURL.searchParams.set("action", "remove_file");
     removeURL.searchParams.set("remove", filename);
     removeURL.searchParams.set("_data", "routes/$localAgency/recertify/upload");
-    await fetch(removeURL);
+    await fetch(removeURL, { keepalive: true });
   };
   const addFileHook = async (file: File) => {
-    console.log(`Trying to get URL for ${file.name}`);
-    // Needs a real URL, filename neeeds urlescaping
     const addURL = new URL(`${origin}${location.pathname}`);
     addURL.searchParams.set("action", "put_file");
     addURL.searchParams.set("put", file.name);
@@ -322,11 +322,17 @@ export default function Upload() {
       return getURL.error;
     }
     console.log(`Starting upload of ${file.name} to ${getURL.putFileURL}`);
-    await fetch(getURL.putFileURL, {
-      body: file,
-      method: "PUT",
-      headers: { "content-type": file.type },
-    });
+    try {
+      trackPromise(
+        fetch(getURL.putFileURL, {
+          body: file,
+          method: "PUT",
+          headers: { "content-type": file.type },
+        })
+      );
+    } catch {
+      await removeFileHook(file.name);
+    }
   };
 
   const renderPreviews = () => {
@@ -405,25 +411,24 @@ export default function Upload() {
     removeFileHook: removeFileHook,
   };
   const documentProofElements = buildDocumentHelp(proofRequired);
+  const { promiseInProgress } = usePromiseTracker();
 
   const fileInputRef = useRef<FileUploaderRef>(null);
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    let data = new FormData(event.currentTarget);
-    // No empty files from the real component sneaking in
-    data.delete("documents");
-    fileInputRef.current?.files.forEach((value) => {
-      data.append("documents", value.name);
-    });
-    // Chrome throws an error if the form is empty
-    if (!data.has("documents")) {
-      data.append("documents", "");
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    async function waitUntilFinished(time = 100) {
+      while (promiseInProgress) {
+        console.log("Waiting for promises to finish");
+        await new Promise((resolve) => setTimeout(resolve, time));
+      }
     }
-    formSubmit(data, {
+    event.preventDefault();
+    await waitUntilFinished();
+    formSubmit(new FormData(), {
       method: "post",
       action: location.pathname,
     });
   };
+
   return (
     <div>
       <h1>{t("Upload.title")}</h1>
@@ -486,8 +491,15 @@ export default function Upload() {
             {serverError}
           </div>
         </FileUploader>
-        <Button type="submit" value="submit" name="action">
-          {t("Upload.button")}
+        <Button
+          type="submit"
+          value="submit"
+          name="action"
+          aria-label={promiseInProgress ? "loading" : undefined}
+          disabled={promiseInProgress}
+          className={promiseInProgress ? "is-loading" : undefined}
+        >
+          {promiseInProgress ? <BeatLoader /> : t("Upload.button")}
         </Button>
       </Form>
     </div>
