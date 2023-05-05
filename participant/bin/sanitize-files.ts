@@ -75,14 +75,14 @@ ${filepath}`;
   }
 
   const jpgs = readdirSync(outputDir);
-  logger.debug(jpgs);
-
   const newPdf = path.join(outputDir, filename);
   logger.info(`Creating new pdf: ${newPdf}`);
   const doc = new PDFDocument({ size: "LETTER" });
   doc.pipe(createWriteStream(newPdf));
 
   // Letter pages are 612 x 792 points
+  // @TODO respect the orientation of the original pdf.
+  //   currently, all pdfs become portrait
   let firstPage = true;
   jpgs.forEach((jpgFile) => {
     if (firstPage) {
@@ -140,10 +140,17 @@ async function main(): Promise<void> {
   // - image/gif (animated)
   // - image/gif (not animated)
   // - image/tiff <--
-  // - application/pdf <--
+  // - application/pdf
+  //   - pdfs with spaces in the filename <-- normalize filenames?
+  //   - landscape pdfs <--
+  //   - mixed landscape and portrait pdfs <--
+  //   - pdfs that aren't letter <--
+  //
+  // - large image <--
+  // - large pdf <--
   //
   // Unconvertable options:
-  // - image/heif <--
+  // - image/heif <-- reject?
   // - text/plain
   // - an evil unreadable file
   const filepath = "";
