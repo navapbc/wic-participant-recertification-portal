@@ -1,4 +1,4 @@
-import { localizeDateString } from "app/utils/date";
+import { getSecondsAgo, localizeDateString } from "app/utils/date";
 
 const timezoneMock = function (zone: string) {
   const DateTimeFormat = Intl.DateTimeFormat;
@@ -33,4 +33,13 @@ it("should return work if the string is undefined", async () => {
   expect(result).toMatch(
     /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2}:\d{1,2}( | )(AM|PM)/
   );
+});
+
+it("should return the correct date given an offset in seconds", async () => {
+  jest.useFakeTimers().setSystemTime(new Date("2020-01-10"));
+  const veryRecent = getSecondsAgo(1 * 24 * 60 * 60);
+  expect(veryRecent).toStrictEqual(new Date("2020-01-09"));
+
+  const notSoRecent = getSecondsAgo(10 * 24 * 60 * 60);
+  expect(notSoRecent).toStrictEqual(new Date("2019-12-31"));
 });
