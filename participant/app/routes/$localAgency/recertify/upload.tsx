@@ -30,7 +30,8 @@ import {
 import type { PreviousUpload, Proofs, SubmittedFile } from "app/types";
 import { determineProof } from "app/utils/determineProof";
 import { checkRoute, routeRelative } from "app/utils/routing";
-import { getURLFromS3, checkFile, deleteFileFromS3 } from "app/utils/s3.server";
+import { getURLFromS3, deleteFileFromS3 } from "app/utils/s3.server";
+import { checkFile } from "app/utils/s3.checkFile";
 import {
   MAX_UPLOAD_FILECOUNT,
   MAX_UPLOAD_SIZE_BYTES,

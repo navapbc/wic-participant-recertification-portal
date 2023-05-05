@@ -18,7 +18,6 @@ import {
   InvalidObjectState,
 } from "@aws-sdk/client-s3";
 import {
-  checkFile,
   deleteFileFromS3,
   getFileFromS3,
   getURLFromS3,
@@ -26,6 +25,7 @@ import {
   readFileHeadFromS3,
   uploadStreamToS3,
 } from "~/utils/s3.server";
+import { checkFile } from "~/utils/s3.checkFile";
 jest.mock("@aws-sdk/s3-request-presigner");
 const mockedgetSignedURL = jest.mocked(getSignedUrl);
 
