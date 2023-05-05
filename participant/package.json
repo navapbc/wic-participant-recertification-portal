@@ -29,7 +29,7 @@
     "typecheck": "tsc",
     "chromatic": "npx chromatic --project-token f2d5a7998246",
     "seed-staff-users": "npx ts-node --require tsconfig-paths/register --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-staff-users.ts",
-    "sanitize-files": "npx ts-node --require tsconfig-paths/register --compiler-options '{\"module\":\"CommonJS\"}' bin/sanitize-files.ts"
+    "sanitize-files": "npx ts-node --require tsconfig-paths/register --compiler-options '{\"module\":\"CommonJS\", \"paths\": {\"*\": [\"bin/custom_types/*\"]}}' bin/sanitize-files.ts"
   },
   "browserslist": [
     "defaults"
@@ -56,6 +56,7 @@
     "@uswds/uswds": "3.1.0",
     "classnames": "^2.3.2",
     "file-type": "^18.2.1",
+    "ghostscript4js": "^3.2.1",
     "i18next": "^22.0.6",
     "i18next-browser-languagedetector": "^7.0.1",
     "i18next-fs-backend": "^2.0.1",

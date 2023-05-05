@@ -73,3 +73,11 @@ CMD ["/home/node/remix/bin/prod-start.sh"]
 # Build a production-like image with non-prod seed data
 FROM prod as lower-envs
 RUN cp public/data/submissions.not-prod.json public/data/submissions.json
+
+# -------- Image: sanitize-files -------- #
+# Build a production-like image with additional packages for file sanitization
+FROM prod as sanitize-files
+RUN apk update \
+  && apk add --on-cache \
+    ghostscript
+ENV GS4JS_HOME /usr/lib
