@@ -127,12 +127,12 @@ test("try to add six image files, expect an error", async ({ page }) => {
   const filefour = getFileFormImage("test-img-4.jpg");
   const filefive = getFileFormImage("test-img-5.jpg");
   const filesix = getFileFormImage("test-img-6.jpg");
-  await uploadBox.setInputFiles([fileone])
-  await uploadBox.setInputFiles([filetwo])
-  await uploadBox.setInputFiles([filethree])
-  await uploadBox.setInputFiles([filefour])
-  await uploadBox.setInputFiles([filefive])
-  await uploadBox.setInputFiles([filesix])
+  await uploadBox.setInputFiles([fileone]);
+  await uploadBox.setInputFiles([filetwo]);
+  await uploadBox.setInputFiles([filethree]);
+  await uploadBox.setInputFiles([filefour]);
+  await uploadBox.setInputFiles([filefive]);
+  await uploadBox.setInputFiles([filesix]);
   const tooManyFiles = page.getByTestId("file-input-error");
   await expect(tooManyFiles).toBeVisible();
   expect(await tooManyFiles.textContent()).toBe(
