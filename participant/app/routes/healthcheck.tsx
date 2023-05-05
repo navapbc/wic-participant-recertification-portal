@@ -1,7 +1,6 @@
 // learn more: https://fly.io/docs/reference/configuration/#services-http_checks
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import db from "~/utils/db.connection";
-import invariant from "tiny-invariant";
 
 // Healthcheck returns OK if this resource route is successfully reached
 // AND we are able to connect to the database and make a simple query.
