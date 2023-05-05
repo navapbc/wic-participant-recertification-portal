@@ -45,7 +45,7 @@ export const loader: LoaderFunction = async ({
   return json(
     {
       submissionID: submissionID,
-      actualHouseholdSize: actualHouseholdSize.householdSize,
+      actualHouseholdSize: actualHouseholdSize?.householdSize,
       routeTarget: routeTarget,
       ...setFormDefaults("householdSizeForm", safeCountData as CountData),
     },
