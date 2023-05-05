@@ -20,11 +20,7 @@ import type { Params } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
 import { cookieParser } from "app/cookies.server";
 import { checkRoute, routeFromCount } from "~/utils/routing";
-import {
-  upsertSubmissionForm,
-  fetchSubmissionData,
-  findSubmissionFormData,
-} from "app/utils/db.server";
+import { upsertSubmissionForm, fetchSubmissionData } from "app/utils/db.server";
 import type { CountData } from "~/types";
 
 const countValidator = withZod(countSchema);
