@@ -122,6 +122,10 @@ module "participant" {
     {
       name  = "MATOMO_URL_BASE",
       value = var.analytics_url,
+    },
+    {
+      name  = "MATOMO_SECURE",
+      value = false,
     }
   ]
   service_ssm_resource_paths = [
