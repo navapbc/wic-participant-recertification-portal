@@ -136,6 +136,6 @@ test("the count page is not editable if participant data has been submitted", as
   await expect(page).toHaveScreenshot({ fullPage: true });
   const householdSize = page.getByTestId("textInput");
   await expect(householdSize).toBeDisabled();
-  await page.getByTestId("button").click();
+  await page.getByRole("link", { name: "Continue" }).click();
   await expect(page).toHaveURL("/gallatin/recertify/details?count=1");
 });
