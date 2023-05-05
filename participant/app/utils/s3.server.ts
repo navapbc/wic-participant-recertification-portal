@@ -208,7 +208,8 @@ export async function uploadStreamToS3(data: any, filename: string) {
     } catch (e) {
       logger.error(
         { location: "s3.server", type: "uploadStream", filename: filename },
-        `⚠️ File upload failed: ${e}; retrying ${retries + 1
+        `⚠️ File upload failed: ${e}; retrying ${
+          retries + 1
         } of ${S3_UPLOAD_RETRIES}`
       );
     }
