@@ -1,1 +1,1 @@
-declare module 'ghostscript4js';
+declare module "ghostscript4js";
