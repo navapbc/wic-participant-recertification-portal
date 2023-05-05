@@ -7,6 +7,8 @@ import { validRoute } from "app/utils/redirect";
 import { MAX_SESSION_SECONDS } from "app/utils/config.server";
 import { routeRelative } from "./utils/routing";
 import logger from "./utils/logging.server";
+import type { Submission } from "@prisma/client";
+
 type ParticipantCookieContents = {
   submissionID?: string;
 };
@@ -14,11 +16,15 @@ type ParticipantCookieContents = {
 // This should be secure: true, and have secrets in prod (probably)
 export const ParticipantCookie = createCookie("prp-recertification-form");
 
-export const sessionCheck = (time: Date): boolean => {
-  const age = (new Date().getTime() - time.getTime()) / 1000;
+export const sessionCheck = (submission: Submission): boolean => {
+  const age = (new Date().getTime() - submission.updatedAt.getTime()) / 1000;
   if (age > MAX_SESSION_SECONDS) {
     logger.info(
-      { location: "cookies.server", type: "session.stale" },
+      {
+        location: "cookies.server",
+        type: "session.stale",
+        submissionID: submission.submissionId,
+      },
       `Session is not so fresh 🤢: ${age} seconds, max ${MAX_SESSION_SECONDS}`
     );
     return false;
@@ -54,7 +60,7 @@ export const cookieParser = async (
         );
         forceRedirect = true;
       } else if (!resetSession) {
-        const validSession = sessionCheck(existingSubmission.updatedAt);
+        const validSession = sessionCheck(existingSubmission);
         if (validSession) {
           if (
             existingSubmission.submitted === true &&

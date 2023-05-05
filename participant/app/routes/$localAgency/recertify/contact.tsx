@@ -80,7 +80,7 @@ export const action = async ({ request }: { request: Request }) => {
       routeTarget: routeTarget,
       submissionID: submissionID,
     },
-    "Completed name form"
+    "Completed contact form"
   );
   return redirect(routeTarget);
 };

@@ -40,13 +40,13 @@ async function makeCookieRequest(
 
 it("tests the session as FRESH", () => {
   const freshSubmission = getCurrentSubmission();
-  const freshness = sessionCheck(freshSubmission.updatedAt);
+  const freshness = sessionCheck(freshSubmission);
   expect(freshness).toBe(true);
 });
 
 it("tests a stale session as not fresh", () => {
   const staleSubmission = getExpiredSubmission();
-  const freshness = sessionCheck(staleSubmission.updatedAt);
+  const freshness = sessionCheck(staleSubmission);
   expect(freshness).toBe(false);
 });
 

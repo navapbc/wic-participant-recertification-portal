@@ -331,6 +331,7 @@ export const action = async ({
           location: "routes/upload",
           type: "action.complete",
           routeTarget: "contact",
+          submissionID: submissionID,
         },
         "Completed upload form; routing to contact"
       );
@@ -343,6 +344,7 @@ export const action = async ({
             location: "routes/upload",
             type: "action.complete",
             routeTarget: "contact",
+            submissionID: submissionID,
           },
           "Completed upload form; routing to contact"
         );
