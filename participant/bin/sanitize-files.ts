@@ -6,9 +6,15 @@ import pino from "pino";
 const logLevel = process.env.LOG_LEVEL || "info";
 const logger = pino({ level: logLevel });
 
-async function sanitizeImage(filepath: string, outputFile: string) {
+async function sanitizeImage(filepath: string, outputFile: string, filetype: string) {
   try {
-    await sharp(filepath)
+    let options = {}
+    if (filetype.includes("gif")) {
+      logger.debug(`Converting a gif. Adding "animated" option`)
+      options = {animated: true}
+    }
+
+    await sharp(filepath, options)
       .toFile(outputFile)
       .then((info) => {
         logger.debug(info);
@@ -18,7 +24,7 @@ async function sanitizeImage(filepath: string, outputFile: string) {
         logger.error(err);
       });
   } catch (error) {
-    logger.error(`Error running sharp: ${error}`);
+    logger.error(`❌ Error running sharp: ${error}`);
   }
 }
 
@@ -35,9 +41,9 @@ async function sanitize(filepath: string, outputDir: string) {
 
   if (filetype && filetype.includes("image")) {
     logger.info(`Sanitizing image: ${filepath}`);
-    await sanitizeImage(filepath, outputFile);
+    await sanitizeImage(filepath, outputFile, filetype);
   } else {
-    logger.warn(`Unknown filetype: ${filepath}`);
+    logger.warn(`❌ Unknown filetype: ${filepath}`);
   }
 }
 
@@ -48,6 +54,21 @@ async function main(): Promise<void> {
   // read all the files in the s3 folder
   // process each s3 file
 
+  // @TODO test for:
+  //
+  // Convertable options:
+  // - image/png
+  // - image/jpeg
+  // - image/gif (animated)
+  // - image/gif (not animated)
+  // - image/tiff <--
+  // - application/pdf <--
+  //
+  // Unconvertable options:
+  // - image/heif <--
+  // - text/plain
+  // - an evil unreadable file
+  const filepath =
   await sanitize(filepath, outputDir);
 
   logger.info(`Done sanitizing 🧽`);
