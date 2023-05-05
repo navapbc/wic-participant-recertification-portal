@@ -100,7 +100,7 @@ export const loader: LoaderFunction = async ({
     submissionData.participant as Participant[],
     count
   );
-  console.debug(
+  logger.debug(
     {
       location: "routes/details",
       type: "loader.participantData",
