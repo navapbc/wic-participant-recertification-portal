@@ -28,7 +28,8 @@
     "storybook:docker": "docker compose up -d remix_dev && docker compose exec remix_dev npm run storybook",
     "typecheck": "tsc",
     "chromatic": "npx chromatic --project-token f2d5a7998246",
-    "seed-staff-users": "npx ts-node --require tsconfig-paths/register --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-staff-users.ts"
+    "seed-staff-users": "npx ts-node --require tsconfig-paths/register --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-staff-users.ts",
+    "sanitize-files": "npx ts-node --require tsconfig-paths/register --compiler-options '{\"module\":\"CommonJS\"}' bin/sanitize-files.ts"
   },
   "browserslist": [
     "defaults"
@@ -61,7 +62,9 @@
     "i18next-http-backend": "^2.0.2",
     "isbot": "^3.6.5",
     "lodash": "^4.17.21",
+    "mime": "^3.0.0",
     "nanoid": "^4.0.2",
+    "pino": "^8.12.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.0.0",
@@ -70,6 +73,7 @@
     "remix-image": "^1.3.3",
     "remix-utils": "^6.3.0",
     "remix-validated-form": "4.6.5",
+    "sharp": "^0.32.1",
     "tiny-invariant": "^1.3.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths-webpack-plugin": "^4.0.0",
@@ -99,7 +103,9 @@
     "@types/jest": "^29.2.5",
     "@types/jest-axe": "^3.5.5",
     "@types/lodash": "^4.14.191",
+    "@types/mime": "^3.0.1",
     "@types/node": "^18.11.13",
+    "@types/pino": "^7.0.5",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@types/tmp": "^0.2.3",
@@ -134,7 +140,7 @@
     "node": ">=14"
   },
   "prisma": {
-    "seed": "ts-node  --require tsconfig-paths/register --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "seed": "ts-node --require tsconfig-paths/register --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "version": "",
   "readme": "ERROR: No README data found!",
