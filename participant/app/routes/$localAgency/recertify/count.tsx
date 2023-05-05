@@ -46,7 +46,12 @@ export const loader: LoaderFunction = async ({
       ? { householdSize: actualHouseholdSize }
       : existingSubmissionData.count;
 
-  const routeTarget = routeFromCount(request, existingCountData as CountData);
+  const safeCountData =
+    actualHouseholdSize !== undefined
+      ? existingCountData
+      : { householdSize: 1 };
+
+  const routeTarget = routeFromCount(request, safeCountData as CountData);
   return json(
     {
       submissionID: submissionID,
