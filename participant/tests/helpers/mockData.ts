@@ -34,7 +34,8 @@ export function getDocument(
   submissionId: string = uuidv4(),
   filename: string = "example-file.jpg",
   filetype: string = "image/jpg",
-  size: number = 1_024_000
+  size: number = 1_024_000,
+  updatedAt: Date = new Date()
 ) {
   return {
     documentId: uuidv4(),
@@ -45,7 +46,7 @@ export function getDocument(
     detectedFilesizeBytes: size,
     originalFilename: filename,
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt: updatedAt,
   } as Document;
 }
 

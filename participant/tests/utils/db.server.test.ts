@@ -10,6 +10,7 @@ import {
   deleteDocument,
   upsertDocument,
   listDocuments,
+  listExpiringDocuments,
   upsertStaffUser,
   fetchSubmissionData,
 } from "app/utils/db.server";
@@ -308,6 +309,40 @@ it("lists documents", async () => {
   });
   expect(foundDocuments[0]).toEqual(mockument);
   expect(foundDocuments[1]).toEqual(mockumentTwo);
+});
+
+it("lists documents with expiring s3 presigned urls", async () => {
+  jest.useFakeTimers().setSystemTime(new Date("2020-01-10"));
+  const submissionID = uuidv4();
+  const mockument = getDocument(
+    submissionID,
+    "filename.jpg",
+    "image/jpeg",
+    1_024_000,
+    new Date("2020-01-10")
+  );
+  const mockumentTwo = getDocument(
+    submissionID,
+    "another-file.png",
+    "image/png",
+    1_024_000,
+    new Date("2020-01-01")
+  );
+
+  prismaMock.document.findMany.mockResolvedValue([mockumentTwo]);
+  const foundDocuments = await listExpiringDocuments();
+  expect(foundDocuments.length).toBe(1);
+  expect(prismaMock.document.findMany).toHaveBeenCalledWith({
+    where: {
+      updatedAt: {
+        lt: new Date("2020-01-05"),
+      },
+    },
+    select: {
+      s3Key: true,
+    },
+  });
+  expect(foundDocuments[0]).toEqual(mockumentTwo);
 });
 
 it("upserting a staff user looks up localagency and creates a staff user if there is none", async () => {
