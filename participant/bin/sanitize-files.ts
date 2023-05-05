@@ -34,20 +34,19 @@ async function sanitizeImage(
       });
   } catch (error) {
     logger.error(`❌ Error running sharp: ${error}`);
+    throw error;
   }
 }
 
 // Use ghostscript to convert pdfs to jpgs and then use pdfkit to create a new pdf
 // Ghostscript4js needs ghostscript to be installed on the OS
 // See https://github.com/NickNaso/ghostscript4js
-// See https://pdfkit.org/
-async function sanitizePdf(filepath: string, outputDir: string) {
-  const outputSubdir = path.join(outputDir, "parts");
-  mkdirSync(outputSubdir);
-  const outputFile = path.join(outputSubdir, "part-%03d.jpeg");
+// See https://pdfkit.org
+function sanitizePdf(filepath: string, outputDir: string) {
+  const outputFile = path.join(outputDir, "part-%03d.jpeg");
   logger.debug(`Ghostscript outputFile: ${outputFile}`);
 
-  const gsOptions = `-dBATCH \
+  const gsCommand = `-dBATCH \
 -dNOPAUSE \
 -dSAFER \
 -sDEVICE=jpeg \
@@ -57,12 +56,13 @@ async function sanitizePdf(filepath: string, outputDir: string) {
 -dFIXEDMEDIA \
 -sOutputFile=${outputFile} \
 ${filepath}`;
-  logger.debug(`Ghostscript options: ${gsOptions}`);
+  logger.debug(`Ghostscript command: ${gsCommand}`);
 
   try {
-    gs.executeSync(gsOptions);
+    gs.executeSync(gsCommand);
   } catch (err) {
     logger.error(`❌ Error running ghostscript4js: ${err}`);
+    throw err;
   }
 }
 
@@ -77,14 +77,20 @@ async function sanitize(filepath: string, outputDir: string) {
   const filetype = mime.getType(filepath);
   logger.debug(`Filetype: ${filetype}`);
 
-  if (filetype && filetype.includes("image")) {
-    logger.info(`Sanitizing image: ${filepath}`);
-    await sanitizeImage(filepath, outputFile, filetype);
-  } else if (filetype && filetype === "application/pdf") {
-    logger.info(`Sanitizing pdf: ${filepath}`);
-    await sanitizePdf(filepath, outputDir);
-  } else {
-    logger.warn(`❌ Unknown filetype: ${filepath}`);
+  try {
+    if (filetype && filetype.includes("image")) {
+      logger.info(`Sanitizing image: ${filepath}`);
+      await sanitizeImage(filepath, outputFile, filetype);
+    } else if (filetype && filetype === "application/pdf") {
+      logger.info(`Sanitizing pdf: ${filepath}`);
+      const outputSubdir = path.join(outputDir, "parts");
+      mkdirSync(outputSubdir);
+      sanitizePdf(filepath, outputSubdir);
+    } else {
+      logger.warn(`❌ Unknown filetype: ${filepath}`);
+    }
+  } catch (error) {
+    // delete the file?
   }
 }
 
