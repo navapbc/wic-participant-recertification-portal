@@ -36,18 +36,24 @@ export const loader: LoaderFunction = async ({
   const existingSubmissionData = await fetchSubmissionData(submissionID);
   checkRoute(request, existingSubmissionData);
 
-  const actualHouseholdSize = existingSubmissionData.participant?.length
-    ? { householdSize: existingSubmissionData.participant!.length }
-    : existingSubmissionData.count;
-  const safeCountData = actualHouseholdSize ?? { householdSize: 1 };
+  const actualHouseholdSize = existingSubmissionData.participant?.length;
+  const existingCountData =
+    actualHouseholdSize !== undefined
+      ? { householdSize: actualHouseholdSize }
+      : existingSubmissionData.count;
+
+  const safeCountData =
+    actualHouseholdSize !== undefined
+      ? existingCountData
+      : { householdSize: 1 };
 
   const routeTarget = routeFromCount(request, safeCountData as CountData);
   return json(
     {
       submissionID: submissionID,
-      actualHouseholdSize: actualHouseholdSize?.householdSize,
+      actualHouseholdSize: actualHouseholdSize,
       routeTarget: routeTarget,
-      ...setFormDefaults("householdSizeForm", safeCountData as CountData),
+      ...setFormDefaults("householdSizeForm", existingCountData as CountData),
     },
     { headers: headers }
   );
