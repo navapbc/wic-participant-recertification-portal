@@ -14,6 +14,7 @@ import {
   upsertSubmission,
 } from "~/utils/db.server";
 import { checkRoute, routeRelative } from "~/utils/routing";
+import logger from "app/utils/logging.server";
 
 export const loader: LoaderFunction = async ({
   request,
@@ -55,7 +56,15 @@ export const action = async ({ request }: { request: Request }) => {
   const submission = await findSubmission(submissionID);
   await upsertSubmission(submissionID, submission!.localAgency.urlId, true);
   const routeTarget = routeRelative(request, "confirm");
-  console.log(`Completed review form; routing to ${routeTarget}`);
+  logger.info(
+    {
+      location: "routes/review",
+      type: "action.complete",
+      routeTarget: routeTarget,
+      submissionID: submissionID,
+    },
+    "Completed review form; routing"
+  );
   return redirect(routeTarget);
 };
 

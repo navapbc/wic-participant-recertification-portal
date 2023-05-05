@@ -24,6 +24,7 @@ import {
 } from "./config.server";
 import { trimStart } from "lodash";
 import { File } from "@remix-run/node/dist/fetch";
+import logging from "app/utils/logging.server";
 
 const PATHSTYLE = ENDPOINT_URL ? true : false;
 
@@ -55,6 +56,10 @@ export const getFileFromS3 = async (key: string): Promise<File | undefined> => {
     if (error instanceof NotFound) {
       return undefined;
     }
+    logging.error(
+      { location: "s3.server", type: "error.getFile", key: key, error: error },
+      `Unable to get ${key} from S3: ${error}`
+    );
     throw new Error(`Unable to get ${key} from S3: ${error}`);
   }
   return undefined;
@@ -77,6 +82,15 @@ export const readFileHeadFromS3 = async (
     if (error instanceof NotFound) {
       return undefined;
     }
+    logging.error(
+      {
+        location: "s3.server",
+        type: "error.readFileHead",
+        key: key,
+        error: error,
+      },
+      `Unable to read Head of ${key} from S3: ${error}`
+    );
     throw new Error(`Unable to read Head of ${key} from S3: ${error}`);
   }
   return undefined;
@@ -96,6 +110,15 @@ export const headFilesizeFromS3 = async (
     if (error instanceof NotFound) {
       return undefined;
     }
+    logging.error(
+      {
+        location: "s3.server",
+        type: "error.headFilesize",
+        key: key,
+        error: error,
+      },
+      `Unable to complete head request for ${key}: ${error}`
+    );
     throw new Error(`Unable to complete head request for ${key}: ${error}`);
   }
 };
@@ -120,6 +143,10 @@ export const getURLFromS3 = async (
     if (error instanceof NotFound) {
       return undefined;
     }
+    logging.error(
+      { location: "s3.server", type: "error.getURL", key: key, error: error },
+      `Unable to get URL for ${key}: ${error}`
+    );
     throw new Error(`Unable to get URL for ${key}: ${error}`);
   }
 };
@@ -131,12 +158,24 @@ export const deleteFileFromS3 = async (key: string) => {
   });
   try {
     await s3Connection.send(command);
-    console.log(`🗑️  Deleted ${key}`);
+    logging.info(
+      { location: "s3.server", type: "info.deleteFile", key: key },
+      `🗑️  Deleted ${key}`
+    );
   } catch (error) {
     // If it doesn't exist, it seems like an OK outcome for a delete request
     if (error! instanceof NotFound) {
       return;
     } else {
+      logging.error(
+        {
+          location: "s3.server",
+          type: "error.deleteFile",
+          key: key,
+          error: error,
+        },
+        `Unable to delete ${key}: ${error}`
+      );
       throw new Error(`Unable to delete ${key}: ${error}`);
     }
   }
@@ -155,12 +194,28 @@ export const checkFile = async (key: string): Promise<FileCheckResult> => {
 
   const startOfFile = await readFileHeadFromS3(key);
   if (!startOfFile) {
-    console.error(`❌ Unable to get head of file for ${key}`);
+    logging.warn(
+      {
+        location: "s3.server",
+        type: "checkfile.cannotRead",
+        key: key,
+        fileSize: fileSize,
+      },
+      `❌ Unable to get head of file for ${key}`
+    );
     return { error: "cannotRead", size: fileSize };
   }
   const fileType = await fileTypeFromBuffer(startOfFile);
   if (!fileType) {
-    console.error(`❌ Unable to determine filetype for ${key}`);
+    logging.warn(
+      {
+        location: "s3.server",
+        type: "checkfile.cannotType",
+        key: key,
+        fileSize: fileSize,
+      },
+      `❌ Unable to determine filetype for ${key}`
+    );
     return { error: "cannotType", size: fileSize };
   }
   if (fileType.mime.includes("image") || fileType.mime == "application/pdf") {
@@ -202,7 +257,8 @@ export async function uploadStreamToS3(data: any, filename: string) {
         return file.Location;
       }
     } catch (e) {
-      console.error(
+      logging.error(
+        { location: "s3.server", type: "uploadStream", filename: filename },
         `⚠️ File upload failed: ${e}; retrying ${
           retries + 1
         } of ${S3_UPLOAD_RETRIES}`

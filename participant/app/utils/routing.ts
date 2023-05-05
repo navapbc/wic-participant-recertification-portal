@@ -3,6 +3,7 @@ import { stringify } from "querystring";
 import type { ParsedUrlQueryInput } from "querystring";
 import { determineProof } from "./determineProof";
 import { redirect } from "@remix-run/node";
+import logger from "app/utils/logging.server";
 
 export const routeRelative = (
   request: Request,
@@ -36,7 +37,13 @@ export const throwRouteChangesRelative = (
   if (request.url.includes(target)) {
     return true;
   }
-  console.log(
+  logger.info(
+    {
+      location: "routing",
+      type: "checkroute",
+      target: target,
+      acceptableRoutes: acceptableRoutes,
+    },
     `➡️ Redirecting to ${target} because of checkRoute; acceptable routes ${JSON.stringify(
       acceptableRoutes
     )}`

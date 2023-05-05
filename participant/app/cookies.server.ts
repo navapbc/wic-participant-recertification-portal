@@ -6,7 +6,7 @@ import { findSubmission, upsertSubmission } from "app/utils/db.server";
 import { validRoute } from "app/utils/redirect";
 import { MAX_SESSION_SECONDS } from "app/utils/config.server";
 import { routeRelative } from "./utils/routing";
-
+import logger from "./utils/logging.server";
 type ParticipantCookieContents = {
   submissionID?: string;
 };
@@ -17,7 +17,8 @@ export const ParticipantCookie = createCookie("prp-recertification-form");
 export const sessionCheck = (time: Date): boolean => {
   const age = (new Date().getTime() - time.getTime()) / 1000;
   if (age > MAX_SESSION_SECONDS) {
-    console.log(
+    logger.info(
+      { location: "cookies.server", type: "session.stale" },
       `Session is not so fresh 🤢: ${age} seconds, max ${MAX_SESSION_SECONDS}`
     );
     return false;
@@ -42,7 +43,15 @@ export const cookieParser = async (
       const existingSubmission = await findSubmission(submissionID);
       if (!existingSubmission) {
         // This is an edge case; we want to ensure the submissionID isn't subverted
-        console.log(`No matching DB submission for ${submissionID}; resetting`);
+        logger.info(
+          {
+            location: "cookies.server",
+            type: "session.missing_db_record",
+            agency: urlId,
+            submissionID: submissionID,
+          },
+          `No matching DB submission for ${submissionID}; resetting`
+        );
         forceRedirect = true;
       } else if (!resetSession) {
         const validSession = sessionCheck(existingSubmission.updatedAt);
@@ -54,12 +63,26 @@ export const cookieParser = async (
             const confirmAlreadySubmitted = routeRelative(request, "confirm", {
               previouslySubmitted: true,
             });
-            console.log(
+            logger.info(
+              {
+                location: "cookies.server",
+                type: "session.already_submitted",
+                agency: urlId,
+                submissionID: submissionID,
+              },
               `🗒️  Already submitted; redirect to ${confirmAlreadySubmitted}`
             );
             throw redirect(confirmAlreadySubmitted);
           }
-          console.log(`Session ${submissionID} valid; finished parser`);
+          logger.debug(
+            {
+              location: "cookies.server",
+              type: "session.completed",
+              agency: urlId,
+              submissionID: submissionID,
+            },
+            `Session ${submissionID} valid; finished parser`
+          );
           return { submissionID: submissionID };
         }
       }
@@ -69,17 +92,47 @@ export const cookieParser = async (
 
   const submissionID = uuidv4();
   if (resetSession) {
-    console.log(`Resetting to new submission ID`);
+    logger.info(
+      {
+        location: "cookies.server",
+        type: "session.reset",
+        agency: urlId,
+        submissionID: submissionID,
+      },
+      `Resetting to new submission ID ${submissionID}`
+    );
   }
-  console.log(`Generating ${submissionID}`);
+  logger.debug(
+    {
+      location: "cookies.server",
+      type: "session.new",
+      agency: urlId,
+      submissionID: submissionID,
+    },
+    `Generating ${submissionID}`
+  );
   cookie.submissionID = submissionID;
-  console.log(
+  logger.info(
+    {
+      location: "cookies.server",
+      type: "session.new_database_record",
+      agency: urlId,
+      submissionID: submissionID,
+    },
     `Creating Submission record in database for ${submissionID} and agency ${urlId}`
   );
   try {
     await upsertSubmission(submissionID, urlId);
   } catch (e) {
-    console.error(`Database error! ${JSON.stringify(e)}`);
+    logger.error(
+      {
+        location: "cookies.server",
+        type: "session.database_error",
+        agency: urlId,
+        submissionID: submissionID,
+      },
+      `Database error! ${JSON.stringify(e)}`
+    );
     throw redirect("/error/databaseError");
   }
   if (forceRedirect) {
@@ -88,7 +141,13 @@ export const cookieParser = async (
       redirectTarget = `${redirectTarget}?resetSession=true`;
     }
     if (redirectTarget) {
-      console.log(
+      logger.debug(
+        {
+          location: "cookies.server",
+          type: "session.force_redirect",
+          agency: urlId,
+          submissionID: submissionID,
+        },
         `Force redirect is ${forceRedirect.toString()}; sending the user back to ${redirectTarget}`
       );
       throw redirect(redirectTarget, {

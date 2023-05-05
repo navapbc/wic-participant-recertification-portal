@@ -39,6 +39,7 @@ import { FilePreview } from "~/components/FilePreview";
 import type { TFunction } from "i18next";
 import { trackPromise, usePromiseTracker } from "react-promise-tracker";
 import BeatLoader from "react-spinners/BeatLoader";
+import logger from "app/utils/logging.server";
 
 const createPreviewData = async (
   submissionID: string
@@ -121,16 +122,38 @@ export const loader: LoaderFunction = async ({
   const removeFile = url.searchParams.get("remove");
   const putFile = url.searchParams.get("put");
   if (removeFileAction && removeFile) {
-    console.log(`⏳ Received request to remove ${removeFile}`);
+    logger.info(
+      {
+        location: "routes/upload",
+        type: "loader.removeFile",
+        filename: removeFile,
+        submissionID: submissionID,
+      },
+      `⏳ Received request to remove ${removeFile}`
+    );
     const existingRecord = await findDocument(submissionID, removeFile);
     if (existingRecord) {
       await deleteFileFromS3(existingRecord.s3Key);
       await deleteDocument(submissionID, existingRecord.originalFilename);
-      console.log(
+      logger.info(
+        {
+          location: "routes/upload",
+          type: "loader.deletedFile",
+          filename: existingRecord.originalFilename,
+          submissionID: submissionID,
+        },
         `🗑️  Deleted ${existingRecord.originalFilename} from S3 and DB`
       );
     } else {
-      console.log(`⚠️  Could not find ${removeFile}`);
+      logger.info(
+        {
+          location: "routes/upload",
+          type: "loader.missingFile",
+          filename: removeFile,
+          submissionID: submissionID,
+        },
+        `⚠️  Could not find ${removeFile}`
+      );
     }
     // This prevents a remove command from being in the history
     return redirect(routeRelative(request, "/upload"));
@@ -138,7 +161,15 @@ export const loader: LoaderFunction = async ({
   if (putFileAction && putFile) {
     const existingUploads = await listDocuments(submissionID);
     if (existingUploads.length + 1 > MAX_UPLOAD_FILECOUNT) {
-      console.log(`Too many files: have ${existingUploads.length}`);
+      logger.debug(
+        {
+          location: "routes/upload",
+          type: "loader.fileCount",
+          count: existingUploads.length,
+          submissionID: submissionID,
+        },
+        `Too many files: have ${existingUploads.length}`
+      );
       return json({ error: "fileCount" });
     }
     const s3key = `${submissionID}/${putFile}`;
@@ -150,7 +181,16 @@ export const loader: LoaderFunction = async ({
       s3Url: getURL,
     });
     const putURL = await getURLFromS3(`${submissionID}/${putFile}`, "PUT");
-    console.log(`🔼 Created PUT URL for ${putFile}: ${putURL}`);
+    logger.info(
+      {
+        location: "routes/upload",
+        type: "loader.putURL",
+        filename: putFile,
+        putURL: putURL,
+        submissionID: submissionID,
+      },
+      "🔼 Created PUT URL"
+    );
     return json({
       putFileURL: putURL,
     });
@@ -159,13 +199,29 @@ export const loader: LoaderFunction = async ({
   checkRoute(request, existingSubmissionData);
   if (!existingSubmissionData.changes) {
     const returnToChanges = routeRelative(request, "changes");
-    console.log(`No changes data; returning to ${returnToChanges}`);
+    logger.info(
+      {
+        location: "routes/upload",
+        type: "loader.missingChanges",
+        target: returnToChanges,
+        submissionID: submissionID,
+      },
+      "No changes data; returning"
+    );
     return redirect(returnToChanges);
   }
   const proofRequired = determineProof(existingSubmissionData);
   if (proofRequired.length == 0) {
     const skipToContact = routeRelative(request, "contact");
-    console.log(`No proof required; routing to ${skipToContact}`);
+    logger.info(
+      {
+        location: "routes/upload",
+        type: "loader.noProof",
+        target: skipToContact,
+        submissionID: submissionID,
+      },
+      "No proof required; skipping"
+    );
     return redirect(skipToContact);
   }
   const previousUploads = await createPreviewData(submissionID);
@@ -201,16 +257,42 @@ export const action = async ({
   await Promise.all(
     previousUploads.map(async (document) => {
       const { mimeType, error, size } = await checkFile(document.s3Key);
-      console.log(
-        `Checking ${document.originalFilename} mime ${mimeType} size ${size} error ${error}`
+      logger.debug(
+        {
+          location: "routes/upload",
+          type: "action.checkFile",
+          filename: document.originalFilename,
+          filesize: size,
+          mime: mimeType,
+          error: error,
+          submissionID: submissionID,
+        },
+        "Checking file"
       );
       if (error) {
-        console.log(
-          `❌ Rejected file ${document.originalFilename} - mimeType: ${mimeType} error: ${error}`
+        logger.info(
+          {
+            location: "routes/upload",
+            type: "action.rejectFile",
+            filename: document.originalFilename,
+            filesize: size,
+            mime: mimeType,
+            error: error,
+            submissionID: submissionID,
+          },
+          "❌ Rejected file"
         );
         await deleteFileFromS3(document.s3Key);
         await deleteDocument(submissionID, document.originalFilename);
-        console.log(`🗑️  Deleted ${document.originalFilename} from S3 and DB`);
+        logger.debug(
+          {
+            location: "routes/upload",
+            type: "action.deleteFile",
+            filename: document.originalFilename,
+            submissionID: submissionID,
+          },
+          "🗑️  Deleted file from S3 and DB"
+        );
         rejectedDocuments.push({
           filename: document.originalFilename,
           accepted: false,
@@ -232,17 +314,38 @@ export const action = async ({
       }
     })
   );
-  console.log(
-    `Accepted ${JSON.stringify(acceptedDocuments)} Rejected ${JSON.stringify(
-      rejectedDocuments
-    )}`
+  logger.info(
+    {
+      location: "routes/upload",
+      type: "action.fileResults",
+      acceptedDocuments: acceptedDocuments,
+      rejectedDocuments: rejectedDocuments,
+      submissionID: submissionID,
+    },
+    "✅  File processing complete"
   );
   if (!rejectedDocuments.length) {
     if (acceptedDocuments.length) {
+      logger.info(
+        {
+          location: "routes/upload",
+          type: "action.complete",
+          routeTarget: "contact",
+        },
+        "Completed upload form; routing to contact"
+      );
       throw redirect(routeRelative(request, "contact"));
     } else {
       const previousUploads = await listDocuments(submissionID);
       if (previousUploads.length) {
+        logger.info(
+          {
+            location: "routes/upload",
+            type: "action.complete",
+            routeTarget: "contact",
+          },
+          "Completed upload form; routing to contact"
+        );
         throw redirect(routeRelative(request, "contact"));
       }
     }
@@ -321,7 +424,6 @@ export default function Upload() {
     if (getURL.error) {
       return getURL.error;
     }
-    console.log(`Starting upload of ${file.name} to ${getURL.putFileURL}`);
     try {
       trackPromise(
         fetch(getURL.putFileURL, {
@@ -417,7 +519,6 @@ export default function Upload() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     async function waitUntilFinished(time = 100) {
       while (promiseInProgress) {
-        console.log("Waiting for promises to finish");
         await new Promise((resolve) => setTimeout(resolve, time));
       }
     }

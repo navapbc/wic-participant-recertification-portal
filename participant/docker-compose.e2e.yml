@@ -48,6 +48,7 @@ services:
       MAX_UPLOAD_FILECOUNT: 5
       MAX_UPLOAD_SIZE_BYTES: 5242880
       NODE_ENV: development
+      LOG_LEVEL: info
       PORT: 3005
     # Check that the remix server is up and running
     healthcheck:

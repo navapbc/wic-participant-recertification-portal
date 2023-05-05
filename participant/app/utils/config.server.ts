@@ -13,3 +13,4 @@ export const MATOMO_URL_BASE = process.env.MATOMO_URL_BASE || ""; // this is the
 export const MATOMO_SECURE =
   process.env.NODE_ENV == "production" ? true : false;
 export const S3_UPLOAD_RETRIES = Number(process.env.S3_UPLOAD_RETRIES) || 3;
+export const LOG_LEVEL = process.env.LOG_LEVEL || "warn";

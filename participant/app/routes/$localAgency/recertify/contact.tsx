@@ -18,6 +18,7 @@ import type { ContactData } from "~/types";
 import { fetchSubmissionData, upsertSubmissionForm } from "~/utils/db.server";
 import { checkRoute, routeFromContact } from "~/utils/routing";
 import { useLoaderData } from "@remix-run/react";
+import logger from "app/utils/logging.server";
 
 const contactValidator = withZod(contactSchema);
 export const loader: LoaderFunction = async ({
@@ -45,18 +46,42 @@ export const loader: LoaderFunction = async ({
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 export const action = async ({ request }: { request: Request }) => {
+  const { submissionID } = await cookieParser(request);
   const formData = await request.formData();
   const validationResult = await contactValidator.validate(formData);
   if (validationResult.error) {
-    console.log(`Validation error: ${validationResult.error}`);
+    logger.debug(
+      {
+        location: "routes/contact",
+        type: "action.validation",
+        validationError: validationResult.error,
+        submissionID: submissionID,
+      },
+      "Validation error"
+    );
     return validationError(validationResult.error, validationResult.data);
   }
   const parsedForm = contactSchema.parse(formData);
-  const { submissionID } = await cookieParser(request);
-  console.log(`Got submission ${JSON.stringify(parsedForm)}`);
+  logger.info(
+    {
+      location: "routes/contact",
+      type: "action.submission",
+      parsedForm: parsedForm,
+      submissionID: submissionID,
+    },
+    "Got submission"
+  );
   await upsertSubmissionForm(submissionID, "contact", parsedForm);
   const routeTarget = routeFromContact(request);
-  console.log(`Completed contact form; routing to ${routeTarget}`);
+  logger.info(
+    {
+      location: "routes/contact",
+      type: "action.complete",
+      routeTarget: routeTarget,
+      submissionID: submissionID,
+    },
+    "Completed name form"
+  );
   return redirect(routeTarget);
 };
 

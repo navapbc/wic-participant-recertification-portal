@@ -23,6 +23,7 @@ import {
 import { checkRoute, routeFromDetails } from "app/utils/routing";
 import type { Participant } from "~/types";
 import { toInteger } from "lodash";
+import logger from "app/utils/logging.server";
 
 const detailsValidator = withZod(participantSchema);
 
@@ -58,7 +59,13 @@ export const loader: LoaderFunction = async ({
   let count: number;
   if (url.searchParams.get("action") == "remove_participant") {
     const removeParticipant = url.searchParams.get("participant");
-    console.log(
+    logger.info(
+      {
+        location: "routes/details",
+        type: "loader.removeParticipant",
+        participant: removeParticipant,
+        submissionID: submissionID,
+      },
       `⏳ Received request to remove participant ${removeParticipant}`
     );
     const uneditedParticipants = (await findSubmissionFormData(
@@ -70,7 +77,15 @@ export const loader: LoaderFunction = async ({
     );
     if (uneditedParticipants?.length > filteredParticipants?.length) {
       await upsertSubmissionForm(submissionID, "details", filteredParticipants);
-      console.log(`🗑 Removed participant ${removeParticipant} from database`);
+      logger.info(
+        {
+          location: "routes/details",
+          type: "loader.removeParticipant",
+          participant: removeParticipant,
+          submissionID: submissionID,
+        },
+        `🗑 Removed participant ${removeParticipant} from database`
+      );
     }
     return null;
   }
@@ -85,7 +100,15 @@ export const loader: LoaderFunction = async ({
     submissionData.participant as Participant[],
     count
   );
-  console.log(`Participant data ${JSON.stringify(participantData)}`);
+  console.debug(
+    {
+      location: "routes/details",
+      type: "loader.participantData",
+      participantData: participantData,
+      submissionID: submissionID,
+    },
+    "Participant data received"
+  );
   return json(
     {
       participantCount: count,
@@ -96,22 +119,46 @@ export const loader: LoaderFunction = async ({
 };
 
 export const action = async ({ request }: { request: Request }) => {
+  const { submissionID } = await cookieParser(request);
   const formData = await request.formData();
   const validationResult = await detailsValidator.validate(formData);
   if (validationResult.error) {
-    console.log(`Validation error: ${validationResult.error}`);
+    logger.debug(
+      {
+        location: "routes/details",
+        type: "action.validation",
+        validationError: validationResult.error,
+        submissionID: submissionID,
+      },
+      "Validation error"
+    );
     return validationError(validationResult.error, validationResult.data);
   }
 
   const parsedForm = participantSchema.parse(formData);
-  const { submissionID } = await cookieParser(request);
-  console.log(`Got submission ${JSON.stringify(parsedForm)}`);
+  logger.debug(
+    {
+      location: "routes/details",
+      type: "action.submission",
+      formData: parsedForm,
+      submissionID: submissionID,
+    },
+    "Got submission"
+  );
   parsedForm.participant.forEach((participantCard) => {
     participantCard.tag = nanoid();
   });
   await upsertSubmissionForm(submissionID, "details", parsedForm.participant);
   const routeTarget = routeFromDetails(request);
-  console.log(`Completed details form; routing to ${routeTarget}`);
+  logger.info(
+    {
+      location: "routes/details",
+      type: "action.complete",
+      routeTarget: routeTarget,
+      submissionID: submissionID,
+    },
+    "Completed details form; routing"
+  );
   return redirect(routeTarget);
 };
 

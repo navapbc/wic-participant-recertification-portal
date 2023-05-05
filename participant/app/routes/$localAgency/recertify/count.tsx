@@ -25,6 +25,7 @@ import {
   findSubmissionFormData,
 } from "app/utils/db.server";
 import type { CountData } from "~/types";
+import logger from "app/utils/logging.server";
 
 const countValidator = withZod(countSchema);
 
@@ -54,18 +55,42 @@ export const loader: LoaderFunction = async ({
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 export const action = async ({ request }: { request: Request }) => {
+  const { submissionID } = await cookieParser(request);
   const formData = await request.formData();
   const validationResult = await countValidator.validate(formData);
   if (validationResult.error) {
-    console.log(`Validation error: ${validationResult.error}`);
+    logger.debug(
+      {
+        location: "routes/count",
+        type: "action.validation",
+        validationError: validationResult.error,
+        submissionID: submissionID,
+      },
+      "Validation error"
+    );
     return validationError(validationResult.error, validationResult.data);
   }
   const parsedForm = countSchema.parse(formData);
-  const { submissionID } = await cookieParser(request);
-  console.log(`Got submission ${JSON.stringify(parsedForm)}`);
+  logger.debug(
+    {
+      location: "routes/count",
+      type: "action.countData",
+      formData: parsedForm,
+      submissionID: submissionID,
+    },
+    "Count data received"
+  );
   await upsertSubmissionForm(submissionID, "count", parsedForm);
   const routeTarget = routeFromCount(request, parsedForm);
-  console.log(`Completed count form; routing to ${routeTarget}`);
+  logger.info(
+    {
+      location: "routes/count",
+      type: "action.complete",
+      routeTarget: routeTarget,
+      submissionID: submissionID,
+    },
+    "Completed count form; routing"
+  );
   return redirect(routeTarget);
 };
 

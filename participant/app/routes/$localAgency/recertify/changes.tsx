@@ -24,6 +24,7 @@ import {
   findSubmissionFormData,
   fetchSubmissionData,
 } from "app/utils/db.server";
+import logger from "app/utils/logging.server";
 
 const changesValidator = withZod(changesSchema);
 
@@ -49,22 +50,46 @@ export const loader: LoaderFunction = async ({
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 export const action = async ({ request }: { request: Request }) => {
+  const { submissionID } = await cookieParser(request);
   const formData = await request.formData();
   const validationResult = await changesValidator.validate(formData);
   if (validationResult.error) {
-    console.log(`Validation error: ${validationResult.error}`);
+    logger.debug(
+      {
+        location: "routes/changes",
+        type: "action.validation",
+        validationError: validationResult.error,
+        submissionID: submissionID,
+      },
+      "Validation error"
+    );
     return validationError(validationResult.error, validationResult.data);
   }
   const parsedForm = changesSchema.parse(formData);
-  const { submissionID } = await cookieParser(request);
-  console.log(`Got submission ${JSON.stringify(parsedForm)}`);
+  logger.info(
+    {
+      location: "routes/changes",
+      type: "action.submission",
+      parsedForm: parsedForm,
+      submissionID: submissionID,
+    },
+    "Got submission"
+  );
   await upsertSubmissionForm(submissionID, "changes", parsedForm);
   const participants = await findSubmissionFormData(submissionID, "details");
   const routeTarget = routeFromChanges(request, {
     changes: parsedForm,
     participant: participants as unknown as Participant[],
   });
-  console.log(`Completed changes form; routing to ${routeTarget}`);
+  logger.info(
+    {
+      location: "routes/changes",
+      type: "action.complete",
+      routeTarget: routeTarget,
+      submissionID: submissionID,
+    },
+    "Completed changes form"
+  );
   return redirect(routeTarget);
 };
 
