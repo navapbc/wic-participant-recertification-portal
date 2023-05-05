@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { parseSubmissionID, validateCookie } from "../helpers/cookies";
 import { parse } from "querystring";
+import type { Participant } from "~/types";
 import {
   fillNameForm,
   fillCountForm,
