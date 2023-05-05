@@ -3,8 +3,14 @@ import path from "path";
 import mime from "mime";
 import pino from "pino";
 import gs from "ghostscript4js";
-import { mkdtempSync, mkdirSync } from "node:fs";
+import {
+  mkdtempSync,
+  mkdirSync,
+  createWriteStream,
+  readdirSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
+import PDFDocument from "pdfkit";
 
 const logLevel = process.env.LOG_LEVEL || "info";
 const logger = pino({ level: logLevel });
@@ -42,15 +48,17 @@ async function sanitizeImage(
 // Ghostscript4js needs ghostscript to be installed on the OS
 // See https://github.com/NickNaso/ghostscript4js
 // See https://pdfkit.org
-function sanitizePdf(filepath: string, outputDir: string) {
+function sanitizePdf(filepath: string, filename: string, outputDir: string) {
   const outputFile = path.join(outputDir, "part-%03d.jpeg");
   logger.debug(`Ghostscript outputFile: ${outputFile}`);
 
+  // 🎩 Hat tip to:
+  // https://superuser.com/questions/168444/using-ghostscript-to-convert-multi-page-pdf-into-single-jpg
   const gsCommand = `-dBATCH \
 -dNOPAUSE \
 -dSAFER \
 -sDEVICE=jpeg \
--dJPEGQ=95 \
+-dJPEGQ=100 \
 -r600x600 \
 -dPDFFitPage \
 -dFIXEDMEDIA \
@@ -59,11 +67,34 @@ ${filepath}`;
   logger.debug(`Ghostscript command: ${gsCommand}`);
 
   try {
+    // @TODO the logs are out of order, seeming to indicate this runs first?
     gs.executeSync(gsCommand);
   } catch (err) {
     logger.error(`❌ Error running ghostscript4js: ${err}`);
     throw err;
   }
+
+  const jpgs = readdirSync(outputDir);
+  logger.debug(jpgs);
+
+  const newPdf = path.join(outputDir, filename);
+  logger.info(`Creating new pdf: ${newPdf}`);
+  const doc = new PDFDocument({ size: "LETTER" });
+  doc.pipe(createWriteStream(newPdf));
+
+  // Letter pages are 612 x 792 points
+  let firstPage = true;
+  jpgs.forEach((jpgFile) => {
+    if (firstPage) {
+      firstPage = false;
+      doc.image(path.join(outputDir, jpgFile), 0, 0, { fit: [612, 792] });
+    } else {
+      doc
+        .addPage()
+        .image(path.join(outputDir, jpgFile), 0, 0, { fit: [612, 792] });
+    }
+  });
+  doc.end();
 }
 
 async function sanitize(filepath: string, outputDir: string) {
@@ -85,7 +116,7 @@ async function sanitize(filepath: string, outputDir: string) {
       logger.info(`Sanitizing pdf: ${filepath}`);
       const outputSubdir = path.join(outputDir, "parts");
       mkdirSync(outputSubdir);
-      sanitizePdf(filepath, outputSubdir);
+      sanitizePdf(filepath, filename, outputSubdir);
     } else {
       logger.warn(`❌ Unknown filetype: ${filepath}`);
     }
