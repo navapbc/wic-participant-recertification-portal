@@ -28,7 +28,14 @@ export function useChangeLanguage(locale: string) {
     const changeLanguage = async () => {
       await i18n.changeLanguage(locale);
     };
-    changeLanguage().catch(console.error);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    changeLanguage().catch((error) => {
+      logger.error({
+        location: "root",
+        type: "changeLanguage.error",
+        error: error,
+      });
+    });
   }, [locale, i18n]);
 }
 
