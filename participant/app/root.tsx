@@ -59,7 +59,7 @@ export function links() {
   ];
 }
 
-type LoaderData = { locale: string; demoMode: string; missingData: string };
+type LoaderData = { locale: string; demoMode: string; missingData: string, MATOMO_SECURE: boolean, MATOMO_URL_BASE: string };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const redirectTarget = await validRoute(request, params);
@@ -81,7 +81,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const missingData =
     url.searchParams.get("missing-data") == "true" ? "true" : "false";
-  return json<LoaderData>({ locale, demoMode, missingData });
+  return json<LoaderData>({ locale, demoMode, missingData, MATOMO_SECURE, MATOMO_URL_BASE });
 };
 
 export const handle = {
@@ -94,7 +94,7 @@ export const handle = {
 
 export default function App() {
   // Get the locale from the loader
-  const { locale, demoMode, missingData } = useLoaderData<LoaderData>();
+  const { locale, demoMode, missingData, MATOMO_SECURE, MATOMO_URL_BASE } = useLoaderData<LoaderData>();
   const { i18n } = useTranslation();
 
   // This hook will change the i18n instance language to the current locale
@@ -122,6 +122,8 @@ export default function App() {
         setSecureCookie: MATOMO_SECURE,
         setRequestMethod: "POST",
         trackPageView: true,
+        setVisitorCookieTimeout: 1800,
+        setReferralCookieTimeout: 1800,
       },
     });
 
@@ -133,6 +135,7 @@ export default function App() {
       <head>
         <Meta />
         <Links />
+        <img src="//${MATOMO_URL_BASE}/matomo.php?idsite=1&amp;rec=1" />
       </head>
       <body>
         <Layout demoMode={demoMode} missingData={missingData}>
