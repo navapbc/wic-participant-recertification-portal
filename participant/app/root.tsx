@@ -156,7 +156,11 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
-        <img referrerPolicy="no-referrer-when-downgrade" src={`http://${MATOMO_URL_BASE}/matomo.php?idsite=1&amp;rec=1`} alt="" />
+        <img
+          referrerPolicy="no-referrer-when-downgrade"
+          src={`http://${MATOMO_URL_BASE}/matomo.php?idsite=1&amp;rec=1`}
+          alt=""
+        />
       </body>
     </html>
   );
