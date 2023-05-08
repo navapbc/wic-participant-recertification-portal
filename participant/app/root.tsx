@@ -119,7 +119,7 @@ export default function App() {
   const isHydrated = useHydrated();
   if (isHydrated && MATOMO_URL_BASE) {
     const tracker = new MatomoTracker({
-      urlBase: `http://${MATOMO_URL_BASE}`,
+      urlBase: `//${MATOMO_URL_BASE}`,
       siteId: 1,
       disabled: false, // optional, false by default. Makes all tracking calls no-ops if set to true.
       heartBeat: {
@@ -156,11 +156,13 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
-        <img
-          referrerPolicy="no-referrer-when-downgrade"
-          src={`http://${MATOMO_URL_BASE}/matomo.php?idsite=1&amp;rec=1`}
-          alt=""
-        />
+        <noscript>
+          <img
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`//${MATOMO_URL_BASE}/matomo.php?idsite=1&rec=1`}
+            alt=""
+          />
+        </noscript>
       </body>
     </html>
   );
