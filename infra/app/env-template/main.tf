@@ -262,6 +262,7 @@ module "analytics" {
   vpc_id                   = data.aws_vpc.default.id
   subnet_ids               = data.aws_subnets.default.ids
   service_cluster_arn      = module.service_cluster.service_cluster_arn
+  memory                   = 2048
   container_port           = 8080
   container_read_only      = false # Matomo/apache needs to be able to write to the rootfs
   healthcheck_path         = "/matomo.php"
