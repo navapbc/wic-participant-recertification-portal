@@ -117,7 +117,30 @@ export const listExpiringDocuments = async () => {
       },
     },
     select: {
+      submissionId: true,
+      originalFilename: true,
       s3Key: true,
+      updatedAt: true,
+    },
+  });
+};
+
+export const updateDocumentS3Url = async (
+  submissionID: string,
+  filename: string,
+  s3Url: string
+) => {
+  const existingDocument = await findDocument(submissionID, filename);
+  if (!existingDocument) {
+    throw Error(`Unable to find document for ${submissionID} ${filename}`);
+  }
+  return await db.document.update({
+    where: {
+      documentId: existingDocument.documentId,
+    },
+    data: {
+      updatedAt: new Date(),
+      s3Url: s3Url,
     },
   });
 };
