@@ -336,7 +336,7 @@ it("lists documents with expiring s3 presigned urls", async () => {
   expect(prismaMock.document.findMany).toHaveBeenCalledWith({
     where: {
       updatedAt: {
-        lt: new Date("2020-01-05"),
+        lt: new Date("2020-01-09T17:00:00.000Z"),
       },
     },
     select: {
