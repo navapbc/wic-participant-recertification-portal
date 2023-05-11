@@ -48,6 +48,11 @@ resource "aws_lb" "alb" {
 
   # TODO(https://github.com/navapbc/template-infra/issues/162) Add access logs
   # checkov:skip=CKV_AWS_91:Add access logs in future PR
+  access_logs {
+    enabled = true
+    prefix  = var.service_name
+    bucket  = var.service_name
+  }
 }
 
 # NOTE: for the demo we expose private http endpoint
@@ -285,6 +290,15 @@ resource "aws_cloudwatch_log_group" "service_logs" {
 
   # TODO(https://github.com/navapbc/template-infra/issues/164) Encrypt with customer managed KMS key
   # checkov:skip=CKV_AWS_158:Encrypt service logs with customer key in future work
+}
+####################
+## Logging Bucket ##
+####################
+
+module "alb_logging" {
+  source           = "../s3-encrypted"
+  environment_name = var.service_name
+  s3_bucket_name   = var.service_name
 }
 
 ####################
