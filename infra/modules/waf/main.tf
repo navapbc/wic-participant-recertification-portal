@@ -264,62 +264,37 @@ resource "aws_wafv2_web_acl" "waf" {
   }
 }
 
-# Remove Firehose in favor of using cloudwatch for query purposes
 # logging configuration resource
+resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
+  log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
+  resource_arn            = aws_wafv2_web_acl.waf.arn
+}
 
-# resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
-#   log_destination_configs = [aws_kinesis_firehose_delivery_stream.waf_logging.arn]
-#   resource_arn            = aws_wafv2_web_acl.waf.arn
-# }
-# # firehose to recieve logs
-# resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
-#   name        = "aws-waf-logs-metrics-stream"
-#   destination = "extended_s3"
-#   server_side_encryption {
-#     enabled  = true
-#     key_type = "CUSTOMER_MANAGED_CMK"
-#     key_arn  = module.s3_encrypted_bucket.bucket_kms_arn
-#   }
-#   extended_s3_configuration {
-#     role_arn   = aws_iam_role.firehose_perms.arn
-#     bucket_arn = module.s3_encrypted_bucket.encrypted_bucket_arn
-#   }
-# }
-
-# # IAM Role for Kinesis
-# resource "aws_iam_role" "firehose_perms" {
-#   name               = var.waf_iam_name
-#   description        = "IAM role for the KDF"
-#   assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
-# }
-
-# # assume role
-# data "aws_iam_policy_document" "firehose_assume_role" {
-#   statement {
-#     effect  = "Allow"
-#     actions = ["sts:AssumeRole"]
-#     principals {
-#       type        = "Service"
-#       identifiers = ["firehose.amazonaws.com"]
-#     }
-#   }
-# }
 resource "aws_cloudwatch_log_group" "waf" {
   name = "aws-waf-logs-wic-prp"
 }
-# # role policy
-# data "aws_iam_policy_document" "firehose_perms" {
-#   statement {
-#     sid    = "AccessKDF"
-#     effect = "Allow"
-#     actions = [
-#       "kinesis:Get*",
-#       "kinesis:PutRecord",
-#       "s3:GetBucket",
-#       "s3:PutObject"
-#     ]
-#     resources = [module.s3_encrypted_bucket.encrypted_bucket_arn, "${module.s3_encrypted_bucket.encrypted_bucket_arn}/*"]
-#   }
+
+# staff_cognito_user_pool_name: "${local.project_name}-staff-${var.environment_name}"
+
+
+# Data attributes for resources; use outputs
+data "aws_lb" "participant_alb" {
+  for_each = toset(["dev", "staging", "prod"])
+  name     = "wic-prp-participant-${each.key}"
+}
+data "aws_lb" "staff_alb" {
+  for_each = toset(["dev", "staging", "prod"])
+  name     = "wic-prp-staff-${each.key}"
+}
+data "aws_lb" "analytics_alb" {
+  for_each = toset(["dev", "staging", "prod"])
+  name     = "wic-prp-analytics-${each.key}"
+}
+
+# data "aws_cognito_user_pools" "staff_pools" {
+#   # how to get a single cognito pool here?
+#   # for_each = toset(["dev", "staging", "prod"])
+#   # name     = "wic-prp-staff-${each.key}"
 # }
 
 # s3 logging bucket; this is a refactor to DRY up the code
@@ -352,3 +327,30 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
     }
   }
 }
+# Associating the WAF with our resources in AWS
+resource "aws_wafv2_web_acl_association" "participant_alb" {
+  for_each     = data.aws_lb.participant_alb
+  resource_arn = data.aws_lb.participant_alb[each.key].arn
+  web_acl_arn  = aws_wafv2_web_acl.waf.arn
+}
+resource "aws_wafv2_web_acl_association" "staff_alb" {
+  for_each     = data.aws_lb.staff_alb
+  resource_arn = data.aws_lb.staff_alb[each.key].arn
+  web_acl_arn  = aws_wafv2_web_acl.waf.arn
+}
+
+resource "aws_wafv2_web_acl_association" "analytics_alb" {
+  for_each     = data.aws_lb.analytics_alb
+  resource_arn = data.aws_lb.analytics_alb[each.key].arn
+  web_acl_arn  = aws_wafv2_web_acl.waf.arn
+}
+
+# resource "aws_wafv2_web_acl_association" "cognito" {
+#   for_each     = data.aws_cognito_user_pools.staff_pools
+#   resource_arn = data.aws_cognito_user_pools.staff_pools[each.key].arn
+#   web_acl_arn  = aws_wafv2_web_acl.waf.arn
+# }
+
+
+# target apply the WAF rules
+# import the web acl associations
