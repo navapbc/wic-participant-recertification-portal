@@ -517,3 +517,16 @@ resource "aws_security_group" "app" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+##############################################
+## WAF Association
+##############################################
+data "aws_wafv2_web_acl" "waf" {
+  name  = "wic-prp-wic-prp-waf"
+  scope = "REGIONAL"
+}
+
+resource "aws_wafv2_web_acl_association" "alb" {
+  resource_arn = aws_lb.alb.arn # load balancer arn
+  web_acl_arn  = data.aws_wafv2_web_acl.waf.arn
+}

@@ -146,3 +146,15 @@ resource "aws_ssm_parameter" "client_secret" {
   type  = "SecureString"
   value = aws_cognito_user_pool_client.client.client_secret
 }
+
+##############################################
+## WAF Association
+##############################################
+data "aws_wafv2_web_acl" "waf" {
+  name  = "wic-prp-wic-prp-waf"
+  scope = "REGIONAL"
+}
+resource "aws_wafv2_web_acl_association" "cognito" {
+  resource_arn = aws_cognito_user_pool.pool.arn
+  web_acl_arn  = data.aws_wafv2_web_acl.waf.arn
+}
