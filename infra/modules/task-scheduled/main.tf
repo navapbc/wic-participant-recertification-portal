@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 locals {
   schedule_role_name        = "${var.schedule_name}-role"
   schedule_role_policy_name = "${var.schedule_name}-policy"
@@ -20,6 +22,7 @@ data "aws_ecs_task_definition" "task_definition" {
 ##############################################
 
 resource "aws_scheduler_schedule" "schedule" {
+  # checkov:skip=CKV_AWS_297:Encrypt Eventbridge scheduler schedule with customer key in full deployment
   name                         = var.schedule_name
   schedule_expression          = var.schedule_expression
   schedule_expression_timezone = var.schedule_expression_timezone
@@ -113,7 +116,7 @@ data "aws_iam_policy_document" "schedule" {
       "iam:PassRole"
     ]
     resources = [
-      "*"
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
     ]
     condition {
       test     = "StringLike"
