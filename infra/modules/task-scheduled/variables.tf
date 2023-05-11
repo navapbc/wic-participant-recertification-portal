@@ -13,14 +13,9 @@ variable "task_definition_family" {
   description = "The name of the ECS task definition family that the Eventbridge schedule will run"
 }
 
-variable "container_name" {
+variable "container_task_override" {
   type        = string
-  description = "The name of the container to override"
-}
-
-variable "container_override_command" {
-  type        = string
-  description = "The command to override the container with"
+  description = "The task override for the ECS task container"
 }
 
 variable "security_group_ids" {

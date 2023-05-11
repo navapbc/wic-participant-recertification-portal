@@ -32,18 +32,7 @@ resource "aws_scheduler_schedule" "schedule" {
   target {
     arn      = data.aws_ecs_cluster.cluster.arn
     role_arn = aws_iam_role.schedule.arn
-    input = jsonencode(
-      [
-        {
-          containerOverrides = [
-            {
-              name    = var.container_name
-              command = var.container_override_command
-            }
-          ]
-        }
-      ]
-    )
+    input = var.container_task_override
     ecs_parameters {
       task_definition_arn     = data.aws_ecs_task_definition.task_definition.arn_without_revision
       enable_ecs_managed_tags = true
