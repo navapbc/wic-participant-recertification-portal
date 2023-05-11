@@ -97,6 +97,10 @@ module "participant" {
       value = var.participant_s3_presigned_url_expiration,
     },
     {
+      name  = "S3_PRESIGNED_URL_RENEWAL_THRESHOLD",
+      value = var.participant_s3_presigned_url_renewal_threshold,
+    },
+    {
       name  = "MAX_UPLOAD_SIZE_BYTES",
       value = var.participant_max_upload_size_bytes,
     },

@@ -45,6 +45,12 @@ variable "participant_s3_presigned_url_expiration" {
   default     = "604800"
 }
 
+variable "participant_s3_presigned_url_renewal_threshold" {
+  type        = string
+  description = "The number of seconds a presigned s3 url is active before it is renewed"
+  default     = "25200"
+}
+
 variable "participant_enable_exec" {
   type        = bool
   description = "Enables ECS exec for the participant service"
