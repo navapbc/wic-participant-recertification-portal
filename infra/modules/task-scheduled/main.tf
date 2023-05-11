@@ -45,7 +45,7 @@ resource "aws_scheduler_schedule" "schedule" {
       ]
     )
     ecs_parameters {
-      task_definition_arn     = data.aws_ecs_task_definition.task_definition.arn
+      task_definition_arn     = data.aws_ecs_task_definition.task_definition.arn_without_revision
       enable_ecs_managed_tags = true
       launch_type             = "FARGATE"
       network_configuration {
@@ -57,7 +57,7 @@ resource "aws_scheduler_schedule" "schedule" {
     }
 
     retry_policy {
-      maximum_retry_attempts = 5
+      maximum_retry_attempts = 0
     }
   }
 
@@ -107,8 +107,8 @@ data "aws_iam_policy_document" "schedule" {
       "ecs:RunTask"
     ]
     resources = [
-      "${data.aws_ecs_task_definition.task_definition.arn}:*",
-      "${data.aws_ecs_task_definition.task_definition.arn}",
+      "${data.aws_ecs_task_definition.task_definition.arn_without_revision}:*",
+      "${data.aws_ecs_task_definition.task_definition.arn_without_revision}",
     ]
     condition {
       test     = "ArnLike"
