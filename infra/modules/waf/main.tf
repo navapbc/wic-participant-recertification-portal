@@ -271,11 +271,9 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
 }
 
 resource "aws_cloudwatch_log_group" "waf" {
-  name = "aws-waf-logs-wic-prp"
+  name              = "aws-waf-logs-wic-prp"
+  retention_in_days = 30
 }
-
-# staff_cognito_user_pool_name: "${local.project_name}-staff-${var.environment_name}"
-
 
 # Data attributes for resources; use outputs
 data "aws_lb" "participant_alb" {
@@ -291,11 +289,10 @@ data "aws_lb" "analytics_alb" {
   name     = "wic-prp-analytics-${each.key}"
 }
 
-# data "aws_cognito_user_pools" "staff_pools" {
-#   # how to get a single cognito pool here?
-#   # for_each = toset(["dev", "staging", "prod"])
-#   # name     = "wic-prp-staff-${each.key}"
-# }
+data "aws_cognito_user_pools" "staff_pools" {
+  for_each = toset(["dev", "staging", "prod"])
+  name     = "wic-prp-staff-${each.key}"
+}
 
 # s3 logging bucket; this is a refactor to DRY up the code
 module "s3_encrypted_bucket" {
@@ -345,12 +342,10 @@ resource "aws_wafv2_web_acl_association" "analytics_alb" {
   web_acl_arn  = aws_wafv2_web_acl.waf.arn
 }
 
-# resource "aws_wafv2_web_acl_association" "cognito" {
-#   for_each     = data.aws_cognito_user_pools.staff_pools
-#   resource_arn = data.aws_cognito_user_pools.staff_pools[each.key].arn
-#   web_acl_arn  = aws_wafv2_web_acl.waf.arn
-# }
+# extremely gnarly way to get the arn of each cognito user pool
+resource "aws_wafv2_web_acl_association" "cognito" {
+  for_each     = data.aws_cognito_user_pools.staff_pools
+  resource_arn = tolist(data.aws_cognito_user_pools.staff_pools[each.key].arns)[0]
+  web_acl_arn  = aws_wafv2_web_acl.waf.arn
+}
 
-
-# target apply the WAF rules
-# import the web acl associations
