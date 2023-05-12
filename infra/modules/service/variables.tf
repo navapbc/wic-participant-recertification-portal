@@ -149,5 +149,5 @@ variable "service_deployment_maximum_percent" {
 variable "task_role_max_session_duration" {
   type        = number
   description = "The maximum session duration for the ECS task role (in seconds)"
-  default     = 60 * 60
+  default     = 60 * 60 # 1 hour
 }
