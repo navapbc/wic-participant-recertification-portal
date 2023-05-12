@@ -12,17 +12,17 @@ import logger from "app/utils/logging.server";
 export async function main() {
   logger.warn(
     {
-      location: "refreshS3Urls",
+      location: "batch.refreshS3Urls",
       type: "main.begin",
     },
     "Beginning s3 document upload url refresh"
   );
 
   const documentsToRefresh = await listExpiringDocuments();
-  if (documentsToRefresh !== undefined && documentsToRefresh.length > 0) {
+  if (documentsToRefresh?.length > 0) {
     logger.warn(
       {
-        location: "refreshS3Urls",
+        location: "batch.refreshS3Urls",
         type: "main.found_expiring_documents",
       },
       `Refreshing ${documentsToRefresh.length} document urls`
@@ -34,7 +34,7 @@ export async function main() {
         newS3Url = await getURLFromS3(document.s3Key);
         logger.info(
           {
-            location: "refreshS3Urls",
+            location: "batch.refreshS3Urls",
             type: "main.get_url",
             submissionId: document.submissionId,
             filename: document.originalFilename,
@@ -45,7 +45,7 @@ export async function main() {
       } catch (error) {
         logger.error(
           {
-            location: "refreshS3Urls",
+            location: "batch.refreshS3Urls",
             type: "main.get_url",
             submissionId: document.submissionId,
             filename: document.originalFilename,
@@ -63,7 +63,7 @@ export async function main() {
           );
           logger.info(
             {
-              location: "refreshS3Urls",
+              location: "batch.refreshS3Urls",
               type: "main.update_db",
               submissionId: updatedDocument.submissionId,
               filename: updatedDocument.originalFilename,
@@ -74,7 +74,7 @@ export async function main() {
         } catch (error) {
           logger.error(
             {
-              location: "refreshS3Urls",
+              location: "batch.refreshS3Urls",
               type: "main.update_db",
               submissionId: document.submissionId,
               filename: document.originalFilename,
@@ -88,7 +88,7 @@ export async function main() {
   } else {
     logger.warn(
       {
-        location: "refreshS3Urls",
+        location: "batch.refreshS3Urls",
         type: "main.no_documents_found",
       },
       "No documents to refresh"
@@ -96,7 +96,7 @@ export async function main() {
   }
   logger.warn(
     {
-      location: "refreshS3Urls",
+      location: "batch.refreshS3Urls",
       type: "main.end",
     },
     "Done with s3 document upload url refresh"
