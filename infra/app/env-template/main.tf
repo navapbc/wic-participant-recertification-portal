@@ -342,15 +342,15 @@ resource "aws_s3_bucket_cors_configuration" "doc_upload_cors" {
 }
 
 module "refresh_s3_presigned_urls" {
-  source                       = "../../modules/task-scheduled"
-  schedule_name                = local.refresh_s3_presigned_urls_schedule_name
-  cluster_name                 = local.cluster_name
-  task_definition_family       = local.participant_service_name
-  container_task_override      = "{\"containerOverrides\": [{\"name\": \"${local.participant_service_name}\", \"command\": [\"npm\", \"run\", \"refresh-s3-urls\"]}]}"
-  security_group_ids           = [module.participant.app_security_group.id]
-  subnet_ids                   = data.aws_subnets.default.ids
-  schedule_expression          = "cron(0 */3 * * ? *)"
-  schedule_enabled             = true
+  source                  = "../../modules/task-scheduled"
+  schedule_name           = local.refresh_s3_presigned_urls_schedule_name
+  cluster_name            = local.cluster_name
+  task_definition_family  = local.participant_service_name
+  container_task_override = "{\"containerOverrides\": [{\"name\": \"${local.participant_service_name}\", \"command\": [\"npm\", \"run\", \"refresh-s3-urls\"]}]}"
+  security_group_ids      = [module.participant.app_security_group.id]
+  subnet_ids              = data.aws_subnets.default.ids
+  schedule_expression     = "cron(0 */3 * * ? *)"
+  schedule_enabled        = true
 }
 
 module "side_load" {
