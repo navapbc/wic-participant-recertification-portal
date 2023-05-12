@@ -68,5 +68,6 @@ module "app" {
   # Misc settings
   participant_max_upload_size_bytes = "5242880"
   participant_max_upload_filecount  = "5"
+  participant_log_level             = "info"
   analytics_enable_exec             = true
 }

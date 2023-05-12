@@ -133,6 +133,10 @@ module "participant" {
     {
       name  = "MATOMO_SECURE",
       value = true,
+    },
+    {
+      name  = "LOG_LEVEL",
+      value = var.participant_log_level,
     }
   ]
   service_ssm_resource_paths = [

@@ -57,6 +57,11 @@ variable "participant_enable_exec" {
   default     = false
 }
 
+variable "participant_log_level" {
+  type        = string
+  description = "Log level for participant container"
+  default     = "warn"
+}
 
 ##############################################
 ## Variables for the staff app
