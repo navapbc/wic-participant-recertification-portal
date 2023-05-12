@@ -74,6 +74,7 @@ module "participant" {
   memory                             = 2048
   healthcheck_path                   = "/healthcheck"
   service_deployment_maximum_percent = 250
+  task_role_max_session_duration     = 12 * 60 * 60
   # The database seed needs longer lead time before healthchecks kick in to kill the container
   healthcheck_start_period = 120
   enable_exec              = var.participant_enable_exec

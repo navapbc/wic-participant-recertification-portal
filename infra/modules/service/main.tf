@@ -369,8 +369,9 @@ data "aws_iam_policy_document" "task_executor" {
 # ECS task role and policy
 # Only defined if needed
 resource "aws_iam_role" "task" {
-  name               = local.task_role_name
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_role.json
+  name                 = local.task_role_name
+  assume_role_policy   = data.aws_iam_policy_document.ecs_assume_task_role.json
+  max_session_duration = var.task_role_max_session_duration
 }
 
 data "aws_iam_policy_document" "ecs_assume_task_role" {

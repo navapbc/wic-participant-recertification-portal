@@ -145,3 +145,9 @@ variable "service_deployment_maximum_percent" {
   description = "The service deployment maximum percent"
   default     = 200
 }
+
+variable "task_role_max_session_duration" {
+  type        = number
+  description = "The maximum session duration for the ECS task role (in seconds)"
+  default     = 60 * 60
+}
