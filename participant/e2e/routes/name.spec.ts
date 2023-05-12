@@ -29,7 +29,7 @@ test("the name page sets a cookie", async ({ page }) => {
 
 test(`the name form submits a POST request, and on return to the page,
       a GET request that repopulates the form`, async ({ page }) => {
-  await page.goto("/gallatin/recertify/name");
+  await page.goto("/gallatin/recertify/name", { waitUntil: "networkidle" });
   const cookies = await page.context().cookies();
   const submissionID = await parseSubmissionID(cookies[0]);
 
@@ -41,6 +41,7 @@ test(`the name form submits a POST request, and on return to the page,
     .getByLabel("Last name *Legally as it appears on an ID document.")
     .fill("Zor");
   await page.getByLabel("Preferred name (optional)").fill("Ali");
+
   await expect(page).toHaveScreenshot({ fullPage: true });
 
   // Catch the POST request to the API with the form data while we click "Continue"
