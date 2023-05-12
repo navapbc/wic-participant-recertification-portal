@@ -41,8 +41,9 @@ resource "aws_scheduler_schedule" "schedule" {
       enable_ecs_managed_tags = true
       launch_type             = "FARGATE"
       network_configuration {
-        security_groups = var.security_group_ids
-        subnets         = var.subnet_ids
+        security_groups  = var.security_group_ids
+        subnets          = var.subnet_ids
+        assign_public_ip = true
       }
       platform_version = "LATEST"
       propagate_tags   = "TASK_DEFINITION"
