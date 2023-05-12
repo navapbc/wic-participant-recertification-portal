@@ -350,7 +350,6 @@ module "refresh_s3_presigned_urls" {
   security_group_ids           = [module.participant.app_security_group.id]
   subnet_ids                   = data.aws_subnets.default.ids
   schedule_expression          = "cron(0 */3 * * ? *)"
-  schedule_expression_timezone = "MST7MDT"
   schedule_enabled             = true
 }
 

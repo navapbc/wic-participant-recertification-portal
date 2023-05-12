@@ -36,6 +36,7 @@ variable "schedule_expression" {
 variable "schedule_expression_timezone" {
   type        = string
   description = "The timezone the schedule expression is in. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
+  default = "Etc/UTC"
 }
 
 variable "schedule_enabled" {
