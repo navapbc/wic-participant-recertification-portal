@@ -10,19 +10,32 @@ import logger from "app/utils/logging.server";
 // Any interactions with Prisma will be async
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function main() {
-  logger.info(`Beginning s3 document upload url refresh`);
+  logger.warn(
+    {
+      location: "refreshS3Urls",
+      type: "main.begin",
+    },
+    "Beginning s3 document upload url refresh"
+  );
 
   const documentsToRefresh = await listExpiringDocuments();
-  logger.debug(documentsToRefresh);
-
   if (documentsToRefresh !== undefined && documentsToRefresh.length > 0) {
-    logger.info(`Refreshing ${documentsToRefresh.length} document urls`);
+    logger.warn(
+      {
+        location: "refreshS3Urls",
+        type: "main.found_expiring_documents",
+      },
+      `Refreshing ${documentsToRefresh.length} document urls`
+    );
+
     for (const document of documentsToRefresh) {
       let newS3Url;
       try {
         newS3Url = await getURLFromS3(document.s3Key);
         logger.info(
           {
+            location: "refreshS3Urls",
+            type: "main.get_url",
             submissionId: document.submissionId,
             filename: document.originalFilename,
             lastUpdatedAt: document.updatedAt,
@@ -32,6 +45,8 @@ export async function main() {
       } catch (error) {
         logger.error(
           {
+            location: "refreshS3Urls",
+            type: "main.get_url",
             submissionId: document.submissionId,
             filename: document.originalFilename,
             lastUpdatedAt: document.updatedAt,
@@ -48,20 +63,22 @@ export async function main() {
           );
           logger.info(
             {
+              location: "refreshS3Urls",
+              type: "main.update_db",
               submissionId: updatedDocument.submissionId,
               filename: updatedDocument.originalFilename,
               nowUpdatedAt: updatedDocument.updatedAt,
-              newS3Url: newS3Url,
             },
             `Document updated`
           );
         } catch (error) {
           logger.error(
             {
+              location: "refreshS3Urls",
+              type: "main.update_db",
               submissionId: document.submissionId,
               filename: document.originalFilename,
               lastUpdatedAt: document.updatedAt,
-              newS3Url: newS3Url,
             },
             `Error encountered updating URL: ${error}`
           );
@@ -69,8 +86,21 @@ export async function main() {
       }
     }
   } else {
-    logger.warn("No documents to refresh");
+    logger.warn(
+      {
+        location: "refreshS3Urls",
+        type: "main.no_documents_found",
+      },
+      "No documents to refresh"
+    );
   }
+  logger.warn(
+    {
+      location: "refreshS3Urls",
+      type: "main.end",
+    },
+    "Done with s3 document upload url refresh"
+  );
 }
 
 main();
