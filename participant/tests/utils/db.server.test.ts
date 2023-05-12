@@ -317,20 +317,13 @@ it("lists documents with expiring s3 presigned urls", async () => {
   const submissionID = uuidv4();
   const mockument = getDocument(
     submissionID,
-    "filename.jpg",
-    "image/jpeg",
-    1_024_000,
-    new Date("2020-01-10")
-  );
-  const mockumentTwo = getDocument(
-    submissionID,
     "another-file.png",
     "image/png",
     1_024_000,
     new Date("2020-01-01")
   );
 
-  prismaMock.document.findMany.mockResolvedValue([mockumentTwo]);
+  prismaMock.document.findMany.mockResolvedValue([mockument]);
   const foundDocuments = await listExpiringDocuments();
   expect(foundDocuments.length).toBe(1);
   expect(prismaMock.document.findMany).toHaveBeenCalledWith({
@@ -346,7 +339,7 @@ it("lists documents with expiring s3 presigned urls", async () => {
       updatedAt: true,
     },
   });
-  expect(foundDocuments[0]).toEqual(mockumentTwo);
+  expect(foundDocuments[0]).toEqual(mockument);
 });
 
 it("updating a document s3 url throws an exception if there is no document", async () => {
@@ -363,7 +356,7 @@ it("updating a document s3 url looks up the document and updates the s3 url and 
   const mockument = getDocument();
   prismaMock.document.findFirst.mockResolvedValue(mockument);
   const updatedS3Url = `http://127.0.0.1/${mockument.submissionId}/${mockument.originalFilename}?updated`;
-  const updatedMockument = await updateDocumentS3Url(
+  await updateDocumentS3Url(
     mockument.submissionId,
     mockument.originalFilename,
     updatedS3Url

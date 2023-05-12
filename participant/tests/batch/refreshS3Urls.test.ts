@@ -6,7 +6,6 @@ import { main } from "batch/refreshS3Urls";
 import { getDocument } from "tests/helpers/mockData";
 import "aws-sdk-client-mock-jest";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { v4 as uuidv4 } from "uuid";
 jest.mock("@aws-sdk/s3-request-presigner");
 const mockedgetSignedURL = jest.mocked(getSignedUrl);
 

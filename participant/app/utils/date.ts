@@ -14,8 +14,8 @@ export const localizeDateString = (dateString: string | undefined): string => {
 // Datetime manipulation
 export const getSecondsAgo = (secondsAgo: number): Date => {
   const now = new Date();
-  const daysAgoSec = 1000 * secondsAgo;
+  const millisecondsAgo = 1000 * secondsAgo;
   // getTime is in milliseconds
-  now.setTime(now.getTime() - daysAgoSec);
+  now.setTime(now.getTime() - millisecondsAgo);
   return now;
 };
