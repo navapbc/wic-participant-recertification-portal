@@ -129,19 +129,18 @@ module "participant" {
   # The database seed needs longer lead time before healthchecks kick in to kill the container
   healthcheck_start_period = 120
   enable_exec              = var.participant_enable_exec
-  # @TODO: We shouldn't need to be doing quite so much string interpolation. Perhaps we can pass back the arns instead of the secret_names.
   container_secrets = [
     {
       name      = "DATABASE_URL",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}"
+      valueFrom = module.participant_database.admin_db_url_secret_arn,
     },
     {
       name      = "POSTGRES_PASSWORD",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_password_secret_name}"
+      valueFrom = module.participant_database.admin_password_secret_arn,
     },
     {
       name      = "POSTGRES_USER",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_user_secret_name}"
+      valueFrom = module.participant_database.admin_user_secret_arn,
     }
   ]
   container_env_vars = [
@@ -191,9 +190,9 @@ module "participant" {
     }
   ]
   service_ssm_resource_paths = [
-    module.participant_database.admin_db_url_secret_name,
-    module.participant_database.admin_password_secret_name,
-    module.participant_database.admin_user_secret_name,
+    module.participant_database.admin_db_url_secret_arn,
+    module.participant_database.admin_password_secret_arn,
+    module.participant_database.admin_user_secret_arn,
   ]
   container_bind_mounts = {
     "tmp" : {
@@ -294,15 +293,15 @@ module "staff" {
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}",
+      valueFrom = module.participant_database.admin_db_url_secret_arn,
     },
     {
       name      = "LOWDEFY_SECRET_OPENID_CLIENT_ID",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_id_secret_name}",
+      valueFrom = module.staff_idp.client_id_secret_arn,
     },
     {
       name      = "LOWDEFY_SECRET_OPENID_CLIENT_SECRET",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_secret_secret_name}",
+      valueFrom = module.staff_idp.client_secret_secret_arn,
     },
     {
       name      = "LOWDEFY_SECRET_JWT_SECRET",
@@ -317,10 +316,10 @@ module "staff" {
 
   ]
   service_ssm_resource_paths = [
-    module.participant_database.admin_db_url_secret_name,
-    module.staff_idp.client_id_secret_name,
-    module.staff_idp.client_secret_secret_name,
-    aws_ssm_parameter.staff_jwt_secret.name,
+    module.participant_database.admin_db_url_secret_arn
+    module.staff_idp.client_id_secret_arn,
+    module.staff_idp.client_secret_secret_arn,
+    aws_ssm_parameter.staff_jwt_secret.arn,
   ]
   depends_on = [
     module.participant_database,
@@ -376,15 +375,15 @@ module "analytics" {
   container_secrets = [
     {
       name      = "MATOMO_DATABASE_HOST",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.analytics_database.admin_db_host_secret_name}"
+      valueFrom = module.analytics_database.admin_db_host_secret_arn,
     },
     {
       name      = "MATOMO_DATABASE_PASSWORD",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.analytics_database.admin_password_secret_name}"
+      valueFrom = module.analytics_database.admin_password_secret_arn,
     },
     {
       name      = "MATOMO_DATABASE_USERNAME",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.analytics_database.admin_user_secret_name}"
+      valueFrom = module.analytics_database.admin_user_secret_arn,
     }
   ]
   container_env_vars = [
@@ -394,9 +393,9 @@ module "analytics" {
     }
   ]
   service_ssm_resource_paths = [
-    module.analytics_database.admin_db_host_secret_name,
-    module.analytics_database.admin_password_secret_name,
-    module.analytics_database.admin_user_secret_name,
+    module.analytics_database.admin_db_host_secret_arn,
+    module.analytics_database.admin_password_secret_arn,
+    module.analytics_database.admin_user_secret_arn,
   ]
   container_efs_volumes = {
     "html" : {
