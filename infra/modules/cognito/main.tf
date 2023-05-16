@@ -1,14 +1,20 @@
-# A module for configuring an AWS Cognito User Pool
-# Configures for email, but not SMS
+############################################################################################
+## A module for configuring a Cognito User Pool
+## - Configures for email, but not SMS
+## - Does not configure MFA
+## - Also creates a Cognito User Pool Client
+## Note: This module assumes that the SSL certificate has been created in the AWS Console
+############################################################################################
 
 locals {
   client_id_secret_name     = "/metadata/idp/${var.pool_name}-client-id"
   client_secret_secret_name = "/metadata/idp/${var.pool_name}-client-secret"
 }
 
-##############################################
+############################################################################################
 ## User pool
-##############################################
+############################################################################################
+
 resource "aws_cognito_user_pool" "pool" {
   name                     = var.pool_name
   deletion_protection      = "ACTIVE"
@@ -47,6 +53,8 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # Optionally configures the FROM address and the REPLY-TO address
+  # Optionally configures using the Cognito default email or using SES
   email_configuration {
     email_sending_account  = var.email_sending_account
     from_email_address     = length(var.from_email_address) > 0 ? var.from_email_address : null
@@ -57,6 +65,7 @@ resource "aws_cognito_user_pool" "pool" {
   admin_create_user_config {
     allow_admin_create_user_only = true
 
+    # Optionally configures email template for activating the account
     invite_message_template {
       email_message = length(var.invite_email_message) > 0 ? var.invite_email_message : null
       email_subject = length(var.invite_email_subject) > 0 ? var.invite_email_subject : null
@@ -64,6 +73,7 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  # Optionally configures email template for resetting a password
   verification_message_template {
     default_email_option = "CONFIRM_WITH_CODE"
     email_message        = length(var.verification_email_message) > 0 ? var.verification_email_message : null
@@ -71,9 +81,15 @@ resource "aws_cognito_user_pool" "pool" {
   }
 }
 
-##############################################
+############################################################################################
 ## User pool client
-##############################################
+##
+## Important! You must create an SSL certificate for a custom domain for the Cognito User
+## Pool Client must be in us-east-1! Do not change this regardless of which region your
+## other resources or certificates are deployed in.
+## See https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html#cognito-user-pools-add-custom-domain-adding
+############################################################################################
+
 provider "aws" {
   region = "us-east-1"
   alias  = "us-east-1"
