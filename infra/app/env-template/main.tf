@@ -326,7 +326,7 @@ module "staff" {
 
   ]
   service_ssm_resource_paths = [
-    module.participant_database.admin_db_url_secret_arn
+    module.participant_database.admin_db_url_secret_arn,
     module.staff_idp.client_id_secret_arn,
     module.staff_idp.client_secret_secret_arn,
     aws_ssm_parameter.staff_jwt_secret.arn,
