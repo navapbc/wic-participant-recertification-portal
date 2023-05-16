@@ -279,7 +279,7 @@ data "aws_iam_policy_document" "write" {
 
 resource "aws_iam_group_policy_attachment" "write" {
   for_each   = toset(var.write_group_names)
-  role       = each.value
+  group      = each.value
   policy_arn = aws_iam_policy.write.arn
 }
 
@@ -310,8 +310,8 @@ data "aws_iam_policy_document" "delete" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "delete" {
+resource "aws_iam_group_policy_attachment" "delete" {
   for_each   = toset(var.delete_group_names)
-  role       = each.value
+  group      = each.value
   policy_arn = aws_iam_policy.delete.arn
 }
