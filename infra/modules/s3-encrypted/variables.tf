@@ -1,28 +1,28 @@
-variable "write_role_names" {
-  type        = list(string)
-  description = "role names that have access to write s3 permissions"
-  default     = []
-}
-
-variable "delete_role_names" {
-  type        = list(string)
-  description = "role names that have access to delete s3 permissions"
-  default     = []
-}
-
-variable "read_role_names" {
-  type        = list(string)
-  description = "role names that have access to read s3 permissions"
-  default     = []
-}
-
-variable "admin_role_names" {
-  type        = list(string)
-  description = "role names that have access to admin s3 permissions, such as creating buckets"
-  default     = []
-}
-
 variable "s3_bucket_name" {
   type        = string
-  description = "The s3 bucket used for document uploads"
+  description = "The name of the S3 bucket"
 }
+
+variable "log_target_prefix" {
+  type        = string
+  description = "The prefix for all log object keys"
+}
+
+variable "read_group_names" {
+  type        = list(string)
+  description = "A list of names for IAM groups that should have access to read access to the encrypted S3 bucket"
+  default     = []
+}
+
+variable "write_group_names" {
+  type        = list(string)
+  description = "A list of names for IAM groups that should have access to write access to the encrypted S3 bucket"
+  default     = []
+}
+
+variable "delete_group_names" {
+  type        = list(string)
+  description = "A list of names for IAM groups that should have access to delete access to the encrypted S3 bucket"
+  default     = []
+}
+
