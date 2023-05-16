@@ -24,13 +24,13 @@ export type TextFieldProps = {
   requiredStar?: boolean;
   type?: "input" | "textarea";
   inputType:
-  | "number"
-  | "search"
-  | "text"
-  | "email"
-  | "password"
-  | "tel"
-  | "url";
+    | "number"
+    | "search"
+    | "text"
+    | "email"
+    | "password"
+    | "tel"
+    | "url";
   defaultValue?: string;
   value?: string;
   className?: string;

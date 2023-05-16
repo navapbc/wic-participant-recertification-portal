@@ -27,5 +27,12 @@ export const RelationshipInput = (
     labelElement: <Trans i18nKey={`${relationshipKey}.${relationship}`} />,
     selected: values && values == relationship,
   }));
-  return <ChoiceGroupInput choices={choices} type="radio" required={required} {...rest} />;
+  return (
+    <ChoiceGroupInput
+      choices={choices}
+      type="radio"
+      required={required}
+      {...rest}
+    />
+  );
 };

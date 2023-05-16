@@ -39,6 +39,10 @@ it("should match display required marker if required is true", () => {
   renderWithRouter(<AdjunctiveInput {...testProps} required={true} />);
   const required = screen.getByText("*");
   expect(required).toBeInTheDocument;
-  expect(screen.getByRole("radio", { name: "Yes" }).getAttribute("required")).toBe("");
-  expect(screen.getByRole("radio", { name: "No" }).getAttribute("required")).toBe("");
+  expect(
+    screen.getByRole("radio", { name: "Yes" }).getAttribute("required")
+  ).toBe("");
+  expect(
+    screen.getByRole("radio", { name: "No" }).getAttribute("required")
+  ).toBe("");
 });
