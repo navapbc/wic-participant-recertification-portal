@@ -1,7 +1,3 @@
-output "admin_user" {
-  value = local.admin_user
-}
-
 output "admin_user_secret_arn" {
   value = aws_ssm_parameter.admin_user.arn
 }

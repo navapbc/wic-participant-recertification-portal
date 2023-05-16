@@ -1,8 +1,8 @@
 variable "database_name" {
-  description = "name of the service, to be used for infra structure resource naming"
+  description = "The name of the database"
   validation {
     condition     = can(regex("^[-_\\da-z]+$", var.database_name))
-    error_message = "use only lower case letters, numbers, dashes, and underscores"
+    error_message = "Use only lower case letters, numbers, dashes, and underscores"
   }
 }
 
