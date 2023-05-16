@@ -141,7 +141,15 @@ module "participant" {
     {
       name      = "POSTGRES_USER",
       valueFrom = module.participant_database.admin_user_secret_arn,
-    }
+    },
+    {
+      name      = "AWS_ACCESS_KEY_ID",
+      valueFrom = module.s3_machine_user.access_key_id_secret_arn,
+    },
+    {
+      name      = "AWS_SECRET_ACCESS_KEY",
+      valueFrom = module.s3_machine_user.secret_access_key_secret_arn,
+    },
   ]
   container_env_vars = [
     {
@@ -193,6 +201,8 @@ module "participant" {
     module.participant_database.admin_db_url_secret_arn,
     module.participant_database.admin_password_secret_arn,
     module.participant_database.admin_user_secret_arn,
+    module.s3_machine_user.access_key_id_secret_arn,
+    module.s3_machine_user.secret_access_key_secret_arn,
   ]
   container_bind_mounts = {
     "tmp" : {
