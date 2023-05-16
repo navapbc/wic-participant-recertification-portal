@@ -330,7 +330,6 @@ module "doc_upload" {
   read_role_names   = [module.participant.task_role_name, module.staff.task_role_name]
   write_role_names  = [module.participant.task_role_name]
   delete_role_names = [module.participant.task_role_name]
-  admin_role_names  = [module.participant.task_role_name]
 }
 
 resource "aws_s3_bucket_cors_configuration" "doc_upload_cors" {
@@ -361,7 +360,6 @@ module "side_load" {
   source           = "../../modules/s3-encrypted"
   s3_bucket_name   = local.side_load_s3_name
   read_role_names  = [module.participant.task_role_name]
-  admin_role_names = [module.participant.task_role_name]
 }
 
 # todo: cleanup service names

@@ -42,12 +42,6 @@ resource "aws_iam_policy" "delete" {
   policy      = data.aws_iam_policy_document.delete_s3.json
 }
 
-resource "aws_iam_policy" "admin" {
-  name        = "${var.s3_bucket_name}-admin"
-  description = "Allows admin access to the bucket"
-  policy      = data.aws_iam_policy_document.admin_s3.json
-}
-
 resource "aws_iam_role_policy_attachment" "read" {
   for_each   = toset(var.read_role_names)
   role       = each.value
@@ -64,12 +58,6 @@ resource "aws_iam_role_policy_attachment" "delete" {
   for_each   = toset(var.delete_role_names)
   role       = each.value
   policy_arn = aws_iam_policy.delete.arn
-}
-
-resource "aws_iam_role_policy_attachment" "admin" {
-  for_each   = toset(var.admin_role_names)
-  role       = each.value
-  policy_arn = aws_iam_policy.admin.arn
 }
 
 resource "aws_s3_bucket_versioning" "s3_encrypted" {
@@ -199,24 +187,6 @@ data "aws_iam_policy_document" "write_s3" {
     effect = "Allow"
     actions = [
       "s3:PutObject",
-      "kms:GenerateDataKey",
-      "kms:Decrypt",
-    ]
-
-    resources = [
-      aws_kms_key.s3_encrypted.arn,
-      aws_s3_bucket.s3_encrypted.arn,
-      "${aws_s3_bucket.s3_encrypted.arn}/*"
-    ]
-  }
-}
-
-data "aws_iam_policy_document" "admin_s3" {
-  statement {
-    sid    = "AllowAdminAccess"
-    effect = "Allow"
-    actions = [
-      "s3:CreateBucket",
       "kms:GenerateDataKey",
       "kms:Decrypt",
     ]
