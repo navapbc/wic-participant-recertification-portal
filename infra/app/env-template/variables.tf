@@ -48,7 +48,7 @@ variable "participant_s3_presigned_url_expiration" {
 variable "participant_s3_presigned_url_renewal_threshold" {
   type        = string
   description = "The number of seconds a presigned s3 url is active before it is renewed"
-  default     = 7 * 60 * 60 # 25200 seconds = 7 hours
+  default     = 90 * 60 # 5400 seconds = 90 minutes
 }
 
 variable "participant_enable_exec" {

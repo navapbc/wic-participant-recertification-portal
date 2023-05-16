@@ -349,7 +349,7 @@ module "refresh_s3_presigned_urls" {
   container_task_override = "{\"containerOverrides\": [{\"name\": \"${local.participant_service_name}\", \"command\": [\"npm\", \"run\", \"refresh-s3-urls\"]}]}"
   security_group_ids      = [module.participant.app_security_group.id]
   subnet_ids              = data.aws_subnets.default.ids
-  schedule_expression     = "cron(0 */3 * * ? *)"
+  schedule_expression     = "cron(0 * * * ? *)"
   schedule_enabled        = true
 }
 
