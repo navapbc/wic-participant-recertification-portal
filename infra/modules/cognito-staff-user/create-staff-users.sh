@@ -5,7 +5,7 @@
 # - the path to a json file that maps local agencies and emails (which are used as the username).
 # See below for more details.
 # Example: ./create-staff-users dev /tmp/email.json
-# @TODO: This might possibly be better if this were pulled down from an S3 bucket.
+# @TODO: This might possibly be better if the list of user_emails were pulled down from an S3 bucket.
 set -euo pipefail
 
 # Positional arguments.
