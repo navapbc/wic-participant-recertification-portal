@@ -57,6 +57,8 @@ data "aws_subnets" "default" {
 ############################################################################################
 
 module "s3_machine_user" {
+  # checkov:skip=CKV_AWS_273:Explicitly using an IAM user for longer S3 presigned url expiration times
+
   source            = "../../modules/iam-machine-user"
   machine_user_name = local.document_upload_s3_name
 }
