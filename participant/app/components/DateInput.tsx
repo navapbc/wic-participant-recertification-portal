@@ -67,6 +67,8 @@ export const DateInput = (props: DateInputProps): ReactElement => {
           size={maxLength}
           inputType="text"
           type="input"
+          required={required}
+          requiredStar={false}
           defaultValue={values && values[field]?.toString()}
         />
       </FormGroup>

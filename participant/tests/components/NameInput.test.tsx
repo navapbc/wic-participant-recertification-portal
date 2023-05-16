@@ -38,3 +38,11 @@ it("renders without legal hint", () => {
   const lastName = screen.getByRole("textbox", { name: "Last name *" });
   expect(lastName).toBeInTheDocument;
 });
+
+it("renders with required tags", () => {
+  renderWithRouter(<NameInput {...defaultProps} legal={false} />);
+  const firstName = screen.getByRole("textbox", { name: "First name *" });
+  expect(firstName.getAttribute("required")).toBe("");
+  const lastName = screen.getByRole("textbox", { name: "Last name *" });
+  expect(lastName.getAttribute("required")).toBe("");
+});

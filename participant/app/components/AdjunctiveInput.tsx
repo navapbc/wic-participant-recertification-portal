@@ -15,10 +15,11 @@ export type AdjunctiveInputProps = Omit<
   adjunctiveKey: i18nKey;
   keyBase: string;
   values?: "yes" | "no";
+  required?: boolean;
 };
 
 export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
-  const { name, adjunctiveKey, legendStyle, values, ...rest } = props;
+  const { name, adjunctiveKey, legendStyle, values, required, ...rest } = props;
   const adjunctiveChoices: Choice[] = [
     {
       value: "yes",
@@ -42,6 +43,7 @@ export const AdjunctiveInput = (props: AdjunctiveInputProps): ReactElement => {
       legendKey={`${adjunctiveKey}.label`}
       legendStyle={legendStyle}
       helpElement={helpElement}
+      required={required}
       {...rest}
     />
   );

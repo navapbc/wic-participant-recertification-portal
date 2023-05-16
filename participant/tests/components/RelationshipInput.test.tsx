@@ -47,4 +47,10 @@ it("should match display required marker if required is true", () => {
   renderWithRouter(<RelationshipInput {...testProps} required={true} />);
   const required = screen.getByText("*");
   expect(required).toBeInTheDocument;
+  const radioButtons = screen.getAllByRole("radio");
+  expect(radioButtons[0].getAttribute("required")).toBe("");
+  expect(radioButtons[1].getAttribute("required")).toBe("");
+  expect(radioButtons[2].getAttribute("required")).toBe("");
+  expect(radioButtons[3].getAttribute("required")).toBe("");
+  expect(radioButtons[4].getAttribute("required")).toBe("");
 });

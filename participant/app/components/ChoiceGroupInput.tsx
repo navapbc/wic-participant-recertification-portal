@@ -66,6 +66,7 @@ export const ChoiceGroupInput = (
           <InputTypeClass
             key={`${keyBase}-${choice.value}`}
             defaultChecked={choice.selected}
+            required={required}
             {...getInputProps({
               id: `${keyBase}-${choice.value}`,
               label: choice.labelElement,

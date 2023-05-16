@@ -14,17 +14,18 @@ export type RelationshipInputProps = Omit<
   relationshipKey: i18nKey;
   keyBase: string;
   values?: RelationshipType;
+  required?: boolean;
 };
 
 export const RelationshipInput = (
   props: RelationshipInputProps
 ): ReactElement => {
-  const { relationshipKey, values, ...rest } = props;
+  const { relationshipKey, values, required, ...rest } = props;
   const relationships = ["self", "child", "grandchild", "foster", "other"];
   const choices: Choice[] = relationships.map((relationship) => ({
     value: relationship,
     labelElement: <Trans i18nKey={`${relationshipKey}.${relationship}`} />,
     selected: values && values == relationship,
   }));
-  return <ChoiceGroupInput choices={choices} type="radio" {...rest} />;
+  return <ChoiceGroupInput choices={choices} type="radio" required={required} {...rest} />;
 };

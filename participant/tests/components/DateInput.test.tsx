@@ -52,3 +52,11 @@ it("renders date component with DMY hint", () => {
   const hint = screen.getByText("For Example: 28 4 1986");
   expect(hint).toBeInTheDocument;
 });
+
+it("renders the date component with required", () => {
+  renderWithRouter(<DateInput {...defaultProps} required={true} />);
+  const inputBoxes = screen.getAllByRole("textbox");
+  expect(inputBoxes[0].getAttribute("required")).toBe("");
+  expect(inputBoxes[1].getAttribute("required")).toBe("");
+  expect(inputBoxes[2].getAttribute("required")).toBe("");
+});

@@ -18,6 +18,7 @@ const choices: Choice[] = ["a", "b", "c"].map((option) => {
   return {
     value: option,
     labelElement: <div>label {option}</div>,
+    testId: `choice-${option}`
   };
 });
 
@@ -49,6 +50,12 @@ it("should match display required marker if required is true", () => {
   );
   const required = screen.getByText("*");
   expect(required).toBeInTheDocument;
+  const choiceA = screen.getByRole('checkbox', { name: 'label a' })
+  expect(choiceA.getAttribute("required")).toBe("")
+  const choiceB = screen.getByRole('checkbox', { name: 'label b' })
+  expect(choiceB.getAttribute("required")).toBe("")
+  const choiceC = screen.getByRole('checkbox', { name: 'label c' })
+  expect(choiceC.getAttribute("required")).toBe("")
 });
 
 it("should display an helpElement if passed as props", () => {
