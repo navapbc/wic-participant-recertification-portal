@@ -15,6 +15,7 @@ import React, {
 import classnames from "classnames";
 import type { i18nKey } from "~/types";
 import { useTranslation } from "react-i18next";
+import { Label } from "@trussworks/react-uswds";
 
 export type FileInputProps = {
   id: string;
@@ -168,10 +169,11 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
         onDrop={handleDrop}
         hidden={javascriptDisabled}
       >
-        <div
+        <Label
           data-testid="file-input-instructions"
           className={instructionClasses}
-          aria-hidden="true"
+          id="file-input-instructions"
+          htmlFor={id}
         >
           <span
             className="usa-file-input__choose text-bold"
@@ -179,7 +181,7 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
           >
             {helpText}
           </span>
-        </div>
+        </Label>
         <div data-testid="file-input-box" className={inputBoxClass}></div>
         {showError && (
           <div

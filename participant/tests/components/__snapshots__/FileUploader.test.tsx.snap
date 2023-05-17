@@ -6,13 +6,11 @@ exports[`renders a file uploader 1`] = `
     class="usa-form-group"
     data-testid="formGroup"
   >
-    <label
-      class="usa-label"
-      data-testid="label"
-      for="file-uploader-story"
+    <div
+      class="margin-top-3"
     >
       Document 1
-    </label>
+    </div>
     <div
       class="usa-file-input"
       data-testid="file-input"
@@ -21,17 +19,18 @@ exports[`renders a file uploader 1`] = `
         class="usa-file-input__target border-dashed border-blue border-05"
         data-testid="file-input-droptarget"
       >
-        <div
-          aria-hidden="true"
-          class="usa-file-input__instructions"
-          data-testid="file-input-instructions"
+        <label
+          class="usa-label usa-file-input__instructions"
+          data-testid="label"
+          for="file-uploader-story"
+          id="file-input-instructions"
         >
           <span
             class="usa-file-input__choose text-bold"
           >
             Choose or drag a file to upload
           </span>
-        </div>
+        </label>
         <div
           class="usa-file-input__box"
           data-testid="file-input-box"

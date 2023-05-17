@@ -10,17 +10,18 @@ exports[`renders a file input correctly 1`] = `
       class="usa-file-input__target border-dashed border-blue border-05"
       data-testid="file-input-droptarget"
     >
-      <div
-        aria-hidden="true"
-        class="usa-file-input__instructions"
-        data-testid="file-input-instructions"
+      <label
+        class="usa-label usa-file-input__instructions"
+        data-testid="label"
+        for="fileinput-test"
+        id="file-input-instructions"
       >
         <span
           class="usa-file-input__choose text-bold"
         >
           Choose or drag a file to upload
         </span>
-      </div>
+      </label>
       <div
         class="usa-file-input__box"
         data-testid="file-input-box"
@@ -47,17 +48,18 @@ exports[`renders a file input with the 'not empty' text correctly 1`] = `
       class="usa-file-input__target border-dashed border-blue border-05"
       data-testid="file-input-droptarget"
     >
-      <div
-        aria-hidden="true"
-        class="usa-file-input__instructions"
-        data-testid="file-input-instructions"
+      <label
+        class="usa-label usa-file-input__instructions"
+        data-testid="label"
+        for="fileinput-test"
+        id="file-input-instructions"
       >
         <span
           class="usa-file-input__choose text-bold"
         >
           Choose or drag another file to upload
         </span>
-      </div>
+      </label>
       <div
         class="usa-file-input__box"
         data-testid="file-input-box"
