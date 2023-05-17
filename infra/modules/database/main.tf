@@ -10,9 +10,6 @@
 
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
-data "aws_vpc" "default" {
-  default = true
-}
 
 module "random_admin_database_password" {
   source = "../random-password"
@@ -75,7 +72,7 @@ resource "aws_security_group" "database" {
   # before the old one is destroyed. In this situation, the new one needs a unique name
   name_prefix = "${var.database_name}-database"
   description = "Allow inbound TCP access to database port"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = var.vpc_id
 
   lifecycle {
     create_before_destroy = true
@@ -86,7 +83,7 @@ resource "aws_security_group" "database" {
     protocol    = "tcp"
     from_port   = var.database_port
     to_port     = var.database_port
-    cidr_blocks = [data.aws_vpc.default.cidr_block]
+    cidr_blocks = var.cidr_blocks
   }
 }
 

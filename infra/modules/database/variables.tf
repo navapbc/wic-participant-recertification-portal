@@ -28,3 +28,13 @@ variable "database_port" {
   description = "The port number for accessing the database"
   default     = 5432
 }
+
+variable "vpc_id" {
+  type        = string
+  description = "The ID for the VPC"
+}
+
+variable "cidr_blocks" {
+  type        = list(any)
+  description = "The CIDR blocks that can access the database"
+}

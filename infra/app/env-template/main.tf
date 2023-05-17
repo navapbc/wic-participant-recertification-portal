@@ -114,6 +114,8 @@ data "aws_ecr_repository" "participant_image_repository" {
 module "participant_database" {
   source        = "../../modules/database"
   database_name = local.participant_database_name
+  vpc_id        = data.aws_vpc.default.id
+  cidr_blocks   = [data.aws_vpc.default.cidr_block]
 }
 
 module "participant_dns" {
@@ -374,6 +376,8 @@ module "analytics_database" {
   database_name = local.analytics_database_name
   database_port = 3306
   database_type = "mysql"
+  vpc_id        = data.aws_vpc.default.id
+  cidr_blocks   = [data.aws_vpc.default.cidr_block]
 }
 
 module "analytics_dns" {
