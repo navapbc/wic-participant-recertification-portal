@@ -1,5 +1,5 @@
-output "machine_user_group" {
-  value = aws_iam_group.machine_user
+output "machine_user_group_name" {
+  value = aws_iam_group.machine_user.name
 }
 
 output "access_key_id_secret_arn" {

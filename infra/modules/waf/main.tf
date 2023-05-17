@@ -286,7 +286,7 @@ module "s3_encrypted_bucket" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
-  bucket                = module.s3_encrypted_bucket.encrypted_bucket.id
+  bucket                = module.s3_encrypted_bucket.encrypted_bucket_id
   expected_bucket_owner = data.aws_caller_identity.current.account_id
 
   rule {

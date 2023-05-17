@@ -69,9 +69,9 @@ module "doc_upload" {
   source             = "../../modules/s3-encrypted"
   s3_bucket_name     = local.document_upload_s3_name
   log_target_prefix  = var.environment_name
-  read_group_names   = [module.s3_machine_user.machine_user_group.name]
-  write_group_names  = [module.s3_machine_user.machine_user_group.name]
-  delete_group_names = [module.s3_machine_user.machine_user_group.name]
+  read_group_names   = [module.s3_machine_user.machine_user_group_name]
+  write_group_names  = [module.s3_machine_user.machine_user_group_name]
+  delete_group_names = [module.s3_machine_user.machine_user_group_name]
 }
 
 resource "aws_s3_bucket_cors_configuration" "doc_upload_cors" {
@@ -243,7 +243,7 @@ module "refresh_s3_presigned_urls" {
   cluster_name            = local.cluster_name
   task_definition_family  = local.participant_service_name
   container_task_override = "{\"containerOverrides\": [{\"name\": \"${local.participant_service_name}\", \"command\": [\"npm\", \"run\", \"refresh-s3-urls\"]}]}"
-  security_group_ids      = [module.participant.app_security_group.id]
+  security_group_ids      = [module.participant.app_security_group_id]
   subnet_ids              = data.aws_subnets.default.ids
   schedule_expression     = "cron(0 9 * * ? *)" # Run once a day at ~3am US time
   schedule_enabled        = true
@@ -253,7 +253,7 @@ module "side_load" {
   source            = "../../modules/s3-encrypted"
   s3_bucket_name    = local.side_load_s3_name
   log_target_prefix = var.environment_name
-  read_group_names  = [module.s3_machine_user.machine_user_group.name]
+  read_group_names  = [module.s3_machine_user.machine_user_group_name]
 }
 
 ############################################################################################
@@ -443,10 +443,10 @@ module "analytics" {
     "html" : {
       volume_name      = "${local.analytics_service_name}-html",
       container_path   = "/var/www/html",
-      file_system_id   = module.analytics_file_system.file_system.id,
-      file_system_arn  = module.analytics_file_system.file_system.arn,
-      access_point_id  = module.analytics_file_system.access_point.id,
-      access_point_arn = module.analytics_file_system.access_point.arn,
+      file_system_id   = module.analytics_file_system.file_system_id,
+      file_system_arn  = module.analytics_file_system.file_system_arn,
+      access_point_id  = module.analytics_file_system.access_point_id,
+      access_point_arn = module.analytics_file_system.access_point_arn,
     }
   }
   depends_on = [
