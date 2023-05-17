@@ -31,6 +31,8 @@
     "ifNeeded": "(if needed)",
     "noFiles": "Choose or drag a file to upload",
     "additionalFiles": "Choose or drag another file to upload",
+    "noFilesAria": "Click to choose a file to upload",
+    "additionalFilesAria": "Click to choose another file to upload",
     "altText": "Image preview for",
     "fileTypeError": "This is not a valid file type.",
     "fileSizeError": "This file is over the maximum size",

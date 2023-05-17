@@ -20,6 +20,7 @@ exports[`renders a file uploader 1`] = `
         data-testid="file-input-droptarget"
       >
         <label
+          aria-label="Click to choose a file to upload"
           class="usa-label usa-file-input__instructions"
           data-testid="label"
           for="file-uploader-story"

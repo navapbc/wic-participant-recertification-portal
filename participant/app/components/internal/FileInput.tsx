@@ -27,6 +27,8 @@ export type FileInputProps = {
   onDrop?: (e: React.DragEvent) => void;
   emptyKey: i18nKey;
   notEmptyKey: i18nKey;
+  emptyAriaKey: i18nKey;
+  notEmptyAriaKey: i18nKey;
   fileTypeErrorKey: i18nKey;
   empty?: boolean;
 };
@@ -51,6 +53,8 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
     onDrop,
     emptyKey,
     notEmptyKey,
+    emptyAriaKey,
+    notEmptyAriaKey,
     fileTypeErrorKey,
     empty = true,
     ...inputProps
@@ -64,6 +68,7 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
   const [files, setFiles] = useState<File[]>([]);
   const { t } = useTranslation();
   const helpText = empty ? t(emptyKey) : t(notEmptyKey);
+  const ariaHelpText = empty ? t(emptyAriaKey) : t(notEmptyAriaKey);
   useImperativeHandle(
     ref,
     () => ({
@@ -173,6 +178,7 @@ export const FileInputForwardRef: React.ForwardRefRenderFunction<
           data-testid="file-input-instructions"
           className={instructionClasses}
           id="file-input-instructions"
+          aria-label={ariaHelpText}
           htmlFor={id}
         >
           <span

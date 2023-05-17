@@ -221,6 +221,8 @@ export const FileUploaderForwardRef: React.ForwardRefRenderFunction<
         draggable={true}
         emptyKey={`${labelKey}.noFiles`}
         notEmptyKey={`${labelKey}.additionalFiles`}
+        emptyAriaKey={`${labelKey}.noFilesAria`}
+        notEmptyAriaKey={`${labelKey}.additionalFilesAria`}
         fileTypeErrorKey={`${labelKey}.fileTypeError`}
         empty={currentDocumentNumber == 0}
       />

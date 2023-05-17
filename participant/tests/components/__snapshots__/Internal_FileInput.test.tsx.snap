@@ -11,6 +11,7 @@ exports[`renders a file input correctly 1`] = `
       data-testid="file-input-droptarget"
     >
       <label
+        aria-label="Click to choose a file to upload"
         class="usa-label usa-file-input__instructions"
         data-testid="label"
         for="fileinput-test"
@@ -49,6 +50,7 @@ exports[`renders a file input with the 'not empty' text correctly 1`] = `
       data-testid="file-input-droptarget"
     >
       <label
+        aria-label="Click to choose another file to upload"
         class="usa-label usa-file-input__instructions"
         data-testid="label"
         for="fileinput-test"
