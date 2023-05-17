@@ -1,3 +1,8 @@
+############################################################################################
+## A module for managing autoscaling for an ECS service
+## - Creates an autoscaling policy using target tracking policies targeting CPU utilization
+############################################################################################
+
 locals {
   cpu_autoscaling_name = "${var.ecs_service_name}-cpu-autoscaling"
 }
@@ -27,6 +32,12 @@ resource "aws_appautoscaling_policy" "service_cpu" {
     }
   }
 }
+
+############################################################################################
+## IAM policy for autoscaling
+## - Creates a customer managed IAM policy and attaches it to the ECS service task executor
+#    role
+############################################################################################
 
 resource "aws_iam_policy" "autoscale" {
   name        = "${var.ecs_service_name}-autoscale-role-policy"
