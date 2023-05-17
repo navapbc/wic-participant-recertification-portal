@@ -1,11 +1,11 @@
 variable "waf_name" {
   type        = string
-  description = "Name for the firewall"
+  description = "The name for the WAF Web ACL"
 }
 
 variable "waf_iam_name" {
   type        = string
-  description = "Name of the IAM role associated with the firewall"
+  description = "The name of the IAM role for WAF logging"
 }
 
 variable "waf_logging_name" {

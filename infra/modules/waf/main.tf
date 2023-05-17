@@ -1,4 +1,15 @@
+############################################################################################
+## A module for creating a WAFv2 Web ACL
+## - Configures a number of common AWS managed WAF rules
+## - Configures logging for the Web ACL
+############################################################################################
+
 data "aws_caller_identity" "current" {}
+
+############################################################################################
+## WAF Web ACL
+############################################################################################
+
 resource "aws_wafv2_web_acl" "waf" {
   name        = var.waf_name
   description = "Managed ruleset for WAF."
@@ -263,6 +274,10 @@ resource "aws_wafv2_web_acl" "waf" {
     sampled_requests_enabled   = false
   }
 }
+
+############################################################################################
+## WAF logging
+############################################################################################
 
 # logging configuration resource
 resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
