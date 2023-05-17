@@ -1,5 +1,6 @@
 ############################################################################################
 ## The root module used to manage all per-environment resources
+## Note: This module assumes that the Route53 Hosted Zone has been created in the AWS Console
 ############################################################################################
 
 data "aws_caller_identity" "current" {}
@@ -16,6 +17,7 @@ module "app_config" {
 locals {
   project_name                            = module.project_config.project_name
   app_name                                = module.app_config.app_name
+  hosted_zone_domain                      = "wic-services.org"
   cluster_name                            = "${local.project_name}-${local.app_name}-${var.environment_name}"
   participant_database_name               = "${local.project_name}-participant-${var.environment_name}"
   participant_service_name                = "${local.project_name}-participant-${var.environment_name}"
@@ -97,6 +99,7 @@ module "service_cluster" {
 ############################################################################################
 ## The participant application
 ## - Creates an RDS Aurora postgresql database
+## - Creates an A record for the application
 ## - Creates an ECS service and task for the Remix application
 ## - Sets autoscaling for the ECS service
 ## - Creates an Eventbridge schedule to update S3 presigned urls saved to the database
@@ -111,6 +114,13 @@ data "aws_ecr_repository" "participant_image_repository" {
 module "participant_database" {
   source        = "../../modules/database"
   database_name = local.participant_database_name
+}
+
+module "participant_dns" {
+  source               = "../../modules/dns-alias"
+  hosted_zone_domain   = local.hosted_zone_domain
+  application_alb_name = local.participant_service_name
+  alias_url            = local.participant_url
 }
 
 module "participant" {
@@ -248,6 +258,7 @@ module "side_load" {
 ## The staff application
 ## - Creates a Cognito user pool and client
 ## - Creates a JWT secret required by the staff application
+## - Creates an A record for the application
 ## - Creates an ECS service and task for the Lowdefy application
 ############################################################################################
 
@@ -287,6 +298,13 @@ resource "aws_ssm_parameter" "staff_jwt_secret" {
   name  = "/metadata/staff/${var.environment_name}-jwt-secret"
   type  = "SecureString"
   value = base64encode(module.staff_secret.random_password)
+}
+
+module "staff_dns" {
+  source               = "../../modules/dns-alias"
+  hosted_zone_domain   = local.hosted_zone_domain
+  application_alb_name = local.staff_service_name
+  alias_url            = local.staff_url
 }
 
 module "staff" {
@@ -342,6 +360,7 @@ module "staff" {
 ############################################################################################
 ## The analytics application
 ## - Creates an RDS Aurora mysql database
+## - Creates an A record for the application
 ## - Creates an EFS for persistent container data
 ## - Creates an ECS service and task for the Matomo application
 ############################################################################################
@@ -355,6 +374,13 @@ module "analytics_database" {
   database_name = local.analytics_database_name
   database_port = 3306
   database_type = "mysql"
+}
+
+module "analytics_dns" {
+  source               = "../../modules/dns-alias"
+  hosted_zone_domain   = local.hosted_zone_domain
+  application_alb_name = local.analytics_service_name
+  alias_url            = local.analytics_url
 }
 
 module "analytics_file_system" {
@@ -423,20 +449,4 @@ module "analytics" {
     module.analytics_database,
     module.analytics_file_system,
   ]
-}
-
-############################################################################################
-## DNS for the participant, staff, and analytics applications
-############################################################################################
-
-# todo: cleanup service names
-module "dns" {
-  source                   = "../../modules/dns-config"
-  environment_name         = var.environment_name
-  analytics_service_name   = local.analytics_service_name
-  participant_service_name = local.participant_service_name
-  staff_service_name       = local.staff_service_name
-  participant_url          = var.participant_url
-  staff_url                = var.staff_url
-  analytics_url            = var.analytics_url
 }
