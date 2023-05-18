@@ -103,7 +103,7 @@ it("should have an error if dob.month is incorrect", async () => {
   );
   expect(validationResult.data).toBeUndefined();
   expect(validationResult.error?.fieldErrors).toStrictEqual({
-    "participant[0].dob.month":
+    "participant[0].dob":
       "Date of birth must include a valid month, day, and year.",
   });
 });
@@ -136,7 +136,7 @@ it("should have an error if dob.day is incorrect", async () => {
   );
   expect(validationResult.data).toBeUndefined();
   expect(validationResult.error?.fieldErrors).toStrictEqual({
-    "participant[0].dob.day":
+    "participant[0].dob":
       "Date of birth must include a valid month, day, and year.",
   });
 });
@@ -169,7 +169,7 @@ it("should have an error if dob.year is too early", async () => {
   );
   expect(validationResult.data).toBeUndefined();
   expect(validationResult.error?.fieldErrors).toStrictEqual({
-    "participant[0].dob.year": "Enter a valid date of birth.",
+    "participant[0].dob": "Enter a valid date of birth.",
   });
 });
 
@@ -186,7 +186,7 @@ it("should have an error if dob.year is back to the future", async () => {
   );
   expect(validationResult.data).toBeUndefined();
   expect(validationResult.error?.fieldErrors).toStrictEqual({
-    "participant[0].dob.year": "Date of birth must be today or in the past.",
+    "participant[0].dob": "Date of birth must be today or in the past.",
   });
 });
 

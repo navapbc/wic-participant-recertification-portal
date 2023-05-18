@@ -1,7 +1,8 @@
-import type { ReactElement } from "react";
-import { Fieldset, DateInputGroup, FormGroup } from "@trussworks/react-uswds";
+import { ReactElement, useState } from "react";
+import { Fieldset, DateInputGroup, FormGroup, Label, ErrorMessage } from "@trussworks/react-uswds";
 import Required from "app/components/Required";
-import { TextField } from "app/components/TextField";
+import { TextInput } from "@trussworks/react-uswds"
+import { useField } from "remix-validated-form";
 import type { i18nKey, legendStyleType } from "~/types";
 import { Trans, useTranslation } from "react-i18next";
 
@@ -37,12 +38,17 @@ export const DateInput = (props: DateInputProps): ReactElement => {
     values,
   } = props;
   const { t } = useTranslation();
+  const { error, clearError, validate } = useField(name);
   const legendElement = (
     <div>
       <Trans i18nKey={legendKey} />
       {required ? <Required /> : ""}
     </div>
   );
+  const onBlurFunc = () => {
+    clearError()
+    validate()
+  }
   const hintKey = DMYorder ? `${dateKey}.hintDMY` : `${dateKey}.hintMDY`;
   const hintElement =
     hint && t(hintKey) ? (
@@ -50,7 +56,6 @@ export const DateInput = (props: DateInputProps): ReactElement => {
         <Trans i18nKey={hintKey} />
       </div>
     ) : undefined;
-
   const orderedFields: DateFieldTypes[] = DMYorder
     ? ["day", "month", "year"]
     : ["month", "day", "year"];
@@ -61,14 +66,14 @@ export const DateInput = (props: DateInputProps): ReactElement => {
         className={`usa-form-group--${field}`}
         key={`${keyBase}-${field}`}
       >
-        <TextField
+        <Label htmlFor={`${name}.${field}`}>{t(`${dateKey}.${field}`)}</Label>
+        <TextInput
           id={`${name}.${field}`}
-          labelKey={`${dateKey}.${field}`}
+          name={`${name}.${field}`}
           size={maxLength}
-          inputType="text"
-          type="input"
+          type="text"
           required={required}
-          requiredStar={false}
+          onBlur={onBlurFunc}
           defaultValue={values && values[field]?.toString()}
         />
       </FormGroup>
@@ -76,6 +81,7 @@ export const DateInput = (props: DateInputProps): ReactElement => {
   });
   return (
     <Fieldset legend={legendElement} legendStyle={legendStyle}>
+      {error && <ErrorMessage id={`${name}-error-message`}>{error}</ErrorMessage>}
       {hintElement}
       <DateInputGroup>{orderedDateFields}</DateInputGroup>
     </Fieldset>
