@@ -2,6 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { ButtonLink } from "app/components/ButtonLink";
 import { List } from "app/components/List";
+import { TransLinks } from "app/components/TransLinks";
 import { useLoaderData } from "@remix-run/react";
 import type { Params } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/server-runtime";
@@ -27,6 +28,7 @@ export const loader: LoaderFunction = async ({
     { headers: headers }
   );
 };
+const feedbackAlertHeading = <Trans i18nKey="Index.feedback.heading" />;
 
 export default function Index() {
   const { resetSession } = useLoaderData<typeof loader>();
@@ -62,6 +64,18 @@ export default function Index() {
       <p>
         <Trans i18nKey="Index.time" />
       </p>
+      <Alert
+        type="info"
+        headingLevel="h6"
+        heading={feedbackAlertHeading}
+        slim={true}
+        role="status"
+      >
+        <TransLinks
+          i18nTextKey={"Index.feedback.text"}
+          i18nLinkKey={"Index.feedback.links"}
+        />
+      </Alert>
       <ButtonLink to="about" className="margin-top-6">
         <Trans i18nKey="Index.button" />
       </ButtonLink>
