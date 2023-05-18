@@ -1,7 +1,13 @@
-import { ReactElement, useState } from "react";
-import { Fieldset, DateInputGroup, FormGroup, Label, ErrorMessage } from "@trussworks/react-uswds";
+import type { ReactElement } from "react";
+import {
+  Fieldset,
+  DateInputGroup,
+  FormGroup,
+  Label,
+  ErrorMessage,
+} from "@trussworks/react-uswds";
 import Required from "app/components/Required";
-import { TextInput } from "@trussworks/react-uswds"
+import { TextInput } from "@trussworks/react-uswds";
 import { useField } from "remix-validated-form";
 import type { i18nKey, legendStyleType } from "~/types";
 import { Trans, useTranslation } from "react-i18next";
@@ -46,9 +52,9 @@ export const DateInput = (props: DateInputProps): ReactElement => {
     </div>
   );
   const onBlurFunc = () => {
-    clearError()
-    validate()
-  }
+    clearError();
+    validate();
+  };
   const hintKey = DMYorder ? `${dateKey}.hintDMY` : `${dateKey}.hintMDY`;
   const hintElement =
     hint && t(hintKey) ? (
@@ -81,7 +87,9 @@ export const DateInput = (props: DateInputProps): ReactElement => {
   });
   return (
     <Fieldset legend={legendElement} legendStyle={legendStyle}>
-      {error && <ErrorMessage id={`${name}-error-message`}>{error}</ErrorMessage>}
+      {error && (
+        <ErrorMessage id={`${name}-error-message`}>{error}</ErrorMessage>
+      )}
       {hintElement}
       <DateInputGroup>{orderedDateFields}</DateInputGroup>
     </Fieldset>
