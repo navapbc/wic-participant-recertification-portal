@@ -80,11 +80,16 @@ const Layout = ({
               <div className="font-body-3xs">
                 <p>
                   <TransLinks
-                    i18nTextKey="Layout.footer1.text"
-                    i18nLinkKey="Layout.footer1.links"
+                    i18nTextKey="Layout.feedback.text"
+                    i18nLinkKey="Layout.feedback.links"
                   />
                 </p>
                 <p>
+                  <TransLinks
+                    i18nTextKey="Layout.footer1.text"
+                    i18nLinkKey="Layout.footer1.links"
+                  />
+                  &nbsp;
                   <TransLinks
                     i18nTextKey="Layout.footer2.text"
                     i18nLinkKey="Layout.footer2.links"

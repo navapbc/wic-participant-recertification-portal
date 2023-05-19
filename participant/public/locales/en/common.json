@@ -109,7 +109,7 @@
     "feedback": {
       "heading": "Already attended your recertification appointment?",
       "links": ["https://forms.gle/hYeQhm6ZjaWE7gQFA"],
-      "text": "We’d love to hear feedback about your experience. Please respond to <0>this 3 question survey.</0>"
+      "text": "We’d love to hear feedback about your experience. Please respond to <0>this 3 question survey</0> ."
     },
     "intro": "You can now prepare for your recertification appointment with your local Montana WIC clinic.",
     "ifList": [
@@ -123,15 +123,19 @@
     "title": "Start your recertification for Montana WIC"
   },
   "Layout": {
+    "feedback": {
+      "links": ["https://forms.gle/FBKaK3vjbHJwmzyA8"],
+      "text": "We want to hear from you! <0>Give feedback or ask questions about this site</0> ."
+    },
     "footer1": {
       "links": ["https://dphhs.mt.gov/ecfsd/wic/index"],
-      "text": "This site is built in partnership with <0>Montana WIC</0>"
+      "text": "This site is built in partnership with <0>Montana WIC</0> ."
     },
     "footer2": {
       "links": [
         "https://www.fns.usda.gov/civil-rights/usda-nondiscrimination-statement-other-fns-programs"
       ],
-      "text": "This institution is an equal opportunity provider. <0>USDA Non-Discrimination Statement</0>"
+      "text": "This institution is an equal opportunity provider. <0>USDA Non-Discrimination Statement</0> ."
     },
     "header": "Montana WIC Recertification Portal"
   },
