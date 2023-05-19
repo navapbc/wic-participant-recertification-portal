@@ -88,6 +88,18 @@ exports[`should match snapshot 1`] = `
               class="font-body-3xs"
             >
               <p>
+                We want to hear from you! 
+                <a
+                  class="usa-link usa-link--external"
+                  href="https://forms.gle/FBKaK3vjbHJwmzyA8"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Give feedback or ask questions about this site
+                </a>
+                 .
+              </p>
+              <p>
                 This site is built in partnership with 
                 <a
                   class="usa-link usa-link--external"
@@ -97,8 +109,8 @@ exports[`should match snapshot 1`] = `
                 >
                   Montana WIC
                 </a>
-              </p>
-              <p>
+                 .
+                 
                 This institution is an equal opportunity provider. 
                 <a
                   class="usa-link usa-link--external"
@@ -108,6 +120,7 @@ exports[`should match snapshot 1`] = `
                 >
                   USDA Non-Discrimination Statement
                 </a>
+                 .
               </p>
                
             </div>
