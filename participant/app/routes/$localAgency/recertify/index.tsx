@@ -41,7 +41,7 @@ export default function Index() {
         {resetSession === "true" && (
           <Alert
             type="warning"
-            headingLevel="h6"
+            headingLevel="h2"
             slim={true}
             role="status"
             className="margin-bottom-2"
@@ -66,7 +66,7 @@ export default function Index() {
       </p>
       <Alert
         type="info"
-        headingLevel="h6"
+        headingLevel="h2"
         heading={feedbackAlertHeading}
         slim={true}
         role="status"

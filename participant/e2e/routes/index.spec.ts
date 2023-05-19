@@ -38,6 +38,6 @@ test("clicking the get started link should take you to about", async ({
 
 test("having resetSession in the URL shows the alert", async ({ page }) => {
   await page.goto("/gallatin/recertify?resetSession=true");
-  const alert = page.getByTestId("alert");
+  const alert = page.getByText('You’ve been timed out due to inactivity. Any information you entered before can\'');
   await expect(alert).toHaveText(/You’ve been timed out due to inactivity/);
 });
