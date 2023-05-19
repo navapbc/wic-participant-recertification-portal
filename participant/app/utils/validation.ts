@@ -107,6 +107,7 @@ export const participantSchema = zfd.formData({
             return z.NEVER;
           }
           const date = new Date(val.year, val.month - 1, val.day);
+          const now = new Date();
           if (date.valueOf() == undefined) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
@@ -122,14 +123,14 @@ export const participantSchema = zfd.formData({
             });
             return z.NEVER;
           }
-          if (val.year < 1912) {
+          if (date.getFullYear() < now.getFullYear() - 110) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: "Enter a valid date of birth.",
             });
             return z.NEVER;
           }
-          if (date > new Date()) {
+          if (date > now) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: "Date of birth must be today or in the past.",
