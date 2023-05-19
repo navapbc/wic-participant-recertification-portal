@@ -28,7 +28,6 @@ export const loader: LoaderFunction = async ({
     { headers: headers }
   );
 };
-const feedbackAlertHeading = <Trans i18nKey="Index.feedback.heading" />;
 
 export default function Index() {
   const { resetSession } = useLoaderData<typeof loader>();
@@ -67,7 +66,7 @@ export default function Index() {
       <Alert
         type="info"
         headingLevel="h2"
-        heading={feedbackAlertHeading}
+        heading={<Trans i18nKey="Index.feedback.heading" />}
         slim={true}
         role="status"
       >
