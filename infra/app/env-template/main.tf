@@ -217,7 +217,7 @@ module "participant" {
       value = var.participant_log_level,
     }
   ]
-  service_ssm_resource_paths = [
+  ssm_resource_paths = [
     module.participant_database.admin_db_url_secret_arn,
     module.participant_database.admin_password_secret_arn,
     module.participant_database.admin_user_secret_arn,
@@ -354,7 +354,7 @@ module "staff" {
     },
 
   ]
-  service_ssm_resource_paths = [
+  ssm_resource_paths = [
     module.participant_database.admin_db_url_secret_arn,
     module.staff_idp.client_id_secret_arn,
     module.staff_idp.client_secret_secret_arn,
@@ -442,7 +442,7 @@ module "analytics" {
       value = local.analytics_database_name,
     }
   ]
-  service_ssm_resource_paths = [
+  ssm_resource_paths = [
     module.analytics_database.admin_db_host_secret_arn,
     module.analytics_database.admin_password_secret_arn,
     module.analytics_database.admin_user_secret_arn,

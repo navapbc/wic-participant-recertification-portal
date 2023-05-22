@@ -366,9 +366,9 @@ data "aws_iam_policy_document" "task_executor" {
     resources = [var.image_repository_arn]
   }
   # Allow ECS to access Parameter Store for specific resources
-  # But only include the statement if var.service_ssm_resource_paths is not empty
+  # But only include the statement if var.ssm_resource_paths is not empty
   dynamic "statement" {
-    for_each = var.service_ssm_resource_paths
+    for_each = var.ssm_resource_paths
     content {
       sid = "SSMAccess${statement.key}"
       actions = [

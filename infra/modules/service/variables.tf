@@ -105,7 +105,7 @@ variable "service_cluster_arn" {
   description = "The arn of the service cluster that the service should be part of"
 }
 
-variable "service_ssm_resource_paths" {
+variable "ssm_resource_paths" {
   type        = list(string)
   description = "A list of ssm resource paths that the ECS task executor should have permission to access"
   default     = []
