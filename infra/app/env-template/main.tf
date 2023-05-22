@@ -122,7 +122,7 @@ module "participant_dns" {
   source               = "../../modules/dns-alias"
   hosted_zone_domain   = local.hosted_zone_domain
   application_alb_name = local.participant_service_name
-  alias_url            = local.participant_url
+  alias_url            = var.participant_url
 }
 
 module "participant" {
@@ -306,7 +306,7 @@ module "staff_dns" {
   source               = "../../modules/dns-alias"
   hosted_zone_domain   = local.hosted_zone_domain
   application_alb_name = local.staff_service_name
-  alias_url            = local.staff_url
+  alias_url            = var.staff_url
 }
 
 module "staff" {
@@ -384,7 +384,7 @@ module "analytics_dns" {
   source               = "../../modules/dns-alias"
   hosted_zone_domain   = local.hosted_zone_domain
   application_alb_name = local.analytics_service_name
-  alias_url            = local.analytics_url
+  alias_url            = var.analytics_url
 }
 
 module "analytics_file_system" {
