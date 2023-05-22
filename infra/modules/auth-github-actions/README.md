@@ -4,7 +4,7 @@ This module sets up a way for GitHub Actions to access AWS resources using short
 
 1. Set up GitHub as an OpenID Connect Provider in the AWS account
 2. Create an IAM role that GitHub actions will assume
-3. Attach an IAM policy to the GitHub actions role that provides the necessary access to AWS account resources. By default this module will provide the [AWS managed Developer power user access policy `PowerUserAccess`](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html)
+3. Attach an IAM policy to the GitHub actions role that provides the necessary access to AWS account resources.
 
 ## Related Implementations
 
