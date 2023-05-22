@@ -1,11 +1,26 @@
-# NOTE: By default, this module ignores changes to the ECS service task definition and ignores changes to the ECS task
-# definition container definitions so that Github Actions can manage deploys by creating new task definition versions.
-# Sometimes we need to deploy updates to container definitions and update the ECS service. Normally, we would control
-# this behavior with a variable. However, terraform currently doesn't support expression evaluation in the `lifecycle`
-# block. See https://github.com/hashicorp/terraform/issues/3116
-#
-# To change this, TEMPORARILY comment out the lines following:
-#  `IGNORE_GITHUB_CHANGES - comment out next line to deploy changes via terraform`
+############################################################################################
+## A module to create an ECS service, with associated ECS task
+## - Creates an application load balancer for the ECS service
+## - Creates an ECS service
+## - Creates an ECS task definition
+## - Configures logging to Cloudwatch Logs
+## - Creates a ECS task role
+## - Creates a ECS task execution role
+## - Creates a security group to allow traffic to reach the application load balancer
+## - Creates a security group to allow traffic from the application load balancer to reach
+##   the ECS task
+##
+## Note: This module assumes that the SSL certificate has been created in the AWS Console
+##
+## Note: By default, this module ignores changes to the ECS service task definition and ignores changes to the ECS task
+## definition container definitions so that Github Actions can manage deploys by creating new task definition versions.
+## Sometimes we need to deploy updates to container definitions and update the ECS service. Normally, we would control
+## this behavior with a variable. However, terraform currently doesn't support expression evaluation in the `lifecycle`
+## block. See https://github.com/hashicorp/terraform/issues/3116
+##
+## To change this, TEMPORARILY comment out the lines following:
+##  `IGNORE_GITHUB_CHANGES - comment out this line to deploy changes via terraform`
+############################################################################################
 
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
@@ -20,11 +35,15 @@ locals {
   create_ecs_task_role_policy = length(var.container_efs_volumes) > 0 || var.enable_exec
 }
 
-###################
-## Load balancer ##
-###################
+############################################################################################
+## Load balancer
+## - Routes all unencrypted traffic on port 80 to HTTPS on port 443
+## - Routes all HTTPS traffic on port 443 to the ALB target group
+## - Creates a load balancer target group
+##   - Optionally configures a healthcheck that looks for HTTP response 200 on the
+##     healthcheck endpoint
+############################################################################################
 
-# ALB for an application running in ECS
 resource "aws_lb" "alb" {
   name            = var.service_name
   idle_timeout    = "120"
@@ -32,14 +51,9 @@ resource "aws_lb" "alb" {
   security_groups = [aws_security_group.alb.id]
   subnets         = var.subnet_ids
 
-  # TODO(https://github.com/navapbc/template-infra/issues/163) Implement HTTPS
-
   # TODO(https://github.com/navapbc/template-infra/issues/161) Prevent deletion protection
   # checkov:skip=CKV_AWS_150:Allow deletion until we can automate deletion for automated tests
   # enable_deletion_protection = true
-
-  # TODO(https://github.com/navapbc/template-infra/issues/165) Protect ALB with WAF
-  # checkov:skip=CKV2_AWS_28:Implement WAF in issue #165
 
   # Drop invalid HTTP headers for improved security
   # Note that header names cannot contain underscores
@@ -53,12 +67,7 @@ resource "aws_lb" "alb" {
   }
 }
 
-# NOTE: for the demo we expose private http endpoint
-# due to the complexity of acquiring a valid TLS/SSL cert.
-# In a production system we would provision an https listener
 resource "aws_lb_listener" "alb_listener_http" {
-  # TODO(https://github.com/navapbc/template-infra/issues/163) Use HTTPS protocol
-
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
@@ -95,6 +104,7 @@ resource "aws_lb_listener_rule" "alb_http_forward" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.alb_target_group.arn
   }
+
   condition {
     path_pattern {
       values = ["/*"]
@@ -131,12 +141,14 @@ resource "aws_lb_target_group" "alb_target_group" {
   }
 }
 
-#######################
-## Service Execution ##
-#######################
+############################################################################################
+## ECS Service execution
+## - Configures an ECS service using FARGATE launch type
+## - Configures the ECS service to use the load balancer target group
+############################################################################################
 
 resource "aws_ecs_service" "app" {
-  # checkov:skip=CKV_AWS_333:Disabling public IP may potentially mess up service discovery; also irrelevant to this PR
+  # checkov:skip=CKV_AWS_333:Disabling public IP will mess up AWS service discovery
 
   # Fargate platform_version must be at least 1.4.0 for Fargate + EFS to work
   # LATEST is currently 1.4.0
@@ -155,8 +167,7 @@ resource "aws_ecs_service" "app" {
   lifecycle {
     ignore_changes = [
       desired_count,
-      # IGNORE_GITHUB_CHANGES - comment out next line to deploy changes via terraform
-      task_definition,
+      task_definition, # IGNORE_GITHUB_CHANGES - comment out this line to deploy changes via terraform
     ]
   }
 
@@ -173,6 +184,20 @@ resource "aws_ecs_service" "app" {
     container_port   = var.container_port
   }
 }
+
+############################################################################################
+## ECS Task definition
+## - Configures the JSON container definitions
+##   - Passes in the specified environment variables
+##   - Passes in the specified AWS-managed secrets
+##   - Optionally configures the container's root filesystem to be read-only
+##   - Optionally configures a healthcheck that is either curl-based or wget-based
+##   - (Required for Fargate) Disable all linux runtime capabilities
+##   - Use an init process
+##   - Configure logging to Cloudwatch Logs
+##   - Optionally support persistent data using either (ephemeral) container bind-mounts
+##     or EFS
+############################################################################################
 
 resource "aws_ecs_task_definition" "app" {
   family             = var.service_name
@@ -243,7 +268,7 @@ resource "aws_ecs_task_definition" "app" {
   # Reference https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html
   network_mode = "awsvpc"
 
-  // Create an EFS mount volume for each element in the var.container_efs_volumes list
+  # Create an EFS mount volume for each element in the var.container_efs_volumes list
   dynamic "volume" {
     for_each = var.container_efs_volumes
     content {
@@ -259,7 +284,7 @@ resource "aws_ecs_task_definition" "app" {
     }
   }
 
-  // Create a bind mount volume for each element in the var.container_efs_volumes list
+  # Create a bind mount volume for each element in the var.container_bind_mounts list
   dynamic "volume" {
     for_each = var.container_bind_mounts
     content {
@@ -269,15 +294,14 @@ resource "aws_ecs_task_definition" "app" {
 
   lifecycle {
     ignore_changes = [
-      # IGNORE_GITHUB_CHANGES - comment out next line to deploy changes via terraform
-      container_definitions,
+      container_definitions, # IGNORE_GITHUB_CHANGES - comment out next line to deploy changes via terraform
     ]
   }
 }
 
-##########
-## Logs ##
-##########
+############################################################################################
+## Logging using Cloudwatch Logs
+############################################################################################
 
 # Cloudwatch log group to for streaming ECS application logs.
 resource "aws_cloudwatch_log_group" "service_logs" {
@@ -300,11 +324,13 @@ module "alb_logging" {
   log_target_prefix = var.service_name
 }
 
-####################
-## Access Control ##
-####################
+############################################################################################
+## IAM role: ECS task executor
+## - Grants access to Cloudwatch Logs, ECR, and specified SSM secrets
+## Note: ECS task execution roles allow the ECS agent to make AWS API calls, such as to
+##       Cloudwatch Logs or ECR
+############################################################################################
 
-# ECS task executor IAM role & policy
 resource "aws_iam_role" "task_executor" {
   name               = local.task_executor_role_name
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_task_executor_role.json
@@ -379,8 +405,15 @@ data "aws_iam_policy_document" "task_executor" {
   }
 }
 
-# ECS task role and policy
-# Only defined if needed
+############################################################################################
+## IAM role: ECS task
+## - Optional grants access to SSM for ECS Exec
+## - Optional grants access to EFS
+## - Only created if ECS Exec or EFS is required
+## Note: ECS task roles allow the container inside the ECS task to assume IAM roles to call
+##       AWS APIs
+############################################################################################
+
 resource "aws_iam_role" "task" {
   name                 = local.task_role_name
   assume_role_policy   = data.aws_iam_policy_document.ecs_assume_task_role.json
@@ -407,7 +440,6 @@ resource "aws_iam_policy" "task" {
   policy      = data.aws_iam_policy_document.task.json
 }
 
-# Link access policies to the ECS task role.
 resource "aws_iam_role_policy_attachment" "task" {
   count      = local.create_ecs_task_role_policy ? 1 : 0
   role       = aws_iam_role.task.name
@@ -457,9 +489,13 @@ data "aws_iam_policy_document" "task" {
   }
 }
 
-###########################
-## Network Configuration ##
-###########################
+############################################################################################
+## Network Configuration: Security groups
+## - Creates a security group for the application load balancer which allows all inbound
+##   public traffic on ports 80 and 443 to reach the ALB
+## - Creates a security group for the application to allow all traffic from the ALB to reach
+##   the application on the container port
+############################################################################################
 
 resource "aws_security_group" "alb" {
   # Specify name_prefix instead of name because when a change requires creating a new
