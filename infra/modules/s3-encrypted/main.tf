@@ -192,7 +192,7 @@ data "aws_iam_policy_document" "s3_encrypted_log" {
     }
   }
 
-  // Allow logging.s3.amazonaws.com put objects into the s3_encrypted_log bucket.
+  # Allow logging.s3.amazonaws.com put objects into the s3_encrypted_log bucket.
   statement {
     sid = "S3ServerAccessLogsPolicy"
     principals {
