@@ -1,6 +1,7 @@
 ############################################################################################
 ## The root module used to manage all per-environment resources
-## Note: This module assumes that the Route53 Hosted Zone has been created in the AWS Console
+## Note: This module assumes that the Route53 Hosted Zone has been created in the AWS Console.
+##       It also assumes that SSL cert has been created in ACM in the AWS Console.
 ############################################################################################
 
 data "aws_caller_identity" "current" {}
@@ -31,6 +32,10 @@ locals {
   contact_email                           = "wic-projects-team@navapbc.com"
   staff_idp_client_domain                 = "${var.environment_name}-idp.wic-services.org"
   waf_name                                = "${local.project_name}-${local.project_name}-waf"
+}
+
+data "aws_acm_certificate" "ssl_cert" {
+  domain = local.hosted_zone_domain
 }
 
 ############################################################################################
@@ -134,6 +139,7 @@ module "participant" {
   image_tag                          = var.participant_image_tag
   vpc_id                             = data.aws_vpc.default.id
   subnet_ids                         = data.aws_subnets.default.ids
+  ssl_cert_arn                       = data.aws_acm_certificate.ssl_cert.arn
   service_cluster_arn                = module.service_cluster.service_cluster_arn
   container_port                     = 3000
   memory                             = 2048
@@ -318,6 +324,7 @@ module "staff" {
   image_tag            = var.staff_image_tag
   vpc_id               = data.aws_vpc.default.id
   subnet_ids           = data.aws_subnets.default.ids
+  ssl_cert_arn         = data.aws_acm_certificate.ssl_cert.arn
   service_cluster_arn  = module.service_cluster.service_cluster_arn
   container_port       = 3000
   enable_exec          = var.staff_enable_exec
@@ -407,6 +414,7 @@ module "analytics" {
   image_tag                = var.analytics_image_tag
   vpc_id                   = data.aws_vpc.default.id
   subnet_ids               = data.aws_subnets.default.ids
+  ssl_cert_arn             = data.aws_acm_certificate.ssl_cert.arn
   service_cluster_arn      = module.service_cluster.service_cluster_arn
   memory                   = 2048
   container_port           = 8080

@@ -6,6 +6,11 @@ variable "service_name" {
   }
 }
 
+variable "ssl_cert_arn" {
+  type        = string
+  description = "The arn of the SSL certificate for the HTTPS ALB listener"
+}
+
 variable "image_tag" {
   type        = string
   description = "The tag of the image to deploy"
