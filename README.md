@@ -1,8 +1,12 @@
 # WIC Participant Recertification Portal
 
+## I want to set this up for my WIC State Agency. How do I do that?
+
+Ready to jump in? Great! Dig into the [getting started documentation]() to understand how to get up and running and how to customize this project for your WIC agency. Take a look at the [architecture]() documentation to see how all of the components fit together.
+
 ## Project components
 
-This project consists of the following major components:
+This project consists of the following components:
 
 1. **Participant portal:** A participant portal written in [Remix](https://remix.run) that enables WIC participants to submit information and documents ahead of their recertification appointment.
 2. **Staff portal:** A staff portal written in [Lowdefy](https://lowdefy.com) that allows WIC staff to access the information and documents that participants submitted.
@@ -21,10 +25,6 @@ This project consists of the following major components:
 ## Project status
 
 ⚠️ **Important!** This repo is not actively maintained. It represents the final state of the project after the conclusion of our pilot. Please apply package and dependency updates before deploying!
-
-## I want to set this up for my WIC State Agency. How do I do that?
-
-Ready to jump in? Great! Take a look at the [architecture diagram]() for deploying all the components, as well as the [getting started documentation]().
 
 ## Project description
 
