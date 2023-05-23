@@ -1,8 +1,3 @@
-variable "environment_name" {
-  type        = string
-  description = "name of the application environment"
-}
-
 variable "write_role_names" {
   type        = list(string)
   description = "role names that have access to write s3 permissions"

@@ -324,28 +324,4 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
     }
   }
 }
-# Associating the WAF with our resources in AWS
-resource "aws_wafv2_web_acl_association" "participant_alb" {
-  for_each     = data.aws_lb.participant_alb
-  resource_arn = data.aws_lb.participant_alb[each.key].arn
-  web_acl_arn  = aws_wafv2_web_acl.waf.arn
-}
-resource "aws_wafv2_web_acl_association" "staff_alb" {
-  for_each     = data.aws_lb.staff_alb
-  resource_arn = data.aws_lb.staff_alb[each.key].arn
-  web_acl_arn  = aws_wafv2_web_acl.waf.arn
-}
-
-resource "aws_wafv2_web_acl_association" "analytics_alb" {
-  for_each     = data.aws_lb.analytics_alb
-  resource_arn = data.aws_lb.analytics_alb[each.key].arn
-  web_acl_arn  = aws_wafv2_web_acl.waf.arn
-}
-
-# extremely gnarly way to get the arn of each cognito user pool
-resource "aws_wafv2_web_acl_association" "cognito" {
-  for_each     = data.aws_cognito_user_pools.staff_pools
-  resource_arn = tolist(data.aws_cognito_user_pools.staff_pools[each.key].arns)[0]
-  web_acl_arn  = aws_wafv2_web_acl.waf.arn
-}
 

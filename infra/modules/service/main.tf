@@ -296,9 +296,8 @@ resource "aws_cloudwatch_log_group" "service_logs" {
 ####################
 
 module "alb_logging" {
-  source           = "../s3-encrypted"
-  environment_name = var.service_name
-  s3_bucket_name   = var.service_name
+  source         = "../s3-encrypted"
+  s3_bucket_name = var.service_name
 }
 
 ####################
@@ -536,7 +535,7 @@ resource "aws_security_group" "app" {
 ## WAF Association
 ##############################################
 data "aws_wafv2_web_acl" "waf" {
-  name  = "wic-prp-wic-prp-waf"
+  name  = var.waf_name
   scope = "REGIONAL"
 }
 

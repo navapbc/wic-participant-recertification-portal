@@ -151,3 +151,8 @@ variable "task_role_max_session_duration" {
   description = "The maximum session duration for the ECS task role (in seconds)"
   default     = 60 * 60 # 1 hour
 }
+
+variable "waf_name" {
+  type        = string
+  description = "The name of the WAF associated with this resource "
+}

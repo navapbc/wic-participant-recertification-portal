@@ -29,6 +29,7 @@ locals {
   side_load_s3_name                       = "${local.project_name}-side-load-${var.environment_name}"
   contact_email                           = "wic-projects-team@navapbc.com"
   staff_idp_client_domain                 = "${var.environment_name}-idp.wic-services.org"
+  waf_name                                = "${local.project_name}-${local.project_name}-waf"
 }
 
 module "project_config" {
@@ -66,6 +67,7 @@ module "participant" {
   service_name                       = local.participant_service_name
   image_repository_url               = data.aws_ecr_repository.participant_image_repository.repository_url
   image_repository_arn               = data.aws_ecr_repository.participant_image_repository.arn
+  waf_name                           = local.waf_name
   image_tag                          = var.participant_image_tag
   vpc_id                             = data.aws_vpc.default.id
   subnet_ids                         = data.aws_subnets.default.ids
@@ -183,6 +185,7 @@ module "staff_idp" {
   client_logout_urls         = ["https://${var.staff_url}/login"]
   client_domain              = local.staff_idp_client_domain
   hosted_zone_domain         = "wic-services.org"
+  waf_name                   = local.waf_name
 }
 
 module "staff_secret" {
@@ -200,6 +203,7 @@ module "staff" {
   source               = "../../modules/service"
   service_name         = local.staff_service_name
   image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
+  waf_name             = local.waf_name
   image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
   image_tag            = var.staff_image_tag
   vpc_id               = data.aws_vpc.default.id
@@ -267,6 +271,7 @@ module "analytics" {
   source                   = "../../modules/service"
   service_name             = local.analytics_service_name
   image_repository_url     = data.aws_ecr_repository.analytics_image_repository.repository_url
+  waf_name                 = local.waf_name
   image_repository_arn     = data.aws_ecr_repository.analytics_image_repository.arn
   image_tag                = var.analytics_image_tag
   vpc_id                   = data.aws_vpc.default.id
@@ -321,7 +326,6 @@ module "analytics" {
 
 module "doc_upload" {
   source            = "../../modules/s3-encrypted"
-  environment_name  = var.environment_name
   s3_bucket_name    = local.document_upload_s3_name
   read_role_names   = [module.participant.task_role_name, module.staff.task_role_name]
   write_role_names  = [module.participant.task_role_name]
@@ -355,7 +359,6 @@ module "refresh_s3_presigned_urls" {
 
 module "side_load" {
   source           = "../../modules/s3-encrypted"
-  environment_name = var.environment_name
   s3_bucket_name   = local.side_load_s3_name
   read_role_names  = [module.participant.task_role_name]
   admin_role_names = [module.participant.task_role_name]

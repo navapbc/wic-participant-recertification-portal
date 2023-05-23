@@ -91,7 +91,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encrypted" {
 }
 
 resource "aws_kms_key" "s3_encrypted" {
-  description = "KMS key for ${var.environment_name} Document Upload"
+  description = "KMS key for S3 buckets"
   # The waiting period, specified in number of days. After receiving a deletion request, AWS KMS will delete the KMS key after the waiting period ends. During the waiting period, the KMS key status and key state is Pending deletion. See https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html#deleting-keys-how-it-works
   deletion_window_in_days = "10"
   # Generates new cryptographic material every 365 days, this is used to encrypt your data. The KMS key retains the old material for decryption purposes.
@@ -116,7 +116,7 @@ resource "aws_s3_bucket_logging" "s3_encrypted_log" {
   bucket = aws_s3_bucket.s3_encrypted.id
   # Checkov recommends using an s3 bucket to store logging for other s3 buckets. The bucket created on #L61 is the target bucket
   target_bucket = aws_s3_bucket.s3_encrypted_log.bucket
-  target_prefix = var.environment_name
+  target_prefix = aws_s3_bucket.s3_encrypted.bucket
 }
 
 resource "aws_s3_bucket_versioning" "s3_encrypted_log" {

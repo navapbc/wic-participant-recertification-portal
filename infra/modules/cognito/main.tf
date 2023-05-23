@@ -151,7 +151,7 @@ resource "aws_ssm_parameter" "client_secret" {
 ## WAF Association
 ##############################################
 data "aws_wafv2_web_acl" "waf" {
-  name  = "wic-prp-wic-prp-waf"
+  name  = var.waf_name
   scope = "REGIONAL"
 }
 resource "aws_wafv2_web_acl_association" "cognito" {
