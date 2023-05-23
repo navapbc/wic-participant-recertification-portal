@@ -55,6 +55,9 @@ resource "aws_lb" "alb" {
   # checkov:skip=CKV_AWS_150:Allow deletion until we can automate deletion for automated tests
   # enable_deletion_protection = true
 
+  # TODO(https://github.com/navapbc/template-infra/issues/165) Protect ALB with WAF
+  # checkov:skip=CKV2_AWS_28:Implement WAF in issue #165
+
   # Drop invalid HTTP headers for improved security
   # Note that header names cannot contain underscores
   # https://docs.bridgecrew.io/docs/ensure-that-alb-drops-http-headers
