@@ -273,6 +273,9 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
 resource "aws_cloudwatch_log_group" "waf" {
   name              = "aws-waf-logs-wic-prp"
   retention_in_days = 30
+
+  # Checkov throuws alerts in the event of default encryption for Cloudwatch,which is server-side encrytion for data at rest. 
+  # checkov:skip=CKV_AWS_158:Disabling this becuase if the key is deleted or otherwise unassociated, the cloudwatch logs will be inaccessible. 
 }
 
 # Data attributes for resources; use outputs
@@ -296,9 +299,8 @@ data "aws_cognito_user_pools" "staff_pools" {
 
 # s3 logging bucket; this is a refactor to DRY up the code
 module "s3_encrypted_bucket" {
-  source           = "../s3-encrypted"
-  s3_bucket_name   = "wic-prp-waf"
-  environment_name = "waf"
+  source         = "../s3-encrypted"
+  s3_bucket_name = "wic-prp-waf"
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
