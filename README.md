@@ -51,3 +51,7 @@ Oour Design team also met regularly with Montana WIC stakeholders and an Advisin
 To test out our designs, we ran a limited pilot with four Montana WIC local agencies. During this time, WIC participants that were due for recertification at one of our participating pilot local agencies received SMS text message reminders that included a link to our pilot website 7 days  and 1 day in advance of their recertification appointment.
 
 Participants would click the link in the text messages to access the participant portal and fill in information and submit documents ahead of their recertification appointment. Staff would authenticate with the staff portal in order to view the information and documents submitted.
+
+## License
+
+This project is released under the Apache-2.0 license. See [`LICENSE.md`](./LICENSE.md) for details.
