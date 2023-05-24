@@ -109,5 +109,5 @@ variable "hosted_zone_domain" {
 
 variable "waf_name" {
   type        = string
-  description = "The name of the WAF associated with this resource "
+  description = "The name of the WAF used to protect the user pool"
 }

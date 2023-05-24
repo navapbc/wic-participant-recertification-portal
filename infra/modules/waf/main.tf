@@ -279,21 +279,19 @@ resource "aws_wafv2_web_acl" "waf" {
 ## WAF logging
 ############################################################################################
 
-# logging configuration resource
 resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
   log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
   resource_arn            = aws_wafv2_web_acl.waf.arn
 }
 
 resource "aws_cloudwatch_log_group" "waf" {
-  name              = var.waf_logging_name # make this a variable
+  name              = var.waf_logging_name
   retention_in_days = 30
 
   # Checkov throws alerts in the event of default encryption for Cloudwatch,which is server-side encrytion for data at rest.
   # checkov:skip=CKV_AWS_158:Disabling this becuase if the key is deleted or otherwise unassociated, the cloudwatch logs will be inaccessible.
 }
 
-# s3 logging bucket; this is a refactor to DRY up the code
 module "s3_encrypted_bucket" {
   source            = "../s3-encrypted"
   s3_bucket_name    = "wic-prp-waf"

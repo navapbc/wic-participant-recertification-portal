@@ -42,7 +42,15 @@ locals {
 ## - Creates a load balancer target group
 ##   - Optionally configures a healthcheck that looks for HTTP response 200 on the
 ##     healthcheck endpoint
+## - Creates an s3 bucket to handle ALB access logging
+## - Protects the ALB with a WAF
 ############################################################################################
+
+module "alb_logging" {
+  source            = "../s3-encrypted"
+  s3_bucket_name    = var.service_name
+  log_target_prefix = var.service_name
+}
 
 resource "aws_lb" "alb" {
   name            = var.service_name
@@ -55,14 +63,12 @@ resource "aws_lb" "alb" {
   # checkov:skip=CKV_AWS_150:Allow deletion until we can automate deletion for automated tests
   # enable_deletion_protection = true
 
-  # TODO(https://github.com/navapbc/template-infra/issues/165) Protect ALB with WAF
-  # checkov:skip=CKV2_AWS_28:Implement WAF in issue #165
-
   # Drop invalid HTTP headers for improved security
   # Note that header names cannot contain underscores
   # https://docs.bridgecrew.io/docs/ensure-that-alb-drops-http-headers
   drop_invalid_header_fields = true
 
+  # Enable access logging via s3 bucket
   access_logs {
     enabled = true
     prefix  = var.service_name
@@ -115,7 +121,6 @@ resource "aws_lb_listener_rule" "alb_http_forward" {
   }
 }
 
-
 resource "aws_lb_target_group" "alb_target_group" {
   # you must use a prefix, to facilitate successful tg changes
   name_prefix                   = "tg-"
@@ -142,6 +147,17 @@ resource "aws_lb_target_group" "alb_target_group" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+# Protects the ALB with a WAF
+data "aws_wafv2_web_acl" "waf" {
+  name  = var.waf_name
+  scope = "REGIONAL"
+}
+
+resource "aws_wafv2_web_acl_association" "alb" {
+  resource_arn = aws_lb.alb.arn
+  web_acl_arn  = data.aws_wafv2_web_acl.waf.arn
 }
 
 ############################################################################################
@@ -303,7 +319,7 @@ resource "aws_ecs_task_definition" "app" {
 }
 
 ############################################################################################
-## Logging using Cloudwatch Logs
+## ECS service logging using Cloudwatch Logs
 ############################################################################################
 
 # Cloudwatch log group to for streaming ECS application logs.
@@ -316,15 +332,6 @@ resource "aws_cloudwatch_log_group" "service_logs" {
 
   # TODO(https://github.com/navapbc/template-infra/issues/164) Encrypt with customer managed KMS key
   # checkov:skip=CKV_AWS_158:Encrypt service logs with customer key in future work
-}
-####################
-## Logging Bucket ##
-####################
-
-module "alb_logging" {
-  source            = "../s3-encrypted"
-  s3_bucket_name    = var.service_name
-  log_target_prefix = var.service_name
 }
 
 ############################################################################################
@@ -568,17 +575,4 @@ resource "aws_security_group" "app" {
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
-
-##############################################
-## WAF Association
-##############################################
-data "aws_wafv2_web_acl" "waf" {
-  name  = var.waf_name
-  scope = "REGIONAL"
-}
-
-resource "aws_wafv2_web_acl_association" "alb" {
-  resource_arn = aws_lb.alb.arn # load balancer arn
-  web_acl_arn  = data.aws_wafv2_web_acl.waf.arn
 }

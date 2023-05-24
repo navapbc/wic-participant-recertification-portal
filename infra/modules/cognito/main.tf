@@ -2,7 +2,8 @@
 ## A module for configuring a Cognito User Pool
 ## - Configures for email, but not SMS
 ## - Does not configure MFA
-## - Also creates a Cognito User Pool Client
+## - Also creates a Cognito User Pool App Client
+## - Protects the user pool with a WAF
 ## Note: This module assumes that the SSL certificate has been created in the AWS Console
 ############################################################################################
 
@@ -82,10 +83,10 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 ############################################################################################
-## User pool client
+## User pool app client
 ##
 ## Important! You must create an SSL certificate for a custom domain for the Cognito User
-## Pool Client must be in us-east-1! Do not change this regardless of which region your
+## Pool App Client must be in us-east-1! Do not change this regardless of which region your
 ## other resources or certificates are deployed in.
 ## See https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-add-custom-domain.html#cognito-user-pools-add-custom-domain-adding
 ############################################################################################
@@ -163,9 +164,10 @@ resource "aws_ssm_parameter" "client_secret" {
   value = aws_cognito_user_pool_client.client.client_secret
 }
 
-##############################################
-## WAF Association
-##############################################
+############################################################################################
+## WAF association
+############################################################################################
+
 data "aws_wafv2_web_acl" "waf" {
   name  = var.waf_name
   scope = "REGIONAL"

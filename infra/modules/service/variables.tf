@@ -12,7 +12,7 @@ variable "service_name" {
 
 variable "vpc_id" {
   type        = string
-  description = "Uniquely identifies the VPC."
+  description = "Uniquely identifies the VPC"
 }
 
 variable "subnet_ids" {
@@ -22,7 +22,7 @@ variable "subnet_ids" {
 
 variable "container_port" {
   type        = number
-  description = "The port number on the container that's bound to the user-specified"
+  description = "The port that the container outputs traffic to"
   default     = 8000
 }
 
@@ -31,13 +31,18 @@ variable "ssl_cert_arn" {
   description = "The arn of the SSL certificate for the HTTPS ALB listener"
 }
 
+variable "waf_name" {
+  type        = string
+  description = "The name of the WAF used to protect the ALB"
+}
+
 ############################################################################################
 ## Variables for the ECS service
 ############################################################################################
 
 variable "desired_instance_count" {
   type        = number
-  description = "Number of instances of the task definition to place and keep running."
+  description = "Number of instances of the task definition to place and keep running"
   default     = 1
 }
 
@@ -80,7 +85,7 @@ variable "image_repository_arn" {
 variable "cpu" {
   type        = number
   default     = 256
-  description = "Number of cpu units used by the task, expessed as an integer value, e.g 512 "
+  description = "Number of cpu units used by the task, expessed as an integer value, e.g 512"
 }
 
 variable "memory" {
@@ -171,11 +176,6 @@ variable "healthcheck_type" {
 
 variable "healthcheck_start_period" {
   type        = number
-  description = "The optional grace period to provide containers time to bootstrap in before failed health checks count towards the maximum number of retries."
+  description = "The optional grace period to provide containers time to bootstrap in before failed health checks count towards the maximum number of retries"
   default     = 0
-}
-
-variable "waf_name" {
-  type        = string
-  description = "The name of the WAF associated with this resource "
 }

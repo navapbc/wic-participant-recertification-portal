@@ -31,7 +31,7 @@ locals {
   side_load_s3_name                       = "${local.project_name}-side-load-${var.environment_name}"
   contact_email                           = "wic-projects-team@navapbc.com"
   staff_idp_client_domain                 = "${var.environment_name}-idp.wic-services.org"
-  waf_name                                = "${local.project_name}-${local.project_name}-waf"
+  waf_name                                = "${local.project_name}-${local.project_name}-waf" # @TODO this should be cleaned up with the root module centralization
 }
 
 data "aws_acm_certificate" "ssl_cert" {
