@@ -1,0 +1,59 @@
+import Upload from "app/routes/$localAgency/recertify/upload";
+import decoratorFunc from "../../../.storybook/preview";
+import Layout from "app/components/Layout";
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+<Meta title="Docs/Pages/Upload" />
+
+## Participant Form Flow
+
+<ul className="breadcrumb">
+  <li>
+    <a href="?path=/docs/docs-pages-index--index">Index</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-about--about">About</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-name--name">Name</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-count--count">Count</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-details--details">Details</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-changes--changes">Changes</a>
+  </li>
+  <li>Upload</li>
+  <li>
+    <a href="?path=/docs/docs-pages-contact--contact">Contact</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-review--review">Review</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-confirm--confirm">Confirm</a>
+  </li>
+</ul>
+
+# Upload
+
+The Upload page renders a [`<FileUploader>`](?path=/docs/components-input-fileuploader--default) component, as well as [`<FilePreview>`](?path=/docs/components-filepreview--default) components for files already uploaded.
+
+This page will be **skipped** if all users entered on the `Details` page have adjunctive eligibility, and if there were no changes (all "no" answers) on the `Changes` page.
+
+Submitted details are stored in the database in an equal number of `Document` records, and file objects are stored in S3
+
+The contents of this page are controlled by three things -
+
+- Files uploaded previously and rerendered as `<FilePreview>` components
+- The layout contained in [app/routes/$localAgency/recertify/upload.tsx](../../participant/app/routes/%24localAgency/recertify/upload.tsx)
+- The i18next strings for the `"Upload"` and `"FileUploader"` keys in [public/locales/en/common.json](../../participant/public/locales/en/common.json)
+
+<Canvas>
+  <Story name="Upload" decorators={decoratorFunc}>
+    {Upload()}
+  </Story>
+</Canvas>

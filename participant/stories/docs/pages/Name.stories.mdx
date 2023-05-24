@@ -1,0 +1,57 @@
+import Name from "app/routes/$localAgency/recertify/name";
+import decoratorFunc from "../../../.storybook/preview";
+import Layout from "app/components/Layout";
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+<Meta title="Docs/Pages/Name" />
+
+## Participant Form Flow
+
+<ul className="breadcrumb">
+  <li>
+    <a href="?path=/docs/docs-pages-index--index">Index</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-about--about">About</a>
+  </li>
+  <li>Name</li>
+  <li>
+    <a href="?path=/docs/docs-pages-count--count">Count</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-details--details">Details</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-changes--changes">Changes</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-upload--upload">Upload</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-contact--contact">Contact</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-review--review">Review</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-confirm--confirm">Confirm</a>
+  </li>
+</ul>
+
+# Name
+
+The Name page collects the details for the individual completing the form.
+
+This page uses a [`<NameInput>`](?path=/docs/components-input-nameinput--preferred-name) component
+to collect the name details, and stores it in the database in a `SubmissionForm` record
+
+The contents of this page are controlled by two things -
+
+- The layout contained in [app/routes/$localAgency/recertify/name.tsx](../../participant/app/routes/%24localAgency/recertify/name.tsx)
+- The i18next strings for the `"Name"` and `"NameInput"` keys in [public/locales/en/common.json](../../participant/public/locales/en/common.json)
+
+<Canvas>
+  <Story name="Name" decorators={decoratorFunc}>
+    {Name()}
+  </Story>
+</Canvas>

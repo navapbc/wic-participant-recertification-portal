@@ -1,0 +1,54 @@
+import About from "app/routes/$localAgency/recertify/about";
+import decoratorFunc from "../../../.storybook/preview";
+import Layout from "app/components/Layout";
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+<Meta title="Docs/Pages/About" />
+
+## Participant Form Flow
+
+<ul className="breadcrumb">
+  <li>
+    <a href="?path=/docs/docs-pages-index--index">Index</a>
+  </li>
+  <li>About</li>
+  <li>
+    <a href="?path=/docs/docs-pages-name--name">Name</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-count--count">Count</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-details--details">Details</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-changes--changes">Changes</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-upload--upload">Upload</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-contact--contact">Contact</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-review--review">Review</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-confirm--confirm">Confirm</a>
+  </li>
+</ul>
+
+# About Page
+
+The About page describes the overall steps process using a USWDS / Trussworks [`<ProcessList>`](https://trussworks.github.io/react-uswds/?path=/story/components-processlist--process-list-default) component
+
+The contents of this page are controlled by two things -
+
+- The layout contained in [app/routes/$localAgency/recertify/about.tsx](../../participant/app/routes/%24localAgency/recertify/about.tsx)
+- The i18next strings for the `"About"` key in [public/locales/en/common.json](../../participant/public/locales/en/common.json)
+
+<Canvas>
+  <Story name="About" decorators={decoratorFunc}>
+    {About()}
+  </Story>
+</Canvas>

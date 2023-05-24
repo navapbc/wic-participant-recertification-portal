@@ -1,0 +1,58 @@
+import Details from "app/routes/$localAgency/recertify/details";
+import decoratorFunc from "../../../.storybook/preview";
+import Layout from "app/components/Layout";
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+<Meta title="Docs/Pages/Details" />
+
+## Participant Form Flow
+
+<ul className="breadcrumb">
+  <li>
+    <a href="?path=/docs/docs-pages-index--index">Index</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-about--about">About</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-name--name">Name</a>
+  </li>
+  <li>
+    {" "}
+    <a href="?path=/docs/docs-pages-count--count">Count</a>
+  </li>
+  <li>Details</li>
+  <li>
+    <a href="?path=/docs/docs-pages-changes--changes">Changes</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-upload--upload">Upload</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-contact--contact">Contact</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-review--review">Review</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-confirm--confirm">Confirm</a>
+  </li>
+</ul>
+
+# Details
+
+The Details page renders a number of [`<ParticipantCard>`](?path=/docs/components-participantcard--default) components, initially based on the `?count` parameter in the URL.
+
+Submitted details are stored in the database in a `SubmissionForm` record
+
+The contents of this page are controlled by three things -
+
+- The `?count` parameter in the URL **or** the number of existing participants in the database
+- The layout contained in [app/routes/$localAgency/recertify/details.tsx](../../participant/app/routes/%24localAgency/recertify/details.tsx)
+- The i18next strings for the `"Details"` key in [public/locales/en/common.json](../../participant/public/locales/en/common.json)
+
+<Canvas>
+  <Story name="Details" decorators={decoratorFunc}>
+    {Details()}
+  </Story>
+</Canvas>

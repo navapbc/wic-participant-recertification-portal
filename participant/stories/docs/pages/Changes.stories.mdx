@@ -1,0 +1,56 @@
+import Changes from "app/routes/$localAgency/recertify/changes";
+import decoratorFunc from "../../../.storybook/preview";
+import Layout from "app/components/Layout";
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+<Meta title="Docs/Pages/Changes" />
+
+## Participant Form Flow
+
+<ul className="breadcrumb">
+  <li>
+    <a href="?path=/docs/docs-pages-index--index">Index</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-about--about">About</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-name--name">Name</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-count--count">Count</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-details--details">Details</a>
+  </li>
+  <li>Changes</li>
+  <li>
+    <a href="?path=/docs/docs-pages-upload--upload">Upload</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-contact--contact">Contact</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-review--review">Review</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-confirm--confirm">Confirm</a>
+  </li>
+</ul>
+
+# Changes
+
+The Changes page renders two [`<ChoiceGroupInput>`](?path=/docs/components-input-choicegroupinput--radio-group) components with yes / no questions
+
+Submitted details are stored in the database in a `SubmissionForm` record
+
+The contents of this page are controlled by two things -
+
+- The layout contained in [app/routes/$localAgency/recertify/changes.tsx](../../participant/app/routes/%24localAgency/recertify/changes.tsx)
+- The i18next strings for the `"Changes"` key in [public/locales/en/common.json](../../participant/public/locales/en/common.json)
+
+<Canvas>
+  <Story name="Changes" decorators={decoratorFunc}>
+    {Changes()}
+  </Story>
+</Canvas>

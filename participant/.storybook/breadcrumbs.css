@@ -1,0 +1,28 @@
+.breadcrumb {
+  padding: 0 0.5rem;
+}
+
+ul.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumb li:not(:first-child)::before {
+  content: "→";
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  color: #000000;
+}
+
+.breadcrumb li {
+  color: #e41d3d;
+  margin-top: 0 !important;
+}
+
+.breadcrumb a {
+  color: #000000;
+  text-decoration: underline;
+}

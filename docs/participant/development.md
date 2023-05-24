@@ -8,9 +8,9 @@ These instructions will assume you are using a MacOS or Linux computer with a sh
 
 - 💻 Items marked with a 💻 are for development on the application **outside** of the Docker container.
 - 📦 Items marked with a 📦 are for development on the application **inside** a Docker container.
-- 💻📦 Items marked with both (💻📦) are requirements for **both** (running the application inside or outside of Docker).
+- 💻📦 Items marked with both are requirements for **both** (running the application inside or outside of Docker).
 
-💻📦 Supporting services (Minio, Postgres) run inside of Docker for both cases
+Supporting services (Minio, Postgres) run inside of Docker for both cases
 
 ### 💻📦 Docker
 
@@ -20,7 +20,7 @@ Follow the instructions and install Docker Desktop, then start it.
 
 ### 💻 NPM / NVM and NodeJS
 
-#### 💻 Installing NVM
+#### Installing NVM
 
 Documentation for NPM indicates a preference to use NVM to manage versions of Node.
 
@@ -28,14 +28,14 @@ You can install it [directly by following the instructions](https://github.com/n
 
 You could also utilize [Brew](https://brew.sh/) on MacOS by running `brew install nvm` on the command line (after installing Brew)
 
-#### 💻 Using NVM to install NodeJS
+#### Using NVM to install NodeJS
 
 1.  Open your command line utility
 2.  Change directories to the `participant` folder `cd participant`
 3.  Install Node using `nvm install v19.1.0`
 4.  Instruct NVM to `nvm use v19.1.0`
 
-#### 💻 Run NPM install to install packages
+#### Run NPM install to install packages
 
 Now that you have NVM to manage Node versions, and a compatible version of NodeJS, you can
 install the necessary packages for the Participant application using `npm`
@@ -78,7 +78,7 @@ The default port for Remix is 3000, but the application will choose other ports 
 
 The application can be run inside a Docker container, with a bind-mount to the local `/app` code (meaning changes to that code will still update the application within the container)
 
-#### 📦 Start the docker compose stack
+#### Start the docker compose stack
 
 From the `/participant` directory:
 
@@ -90,7 +90,7 @@ Changes to the code in the `participant` folder will cause the app to dynamicall
 
 Changes to CSS need to be built, using the `npm run css` command.
 
-#### 💻📦 Form Submissions
+#### Form Submissions
 
 Form submissions will be stored in the local Docker postgres database. This should be durable across restarts of the application
 stack.
@@ -107,7 +107,7 @@ You can use the Postgres command `\d<enter>` to show the database schema, and `\
 
 A popular postgres graphical client is [PgAdmin](https://www.pgadmin.org/); this should work as well.
 
-#### 💻📦 Document submissions
+#### Document submissions
 
 Document submissions will be stored in the Minio container.
 

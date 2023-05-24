@@ -1,0 +1,60 @@
+import Index from "app/routes/$localAgency/recertify/index";
+import decoratorFunc from "../../../.storybook/preview";
+import Layout from "app/components/Layout";
+import { Canvas, Meta, Story } from "@storybook/addon-docs";
+
+<Meta title="Docs/Pages/Index" />
+
+## Participant Form Flow
+
+<ul className="breadcrumb">
+  <li>Index</li>
+  <li>
+    <a href="?path=/docs/docs-pages-about--about">About</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-name--name">Name</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-count--count">Count</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-details--details">Details</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-changes--changes">Changes</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-upload--upload">Upload</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-contact--contact">Contact</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-review--review">Review</a>
+  </li>
+  <li>
+    <a href="?path=/docs/docs-pages-confirm--confirm">Confirm</a>
+  </li>
+</ul>
+
+# Index Page
+
+The Index page is the landing page for the application.
+
+Remix allows us to use URL parameters in our paths, so the file on our filesystem is [app/routes/$localAgency/recertify/index.tsx](../../participant/app/routes/%24localAgency/recertify/index.tsx)
+
+The `$localAgency` parameter associates the participant's submission with a `LocalAgency` database record, using its `urlId` property.
+
+Invalid `urlId` values will be redirected to the first database record in the `LocalAgency` table, and an empty `LocalAgency` table will result in an error.
+
+The contents of this page are controlled by two things -
+
+- The layout contained in [app/routes/$localAgency/recertify/index.tsx](../../participant/app/routes/%24localAgency/recertify/index.tsx)
+- The i18next strings for the `"Index"` key in [public/locales/en/common.json](../../participant/public/locales/en/common.json)
+
+<Canvas>
+  <Story name="Index" decorators={decoratorFunc}>
+    {Index()}
+  </Story>
+</Canvas>

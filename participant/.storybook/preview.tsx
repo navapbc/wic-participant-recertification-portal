@@ -6,6 +6,7 @@ import common from "../public/locales/en/common.json";
 import test from "../tests/fixtures/test-i18n.json";
 import React from "react";
 import "app/styles/styles.css";
+import "./breadcrumbs.css";
 
 i18next
   .use(initReactI18next) // Tell i18next to use the react-i18next plugin
@@ -23,15 +24,15 @@ i18next
     },
   });
 
-export const decorators = [
-  (Story) => (
-    <BrowserRouter>
-      <I18nextProvider i18n={i18next}>
-        <Story />
-      </I18nextProvider>
-    </BrowserRouter>
-  ),
-];
+export const decoratorFunc = (Story) => (
+  <BrowserRouter>
+    <I18nextProvider i18n={i18next}>
+      <Story />
+    </I18nextProvider>
+  </BrowserRouter>
+)
+
+export const decorators = [decoratorFunc];
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {
@@ -42,7 +43,7 @@ export const parameters = {
   },
   options: {
     storySort: {
-      order: ["Docs", ["Intro"], "Pages", "Layout", "Components"],
+      order: ["Docs", ["📝 Intro", "🛠️ Development", "Pages", ["Index", "About", "Name", "Count", "Details", "Changes", "Upload", "Contact", "Review", "Confirm"]], "Pages", ["Index", "About", "Name", "Count", "Details", "Changes", "Upload", "Contact", "Review", "Confirm"], "Layout", "Components"],
     },
   },
 };
