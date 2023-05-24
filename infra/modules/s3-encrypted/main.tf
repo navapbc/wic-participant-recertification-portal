@@ -41,6 +41,12 @@ resource "aws_s3_bucket" "s3_encrypted" {
   # checkov:skip=CKV2_AWS_62:Disable SNS requirement
 }
 
+resource "aws_s3_bucket_logging" "s3_encrypted_log" {
+  bucket        = aws_s3_bucket.s3_encrypted.id
+  target_bucket = var.s3_logging_bucket_id
+  target_prefix = "s3/${var.s3_bucket_name}/"
+}
+
 resource "aws_s3_bucket_versioning" "s3_encrypted" {
   bucket = aws_s3_bucket.s3_encrypted.id
 
@@ -117,17 +123,6 @@ data "aws_iam_policy_document" "s3_encrypted" {
       ]
     }
   }
-}
-
-############################################################################################
-## Bucket logging
-## - Checkov recommends using an s3 bucket to store logging for other s3 buckets
-############################################################################################
-
-resource "aws_s3_bucket_logging" "s3_encrypted_log" {
-  bucket        = aws_s3_bucket.s3_encrypted.id
-  target_bucket = var.s3_logging_bucket_id
-  target_prefix = "s3/${var.s3_bucket_name}/"
 }
 
 ############################################################################################
