@@ -294,8 +294,9 @@ resource "aws_cloudwatch_log_group" "service_logs" {
 ####################
 
 module "alb_logging" {
-  source         = "../s3-encrypted"
-  s3_bucket_name = var.service_name
+  source            = "../s3-encrypted"
+  s3_bucket_name    = var.service_name
+  log_target_prefix = var.service_name
 }
 
 ####################
