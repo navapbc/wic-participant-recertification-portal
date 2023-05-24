@@ -66,7 +66,7 @@ resource "aws_lb" "alb" {
   access_logs {
     enabled = true
     prefix  = "alb/${var.service_name}/"
-    bucket  = var.s3_logging_bucket_name
+    bucket  = var.s3_logging_bucket_id
   }
 }
 
