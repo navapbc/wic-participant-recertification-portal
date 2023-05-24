@@ -277,6 +277,7 @@ resource "aws_wafv2_web_acl" "waf" {
 
 ############################################################################################
 ## WAF logging
+## - Logs to Cloudwatch Logs
 ############################################################################################
 
 resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
@@ -290,34 +291,4 @@ resource "aws_cloudwatch_log_group" "waf" {
 
   # Checkov throws alerts in the event of default encryption for Cloudwatch,which is server-side encrytion for data at rest.
   # checkov:skip=CKV_AWS_158:Disabling this becuase if the key is deleted or otherwise unassociated, the cloudwatch logs will be inaccessible.
-}
-
-module "s3_encrypted_bucket" {
-  source            = "../s3-encrypted"
-  s3_bucket_name    = "wic-prp-waf"
-  log_target_prefix = "waf"
-}
-
-resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
-  bucket                = module.s3_encrypted_bucket.encrypted_bucket_id
-  expected_bucket_owner = data.aws_caller_identity.current.account_id
-
-  rule {
-    id     = "move-s3-to-ia"
-    status = "Enabled"
-
-    abort_incomplete_multipart_upload {
-      days_after_initiation = 15
-    }
-
-    transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
-    }
-
-    noncurrent_version_transition {
-      noncurrent_days = 30
-      storage_class   = "STANDARD_IA"
-    }
-  }
 }
