@@ -29,6 +29,7 @@ locals {
   document_upload_s3_name                 = "${local.project_name}-doc-upload-${var.environment_name}"
   refresh_s3_presigned_urls_schedule_name = "${local.project_name}-s3-refresh-schedule-${var.environment_name}"
   side_load_s3_name                       = "${local.project_name}-side-load-${var.environment_name}"
+  s3_logging_bucket_name                  = "${local.project_name}-s3-logging-${var.environment_name}"
   contact_email                           = "wic-projects-team@navapbc.com"
   staff_idp_client_domain                 = "${var.environment_name}-idp.wic-services.org"
   waf_name                                = "${local.project_name}-${local.project_name}-waf" # @TODO this should be cleaned up with the root module centralization
@@ -57,6 +58,17 @@ data "aws_subnets" "default" {
 }
 
 ############################################################################################
+## S3 logging bucket
+## - Creates an S3 bucket for logging purposes
+## - Resources that log to this bucket include: doc upload and side load s3 buckets and ALB
+############################################################################################
+
+module "s3_logging_bucket" {
+  source              = "../../modules/s3-logging"
+  logging_bucket_name = local.s3_logging_bucket_name
+}
+
+############################################################################################
 ## Document upload
 ## - Creates an IAM user to pass to the AWS SDK in the participant app for S3 operations
 ## - Creates an S3 bucket
@@ -71,12 +83,12 @@ module "s3_machine_user" {
 }
 
 module "doc_upload" {
-  source             = "../../modules/s3-encrypted"
-  s3_bucket_name     = local.document_upload_s3_name
-  log_target_prefix  = var.environment_name
-  read_group_names   = [module.s3_machine_user.machine_user_group_name]
-  write_group_names  = [module.s3_machine_user.machine_user_group_name]
-  delete_group_names = [module.s3_machine_user.machine_user_group_name]
+  source               = "../../modules/s3-encrypted"
+  s3_bucket_name       = local.document_upload_s3_name
+  s3_logging_bucket_id = module.s3_logging_bucket.bucket_id
+  read_group_names     = [module.s3_machine_user.machine_user_group_name]
+  write_group_names    = [module.s3_machine_user.machine_user_group_name]
+  delete_group_names   = [module.s3_machine_user.machine_user_group_name]
 }
 
 resource "aws_s3_bucket_cors_configuration" "doc_upload_cors" {
@@ -136,6 +148,7 @@ module "participant" {
   image_repository_url               = data.aws_ecr_repository.participant_image_repository.repository_url
   image_repository_arn               = data.aws_ecr_repository.participant_image_repository.arn
   waf_name                           = local.waf_name
+  s3_logging_bucket_name             = module.s3_logging_bucket.bucket_name
   image_tag                          = var.participant_image_tag
   vpc_id                             = data.aws_vpc.default.id
   subnet_ids                         = data.aws_subnets.default.ids
@@ -256,10 +269,10 @@ module "refresh_s3_presigned_urls" {
 }
 
 module "side_load" {
-  source            = "../../modules/s3-encrypted"
-  s3_bucket_name    = local.side_load_s3_name
-  log_target_prefix = var.environment_name
-  read_group_names  = [module.s3_machine_user.machine_user_group_name]
+  source               = "../../modules/s3-encrypted"
+  s3_bucket_name       = local.side_load_s3_name
+  s3_logging_bucket_id = module.s3_logging_bucket.bucket_id
+  read_group_names     = [module.s3_machine_user.machine_user_group_name]
 }
 
 ############################################################################################
@@ -316,19 +329,20 @@ module "staff_dns" {
 }
 
 module "staff" {
-  source               = "../../modules/service"
-  service_name         = local.staff_service_name
-  image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
-  waf_name             = local.waf_name
-  image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
-  image_tag            = var.staff_image_tag
-  vpc_id               = data.aws_vpc.default.id
-  subnet_ids           = data.aws_subnets.default.ids
-  ssl_cert_arn         = data.aws_acm_certificate.ssl_cert.arn
-  service_cluster_arn  = module.service_cluster.service_cluster_arn
-  container_port       = 3000
-  enable_exec          = var.staff_enable_exec
-  enable_healthcheck   = false
+  source                 = "../../modules/service"
+  service_name           = local.staff_service_name
+  image_repository_url   = data.aws_ecr_repository.staff_image_repository.repository_url
+  waf_name               = local.waf_name
+  s3_logging_bucket_name = module.s3_logging_bucket.bucket_name
+  image_repository_arn   = data.aws_ecr_repository.staff_image_repository.arn
+  image_tag              = var.staff_image_tag
+  vpc_id                 = data.aws_vpc.default.id
+  subnet_ids             = data.aws_subnets.default.ids
+  ssl_cert_arn           = data.aws_acm_certificate.ssl_cert.arn
+  service_cluster_arn    = module.service_cluster.service_cluster_arn
+  container_port         = 3000
+  enable_exec            = var.staff_enable_exec
+  enable_healthcheck     = false
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
@@ -410,6 +424,7 @@ module "analytics" {
   service_name             = local.analytics_service_name
   image_repository_url     = data.aws_ecr_repository.analytics_image_repository.repository_url
   waf_name                 = local.waf_name
+  s3_logging_bucket_name   = module.s3_logging_bucket.bucket_name
   image_repository_arn     = data.aws_ecr_repository.analytics_image_repository.arn
   image_tag                = var.analytics_image_tag
   vpc_id                   = data.aws_vpc.default.id

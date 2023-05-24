@@ -31,6 +31,11 @@ variable "ssl_cert_arn" {
   description = "The arn of the SSL certificate for the HTTPS ALB listener"
 }
 
+variable "s3_logging_bucket_name" {
+  type        = string
+  description = "The name of the s3 bucket for ALB access logging"
+}
+
 variable "waf_name" {
   type        = string
   description = "The name of the WAF used to protect the ALB"
