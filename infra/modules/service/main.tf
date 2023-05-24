@@ -46,8 +46,6 @@ resource "aws_lb" "alb" {
   # https://docs.bridgecrew.io/docs/ensure-that-alb-drops-http-headers
   drop_invalid_header_fields = true
 
-  # TODO(https://github.com/navapbc/template-infra/issues/162) Add access logs
-  # checkov:skip=CKV_AWS_91:Add access logs in future PR
   access_logs {
     enabled = true
     prefix  = var.service_name

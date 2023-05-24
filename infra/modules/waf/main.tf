@@ -271,30 +271,11 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
 }
 
 resource "aws_cloudwatch_log_group" "waf" {
-  name              = "aws-waf-logs-wic-prp"
+  name              = var.waf_logging_name # make this a variable
   retention_in_days = 30
 
-  # Checkov throuws alerts in the event of default encryption for Cloudwatch,which is server-side encrytion for data at rest. 
+  # Checkov throws alerts in the event of default encryption for Cloudwatch,which is server-side encrytion for data at rest. 
   # checkov:skip=CKV_AWS_158:Disabling this becuase if the key is deleted or otherwise unassociated, the cloudwatch logs will be inaccessible. 
-}
-
-# Data attributes for resources; use outputs
-data "aws_lb" "participant_alb" {
-  for_each = toset(["dev", "staging", "prod"])
-  name     = "wic-prp-participant-${each.key}"
-}
-data "aws_lb" "staff_alb" {
-  for_each = toset(["dev", "staging", "prod"])
-  name     = "wic-prp-staff-${each.key}"
-}
-data "aws_lb" "analytics_alb" {
-  for_each = toset(["dev", "staging", "prod"])
-  name     = "wic-prp-analytics-${each.key}"
-}
-
-data "aws_cognito_user_pools" "staff_pools" {
-  for_each = toset(["dev", "staging", "prod"])
-  name     = "wic-prp-staff-${each.key}"
 }
 
 # s3 logging bucket; this is a refactor to DRY up the code
@@ -326,4 +307,3 @@ resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
     }
   }
 }
-
