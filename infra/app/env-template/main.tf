@@ -148,7 +148,7 @@ module "participant" {
   image_repository_url               = data.aws_ecr_repository.participant_image_repository.repository_url
   image_repository_arn               = data.aws_ecr_repository.participant_image_repository.arn
   waf_name                           = local.waf_name
-  s3_logging_bucket_id             = module.s3_logging_bucket.bucket_id
+  s3_logging_bucket_id               = module.s3_logging_bucket.bucket_id
   image_tag                          = var.participant_image_tag
   vpc_id                             = data.aws_vpc.default.id
   subnet_ids                         = data.aws_subnets.default.ids
@@ -329,20 +329,20 @@ module "staff_dns" {
 }
 
 module "staff" {
-  source                 = "../../modules/service"
-  service_name           = local.staff_service_name
-  image_repository_url   = data.aws_ecr_repository.staff_image_repository.repository_url
-  waf_name               = local.waf_name
+  source               = "../../modules/service"
+  service_name         = local.staff_service_name
+  image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
+  waf_name             = local.waf_name
   s3_logging_bucket_id = module.s3_logging_bucket.bucket_id
-  image_repository_arn   = data.aws_ecr_repository.staff_image_repository.arn
-  image_tag              = var.staff_image_tag
-  vpc_id                 = data.aws_vpc.default.id
-  subnet_ids             = data.aws_subnets.default.ids
-  ssl_cert_arn           = data.aws_acm_certificate.ssl_cert.arn
-  service_cluster_arn    = module.service_cluster.service_cluster_arn
-  container_port         = 3000
-  enable_exec            = var.staff_enable_exec
-  enable_healthcheck     = false
+  image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
+  image_tag            = var.staff_image_tag
+  vpc_id               = data.aws_vpc.default.id
+  subnet_ids           = data.aws_subnets.default.ids
+  ssl_cert_arn         = data.aws_acm_certificate.ssl_cert.arn
+  service_cluster_arn  = module.service_cluster.service_cluster_arn
+  container_port       = 3000
+  enable_exec          = var.staff_enable_exec
+  enable_healthcheck   = false
   container_secrets = [
     {
       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
@@ -424,7 +424,7 @@ module "analytics" {
   service_name             = local.analytics_service_name
   image_repository_url     = data.aws_ecr_repository.analytics_image_repository.repository_url
   waf_name                 = local.waf_name
-  s3_logging_bucket_id   = module.s3_logging_bucket.bucket_id
+  s3_logging_bucket_id     = module.s3_logging_bucket.bucket_id
   image_repository_arn     = data.aws_ecr_repository.analytics_image_repository.arn
   image_tag                = var.analytics_image_tag
   vpc_id                   = data.aws_vpc.default.id
