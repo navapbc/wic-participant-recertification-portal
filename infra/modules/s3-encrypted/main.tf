@@ -39,9 +39,10 @@ resource "aws_s3_bucket" "s3_encrypted" {
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
   # checkov:skip=CKV2_AWS_61:Lifecycle policy will be added in later ticket for post-pilot cleanup
   # checkov:skip=CKV2_AWS_62:Disable SNS requirement
+  # checkov:skip=CKV_AWS_18:Checkov is unable to detect that access logging is enabled in the next resource
 }
 
-resource "aws_s3_bucket_logging" "s3_encrypted_log" {
+resource "aws_s3_bucket_logging" "s3_encrypted" {
   bucket        = aws_s3_bucket.s3_encrypted.id
   target_bucket = var.s3_logging_bucket_id
   target_prefix = "s3/${var.s3_bucket_name}/"
