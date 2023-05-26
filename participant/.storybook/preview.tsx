@@ -30,7 +30,7 @@ export const decoratorFunc = (Story) => (
       <Story />
     </I18nextProvider>
   </BrowserRouter>
-)
+);
 
 export const decorators = [decoratorFunc];
 export const parameters = {
@@ -43,7 +43,41 @@ export const parameters = {
   },
   options: {
     storySort: {
-      order: ["Docs", ["📝 Intro", "🛠️ Development", "Pages", ["Index", "About", "Name", "Count", "Details", "Changes", "Upload", "Contact", "Review", "Confirm"]], "Pages", ["Index", "About", "Name", "Count", "Details", "Changes", "Upload", "Contact", "Review", "Confirm"], "Layout", "Components"],
+      order: [
+        "Docs",
+        [
+          "📝 Intro",
+          "🛠️ Development",
+          "Pages",
+          [
+            "Index",
+            "About",
+            "Name",
+            "Count",
+            "Details",
+            "Changes",
+            "Upload",
+            "Contact",
+            "Review",
+            "Confirm",
+          ],
+        ],
+        "Pages",
+        [
+          "Index",
+          "About",
+          "Name",
+          "Count",
+          "Details",
+          "Changes",
+          "Upload",
+          "Contact",
+          "Review",
+          "Confirm",
+        ],
+        "Layout",
+        "Components",
+      ],
     },
   },
 };

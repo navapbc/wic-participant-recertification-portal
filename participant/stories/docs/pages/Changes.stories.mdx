@@ -1,9 +1,18 @@
 import Changes from "app/routes/$localAgency/recertify/changes";
-import decoratorFunc from "../../../.storybook/preview";
+import { decoratorFunc } from "../../../.storybook/preview";
 import Layout from "app/components/Layout";
 import { Canvas, Meta, Story } from "@storybook/addon-docs";
 
-<Meta title="Docs/Pages/Changes" />
+<Meta
+  title="Docs/Pages/Changes"
+  parameters={{
+    viewMode: "docs",
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+    decorators: [decoratorFunc],
+  }}
+/>
 
 ## Participant Form Flow
 
@@ -40,17 +49,26 @@ import { Canvas, Meta, Story } from "@storybook/addon-docs";
 
 # Changes
 
+### About this page:
+
+This question allows us to understand if something has changed with the WIC participant that would require them to upload new proof of address/identity docs. Montana WIC only requires documentation if these two scenarios have changed, or if any participant lacks adjunctive eligibility.
+
+### Considerations for other states:
+
+When do you require recertifying WIC participants to upload documents? If only certain scenarios, what questions can you replace with these to understand those participants?
+For states that always require documents during recertification, are these questions helpful for local staff? Or, can you remove these questions and logic altogether?
+
+### Development
+
 The Changes page renders two [`<ChoiceGroupInput>`](?path=/docs/components-input-choicegroupinput--radio-group) components with yes / no questions
 
 Submitted details are stored in the database in a `SubmissionForm` record
 
 The contents of this page are controlled by two things -
 
-- The layout contained in [app/routes/$localAgency/recertify/changes.tsx](../../participant/app/routes/%24localAgency/recertify/changes.tsx)
-- The i18next strings for the `"Changes"` key in [public/locales/en/common.json](../../participant/public/locales/en/common.json)
+- The layout contained in [app/routes/$localAgency/recertify/changes.tsx](participant/app/routes/%24localAgency/recertify/changes.tsx)
+- The i18next strings for the `"Changes"` key in [public/locales/en/common.json](participant/public/locales/en/common.json)
 
 <Canvas>
-  <Story name="Changes" decorators={decoratorFunc}>
-    {Changes()}
-  </Story>
+  <Story name="Changes">{Changes()}</Story>
 </Canvas>

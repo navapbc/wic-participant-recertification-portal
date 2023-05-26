@@ -14,14 +14,16 @@ import { ReactElement } from "react";
 // You could return Action data here, though note that
 // ALL useActionData calls in all routes rendered in Storybook
 // receive the contents of this response
-export const useActionData = () => { };
-export const useLocation = () => { return { pathname: "#" } };
+export const useActionData = () => {};
+export const useLocation = () => {
+  return { pathname: "#" };
+};
 export const useFetcher = () => {
-  return { submit: () => { } };
+  return { submit: () => {} };
 };
 
 // Can't use a real submit hook in Storybook
-export const useSubmit = () => { };
+export const useSubmit = () => {};
 
 // There are almost certainly more elegant or flexible solutions
 // to providing loader data to pages in Storybook, but I

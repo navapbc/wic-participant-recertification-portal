@@ -1,0 +1,22 @@
+# Contact
+
+### About this page:
+
+We want staff to have a contact method in case there's issues with the submission.
+We also want to nudge participants to share any nutrition or life updates, but testing with Montana WIC recipients revealed participants might not always have an update to share.
+
+### Considerations for other states:
+
+Is there anything else you need to collect ahead of a recertification appointment?
+
+### Development
+
+The Contact page collects the phone number, and any additional comments for the individual completing the form.
+
+This page uses two [`<TextField>`](../../../participant/app/components/TextField.tsx) components
+to collect the phone and comment details, and stores it in the database in a `SubmissionForm` record
+
+The contents of this page are controlled by two things -
+
+- The layout contained in [app/routes/$localAgency/recertify/contact.tsx](../../../participant/app/routes/%24localAgency/recertify/contact.tsx)
+- The i18next strings for the `"Contact"` key in [public/locales/en/common.json](../../../participant/public/locales/en/common.json)

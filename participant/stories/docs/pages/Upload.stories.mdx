@@ -1,9 +1,18 @@
 import Upload from "app/routes/$localAgency/recertify/upload";
-import decoratorFunc from "../../../.storybook/preview";
+import { decoratorFunc } from "../../../.storybook/preview";
 import Layout from "app/components/Layout";
 import { Canvas, Meta, Story } from "@storybook/addon-docs";
 
-<Meta title="Docs/Pages/Upload" />
+<Meta
+  title="Docs/Pages/Upload"
+  parameters={{
+    viewMode: "docs",
+    previewTabs: {
+      canvas: { hidden: true },
+    },
+    decorators: [decoratorFunc],
+  }}
+/>
 
 ## Participant Form Flow
 
@@ -40,6 +49,21 @@ import { Canvas, Meta, Story } from "@storybook/addon-docs";
 
 # Upload
 
+### About this page:
+
+​​We use the participant's situation to determine which kinds of documents, if any, they need to provide:
+
+- If they don't have adjunctive eligibility, they always need to upload proof of income.
+- If they moved, they need to provide proof of address.
+- If they changed their name and/or their previous ID doc expired, they need to provide new proof of identity.
+
+### Considerations for other states:
+
+What are your policies around verifying identity and address?
+If you require documents in all scenarios, you may be able to simplify this document upload flow.
+
+### Development
+
 The Upload page renders a [`<FileUploader>`](?path=/docs/components-input-fileuploader--default) component, as well as [`<FilePreview>`](?path=/docs/components-filepreview--default) components for files already uploaded.
 
 This page will be **skipped** if all users entered on the `Details` page have adjunctive eligibility, and if there were no changes (all "no" answers) on the `Changes` page.
@@ -53,7 +77,5 @@ The contents of this page are controlled by three things -
 - The i18next strings for the `"Upload"` and `"FileUploader"` keys in [public/locales/en/common.json](../../participant/public/locales/en/common.json)
 
 <Canvas>
-  <Story name="Upload" decorators={decoratorFunc}>
-    {Upload()}
-  </Story>
+  <Story name="Upload">{Upload()}</Story>
 </Canvas>
