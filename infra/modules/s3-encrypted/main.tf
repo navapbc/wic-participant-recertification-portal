@@ -38,7 +38,6 @@ resource "aws_s3_bucket" "s3_encrypted" {
 
   # checkov:skip=CKV_AWS_144:Cross region replication not required by default
   # checkov:skip=CKV2_AWS_61:Lifecycle policy will be added in later ticket for post-pilot cleanup
-  # checkov:skip=CKV_AWS_18:Logging is enabled; but checkov can't find it
   # checkov:skip=CKV2_AWS_62:Disable SNS requirement
 }
 

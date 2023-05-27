@@ -16,6 +16,7 @@ resource "aws_s3_bucket" "s3_encrypted_log" {
   # checkov:skip=CKV2_AWS_61:Lifecycle policy will be added in later ticket for post-pilot cleanup
   # checkov:skip=CKV2_AWS_62:Disable SNS requirement
   # checkov:skip=CKV_AWS_145:Access logging for s3 and elb does not support KMS SSE encryption
+  # checkov:skip=CKV_AWS_18:Unnecessary to recursively access log this access log
 }
 
 resource "aws_s3_bucket_versioning" "s3_encrypted_log" {
