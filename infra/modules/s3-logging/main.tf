@@ -1,30 +1,8 @@
 ############################################################################################
 ## A module for creating an encrypted S3 bucket for logging purposes
 ## - With associated S3 bucket policies and access management
-## - Also creates an encrypted S3 bucket for logging operations
-## - Creates IAM policies:
-##   - IAM policies in this module are broken out into read, write, and delete
-##     so that these permissions can be modularly assigned to different user groups by the
-##     module calling this one.
+## - By default allows logging from Cloudwatch Logs, Elastic Load Balancing, and S3
 ############################################################################################
-
-############################################################################################
-## KMS key
-############################################################################################
-
-resource "aws_kms_key" "s3_encrypted_log" {
-  description = "KMS key for encrypted S3 bucket"
-
-  # The waiting period, specified in number of days. After receiving a deletion request,
-  # AWS KMS will delete the KMS key after the waiting period ends. During the waiting period,
-  # the KMS key status and key state is Pending deletion.
-  # See https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html#deleting-keys-how-it-works
-  deletion_window_in_days = "10"
-
-  # Generates new cryptographic material every 365 days, this is used to encrypt your data.
-  # The KMS key retains the old material for decryption purposes.
-  enable_key_rotation = "true"
-}
 
 ############################################################################################
 ## Encrypted S3 bucket logging
@@ -52,8 +30,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encrypted_log"
 
   rule {
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.s3_encrypted_log.arn
-      sse_algorithm     = "aws:kms"
+      # S3 and ELB access logging only supports AWS managed server-side encryption
+      # using AES256. See:
+      # - https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-access-logging.html
+      # - https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-access-logs.html
+      sse_algorithm     = "AES256"
     }
   }
 }
@@ -100,21 +81,47 @@ data "aws_iam_policy_document" "s3_encrypted_log" {
     }
   }
 
-  # Allow logging.s3.amazonaws.com put objects into the s3_encrypted_log bucket.
+  # Allow Cloudwatch Logs to log to the bucket.
   statement {
-    sid = "S3ServerAccessLogsPolicy"
+    sid = "CloudwatchAccess"
+
     principals {
       type = "Service"
       identifiers = [
-        "logging.s3.amazonaws.com"
+        "logging.s3.amazonaws.com",
       ]
     }
+
     actions = [
       "s3:PutObject",
     ]
 
     resources = [
       "${aws_s3_bucket.s3_encrypted_log.arn}/*"
+    ]
+
+    effect = "Allow"
+  }
+
+  # Allow Elastic Load Balancing to log to the bucket.
+  statement {
+    sid = "ElasticLoadBalancingAccess"
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        # AWS requires that the region is hard coded.
+        # See https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-access-logs.html#attach-bucket-policy
+        "arn:aws:iam::797873946194:root"
+      ]
+    }
+
+    actions = [
+      "s3:PutObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.s3_encrypted_log.arn}/*",
     ]
 
     effect = "Allow"
