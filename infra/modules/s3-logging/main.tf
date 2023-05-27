@@ -34,7 +34,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_encrypted_log"
       # using AES256. See:
       # - https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-access-logging.html
       # - https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-access-logs.html
-      sse_algorithm     = "AES256"
+      sse_algorithm = "AES256"
     }
   }
 }
