@@ -48,6 +48,7 @@ export const parameters = {
         [
           "📝 Intro",
           "🛠️ Development",
+          "🗂 Application Internals",
           "Pages",
           [
             "Index",

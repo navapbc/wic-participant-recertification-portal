@@ -7,7 +7,7 @@ We also want to nudge participants to share any nutrition or life updates, but t
 
 ### Considerations for other states:
 
-Is there anything else you need to collect ahead of a recertification appointment?
+Is there anything else you need to collect ahead of a recertification appointment? It's important to collect all necessary information, but be sure to balance that against collecting too much information. Asking participants to fill out excessively long forms or asking for sensitive PII may make participants reluctant to use the application.
 
 ### Development
 

@@ -8,17 +8,17 @@ Form data submitted by participants is stored in a [Postgres](https://www.postgr
 
 Uploaded documents submitted by participants are stored in a [Minio](https://min.io/) docker container locally, or in [AWS S3](https://docs.aws.amazon.com/s3/index.html) when deployed.
 
-![Participant Diagram](https://github.com/navapbc/wic-participant-recertification-portal/assets/723391/c1339576-38b8-4a92-b090-b7c52940b04a)
+![Participant Diagram](https://github.com/navapbc/wic-participant-recertification-portal/assets/723391/e79ebebb-aebb-4e12-98ca-d0e0bb7d4ee3)
 
 ## Components
 
 ### Remix (Participant Application)
 
-Remix is a javascript framework based on [React Router](https://reactrouter.com/en/main) and [React](https://react.dev/). It provides semantics for writing code that renders both a page for a browser and the HTTP API endpoints that page may consume, with "Loaders" responding to GET requests from the page, and "Actions" responding to POST requests. These semantics mean that one page such as the [count](../../participant/app/routes/%24localAgency/recertify/count.tsx) route can have a Loader to provide data needed for the page render, and an Action to process data submitted from that page's form.
+Remix is a javascript framework based on [React Router](https://reactrouter.com/en/main) and [React](https://react.dev/). It provides semantics for writing code that renders both a page for a browser and the HTTP API endpoints that the page may consume, with ["Loaders"](https://remix.run/docs/en/1.16.1/route/loader) responding to GET requests from the page, and ["Actions"](https://remix.run/docs/en/1.16.1/route/action) responding to POST requests. These semantics mean that one page, such as the [count](../../participant/app/routes/%24localAgency/recertify/count.tsx) route, can have a Loader to provide data needed for the page render, as well as an Action to process data submitted from that page's form.
 
 The route's render occurs mostly with familiar [React](https://react.dev/) component patterns, and additional hooks to provide data from the Loader and Action functions on the server to the page.
 
-Remix cannot be run as a Single-Page Application, and must have a running server to host the page. As all data from an individual participant needs to be stored on a server, we consider this a reasonable limitation for the use case.
+Remix cannot be run as a Single-Page Application, and must have a running server to host the page. In the participant application, all data from an individual participant needs to be stored on a server, so we consider this a reasonable limitation for the use case.
 
 ### Postgres & Prisma (Database Interactions)
 
