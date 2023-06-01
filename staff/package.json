@@ -11,6 +11,7 @@
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint ."
   },
   "dependencies": {
+    "@aws-sdk/client-ssm": "^3.342.0",
     "knex": "^2.4.2",
     "pg": "^8.9.0"
   },

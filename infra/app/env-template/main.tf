@@ -205,57 +205,64 @@ module "staff_lambda" {
   function_name         = local.staff_function_name
   image_repository_name = data.aws_ecr_repository.staff_image_repository.name
   image_tag             = var.staff_image_tag
-}
-
-module "staff" {
-  source               = "../../modules/service"
-  service_name         = local.staff_service_name
-  image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
-  waf_name             = local.waf_name
-  image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
-  image_tag            = var.staff_image_tag
-  vpc_id               = data.aws_vpc.default.id
-  subnet_ids           = data.aws_subnets.default.ids
-  service_cluster_arn  = module.service_cluster.service_cluster_arn
-  container_port       = 3000
-  enable_exec          = var.staff_enable_exec
-  enable_healthcheck   = false
-  container_secrets = [
-    {
-      name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}",
-    },
-    {
-      name      = "LOWDEFY_SECRET_OPENID_CLIENT_ID",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_id_secret_name}",
-    },
-    {
-      name      = "LOWDEFY_SECRET_OPENID_CLIENT_SECRET",
-      valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_secret_secret_name}",
-    },
-    {
-      name      = "LOWDEFY_SECRET_JWT_SECRET",
-      valueFrom = aws_ssm_parameter.staff_jwt_secret.arn,
-    },
-  ]
-  container_env_vars = [
-    {
-      name  = "LOWDEFY_SECRET_OPENID_DOMAIN",
-      value = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${module.staff_idp.user_pool_id}/.well-known/openid-configuration",
-    },
-
-  ]
-  service_ssm_resource_paths = [
-    module.participant_database.admin_db_url_secret_name,
-    module.staff_idp.client_id_secret_name,
-    module.staff_idp.client_secret_secret_name,
-    aws_ssm_parameter.staff_jwt_secret.name,
-  ]
+  staff_url             = var.staff_url
+  container_env_vars    = { LOWDEFY_SECRET_OPENID_DOMAIN : "https://${module.staff_idp.idp_endpoint}/.well-known/openid-configuration" }
+  container_secrets     = { LOWDEFY_SECRET_JWT_SECRET : aws_ssm_parameter.staff_jwt_secret.name, LOWDEFY_SECRET_OPENID_CLIENT_ID : module.staff_idp.client_id_secret_name, LOWDEFY_SECRET_OPENID_CLIENT_SECRET : module.staff_idp.client_secret_secret_name, LOWDEFY_SECRET_PG_CONNECTION_STRING : module.participant_database.admin_db_url_secret_name }
   depends_on = [
     module.participant_database,
     module.staff_idp,
   ]
 }
+
+# module "staff" {
+#   source               = "../../modules/service"
+#   service_name         = local.staff_service_name
+#   image_repository_url = data.aws_ecr_repository.staff_image_repository.repository_url
+#   waf_name             = local.waf_name
+#   image_repository_arn = data.aws_ecr_repository.staff_image_repository.arn
+#   image_tag            = var.staff_image_tag
+#   vpc_id               = data.aws_vpc.default.id
+#   subnet_ids           = data.aws_subnets.default.ids
+#   service_cluster_arn  = module.service_cluster.service_cluster_arn
+#   container_port       = 3000
+#   enable_exec          = var.staff_enable_exec
+#   enable_healthcheck   = false
+#   container_secrets = [
+#     {
+#       name      = "LOWDEFY_SECRET_PG_CONNECTION_STRING",
+#       valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.participant_database.admin_db_url_secret_name}",
+#     },
+#     {
+#       name      = "LOWDEFY_SECRET_OPENID_CLIENT_ID",
+#       valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_id_secret_name}",
+#     },
+#     {
+#       name      = "LOWDEFY_SECRET_OPENID_CLIENT_SECRET",
+#       valueFrom = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter${module.staff_idp.client_secret_secret_name}",
+#     },
+#     {
+#       name      = "LOWDEFY_SECRET_JWT_SECRET",
+#       valueFrom = aws_ssm_parameter.staff_jwt_secret.arn,
+#     },
+#   ]
+#   container_env_vars = [
+#     {
+#       name  = "LOWDEFY_SECRET_OPENID_DOMAIN",
+#       value = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${module.staff_idp.user_pool_id}/.well-known/openid-configuration",
+#     },
+
+#   ]
+#   service_ssm_resource_paths = [
+#     module.participant_database.admin_db_url_secret_name,
+#     module.staff_idp.client_id_secret_name,
+#     module.staff_idp.client_secret_secret_name,
+#     aws_ssm_parameter.staff_jwt_secret.name,
+#   ]
+#   depends_on = [
+#     module.participant_database,
+#     module.staff_idp,
+#   ]
+# }
 
 module "analytics_database" {
   source        = "../../modules/database"
@@ -335,7 +342,7 @@ module "analytics" {
 module "doc_upload" {
   source            = "../../modules/s3-encrypted"
   s3_bucket_name    = local.document_upload_s3_name
-  read_role_names   = [module.participant.task_role_name, module.staff.task_role_name]
+  read_role_names   = [module.participant.task_role_name, module.staff_lambda.lambda_role_name]
   write_role_names  = [module.participant.task_role_name]
   delete_role_names = [module.participant.task_role_name]
   admin_role_names  = [module.participant.task_role_name]

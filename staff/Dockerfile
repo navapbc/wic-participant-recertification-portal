@@ -3,8 +3,8 @@
 FROM node:18-slim as base
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
-    # Install for healthcheck
-    wget
+  # Install for healthcheck
+  wget jq
 # Set working directory and node user
 WORKDIR /home/node/lowdefy
 
@@ -45,3 +45,15 @@ COPY --from=production-deps /home/node/lowdefy/node_modules ./node_modules
 COPY --from=build --chown=node:node /home/node/lowdefy/.lowdefy/build ./build
 COPY --chown=node:node ./public ./public
 CMD ["node", "./dist/server.js"]
+
+# -------- Image: Lambda ------ #
+# ... the prod image won't work in lambdas
+
+# Use the correct Lowdefy base image
+FROM lowdefy/lowdefy-aws-lambda:3.23.3 as lambda
+COPY --from=production-deps /home/node/lowdefy/node_modules ./node_modules
+COPY --from=build --chown=node:node /home/node/lowdefy/.lowdefy/build ./build
+COPY --chown=node:node ./public ./public
+COPY bin/entrypoint.js ./
+ENTRYPOINT [ "node", "./entrypoint.js" ]
+CMD [ "/lambda-entrypoint.sh", "dist/server.handler"]
