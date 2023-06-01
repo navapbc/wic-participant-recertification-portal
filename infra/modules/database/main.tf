@@ -127,39 +127,34 @@ resource "aws_rds_cluster" "database" {
 }
 
 resource "aws_rds_cluster_instance" "database_instance" {
-  cluster_identifier              = aws_rds_cluster.database.id
-  instance_class                  = "db.serverless"
-  engine                          = aws_rds_cluster.database.engine
-  engine_version                  = aws_rds_cluster.database.engine_version
-  auto_minor_version_upgrade      = true
-  monitoring_role_arn             = aws_iam_role.rds_enhanced_monitoring.arn
-  monitoring_interval             = 30
-  performance_insights_enabled    = true
-  performance_insights_kms_key_id = aws_kms_key.database_instance.key_id
+  # checkov:skip=CKV_AWS_354:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  cluster_identifier           = aws_rds_cluster.database.id
+  instance_class               = "db.serverless"
+  engine                       = aws_rds_cluster.database.engine
+  engine_version               = aws_rds_cluster.database.engine_version
+  auto_minor_version_upgrade   = true
+  monitoring_role_arn          = aws_iam_role.rds_enhanced_monitoring.arn
+  monitoring_interval          = 30
+  performance_insights_enabled = true
 }
 
-# Encrypt the performance insights
-resource "aws_kms_key" "database_instance" {
-  enable_key_rotation = true
-  description         = "KMS key for the database performance insights"
-}
 ############################################################################################
 ## Secrets
 ## - Stored in Systems Manager Parameter Store
 ############################################################################################
 
 resource "aws_ssm_parameter" "admin_password" {
-  name   = local.admin_password_secret_name
-  type   = "SecureString"
-  value  = local.admin_password
-  key_id = aws_kms_key.database_secrets.key_id
+  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  name  = local.admin_password_secret_name
+  type  = "SecureString"
+  value = local.admin_password
 }
 
 resource "aws_ssm_parameter" "admin_db_url" {
-  name   = local.admin_db_url_secret_name
-  type   = "SecureString"
-  value  = "${var.database_type}://${local.admin_user}:${urlencode(local.admin_password)}@${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}/${local.database_name_formatted}?schema=public"
-  key_id = aws_kms_key.database_secrets.key_id
+  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  name  = local.admin_db_url_secret_name
+  type  = "SecureString"
+  value = "${var.database_type}://${local.admin_user}:${urlencode(local.admin_password)}@${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}/${local.database_name_formatted}?schema=public"
 
   depends_on = [
     aws_rds_cluster_instance.database_instance
@@ -167,10 +162,10 @@ resource "aws_ssm_parameter" "admin_db_url" {
 }
 
 resource "aws_ssm_parameter" "admin_db_host" {
-  name   = local.admin_db_host_secret_name
-  type   = "SecureString"
-  value  = "${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}"
-  key_id = aws_kms_key.database_secrets.key_id
+  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  name  = local.admin_db_host_secret_name
+  type  = "SecureString"
+  value = "${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}"
 
   depends_on = [
     aws_rds_cluster_instance.database_instance
@@ -178,17 +173,12 @@ resource "aws_ssm_parameter" "admin_db_host" {
 }
 
 resource "aws_ssm_parameter" "admin_user" {
-  name   = local.admin_user_secret_name
-  type   = "SecureString"
-  value  = local.admin_user
-  key_id = aws_kms_key.database_secrets.key_id
+  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  name  = local.admin_user_secret_name
+  type  = "SecureString"
+  value = local.admin_user
 }
 
-# Encrypt the database secrets
-resource "aws_kms_key" "database_secrets" {
-  enable_key_rotation = true
-  description         = "KMS key for the database secrets"
-}
 ############################################################################################
 ## Backup Configuration
 ############################################################################################

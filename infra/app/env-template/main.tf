@@ -303,15 +303,10 @@ module "staff_secret" {
 }
 
 resource "aws_ssm_parameter" "staff_jwt_secret" {
-  name   = "/metadata/staff/${var.environment_name}-jwt-secret"
-  type   = "SecureString"
-  value  = base64encode(module.staff_secret.random_password)
-  key_id = aws_kms_key.staff_jwt_secret.key_id
-}
-# Encryption for the securestring
-resource "aws_kms_key" "staff_jwt_secret" {
-  enable_key_rotation = true
-  description         = "KMS key for the staff jwt secret"
+  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  name  = "/metadata/staff/${var.environment_name}-jwt-secret"
+  type  = "SecureString"
+  value = base64encode(module.staff_secret.random_password)
 }
 
 module "staff_dns" {

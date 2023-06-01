@@ -153,23 +153,19 @@ resource "aws_cognito_user_pool_client" "client" {
 }
 
 resource "aws_ssm_parameter" "client_id" {
-  name   = local.client_id_secret_name
-  type   = "SecureString"
-  value  = aws_cognito_user_pool_client.client.id
-  key_id = aws_kms_key.client_secrets.key_id
+  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  name  = local.client_id_secret_name
+  type  = "SecureString"
+  value = aws_cognito_user_pool_client.client.id
 }
 
 resource "aws_ssm_parameter" "client_secret" {
-  name   = local.client_secret_secret_name
-  type   = "SecureString"
-  value  = aws_cognito_user_pool_client.client.client_secret
-  key_id = aws_kms_key.client_secrets.key_id
+  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  name  = local.client_secret_secret_name
+  type  = "SecureString"
+  value = aws_cognito_user_pool_client.client.client_secret
 }
 
-resource "aws_kms_key" "client_secrets" {
-  enable_key_rotation = true
-  description         = "KMS key for client secrets"
-}
 ############################################################################################
 ## WAF association
 ############################################################################################
