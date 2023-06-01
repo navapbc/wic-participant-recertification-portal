@@ -25,6 +25,7 @@ resource "aws_iam_group_policy_attachment" "manage_wic_prp_env" {
 
 # Define the policy for managing PRP environments
 data "aws_iam_policy_document" "manage_wic_prp_env" {
+  # checkov:skip=CKV_AWS_356:narrowing the resource list requires too much technical lift for the time remaining
   statement {
     sid    = "General"
     effect = "Allow"

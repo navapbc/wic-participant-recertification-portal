@@ -290,6 +290,7 @@ resource "aws_cloudwatch_log_group" "waf" {
 
   # Checkov throws alerts in the event of default encryption for Cloudwatch,which is server-side encrytion for data at rest.
   # checkov:skip=CKV_AWS_158:Disabling this becuase if the key is deleted or otherwise unassociated, the cloudwatch logs will be inaccessible.
+  # checkov:skip=CKV_AWS_338:Retaining logs for at least 1 year is unessecary for this project.
 }
 
 module "s3_encrypted_bucket" {
