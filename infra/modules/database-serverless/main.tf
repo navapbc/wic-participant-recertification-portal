@@ -46,14 +46,15 @@ resource "aws_security_group" "database" {
 ############################
 resource "aws_db_instance" "database" {
   # checkov:skip=CKV_AWS_157:Multi-AZ is mostly unessecary for a project of this size.
-  identifier                          = var.database_name
-  allocated_storage                   = 20
-  engine                              = "postgres"
-  engine_version                      = "13.7"
+  identifier        = var.database_name
+  allocated_storage = 20
+  # "postgresql isn't a supported engine name in RDS. use postgres instead"
+  engine                              = var.database_type == "mysql" ? "mysql" : "postgres"
+  engine_version                      = var.database_type == "mysql" ? "8.0" : "14.6"
   instance_class                      = "db.t3.micro"
   db_name                             = local.database_name_formatted
-  port                                = 5432
-  enabled_cloudwatch_logs_exports     = ["postgresql"]
+  port                                = var.database_port
+  enabled_cloudwatch_logs_exports     = [var.database_type == "mysql" ? "general" : "postgresql"]
   apply_immediately                   = true
   deletion_protection                 = true
   storage_encrypted                   = true
