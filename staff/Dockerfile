@@ -51,9 +51,8 @@ CMD ["node", "./dist/server.js"]
 
 # Use the correct Lowdefy base image
 FROM lowdefy/lowdefy-aws-lambda:3.23.3 as lambda
+USER node
 COPY --from=production-deps /home/node/lowdefy/node_modules ./node_modules
 COPY --from=build --chown=node:node /home/node/lowdefy/.lowdefy/build ./build
 COPY --chown=node:node ./public ./public
-COPY bin/entrypoint.js ./
-ENTRYPOINT [ "node", "./entrypoint.js" ]
-CMD [ "/lambda-entrypoint.sh", "dist/server.handler"]
+CMD ["dist/server.handler"]
