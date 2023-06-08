@@ -95,9 +95,8 @@ resource "aws_rds_cluster" "database" {
   # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
   # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
   # checkov:skip=CKV_AWS_313: This is literally a new check; more research needed
-  # checkov:skip=CKV_AWS_325: This check is not related to this PR.
-  # checkov:skip=CKV_AWS_327: This check is not related to this PR.
-  # checkov:skip=CKV_AWS_324: This check is not related to this PR.
+  # checkov:skip=CKV_AWS_327: :Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining.
+  # checkov:skip=CKV_AWS_324: RDS Cluster log capture would be too much lift for the time remaining. DB is currently using cloudwatch.
   cluster_identifier                  = var.database_name
   engine                              = "aurora-${var.database_type}"
   engine_mode                         = "provisioned"
