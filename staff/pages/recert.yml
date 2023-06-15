@@ -11,7 +11,7 @@ requests: # Requests defines all the data requests made available in this page c
     connectionId: postgres # This is the ID of the connection. The connection itself is defined in `lowdefy.yml`
     properties:
       query: |
-        select jsonb_object_agg(coalesce(sf.form_route, 'Null'), sf.form_data) as form_data, s.updated_at, la.name as agency_name, d.s3_documents
+        select jsonb_object_agg(coalesce(sf.form_route, 'Null'), sf.form_data) as form_data, s.updated_at, la.name as agency_name, d.s3_documents, sf.submission_id
         from submissions s
         left join submission_forms sf on (s.submission_id = sf.submission_id)
         left join local_agencies la on (s.local_agency_id = la.local_agency_id)
@@ -125,6 +125,17 @@ blocks:
 
       # Define each table column
       columnDefs:
+        - headerName: Submission ID
+          wrapText: true
+          valueGetter:
+            _function:
+              __nunjucks:
+                template: |
+                  {{ submission_id }}
+                on:
+                  __args: 0.data
+
+
         - headerName: Submission date
           wrapText: true
           valueGetter:
