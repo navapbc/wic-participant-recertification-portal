@@ -11,7 +11,7 @@ requests: # Requests defines all the data requests made available in this page c
     connectionId: postgres # This is the ID of the connection. The connection itself is defined in `lowdefy.yml`
     properties:
       query: |
-        select jsonb_object_agg(coalesce(sf.form_route, 'Null'), sf.form_data) as form_data, s.updated_at, la.name as agency_name, d.s3_documents, sf.submission_id
+        select jsonb_object_agg(coalesce(sf.form_route, 'Null'), sf.form_data) as form_data, s.updated_at, s.submitted, la.name as agency_name, d.s3_documents, sf.submission_id
         from submissions s
         left join submission_forms sf on (s.submission_id = sf.submission_id)
         left join local_agencies la on (s.local_agency_id = la.local_agency_id)
@@ -23,7 +23,7 @@ requests: # Requests defines all the data requests made available in this page c
         left join staff_users su on (s.local_agency_id = su.local_agency_id)
         where su.staff_user_id = :staff_user_id
         and s.submitted = true
-        group by sf.submission_id, s.updated_at, la.name, d.s3_documents
+        group by sf.submission_id, s.updated_at, s.submitted, la.name, d.s3_documents
         order by s.updated_at desc;
       parameters:
         staff_user_id:
