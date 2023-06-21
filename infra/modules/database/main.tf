@@ -143,14 +143,14 @@ resource "aws_rds_cluster_instance" "database_instance" {
 ############################################################################################
 
 resource "aws_ssm_parameter" "admin_password" {
-  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.admin_password_secret_name
   type  = "SecureString"
   value = local.admin_password
 }
 
 resource "aws_ssm_parameter" "admin_db_url" {
-  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.admin_db_url_secret_name
   type  = "SecureString"
   value = "${var.database_type}://${local.admin_user}:${urlencode(local.admin_password)}@${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}/${local.database_name_formatted}?schema=public"
@@ -161,7 +161,7 @@ resource "aws_ssm_parameter" "admin_db_url" {
 }
 
 resource "aws_ssm_parameter" "admin_db_host" {
-  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.admin_db_host_secret_name
   type  = "SecureString"
   value = "${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}"
@@ -172,7 +172,7 @@ resource "aws_ssm_parameter" "admin_db_host" {
 }
 
 resource "aws_ssm_parameter" "admin_user" {
-  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.admin_user_secret_name
   type  = "SecureString"
   value = local.admin_user

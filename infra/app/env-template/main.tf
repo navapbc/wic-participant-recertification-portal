@@ -316,7 +316,7 @@ module "staff_secret" {
 }
 
 resource "aws_ssm_parameter" "staff_jwt_secret" {
-  # checkov:skip=CKV_AWS_337:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = "/metadata/staff/${var.environment_name}-jwt-secret"
   type  = "SecureString"
   value = base64encode(module.staff_secret.random_password)

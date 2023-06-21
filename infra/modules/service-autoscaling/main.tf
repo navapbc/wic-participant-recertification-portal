@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "autoscale" {
   # checkov:skip=CKV_AWS_109 Allow autoscaling to work
   # checkov:skip=CKV_AWS_111 Allow autoscaling to work
   # @TODO narrow resource list for autoscaling permissions
-  # checkov:skip=CKV_AWS_356:narrowing the resource list requires too much technical lift for the time remaining
+  # checkov:skip=CKV_AWS_356: skip narrowing resource list requirement.
   statement {
     sid    = "AllowAutoScaling"
     effect = "Allow"
