@@ -46,12 +46,6 @@ locals {
 ## - Protects the ALB with a WAF
 ############################################################################################
 
-module "alb_logging" {
-  source            = "../s3-encrypted"
-  s3_bucket_name    = var.service_name
-  log_target_prefix = var.service_name
-}
-
 resource "aws_lb" "alb" {
   name            = var.service_name
   idle_timeout    = "120"
@@ -71,8 +65,8 @@ resource "aws_lb" "alb" {
   # Enable access logging via s3 bucket
   access_logs {
     enabled = true
-    prefix  = var.service_name
-    bucket  = var.service_name
+    prefix  = "alb/${var.service_name}"
+    bucket  = var.s3_logging_bucket_id
   }
 }
 

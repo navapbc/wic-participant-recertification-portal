@@ -3,9 +3,9 @@ variable "s3_bucket_name" {
   description = "The name of the S3 bucket"
 }
 
-variable "log_target_prefix" {
+variable "s3_logging_bucket_id" {
   type        = string
-  description = "The prefix for all log object keys"
+  description = "The ID for the s3 bucket used for logging for this bucket"
 }
 
 variable "read_group_names" {
