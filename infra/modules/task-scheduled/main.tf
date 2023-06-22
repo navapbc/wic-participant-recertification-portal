@@ -1,3 +1,11 @@
+############################################################################################
+## A module for creating an Eventbridge scheduler schedule to run an existing ECS task
+## - Configures the ECS task to run using launch type FARGATE
+## - Disables retries with the expectation that the schedule will be cron-like
+## - Creates an IAM role for the schedule that grants access to a specific ECS task
+##   definition
+############################################################################################
+
 data "aws_caller_identity" "current" {}
 
 locals {
@@ -5,9 +13,9 @@ locals {
   schedule_role_policy_name = "${var.schedule_name}-policy"
 }
 
-##############################################
+############################################################################################
 ## Lookup ECS resources
-##############################################
+############################################################################################
 
 data "aws_ecs_cluster" "cluster" {
   cluster_name = var.cluster_name
@@ -17,9 +25,9 @@ data "aws_ecs_task_definition" "task_definition" {
   task_definition = var.task_definition_family
 }
 
-##############################################
-## Eventbridge schedule
-##############################################
+############################################################################################
+## Eventbridge scheduler schedule
+############################################################################################
 
 resource "aws_scheduler_schedule" "schedule" {
   # checkov:skip=CKV_AWS_297:Encrypt Eventbridge scheduler schedule with customer key in full deployment
@@ -36,10 +44,12 @@ resource "aws_scheduler_schedule" "schedule" {
     arn      = data.aws_ecs_cluster.cluster.arn
     role_arn = aws_iam_role.schedule.arn
     input    = var.container_task_override
+
     ecs_parameters {
       task_definition_arn     = data.aws_ecs_task_definition.task_definition.arn_without_revision
       enable_ecs_managed_tags = true
       launch_type             = "FARGATE"
+
       network_configuration {
         security_groups  = var.security_group_ids
         subnets          = var.subnet_ids
@@ -59,9 +69,9 @@ resource "aws_scheduler_schedule" "schedule" {
   ]
 }
 
-##############################################
+############################################################################################
 ## IAM role
-##############################################
+############################################################################################
 
 resource "aws_iam_role" "schedule" {
   name               = local.schedule_role_name

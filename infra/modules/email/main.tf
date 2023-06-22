@@ -1,3 +1,10 @@
+############################################################################################
+## A module for setting up SES
+## - Creates a verified domain and 0+ verified email accounts
+## - Configures DKIM and SPF
+## Note: This module assumes that the Route53 hosted zone has been created in the AWS Console
+############################################################################################
+
 data "aws_route53_zone" "domain" {
   name         = var.hosted_zone_domain
   private_zone = false

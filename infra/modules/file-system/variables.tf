@@ -5,7 +5,7 @@ variable "resource_name" {
 
 variable "vpc_id" {
   type        = string
-  description = "Uniquely identifies the VPC."
+  description = "The ID for the VPC"
 }
 
 variable "subnet_ids" {
@@ -20,22 +20,22 @@ variable "cidr_blocks" {
 
 variable "access_point_posix_uid" {
   type        = number
-  description = "Posix UID for the EFS access point"
+  description = "The posix UID for the EFS access point"
 }
 
 variable "access_point_posix_gid" {
   type        = number
-  description = "Posix GID for the EFS access point"
+  description = "The posix GID for the EFS access point"
 }
 
 variable "access_point_posix_permissions" {
   type        = string
-  description = "Posix permissions for the EFS access point"
+  description = "The posix permissions for the EFS access point"
   default     = "0755"
 }
 
 variable "access_point_root_dir" {
   type        = string
-  description = "EFS access point root directory"
+  description = "The EFS access point root directory"
   default     = "/"
 }

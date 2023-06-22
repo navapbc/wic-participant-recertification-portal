@@ -1,8 +1,15 @@
+############################################################################################
+## A module for creating an RDS Aurora database cluster
+## - Creates either a postgresql or mysql database instance (defaults to postgres) with
+##   enhanced monitoring
+## - Configures query logging
+## - Sets up a security group that allows all access within the VPC
+## - Stores database secrets (e.g. admin user name and password) in SSM Parameter Store
+## - Configures database backups to AWS Backup
+############################################################################################
+
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
-data "aws_vpc" "default" {
-  default = true
-}
 
 module "random_admin_database_password" {
   source = "../random-password"
@@ -20,9 +27,9 @@ locals {
   admin_password             = var.admin_password == "" ? module.random_admin_database_password.random_password : var.admin_password
 }
 
-################################################################################
-# Parameters for Query Logging
-################################################################################
+############################################################################################
+## Parameters for Query Logging
+############################################################################################
 
 # For psql query logging, see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.Concepts.PostgreSQL.html#USER_LogAccess.Concepts.PostgreSQL.Query_Logging
 resource "aws_rds_cluster_parameter_group" "rds_query_logging_postgresql" {
@@ -55,17 +62,17 @@ resource "aws_rds_cluster_parameter_group" "rds_query_logging_mysql" {
   }
 }
 
+############################################################################################
+## Security Group
+############################################################################################
 
-####################
-## Security Group ##
-####################
 resource "aws_security_group" "database" {
   # Specify name_prefix instead of name because when a change requires creating a new
   # security group, sometimes the change requires the new security group to be created
   # before the old one is destroyed. In this situation, the new one needs a unique name
   name_prefix = "${var.database_name}-database"
   description = "Allow inbound TCP access to database port"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = var.vpc_id
 
   lifecycle {
     create_before_destroy = true
@@ -76,14 +83,14 @@ resource "aws_security_group" "database" {
     protocol    = "tcp"
     from_port   = var.database_port
     to_port     = var.database_port
-    cidr_blocks = [data.aws_vpc.default.cidr_block]
+    cidr_blocks = var.cidr_blocks
   }
 }
 
+############################################################################################
+## Database Configuration
+############################################################################################
 
-############################
-## Database Configuration ##
-############################
 resource "aws_rds_cluster" "database" {
   # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
   # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
@@ -129,6 +136,11 @@ resource "aws_rds_cluster_instance" "database_instance" {
   monitoring_interval        = 30
 }
 
+############################################################################################
+## Secrets
+## - Stored in Systems Manager Parameter Store
+############################################################################################
+
 resource "aws_ssm_parameter" "admin_password" {
   name  = local.admin_password_secret_name
   type  = "SecureString"
@@ -161,9 +173,9 @@ resource "aws_ssm_parameter" "admin_user" {
   value = local.admin_user
 }
 
-################################################################################
-# Backup Configuration
-################################################################################
+############################################################################################
+## Backup Configuration
+############################################################################################
 
 resource "aws_backup_plan" "database" {
   name = "${var.database_name}-backup-plan"
@@ -184,6 +196,7 @@ resource "aws_backup_plan" "database" {
 data "aws_kms_key" "database" {
   key_id = "alias/aws/backup"
 }
+
 # create backup vault
 resource "aws_backup_vault" "database" {
   name        = "${var.database_name}-vault"
@@ -226,9 +239,9 @@ resource "aws_backup_selection" "database_backup" {
   ]
 }
 
-################################################################################
-# IAM role for enhanced monitoring
-################################################################################
+############################################################################################
+## IAM role for enhanced monitoring
+############################################################################################
 
 resource "aws_iam_role" "rds_enhanced_monitoring" {
   name               = "${var.database_name}-rds-enhanced-monitoring"
@@ -252,43 +265,5 @@ data "aws_iam_policy_document" "rds_enhanced_monitoring" {
       type        = "Service"
       identifiers = ["monitoring.rds.amazonaws.com"]
     }
-  }
-}
-
-
-################################################################################
-# IAM role for user access
-################################################################################
-resource "aws_iam_policy" "db_access" {
-  name        = "${var.database_name}-db-access"
-  description = "Allows administration of the database instance"
-  policy      = data.aws_iam_policy_document.db_access.json
-}
-
-data "aws_iam_policy_document" "db_access" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "rds:CreateDBInstance",
-      "rds:ModifyDBInstance",
-      "rds:CreateDBSnapshot"
-    ]
-    resources = [aws_rds_cluster.database.arn]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "rds:Describe*"
-    ]
-    resources = [aws_rds_cluster.database.arn]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "rds:AddTagToResource"
-    ]
-    resources = [aws_rds_cluster_instance.database_instance.arn]
   }
 }

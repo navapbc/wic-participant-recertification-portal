@@ -1,4 +1,15 @@
+############################################################################################
+## A module for creating a WAFv2 Web ACL
+## - Configures a number of common AWS managed WAF rules
+## - Configures logging for the Web ACL
+############################################################################################
+
 data "aws_caller_identity" "current" {}
+
+############################################################################################
+## WAF Web ACL
+############################################################################################
+
 resource "aws_wafv2_web_acl" "waf" {
   name        = var.waf_name
   description = "Managed ruleset for WAF."
@@ -10,7 +21,7 @@ resource "aws_wafv2_web_acl" "waf" {
 
   rule {
     name     = "AWSGeneralRules"
-    priority = 1
+    priority = 0
 
     override_action {
       count {}
@@ -32,7 +43,7 @@ resource "aws_wafv2_web_acl" "waf" {
 
   rule {
     name     = "AWSManageKnownBadInputs"
-    priority = 2
+    priority = 1
     # setting to none re this solution here: https://github.com/bridgecrewio/checkov/issues/2101
     # count rule override: https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-rule-group-override-options.html#web-acl-rule-group-override-options-rule-group
     override_action {
@@ -55,7 +66,7 @@ resource "aws_wafv2_web_acl" "waf" {
   rule {
     # Inspect IPs that have been identified as bots by Amazon
     name     = "AWSIPReputationList"
-    priority = 3
+    priority = 2
     override_action {
       count {}
     }
@@ -76,7 +87,7 @@ resource "aws_wafv2_web_acl" "waf" {
   rule {
     # Inspects IPs for services known to anonymize client information e.g. proxies
     name     = "AWSAnonList"
-    priority = 4
+    priority = 3
     override_action { # does this need an override?
       count {}
     }
@@ -97,7 +108,7 @@ resource "aws_wafv2_web_acl" "waf" {
   rule {
     # Blocks requests associated with SQL database exploitation
     name     = "AWSSQLManagement"
-    priority = 5
+    priority = 4
     override_action {
       count {}
     }
@@ -118,7 +129,7 @@ resource "aws_wafv2_web_acl" "waf" {
   rule {
     # Blocks requests associated with Linux exploitation
     name     = "AWSLinuxManagement"
-    priority = 6
+    priority = 5
     override_action {
       count {}
     }
@@ -138,7 +149,7 @@ resource "aws_wafv2_web_acl" "waf" {
   rule {
     # Blocks requests associated with POSIX and POSIX-like OS exploitation
     name     = "AWSUnixManagement"
-    priority = 7
+    priority = 6
     override_action {
       count {}
     }
@@ -158,7 +169,7 @@ resource "aws_wafv2_web_acl" "waf" {
   rule {
     # Applies a rate based rule to IPs originating in the US
     name     = "AWSRateBasedRuleDomesticDOS"
-    priority = 8
+    priority = 7
 
     action {
       block {}
@@ -186,7 +197,7 @@ resource "aws_wafv2_web_acl" "waf" {
   rule {
     # Applies a rate based rule to IPs originating outside of the US
     name     = "AWSRateBasedRuleGlobalDOS"
-    priority = 9
+    priority = 8
 
     action {
       block {}
@@ -215,6 +226,48 @@ resource "aws_wafv2_web_acl" "waf" {
       sampled_requests_enabled   = false
     }
   }
+  rule {
+    name     = "BlockSuspiciousPOST"
+    priority = 9
+    action {
+      block {}
+    }
+    statement {
+      and_statement {
+        statement {
+          byte_match_statement {
+            search_string         = "POST"
+            positional_constraint = "EXACTLY"
+            field_to_match {
+              method {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+        statement {
+          byte_match_statement {
+            search_string         = "/"
+            positional_constraint = "EXACTLY"
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+          }
+        }
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BlockSuspiciousPOST"
+      sampled_requests_enabled   = true
+    }
+  }
   visibility_config {
     cloudwatch_metrics_enabled = true
     metric_name                = "waf-general-metrics"
@@ -222,87 +275,20 @@ resource "aws_wafv2_web_acl" "waf" {
   }
 }
 
-# logging configuration resource
+############################################################################################
+## WAF logging
+## - Logs to Cloudwatch Logs
+############################################################################################
+
 resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
-  log_destination_configs = [aws_kinesis_firehose_delivery_stream.waf_logging.arn]
+  log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
   resource_arn            = aws_wafv2_web_acl.waf.arn
 }
-# firehose to recieve logs
-resource "aws_kinesis_firehose_delivery_stream" "waf_logging" {
-  name        = "aws-waf-logs-metrics-stream"
-  destination = "extended_s3"
-  server_side_encryption {
-    enabled  = true
-    key_type = "CUSTOMER_MANAGED_CMK"
-    key_arn  = module.s3_encrypted_bucket.bucket_kms_arn
-  }
-  extended_s3_configuration {
-    role_arn   = aws_iam_role.firehose_perms.arn
-    bucket_arn = module.s3_encrypted_bucket.encrypted_bucket_arn
-  }
-}
 
-# IAM Role for Kinesis
-resource "aws_iam_role" "firehose_perms" {
-  name               = var.waf_iam_name
-  description        = "IAM role for the KDF"
-  assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
-}
+resource "aws_cloudwatch_log_group" "waf" {
+  name              = var.waf_logging_name
+  retention_in_days = 30
 
-# assume role
-data "aws_iam_policy_document" "firehose_assume_role" {
-  statement {
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["firehose.amazonaws.com"]
-    }
-  }
-}
-
-# role policy
-data "aws_iam_policy_document" "firehose_perms" {
-  statement {
-    sid    = "AccessKDF"
-    effect = "Allow"
-    actions = [
-      "kinesis:Get*",
-      "kinesis:PutRecord",
-      "s3:GetBucket",
-      "s3:PutObject"
-    ]
-    resources = [module.s3_encrypted_bucket.encrypted_bucket_arn, "${module.s3_encrypted_bucket.encrypted_bucket_arn}/*"]
-  }
-}
-
-# s3 logging bucket; this is a refactor to DRY up the code
-module "s3_encrypted_bucket" {
-  source           = "../s3-encrypted"
-  s3_bucket_name   = "wic-prp-waf"
-  environment_name = "waf"
-}
-
-resource "aws_s3_bucket_lifecycle_configuration" "waf_logging" {
-  bucket                = module.s3_encrypted_bucket.encrypted_bucket_id
-  expected_bucket_owner = data.aws_caller_identity.current.account_id
-
-  rule {
-    id     = "move-s3-to-ia"
-    status = "Enabled"
-
-    abort_incomplete_multipart_upload {
-      days_after_initiation = 15
-    }
-
-    transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
-    }
-
-    noncurrent_version_transition {
-      noncurrent_days = 30
-      storage_class   = "STANDARD_IA"
-    }
-  }
+  # Checkov throws alerts in the event of default encryption for Cloudwatch,which is server-side encrytion for data at rest.
+  # checkov:skip=CKV_AWS_158:Disabling this becuase if the key is deleted or otherwise unassociated, the cloudwatch logs will be inaccessible.
 }

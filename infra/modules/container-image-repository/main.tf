@@ -1,3 +1,8 @@
+############################################################################################
+## A module for creating a container image registry using AWS ECR
+## - Creates an encrypted AWS ECR repository with immutable tags
+############################################################################################
+
 data "aws_region" "current" {}
 
 locals {

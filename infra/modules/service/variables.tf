@@ -6,6 +6,72 @@ variable "service_name" {
   }
 }
 
+############################################################################################
+## Variables for networking
+############################################################################################
+
+variable "vpc_id" {
+  type        = string
+  description = "Uniquely identifies the VPC"
+}
+
+variable "subnet_ids" {
+  type        = list(any)
+  description = "Private subnet id from vpc module"
+}
+
+variable "container_port" {
+  type        = number
+  description = "The port that the container outputs traffic to"
+  default     = 8000
+}
+
+variable "ssl_cert_arn" {
+  type        = string
+  description = "The arn of the SSL certificate for the HTTPS ALB listener"
+}
+
+variable "s3_logging_bucket_id" {
+  type        = string
+  description = "The id of the s3 bucket for ALB access logging"
+}
+
+variable "waf_name" {
+  type        = string
+  description = "The name of the WAF used to protect the ALB"
+}
+
+############################################################################################
+## Variables for the ECS service
+############################################################################################
+
+variable "desired_instance_count" {
+  type        = number
+  description = "Number of instances of the task definition to place and keep running"
+  default     = 1
+}
+
+variable "service_cluster_arn" {
+  type        = string
+  description = "The arn of the service cluster that the service should be part of"
+}
+
+variable "service_deployment_maximum_percent" {
+  type        = number
+  description = "The service deployment maximum percent"
+  default     = 200
+}
+
+variable "enable_exec" {
+  type        = bool
+  description = "Enable exec access to ECS task"
+  default     = false
+}
+
+############################################################################################
+## Variables for the ECS task definition
+############################################################################################
+
 variable "image_tag" {
   type        = string
   description = "The tag of the image to deploy"
@@ -21,28 +87,16 @@ variable "image_repository_arn" {
   description = "The arn of the container image repository"
 }
 
-variable "desired_instance_count" {
-  type        = number
-  description = "Number of instances of the task definition to place and keep running."
-  default     = 1
-}
-
 variable "cpu" {
   type        = number
   default     = 256
-  description = "Number of cpu units used by the task, expessed as an integer value, e.g 512 "
+  description = "Number of cpu units used by the task, expessed as an integer value, e.g 512"
 }
 
 variable "memory" {
   type        = number
   default     = 512
   description = "Amount (in MiB) of memory used by the task. e.g. 2048"
-}
-
-variable "container_port" {
-  type        = number
-  description = "The port number on the container that's bound to the user-specified"
-  default     = 8000
 }
 
 variable "container_env_vars" {
@@ -85,26 +139,23 @@ variable "container_read_only" {
   default     = true
 }
 
-variable "vpc_id" {
-  type        = string
-  description = "Uniquely identifies the VPC."
-}
 
-variable "subnet_ids" {
-  type        = list(any)
-  description = "Private subnet id from vpc module"
-}
-
-variable "service_cluster_arn" {
-  type        = string
-  description = "The arn of the service cluster that the service should be part of"
-}
-
-variable "service_ssm_resource_paths" {
+variable "ssm_resource_paths" {
   type        = list(string)
   description = "A list of ssm resource paths that the ECS task executor should have permission to access"
   default     = []
 }
+
+variable "task_role_max_session_duration" {
+  type        = number
+  description = "The maximum session duration for the ECS task role (in seconds)"
+  default     = 60 * 60 # 1 hour
+}
+
+############################################################################################
+## Variables for healthcheck
+## - Controls healthcheck in the ECS task definition and in the ALB
+############################################################################################
 
 variable "enable_healthcheck" {
   type        = bool
@@ -130,24 +181,6 @@ variable "healthcheck_type" {
 
 variable "healthcheck_start_period" {
   type        = number
-  description = "The optional grace period to provide containers time to bootstrap in before failed health checks count towards the maximum number of retries."
+  description = "The optional grace period to provide containers time to bootstrap in before failed health checks count towards the maximum number of retries"
   default     = 0
-}
-
-variable "enable_exec" {
-  type        = bool
-  description = "Enable exec access to ECS task"
-  default     = false
-}
-
-variable "service_deployment_maximum_percent" {
-  type        = number
-  description = "The service deployment maximum percent"
-  default     = 200
-}
-
-variable "task_role_max_session_duration" {
-  type        = number
-  description = "The maximum session duration for the ECS task role (in seconds)"
-  default     = 60 * 60 # 1 hour
 }

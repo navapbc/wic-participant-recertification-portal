@@ -106,3 +106,8 @@ variable "hosted_zone_domain" {
   type        = string
   description = "The aws_route53_zone domain"
 }
+
+variable "waf_name" {
+  type        = string
+  description = "The name of the WAF used to protect the user pool"
+}

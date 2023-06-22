@@ -1,3 +1,12 @@
+############################################################################################
+## A module to create an S3 backend module for managing terraform resources
+## This module creates resources for an [S3 backend for Terraform](https://www.terraform.io/language/settings/backends/s3). It creates the following resources:
+##
+## - Creates an S3 bucket to store [Terraform state files](https://www.terraform.io/language/state)
+## - Creates an S3 bucket to store [S3 access logs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html)
+## - Creates a DynamoDB table to manage [terraform state locks](https://www.terraform.io/language/state/locking)
+############################################################################################
+
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 data "aws_partition" "current" {}

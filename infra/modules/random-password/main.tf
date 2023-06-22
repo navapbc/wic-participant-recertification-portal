@@ -1,3 +1,7 @@
+############################################################################################
+## A module to generate a random password
+############################################################################################
+
 resource "random_password" "random_password" {
   length           = var.length
   special          = true
