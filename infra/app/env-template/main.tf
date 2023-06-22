@@ -129,7 +129,7 @@ data "aws_ecr_repository" "participant_image_repository" {
 }
 
 module "participant_database" {
-  source        = "../../modules/database-serverless"
+  source        = "../../modules/database"
   database_name = local.participant_database_name
   vpc_id        = data.aws_vpc.default.id
   cidr_blocks   = [data.aws_vpc.default.cidr_block]
@@ -393,7 +393,7 @@ data "aws_ecr_repository" "analytics_image_repository" {
 }
 
 module "analytics_database" {
-  source        = "../../modules/database-serverless"
+  source        = "../../modules/database"
   database_name = local.analytics_database_name
   database_port = 3306
   database_type = "mysql"
