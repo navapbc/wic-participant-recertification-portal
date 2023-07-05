@@ -95,8 +95,8 @@ resource "aws_rds_cluster" "database" {
   # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
   # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
   # checkov:skip=CKV_AWS_313: This is literally a new check; more research needed
-  # checkov:skip=CKV_AWS_327: :Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining.
-  # checkov:skip=CKV_AWS_324: RDS Cluster log capture would be too much lift for the time remaining. DB is currently using cloudwatch.
+  # checkov:skip=CKV_AWS_327: Need to assign the access permissions for the KMS key.
+  # checkov:skip=CKV_AWS_324: This check requires the use of RDS Cluster log capture. DB is currently using cloudwatch.
   cluster_identifier                  = var.database_name
   engine                              = "aurora-${var.database_type}"
   engine_mode                         = "provisioned"
@@ -126,7 +126,7 @@ resource "aws_rds_cluster" "database" {
 }
 
 resource "aws_rds_cluster_instance" "database_instance" {
-  # checkov:skip=CKV_AWS_354:Need to assign the access permissions for the KMS key, which would be too much lift for the time remaining
+  # checkov:skip=CKV_AWS_354:Need to assign the access permissions for the KMS key.
   cluster_identifier           = aws_rds_cluster.database.id
   instance_class               = "db.serverless"
   engine                       = aws_rds_cluster.database.engine
