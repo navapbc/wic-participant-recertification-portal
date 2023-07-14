@@ -3,7 +3,6 @@
 // work to continue working without modification
 export {
   Link,
-  useLocation,
   useCatch,
   useTransition,
   useMatches,
@@ -16,7 +15,9 @@ import { ReactElement } from "react";
 // ALL useActionData calls in all routes rendered in Storybook
 // receive the contents of this response
 export const useActionData = () => {};
-
+export const useLocation = () => {
+  return { pathname: "#" };
+};
 export const useFetcher = () => {
   return { submit: () => {} };
 };
