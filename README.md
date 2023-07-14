@@ -1,8 +1,12 @@
 # WIC Participant Recertification Portal
 
+## Overview
+
+This repo contains code for a WIC participant-facing portal that enables participants to submit information and documents ahead of their recertification appointment, a necessary step in renewing WIC benefits. It also contains application code for a WIC staff-facing portal to manage participant recertification information and prepare for recertification appointments.
+
 ## I want to set this up for my WIC State Agency. How do I do that?
 
-Ready to jump in? Great! Dig into the [getting started documentation]() to understand how to get up and running and how to customize this project for your WIC agency. Take a look at the [architecture]() documentation to see how all of the components fit together.
+Ready to jump in? Great! Dig into the [getting started documentation](@TODO) to understand how to get up and running and how to customize this project for your WIC agency. Take a look at the [architecture](@TODO) documentation to see how all of the components fit together.
 
 ## Project components
 
@@ -16,11 +20,11 @@ This project consists of the following components:
 ### Demos
 
 - **Participant portal:**
-  - You can access a live version of the participant portal at [@TODO]().
+  - You can access a live version of the participant portal at <https://wic-recertification.demo.navapbc.com>.
   - You can access the [Storybook](https://storybook.js.org) for the participant portal. [Our storybook](https://navapbc.github.io/wic-participant-recertification-portal) provides an interactive list of all of the React components for the participant portal, as well as all of the Remix pages.
 - **Staff portal:**
-  - You can access a static version of the staff portal at [@TODO]().
-  - ℹ️ Note: For privacy and security reasons, this demo *does not* show live data from the participant portal, nor is it require authentication.
+  - You can access a static version of the staff portal at <https://wic-recertification-staff.demo.navapbc.com>.
+  - ℹ️ Note: For privacy and security reasons, this demo *does not* show live data from the participant portal, nor does it require authentication.
 
 ## Project status
 
@@ -44,7 +48,7 @@ When designing public services, it's important to conduct research with people w
 
 A PAC is a group of program participants that convenes to engage in user research sessions and advise on program improvements. Our council was made up of 12 WIC participants who attended monthly meetings and participated in research activities to help our team ensure that the tools we built met participants’ needs. Read more about PACs in Nava's [How to Build a Participant Advisory Council Toolkit](https://www.navapbc.com/toolkits/how-to-build-a-participant-advisory-council).
 
-Oour Design team also met regularly with Montana WIC stakeholders and an Advising States Council made up of subject matter experts from three other WIC State Agencies to ensure that the tools we built also met staff needs and would be informed by requirements beyond just Montana's.
+Our Design team also met regularly with Montana WIC stakeholders and an Advising States Council made up of subject matter experts from three other WIC State Agencies to ensure that the tools we built also met staff needs and would be informed by requirements beyond just Montana's.
 
 ### Pilot
 
