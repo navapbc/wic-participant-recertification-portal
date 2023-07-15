@@ -10,7 +10,7 @@ This process will create infrastructure resources needed:
 
 ## Prerequisites
 
-This guide assumes you have already gone through the [AWS account setup](./set-up-aws-account.md).
+This guide assumes you have already gone through the [AWS account setup](./2-set-up-aws-account.md).
 
 ## Instructions
 
@@ -39,6 +39,6 @@ terraform apply plan.out
 
 Once these steps are complete, this should not need to be touched again.
 
-## Set up application environments
+## Next Up
 
-Once you set up the deployment process, you can proceed to [set up application environments](./set-up-app-env.md)
+You can now proceed to [setting up application environments](./4-set-up-app-env.md).

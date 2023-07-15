@@ -9,7 +9,7 @@ The AWS account setup process will:
 
 ## Prerequisites
 
-First, [set up infrastructure tools](./set-up-infrastructure-tools.md), like Terraform, AWS CLI, and AWS authentication.
+This guide assumes you have [set up infrastructure tools](./1-set-up-infrastructure-tools.md), like Terraform, AWS CLI, and AWS authentication.
 
 ## Overview of Terraform backend management
 
@@ -110,3 +110,7 @@ Once these steps are complete, this should not need to be touched again.
 ## Destroying infrastructure
 
 To undeploy and destroy infrastructure, see [instructions on destroying infrastructure](./destroy-infrastructure.md).
+
+## Next Up
+
+You can now proceed to [setting up application](./2-set-up-app.md).

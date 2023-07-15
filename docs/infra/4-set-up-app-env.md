@@ -12,7 +12,7 @@ All three environments rely on a shared child module `/infra/app/env-template`.
 
 ## Prerequisites
 
-This guide assumes you have already gone through the [application setup](./set-up-app.md).
+This guide assumes you have already gone through the [application setup](./3-set-up-app.md).
 
 ## Instructions
 

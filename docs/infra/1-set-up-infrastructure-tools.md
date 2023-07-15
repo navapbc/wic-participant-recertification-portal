@@ -1,8 +1,6 @@
 # Set up infrastructure developer tools
 
-## Prerequisites
-
-### Install Terraform
+## Terraform
 
 [Terraform](https://www.terraform.io/) is an infrastructure as code (IaC) tool that allows you to build, change, and version infrastructure safely and efficiently. This includes both low-level components like compute instances, storage, and networking, as well as high-level components like DNS entries and SaaS features.
 
@@ -20,25 +18,13 @@ Then install the version of Terraform you need.
 tfenv install 1.2.1
 ```
 
-If you are unfamiliar with Terraform, check out this [basic introduction to Terraform](./introduction-to-terraform.md).
+If you are unfamiliar with Terraform, check out this [basic introduction to Terraform](./0-introduction-to-terraform.md).
 
-### Install AWS CLI
+## AWS CLI
 
 The [AWS Command Line Interface (AWS CLI)](https://aws.amazon.com/cli/) is a unified tool to manage your AWS services. With just one tool to download and configure, you can control multiple AWS services from the command line and automate them through scripts. Install the AWS commmand line tool by following the instructions found here:
 
 - [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-
-### Install Go
-
-The [Go programming language](https://go.dev/dl/) is required to run [Terratest](https://terratest.gruntwork.io/), the unit test framework for Terraform.
-
-### Install GitHub CLI
-
-The [GitHub CLI](https://cli.github.com/) is useful for automating certain operations for GitHub such as with GitHub actions.
-
-```bash
-brew install gh
-```
 
 ## AWS Authentication
 
@@ -84,3 +70,7 @@ aws sts get-caller-identity
 [1]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html
 [2]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
 [3]: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
+
+## Next Up
+
+You can now proceed to [setting up the AWS account](./2-set-up-aws-account.md).
