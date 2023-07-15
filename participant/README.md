@@ -5,4 +5,3 @@ The participant app is a [Remix](https://remix.run) application that enables WIC
 ---
 
 ![Participant portal screenshot](../docs/imgs/participant-portal.png)
-
