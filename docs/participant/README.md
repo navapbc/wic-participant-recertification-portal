@@ -7,6 +7,9 @@
 - [Application Architecture and Components](./architecture.md)
 - [Application Internals](./application.md)
 - [Development](./development.md)
+- [Linting, Typechecking, and Formatting](./formatting.md)
+- [Testing](./testing.md)
+- [The Remix Shoegaze Stack](./remix-stack.md)
 
 ## Page Details
 

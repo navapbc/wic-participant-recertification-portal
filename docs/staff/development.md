@@ -39,7 +39,7 @@ The participant portal includes much more robust end-to-end testing. The staff p
 
 Both the staff portal and the participant portal have an npm script in `package.json` that allows you to run `npm run e2e`. This will call the `/bin/run-e2e.sh` bash script in, which in turn will execute the `docker-compose.e2e.yml`.
 
-Note: We chose to run playwright inside a docker container because we were experiencing significant pixel drift between snapshots taken on macOS vs snapshots taken in CI using Github Actions.
+> Note: We chose to run playwright inside a docker container because we were experiencing significant pixel drift between snapshots taken on macOS vs snapshots taken in CI using Github Actions.
 
 ## Deployment
 
