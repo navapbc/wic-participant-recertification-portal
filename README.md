@@ -6,7 +6,7 @@ This repo contains code for a WIC participant-facing portal that enables partici
 
 ## I want to set this up for my WIC State Agency. How do I do that?
 
-Ready to jump in? Great! Dig into the [getting started documentation](@TODO) to understand how to get up and running and how to customize this project for your WIC agency. Take a look at the [architecture](@TODO) documentation to see how all of the components fit together.
+Ready to jump in? Great! Dig into the [getting started documentation](./docs/README.md) to understand how to get up and running and how to customize this project for your WIC agency.
 
 ## Project components
 
