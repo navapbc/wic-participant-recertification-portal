@@ -1,7 +1,5 @@
 # Set up infrastructure developer tools
 
-If you are contributing to infrastructure, you will need to complete these setup steps.
-
 ## Prerequisites
 
 ### Install Terraform

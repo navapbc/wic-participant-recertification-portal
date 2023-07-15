@@ -1,41 +1,42 @@
-# Set up application environment
+# Set up application environments
 
-## 1. Configure backend
+> Note: This is (ideally) a process that you'll only need to run one time to set up cross-application resources.
 
-To set up To get started with an environment, copy the backend configuration information created from the relevant account
+This repo has configured three environments (listed in order of lowest to highest):
 
-```bash
-cd infra/accounts/account
-terraform output -raw tf_state_bucket_name
-terraform output -raw tf_locks_table_name
-terraform output -raw region
-```
+1. `dev`
+2. `staging`
+3. `prod`
 
-Now navigate to the environment module of the application you want to set up (e.g. `infra/app/envs/dev`)
+All three environments rely on a shared child module `/infra/app/env-template`.
 
-```terraform
-# infra/app/envs/dev.tf
+## Prerequisites
 
-backend "s3" {
-  bucket         = "<TF_STATE_BUCKET_NAME>"
-  key            = "infra/<APP_NAME>/envs/dev.tfstate"
-  dynamodb_table = "<TF_LOCKS_TABLE_NAME>"
-  region         = "<REGION>"
-  encrypt        = "true"
-}
-```
+This guide assumes you have already gone through the [application setup](./set-up-app.md).
 
-Then initialize terraform
+## Instructions
+
+For each of these terraform modules, perform the following steps (i.e. do this 3 times):
+
+- `/infra/app/envs/dev`
+- `/infra/app/envs/staging`
+- `/infra/app/envs/prod`
+
+### 1. Review the backend resources that will be created
+
+Open a terminal and cd into the above directory and run the following commands:
 
 ```bash
 terraform init
+terraform plan -out=plan.out
 ```
 
-## 2. Create application resources
+Review the plan to make sure that the resources look correct.
 
-Now run the following commands to create the resources, making sure to verify the plan very applying.
+### 2. Create the backend resources
 
 ```bash
-terraform plan -out=plan.out
 terraform apply plan.out
 ```
+
+You will need to run these instructions any time you make changes to your environment application infrastructure.

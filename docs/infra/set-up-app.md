@@ -1,51 +1,43 @@
 # Set up application
 
-To application setup process will:
+> Note: This is (ideally) a process that you'll only need to run one time to set up cross-application resources.
 
-1. Create infrastructure resources needed to store built release candidate artifacts used to deploy the application to an environment.
-2. Create one or more application environmnets for running the application.
+This process will create infrastructure resources needed:
 
-## Set up application deployment process
+1. To store built release candidate artifacts used to deploy applications to an environment.
+2. To configure an [web application firewall](https://aws.amazon.com/waf) to protect the applications.
+3. To send emails to WIC staff to access the staff portal.
 
-### 1. Configure backend
+## Prerequisites
 
-Get the backend configration values for the S3 backend in production. If your prod account is in `infra/accounts/prod`, you would do
+This guide assumes you have already gone through the [AWS account setup](./set-up-aws-account.md).
 
-```bash
-cd infra/accounts/prod
-terraform output -raw tf_state_bucket_name
-terraform output -raw tf_locks_table_name
-terraform output -raw region
-```
+## Instructions
 
-Now navigate to the `build-repository` module of the application you want to set up (e.g. `infra/app/build-repository`)
+For each of these terraform modules, perform the following steps (i.e. do this 3 times):
 
-```terraform
-# infra/app/build-repository/main.tf
+- `/infra/app/build-repository`
+- `/infra/app/app-waf`
+- `/infra/app/app-email`
 
-backend "s3" {
-  bucket         = "<TF_STATE_BUCKET_NAME>"
-  key            = "infra/<APP_NAME>/build-repository.tfstate"
-  dynamodb_table = "<TF_LOCKS_TABLE_NAME>"
-  region         = "<REGION>"
-  encrypt        = "true"
-}
-```
+### 1. Review the backend resources that will be created
 
-Then initialize terraform
+Open a terminal and cd into the above directory and run the following commands:
 
 ```bash
 terraform init
+terraform plan -out=plan.out
 ```
 
-### 2. Create build repository resources
+Review the plan to make sure that the resources look correct.
 
-Now run the following commands to create the resources, making sure to verify the plan very applying.
+### 2. Create the backend resources
 
 ```bash
-terraform plan -out=plan.out
 terraform apply plan.out
 ```
+
+Once these steps are complete, this should not need to be touched again.
 
 ## Set up application environments
 
