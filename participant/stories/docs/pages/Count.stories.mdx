@@ -44,11 +44,11 @@ import { Canvas, Meta, Story } from "@storybook/addon-docs";
 
 User research showed that WIC participants don't distinguish between household members directly enrolled in WIC and authorized representatives. However, we only want to collect detailed information about WIC participants who are recertifying. So the count page includes content and nudges to help the user understand whose info we need. We use the /count page to identify how many people are recertifying from their household, which creates that number of "participant cards" on the /details page. The number entered in /count is not saved anywhere, it's just to generate participant cards. Users can remove the number of participant cards on the /details page.
 
-### Considerations for other states:
+## Considerations for Other States
 
 If your state is able to surface who is recertifying, for example by using MIS data, then you can avoid this and the /count pages all together and instead surface to the user who is recertifying.
 
-### Development
+## Development
 
 The Count page collects a number of individuals being recertified, to populate the [Details](?path=/docs/docs-pages-details--details) form
 

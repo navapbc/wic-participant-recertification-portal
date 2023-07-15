@@ -1,14 +1,14 @@
 # About Page
 
-### About this page:
+## About This Page
 
 This page contains static content about the process. It's written at a very high level.
 
-### Considerations for other states:
+## Considerations for Other States
 
 This page may not need to change even if you make changes to the rest of the flow, given how high level it is.
 
-### Development
+## Development
 
 The About page describes the overall steps process using a USWDS / Trussworks [`<ProcessList>`](https://trussworks.github.io/react-uswds/?path=/story/components-processlist--process-list-default) component
 

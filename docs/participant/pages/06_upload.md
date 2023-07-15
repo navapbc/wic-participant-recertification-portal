@@ -1,6 +1,6 @@
 # Upload
 
-### About this page:
+## About This Page
 
 ​​We use the participant's situation to determine which kinds of documents, if any, they need to provide:
 
@@ -8,12 +8,12 @@
 - If they moved, they need to provide proof of address.
 - If they changed their name and/or their previous ID doc expired, they need to provide new proof of identity.
 
-### Considerations for other states:
+## Considerations for Other States
 
 What are your policies around verifying identity and address?
 If you require documents in all scenarios, you may be able to simplify this document upload flow.
 
-### Development
+## Development
 
 The Upload page renders a [`<FileUploader>`](../../../participant/app/components/FileUploader.tsx) component, as well as a separate group of [`<FilePreview>`](../../../participant/app/components/FilePreview.tsx) components for files previously uploaded. (The `<FileUploader>` component also contains `<FilePreview>` components for uploads done in the current page load)
 
