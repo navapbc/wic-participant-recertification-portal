@@ -140,6 +140,7 @@ module "participant_dns" {
   hosted_zone_domain   = local.hosted_zone_domain
   application_alb_name = local.participant_service_name
   alias_url            = var.participant_url
+  depends_on           = [module.participant]
 }
 
 module "participant" {
@@ -266,6 +267,7 @@ module "refresh_s3_presigned_urls" {
   subnet_ids              = data.aws_subnets.default.ids
   schedule_expression     = "cron(0 9 * * ? *)" # Run once a day at ~3am US time
   schedule_enabled        = true
+  depends_on              = [module.participant]
 }
 
 module "side_load" {
@@ -327,6 +329,7 @@ module "staff_dns" {
   hosted_zone_domain   = local.hosted_zone_domain
   application_alb_name = local.staff_service_name
   alias_url            = var.staff_url
+  depends_on           = [module.staff]
 }
 
 module "staff" {
@@ -407,6 +410,7 @@ module "analytics_dns" {
   hosted_zone_domain   = local.hosted_zone_domain
   application_alb_name = local.analytics_service_name
   alias_url            = var.analytics_url
+  depends_on           = [module.analytics]
 }
 
 module "analytics_file_system" {
