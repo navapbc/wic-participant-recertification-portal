@@ -4,6 +4,8 @@
 
 The staff portal is a [Lowdefy](https://lowdefy.com) that allows WIC staff to access the information and documents that participants submitted in the participant portal. See the [docs](../docs/staff) for details.
 
+![Staff portal screenshot](../docs/imgs/staff-portal.png)
+
 ## Customization
 
 The staff portal was built for [Montana WIC](https://dphhs.mt.gov/ecfsd/WIC). To customize it for a different WIC state agency, change:
