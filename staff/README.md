@@ -6,7 +6,7 @@ The staff portal is a [Lowdefy](https://lowdefy.com) that allows WIC staff to ac
 
 ![Staff portal screenshot](../docs/imgs/staff-portal.png)
 
-## Customization
+## Considerations for Other States
 
 The staff portal was built for [Montana WIC](https://dphhs.mt.gov/ecfsd/WIC). To customize it for a different WIC state agency, change:
 
