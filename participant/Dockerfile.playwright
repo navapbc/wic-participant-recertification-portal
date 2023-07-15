@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.31.0-focal
+FROM mcr.microsoft.com/playwright:v1.36.1-focal
 # npm install must be run in a non-root directory
 WORKDIR /srv
 # Install packages needed to run playwright tests
