@@ -6,7 +6,7 @@
 
 - [Application Architecture and Components](./architecture.md)
 - [Application Internals](./application.md)
-- [Development](./development)
+- [Development](./development.md)
 
 ## Page Details
 
