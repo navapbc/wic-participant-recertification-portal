@@ -1,6 +1,6 @@
-## Development & Deployment
+# Development, Deployment, and Testing
 
-### Docker
+## Docker
 
 The application is intended to be deployed as a docker container The `Dockerfile` uses a multi-stage build strategy to flexibly build different images needed for different contexts:
 
@@ -9,7 +9,7 @@ The application is intended to be deployed as a docker container The `Dockerfile
 
 Files that docker builds should ignore are tracked in `.dockerignore`.
 
-### Local Development
+## Local Development
 
 We recommend doing local development in a docker container as well. A `docker-compose.yml` file has been included for creating a container cluster that also starts supporting containers:
 
@@ -20,7 +20,7 @@ We recommend doing local development in a docker container as well. A `docker-co
 - **`createbuckets`:** An ephemeral container that will create the expected S3 buckets in minio. This container should stop when its done and not be long-running.
 - **`remix`:** An ephemeral container that will seed the development database with some entries to test against. This container should stop when its done and not be long-running.
 
-#### Usage
+### Usage
 
 1. Make sure [docker](https://www.docker.com) is installed and running. We recommend using [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2. Run [`docker compose up --build --detach`](https://docs.docker.com/engine/reference/commandline/compose_up/). This command will build all of the docker images, start all of the containers, and then exit (leaving the containers running in the background).
@@ -31,7 +31,7 @@ We recommend doing local development in a docker container as well. A `docker-co
 - Navigate to `localhost:3033` to view the `lowdefy_dev` app
 - Run `docker compose down` to stop and remove all of the containers when you are done
 
-### Testing (e2e)
+## Testing (e2e)
 
 The testing included with the staff portal is very limited. We have included infrastructure for running end-to-end (e2e) testing using [Playwright](https://playwright.dev). Example tests are located in `e2e/`. Playwright configuration is located in `playwright.config.ts`.
 
@@ -41,6 +41,6 @@ Both the staff portal and the participant portal have an npm script in `package.
 
 Note: We chose to run playwright inside a docker container because we were experiencing significant pixel drift between snapshots taken on macOS vs snapshots taken in CI using Github Actions.
 
-### Deployment
+## Deployment
 
 This repo includes CI/CD for the staff portal. The `Makefile` is used to support the CI/CD jobs in the `.github/workflows` directory.
