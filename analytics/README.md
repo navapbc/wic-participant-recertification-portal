@@ -1,6 +1,6 @@
 # Analytics using Matomo
 
-For this project, we used [matomo](https://matomo.org), a privacy-forward alternative to Google Analytics. See @TODO ADR for reasons why we chose to do so.
+For this project, we used [matomo](https://matomo.org), a privacy-forward alternative to Google Analytics.
 
 ## Local development
 
@@ -42,7 +42,7 @@ Notes:
 
 For each environment, do the following:
 
-1. Use terraform to deploy the environment as usual (see @TODO documentation). For matomo, be sure to wait several minutes to allow the docker entrypoint to complete
+1. Use terraform to deploy the environment as usual (see [documentation](../docs/infra)). For matomo, be sure to wait several minutes to allow the docker entrypoint to complete
 2. Use the "Deploy" Github Action to build and deploy a docker image for matomo
 3. Navigate to the AWS Console for [ECS clusters](https://us-west-2.console.aws.amazon.com/ecs/v2/clusters?region=us-west-2) for the region you have deployed your environment to
   1. Click on the cluster for the environment you are setting up

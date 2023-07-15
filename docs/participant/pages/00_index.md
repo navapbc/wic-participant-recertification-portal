@@ -2,16 +2,16 @@
 
 The Index page is the landing page for the application.
 
-### About this page:
+## About This Page
 
 This page contains static content about who is eligible to use this recertification portal.
 
-### Considerations for other states:
+## Considerations for Other States
 
 We predict state agencies may make content and logo changes on this page
 Also, state agencies would need to remove the portal survey, or replace it with a new survey
 
-### Development
+## Development
 
 Remix allows us to use URL parameters in our paths, so the file on our filesystem is [app/routes/$localAgency/recertify/index.tsx](../../../participant/app/routes/%24localAgency/recertify/index.tsx)
 

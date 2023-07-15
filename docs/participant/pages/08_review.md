@@ -1,10 +1,10 @@
 # Review
 
-### About this page:
+## About This Page
 
 We allow users to review their inputs and selections and offer them the choice to make any changes to their answers to ensure accuracy of the submitted information.
 
-### Development
+## Development
 
 The Review page renders all previous page data stored in `SubmissionForm` (and a count of `Document` records) in
 a special component (not in Storybook) called a [`<SubmissionForm>`](../../../participant/app/components/SubmissionForm.tsx)

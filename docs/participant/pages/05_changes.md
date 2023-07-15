@@ -1,15 +1,15 @@
 # Changes
 
-### About this page:
+## About This Page
 
 This question allows us to understand if something has changed with the WIC participant that would require them to upload new proof of address/identity docs. Montana WIC only requires documentation if these two scenarios have changed, or if any participant lacks adjunctive eligibility.
 
-### Considerations for other states:
+## Considerations for Other States
 
 When do you require recertifying WIC participants to upload documents? If only certain scenarios, what questions can you replace with these to understand those participants?
 For states that always require documents during recertification, are these questions helpful for local staff? Or, can you remove these questions and logic altogether?
 
-### Development
+## Development
 
 The Changes page renders two [`<ChoiceGroupInput>`](../../../participant/app/components/ChoiceGroupInput.tsx) components with yes / no questions
 

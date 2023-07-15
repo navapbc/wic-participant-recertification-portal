@@ -10,6 +10,8 @@ The infrastructure code is organized as follows. [Root modules](https://www.terr
 infra/                  Infrastructure code
   accounts/             Account root modules for IaC and IAM resources
   app/                  Application-specific infrastructure
+    app-email/          Root module for resources setting up email
+    app-waf/            Root module for resources securing applications with firewalls
     build-repository/   Root module for resources storing built release candidates used for deploys
     env-template        Child module defining resources needed to run the application
     envs/               Root modules for each environment

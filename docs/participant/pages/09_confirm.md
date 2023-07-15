@@ -1,6 +1,6 @@
 # Confirm
 
-### About this page:
+## About This Page
 
 This page confirms the submission and shows content about next steps. It contains an optional user survey for feedback about their experience. It shows the user's submitted information.
 
@@ -9,7 +9,7 @@ This page confirms the submission and shows content about next steps. It contain
 - You may want to update next steps content with agency specific next steps.
 - You can replace your own survey link with your own to collect user feedback.
 
-### Development
+## Development
 
 The Confirm page renders all previous page data stored in `SubmissionForm` (and a count of `Document` records) in
 a special component (not in Storybook) called a [`<SubmissionForm>`](../../../participant/app/components/SubmissionForm.tsx)

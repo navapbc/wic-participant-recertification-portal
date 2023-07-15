@@ -49,6 +49,9 @@ export const parameters = {
           "📝 Intro",
           "🛠️ Development",
           "🗂 Application Internals",
+          "🧹 Formatting",
+          "🧪 Testing",
+          "👟 Remix Stack",
           "Pages",
           [
             "Index",

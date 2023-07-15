@@ -7,7 +7,7 @@ To destroy everything you'll need to undeploy all the infrastructure in reverse 
 1. First destroy all your environments by running `terraform destroy` in each of your environment module folders
 
     ```bash
-    # within each env folder in /infra/envs/ (dev, stage, etc)
+    # within each env folder in /infra/app/envs/ (dev, staging, etc)
     terraform destroy
     ```
 
@@ -46,7 +46,7 @@ To destroy everything you'll need to undeploy all the infrastructure in reverse 
     }
     ```
 
-4. Finally, you can run `terraform destroy` within the backend account folders.
+4. Finally, you can run `terraform destroy` within the backend account and app folders.
 
     ```bash
     terraform destroy
