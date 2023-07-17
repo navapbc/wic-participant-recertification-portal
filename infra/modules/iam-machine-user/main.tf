@@ -32,13 +32,16 @@ resource "aws_iam_access_key" "machine_user" {
 }
 
 resource "aws_ssm_parameter" "access_key_id" {
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = "${var.machine_user_name}-access-key-id"
   type  = "SecureString"
   value = aws_iam_access_key.machine_user.id
 }
 
 resource "aws_ssm_parameter" "secret_access_key" {
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = "${var.machine_user_name}-secret-access-key"
   type  = "SecureString"
   value = aws_iam_access_key.machine_user.secret
 }
+

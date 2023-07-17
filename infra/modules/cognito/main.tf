@@ -153,12 +153,14 @@ resource "aws_cognito_user_pool_client" "client" {
 }
 
 resource "aws_ssm_parameter" "client_id" {
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.client_id_secret_name
   type  = "SecureString"
   value = aws_cognito_user_pool_client.client.id
 }
 
 resource "aws_ssm_parameter" "client_secret" {
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.client_secret_secret_name
   type  = "SecureString"
   value = aws_cognito_user_pool_client.client.client_secret

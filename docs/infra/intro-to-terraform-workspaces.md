@@ -2,6 +2,8 @@
 
 Terraform workspaces are created by default, the default workspace is named "default." Workspaces are used to allow multiple engineers to deploy their own stacks for development and testing. This allows multiple engineers to develop new features in parallel using a single environment without destroying each others infrastructure. Separate resources will be created for each engineer when using the prefix variable.
 
+> Note: This repo does not yet implement terraform workspaces. To support workspaces, changes would need to be made to prefix all the resources correctly.
+
 ## Terraform workspace commands
 
 `terraform workspace show [Name]`   - This command will show the workspace you working in.

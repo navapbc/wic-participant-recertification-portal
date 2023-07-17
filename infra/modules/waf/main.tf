@@ -287,7 +287,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
 
 resource "aws_cloudwatch_log_group" "waf" {
   name              = var.waf_logging_name
-  retention_in_days = 30
+  retention_in_days = 365
 
   # Checkov throws alerts in the event of default encryption for Cloudwatch,which is server-side encrytion for data at rest.
   # checkov:skip=CKV_AWS_158:Disabling this becuase if the key is deleted or otherwise unassociated, the cloudwatch logs will be inaccessible.

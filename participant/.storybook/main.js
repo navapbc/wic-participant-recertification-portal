@@ -14,7 +14,7 @@ module.exports = {
     builder: "webpack5",
     disableTelemetry: true,
   },
-  staticDirs: ["../public"],
+  staticDirs: ["../public", { from: "../app", to: "participant/app" }],
   webpackFinal: async (config, { configType }) => {
     config.resolve.plugins = [new TsconfigPathsPlugin()];
     config.resolve.alias = {
