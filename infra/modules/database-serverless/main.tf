@@ -19,10 +19,10 @@ module "random_admin_database_password" {
 
 locals {
   admin_user                 = "app_usr"
-  admin_user_secret_name     = "/metadata/db/${var.database_name}-admin-user"
-  admin_password_secret_name = "/metadata/db/${var.database_name}-admin-password"
-  admin_db_url_secret_name   = "/metadata/db/${var.database_name}-admin-db-url"
-  admin_db_host_secret_name  = "/metadata/db/${var.database_name}-admin-db-host"
+  admin_user_secret_name     = "/metadata/db-serverless/${var.database_name}-admin-user"
+  admin_password_secret_name = "/metadata/db-serverless/${var.database_name}-admin-password"
+  admin_db_url_secret_name   = "/metadata/db-serverless/${var.database_name}-admin-db-url"
+  admin_db_host_secret_name  = "/metadata/db-serverless/${var.database_name}-admin-db-host"
   database_name_formatted    = replace("${var.database_name}", "-", "_")
   admin_password             = var.admin_password == "" ? module.random_admin_database_password.random_password : var.admin_password
 }
@@ -95,9 +95,8 @@ resource "aws_rds_cluster" "database" {
   # checkov:skip=CKV2_AWS_27:have concerns about sensitive data in logs; want better way to get this information
   # checkov:skip=CKV2_AWS_8:TODO add backup selection plan using tags
   # checkov:skip=CKV_AWS_313: This is literally a new check; more research needed
-  # checkov:skip=CKV_AWS_325: This check is not related to this PR.
-  # checkov:skip=CKV_AWS_327: This check is not related to this PR.
-  # checkov:skip=CKV_AWS_324: This check is not related to this PR.
+  # checkov:skip=CKV_AWS_327: Need to assign the access permissions for the KMS key.
+  # checkov:skip=CKV_AWS_324: This check requires the use of RDS Cluster log capture. DB is currently using cloudwatch.
   cluster_identifier                  = var.database_name
   engine                              = "aurora-${var.database_type}"
   engine_mode                         = "provisioned"
@@ -127,13 +126,15 @@ resource "aws_rds_cluster" "database" {
 }
 
 resource "aws_rds_cluster_instance" "database_instance" {
-  cluster_identifier         = aws_rds_cluster.database.id
-  instance_class             = "db.serverless"
-  engine                     = aws_rds_cluster.database.engine
-  engine_version             = aws_rds_cluster.database.engine_version
-  auto_minor_version_upgrade = true
-  monitoring_role_arn        = aws_iam_role.rds_enhanced_monitoring.arn
-  monitoring_interval        = 30
+  # checkov:skip=CKV_AWS_354:Need to assign the access permissions for the KMS key.
+  cluster_identifier           = aws_rds_cluster.database.id
+  instance_class               = "db.serverless"
+  engine                       = aws_rds_cluster.database.engine
+  engine_version               = aws_rds_cluster.database.engine_version
+  auto_minor_version_upgrade   = true
+  monitoring_role_arn          = aws_iam_role.rds_enhanced_monitoring.arn
+  monitoring_interval          = 30
+  performance_insights_enabled = true
 }
 
 ############################################################################################
@@ -142,12 +143,14 @@ resource "aws_rds_cluster_instance" "database_instance" {
 ############################################################################################
 
 resource "aws_ssm_parameter" "admin_password" {
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.admin_password_secret_name
   type  = "SecureString"
   value = local.admin_password
 }
 
 resource "aws_ssm_parameter" "admin_db_url" {
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.admin_db_url_secret_name
   type  = "SecureString"
   value = "${var.database_type}://${local.admin_user}:${urlencode(local.admin_password)}@${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}/${local.database_name_formatted}?schema=public"
@@ -158,6 +161,7 @@ resource "aws_ssm_parameter" "admin_db_url" {
 }
 
 resource "aws_ssm_parameter" "admin_db_host" {
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.admin_db_host_secret_name
   type  = "SecureString"
   value = "${aws_rds_cluster_instance.database_instance.endpoint}:${var.database_port}"
@@ -168,6 +172,7 @@ resource "aws_ssm_parameter" "admin_db_host" {
 }
 
 resource "aws_ssm_parameter" "admin_user" {
+  # checkov:skip=CKV_AWS_337:Skip creating separate IAM roles for KMS keys
   name  = local.admin_user_secret_name
   type  = "SecureString"
   value = local.admin_user
@@ -199,13 +204,13 @@ data "aws_kms_key" "database" {
 
 # create backup vault
 resource "aws_backup_vault" "database" {
-  name        = "${var.database_name}-vault"
+  name        = "${var.database_name}-serverless-vault"
   kms_key_arn = data.aws_kms_key.database.arn
 }
 
 # create IAM role
 resource "aws_iam_role" "database_backup" {
-  name               = "${var.database_name}-database-backup"
+  name               = "${var.database_name}-database-serverless-backup"
   assume_role_policy = data.aws_iam_policy_document.database_backup.json
 }
 
@@ -244,7 +249,7 @@ resource "aws_backup_selection" "database_backup" {
 ############################################################################################
 
 resource "aws_iam_role" "rds_enhanced_monitoring" {
-  name               = "${var.database_name}-rds-enhanced-monitoring"
+  name               = "${var.database_name}-rds-serverless-enhanced-monitoring"
   assume_role_policy = data.aws_iam_policy_document.rds_enhanced_monitoring.json
 }
 
