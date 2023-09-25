@@ -13,13 +13,6 @@ variable "admin_password" {
   sensitive   = true
 }
 
-
-variable "database_port" {
-  type        = number
-  description = "The port number for accessing the database"
-  default     = 5432
-}
-
 variable "database_type" {
   type        = string
   description = "Whether to configure a postgresql or mysql database"
@@ -29,6 +22,13 @@ variable "database_type" {
     error_message = "choose either: postgresql or mysql"
   }
 }
+
+variable "database_port" {
+  type        = number
+  description = "The port number for accessing the database"
+  default     = 5432
+}
+
 variable "vpc_id" {
   type        = string
   description = "The ID for the VPC"
